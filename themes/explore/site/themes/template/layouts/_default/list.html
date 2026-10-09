@@ -1,0 +1,42 @@
+{{ define "main" }}
+{{ $cfg := partial "func/defaults" . }}
+{{ $sidebarPosition := .Params.sidebar.position | default $cfg.sidebar.globalPosition }}
+
+<div class="container site-main">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="page-content">
+        {{ . }}
+      </div>
+    {{ end }}
+  </header>
+
+  {{ if $cfg.ui.showSearch }}
+  <form class="list-search" action="{{ "search" | relLangURL }}" method="get">
+    <input type="search" name="q" placeholder="{{ i18n "search" }}..." class="search-input">
+  </form>
+  {{ end }}
+
+  <div class="layout-grid {{ if and (ne $sidebarPosition "off") (ne $sidebarPosition "bottom") }}layout-grid--sidebar-{{ $sidebarPosition }}{{ end }}">
+    <div class="main-content {{ if eq $sidebarPosition "left" }}main-content--sidebar-left{{ end }}">
+      <div class="post-list">
+        {{ $listView := $cfg.list.listView }}
+        {{ $paginator := .Paginate .Pages }}
+        {{ range $paginator.Pages }}
+          {{ if eq $listView "compact" }}
+            {{ partial "post/list-item-compact.html" . }}
+          {{ else }}
+            {{ partial "post/list-item-default.html" . }}
+          {{ end }}
+        {{ end }}
+      </div>
+      {{ partial "pagination.html" . }}
+    </div>
+
+    {{ if and (ne $sidebarPosition "off") (ne $sidebarPosition "bottom") }}
+      {{ partial "sidebar.html" (dict "context" . "widgetSidebarPosition" $sidebarPosition )}}
+    {{ end }}
+  </div>
+</div>
+{{ end }}

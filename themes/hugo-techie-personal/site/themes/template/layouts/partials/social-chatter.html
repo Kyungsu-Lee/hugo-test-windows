@@ -1,0 +1,107 @@
+{{ $page := . }}
+{{ with .Params.social_chatter }}
+  {{ $items := . }}
+  {{ if reflect.IsSlice $items }}
+    {{ $items = $items }}
+  {{ else }}
+    {{ $items = slice $items }}
+  {{ end }}
+  {{ if $items }}
+    {{ $scratch := newScratch }}
+    {{ $scratch.Set "platformOrder" (slice) }}
+
+    {{/* First pass: classify each URL and generate embed content, grouped by platform */}}
+    {{ range $items }}
+      {{ $itemUrl := "" }}
+      {{ if not (reflect.IsMap .) }}
+        {{ $itemUrl = . }}
+      {{ end }}
+      {{ if $itemUrl }}
+        {{ $parsed := urls.Parse $itemUrl }}
+        {{ $host := lower $parsed.Host }}
+        {{ $path := $parsed.Path }}
+        {{ $platformLabel := "Social" }}
+        {{ $embedContent := "" }}
+
+        {{/* LinkedIn: direct iframe with URN */}}
+        {{ if findRE "linkedin\\.com" $host }}
+          {{ $platformLabel = "LinkedIn" }}
+          {{ $urn := "" }}
+          {{ if findRE "urn:li:(activity|share|ugcPost):[0-9]+" $itemUrl }}
+            {{ $urn = index (findRE "urn:li:(activity|share|ugcPost):[0-9]+" $itemUrl) 0 }}
+          {{ else }}
+            {{ $subs := findRESubmatch "activity[-_]([0-9]+)" $path }}
+            {{ if $subs }}
+              {{ $urn = printf "urn:li:activity:%s" (index (index $subs 0) 1) }}
+            {{ end }}
+          {{ end }}
+          {{ if $urn }}
+            {{ $embedSrc := printf "https://www.linkedin.com/embed/feed/update/%s" $urn }}
+            {{ $embedContent = printf "<iframe src=\"%s\" class=\"social-chatter__iframe\" title=\"LinkedIn post\" loading=\"lazy\" allowfullscreen allow=\"encrypted-media\"></iframe>" $embedSrc | safeHTML }}
+          {{ else }}
+            {{ $embedContent = printf "<div class=\"oembed-error\"><p>🔗 <a href=\"%s\" target=\"_blank\" rel=\"noopener\">View on LinkedIn</a></p></div>" $itemUrl | safeHTML }}
+          {{ end }}
+        {{/* Facebook: direct iframe */}}
+        {{ else if findRE "facebook\\.com|fb\\.com|fbcdn\\.net" $host }}
+          {{ $platformLabel = "Facebook" }}
+          {{ $encoded := $itemUrl | safeURL }}
+          {{ $embedSrc := printf "https://www.facebook.com/plugins/post.php?href=%s&show_text=true&width=500" $encoded }}
+          {{ $embedContent = printf "<iframe src=\"%s\" class=\"social-chatter__iframe\" title=\"Facebook post\" loading=\"lazy\" allowfullscreen allow=\"encrypted-media\"></iframe>" $embedSrc | safeHTML }}
+        {{/* Instagram: direct iframe with shortcode */}}
+        {{ else if findRE "instagram\\.com" $host }}
+          {{ $platformLabel = "Instagram" }}
+          {{ $shortcode := "" }}
+          {{ if findRE "/p/[A-Za-z0-9_-]+" $path }}
+            {{ $shortcode = replaceRE ".*/p/([A-Za-z0-9_-]+).*" "$1" $path }}
+          {{ end }}
+          {{ if $shortcode }}
+            {{ $embedSrc := printf "https://www.instagram.com/p/%s/embed/" $shortcode }}
+            {{ $embedContent = printf "<iframe src=\"%s\" class=\"social-chatter__iframe\" title=\"Instagram post\" loading=\"lazy\" allowfullscreen allow=\"encrypted-media\"></iframe>" $embedSrc | safeHTML }}
+          {{ else }}
+            {{ $embedContent = printf "<div class=\"oembed-error\"><p>🔗 <a href=\"%s\" target=\"_blank\" rel=\"noopener\">View on Instagram</a></p></div>" $itemUrl | safeHTML }}
+          {{ end }}
+        {{/* Everything else: existing oembed partial (Twitter, X, Bluesky, Mastodon, etc.) */}}
+        {{ else }}
+          {{ if findRE "twitter\\.com" $host }}{{ $platformLabel = "Twitter/X" }}
+          {{ else if findRE "x\\.com" $host }}{{ $platformLabel = "Twitter/X" }}
+          {{ else if findRE "bsky\\.app" $host }}{{ $platformLabel = "Bluesky" }}
+          {{ else if findRE "mastodon|fediverse" $host }}{{ $platformLabel = "Mastodon" }}
+          {{ else }}{{ $platformLabel = "Social" }}{{ end }}
+          {{ $embedContent = partial "oembed.html" (dict "url" $itemUrl "page" $page) }}
+        {{ end }}
+
+        {{ if $embedContent }}
+          {{ if not ($scratch.Get (printf "seen_%s" $platformLabel)) }}
+            {{ $scratch.Set (printf "seen_%s" $platformLabel) true }}
+            {{ $scratch.Add "platformOrder" (slice $platformLabel) }}
+          {{ end }}
+          {{ $scratch.Add (printf "embeds_%s" $platformLabel) (slice $embedContent) }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+
+    {{/* Second pass: render one container per platform */}}
+    {{ $platformOrder := $scratch.Get "platformOrder" }}
+    {{ if $platformOrder }}
+<section class="social-chatter">
+  <h2>Social chatter</h2>
+  <div class="social-chatter__list">
+    {{ range $platformOrder }}
+      {{ $label := . }}
+      {{ $embeds := $scratch.Get (printf "embeds_%s" $label) }}
+      <div class="social-chatter__item">
+        <span class="social-chatter__platform-label">{{ $label }}</span>
+        <div class="social-chatter__embeds">
+          {{ range $embeds }}
+            <div class="social-chatter__embed">
+              {{ . }}
+            </div>
+          {{ end }}
+        </div>
+      </div>
+    {{ end }}
+  </div>
+</section>
+    {{ end }}
+  {{ end }}
+{{ end }}

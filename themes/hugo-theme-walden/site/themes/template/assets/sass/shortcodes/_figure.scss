@@ -1,0 +1,16 @@
+figure {
+    margin-top: 1.5rem;
+    img {
+        display: block;
+    }
+
+    figcaption {
+        padding: .5rem;
+        font-size: .875rem;
+
+        color: var(--slate-500);
+
+        text-align: right;
+
+    }
+}

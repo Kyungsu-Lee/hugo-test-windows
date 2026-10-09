@@ -1,0 +1,201 @@
+<!-- 
+    Copyright © 2024 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
+-->
+
+{{/* Initialize arguments */}}
+ {{ $args := partial "utilities/InitArgs.html" (dict "structure" "section-title" "args" . "group" "partial") }}
+{{ if or $args.err $args.warnmsg }}
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial" "assets/section-title.html" 
+        "warnid"  "warn-invalid-arguments"
+        "msg"     "Invalid arguments"
+        "details" ($args.errmsg | append $args.warnmsg)
+        "file"    (or $args.page page).File
+    )}}
+{{ end }}
+
+{{/* Resolve the intrinsic page; fall back to the global page for one release */}}
+{{- $page := $args.page -}}
+{{- if not $page -}}
+    {{- $noop := partial "utilities/LogWarn.html" (dict
+        "partial" "assets/section-title.html"
+        "warnid"  "warn-missing-page-argument"
+        "msg"     "Missing argument 'page', falling back to the global page context"
+        "details" (slice "Pass the rendering page explicitly; this fallback will be removed in a future release")
+        "file"    page.File
+    ) -}}
+    {{- $page = page -}}
+{{- end -}}
+
+{{/* Initialize global arguments */}}
+{{- $breakpoint := partial "utilities/GetBreakpoint.html" -}}
+{{- $padding := partial "utilities/GetPadding.html" (dict "section" "heading") -}}
+
+{{/* Initialize local arguments */}}
+{{- $size := (or $args.heading.size site.Params.style.title.size) | default 4 -}}
+{{/* An explicit arrangement argument wins, then the heading's own arrangement. InitArgs always fills
+     $args.arrangement from the site config or its default, so the raw arguments tell whether the
+     caller set one. */}}
+{{- $arrangement := (or (index . "arrangement") $args.heading.arrangement $args.arrangement site.Params.style.title.arrangement) | default "above" -}}
+{{- $headingStyle := (or $args.headingStyle site.Params.style.title.headingStyle) | default "display" -}}
+{{- $contentStyle := (or $args.contentStyle site.Params.style.title.contentStyle) | default "lead text-muted" -}}
+{{- $preheading := $args.heading.preheading }}
+{{- $title := $args.heading.title }}
+{{- $width := $args.heading.width | default 12 -}}
+{{- $width = cond (lt $width 12) (printf "col-12 col-%s-%d" $breakpoint.current $width) "" }}
+{{- if and (not $preheading) $args.useSection }}{{ $preheading = $page.CurrentSection.Name }}{{ end -}}
+{{- $justify := cond (eq $args.justify "start") "" (cond (eq $args.justify "end") "me-0" "mx-auto") -}}
+
+{{/* Read the heading level. An explicit heading-level wins, the legacy use-title boolean maps onto
+     level 1, and a caller that asks for neither keeps the div this partial has always rendered. */}}
+{{- $level := $args.headingLevel -}}
+{{- $levelled := ne $level nil -}}
+{{- if not $levelled }}{{ $level = cond $args.useTitle 1 0 }}{{ end -}}
+{{- if or (lt $level 0) (gt $level 6) -}}
+    {{- partial "utilities/LogWarn.html" (dict
+        "partial" "assets/section-title.html"
+        "warnid"  "warn-invalid-heading-level"
+        "msg"     (printf "Heading level %d is out of range, falling back to a div" $level)
+        "details" (slice "Use a level between 1 and 6, or 0 to render a div")
+        "file"    $page.File
+    ) -}}
+    {{- $level = 0 -}}
+{{- end -}}
+
+{{/* Classes for the heading element. A caller-supplied heading-class always wins, including an
+     empty string, which leaves the element on its own styling. Without one, a heading-level title
+     resets the margins that a heading carries and the div it replaces does not, plus the weight
+     and line height that the "fs" heading style leaves to Bootstrap; a use-title title keeps the
+     styling the h1 has always had. */}}
+{{- $headingClass := "" -}}
+{{- if isset $args "headingClass" -}}
+    {{- $headingClass = $args.headingClass -}}
+{{- else if $levelled -}}
+    {{- $headingClass = "mt-0 mb-0" -}}
+    {{- if eq $headingStyle "fs" }}{{ $headingClass = printf "%s fw-normal lh-base" $headingClass }}{{ end -}}
+{{- end -}}
+
+{{ $preheading = partial "utilities/TitleCase.html" (dict "page" $page "text" $preheading) }}
+{{ $title = partial "utilities/TitleCase.html" (dict "page" $page "text" $title) }}
+
+{{/* Composes the title element. The tag varies with the heading level, and Go's template engine
+     rejects a dynamic element name, so the markup is assembled as a string and marked safe. */}}
+{{ define "_partials/assets/section-title-header.html" }}
+    {{- $page := .page -}}
+    {{- $level := .level -}}
+    {{- $tag := cond (eq $level 0) "div" (printf "h%d" $level) -}}
+
+    {{- $title := .title | $page.RenderString -}}
+    {{- $label := trim (replaceRE "\r\n?|\n" " " ($title | plainify)) " " -}}
+
+    {{- $class := printf "%s-%v" .headingStyle .size -}}
+    {{- with .color }}{{ $class = printf "%s text-%s" $class . }}{{ end -}}
+    {{- $class = printf "%s pt-1" $class -}}
+    {{- if ne $level 0 }}{{ with .headingClass }}{{ $class = printf "%s %s" $class . }}{{ end }}{{ end -}}
+
+    {{- $attrs := printf `class="%s"` $class -}}
+    {{- with .headingId -}}
+        {{- $attrs = printf `id="%s" %s` (htmlEscape .) $attrs -}}
+    {{- end -}}
+    {{- if and (ne $level 0) (ne $title $label) -}}
+        {{- $attrs = printf `aria-label="%s" %s` (htmlEscape $label) $attrs -}}
+    {{- end -}}
+
+    {{- printf "<%s %s>\n%s\n</%s>" $tag $attrs $title $tag | safeHTML -}}
+{{ end }}
+
+{{ $header := "" }}
+{{ if $title }}
+    {{ $header = partial "assets/section-title-header.html" (dict
+        "page"         $page
+        "level"        $level
+        "headingClass" $headingClass
+        "headingId"    $args.headingId
+        "title"        $title
+        "headingStyle" $headingStyle
+        "color"        $args.color
+        "size"         $size
+    ) }}
+{{ end }}
+
+{{/* Optional action slot: pre-rendered HTML (typically a button) placed on the
+     title's own row, pushed to the trailing edge. A section landing page's
+     primary action belongs beside its title rather than buried in the body, and
+     the heading is rendered here, so this is the only place that can put it
+     there. Existing callers keep centered alignment and render the wrapper only
+     when an action exists; callers can opt into a persistent, identified slot. */}}
+{{ if and $header (or $args.action $args.alwaysRenderAction) }}
+    {{- $actionAttrs := `class="section-title-action ms-auto flex-shrink-0"` -}}
+    {{- with $args.actionId }}{{ $actionAttrs = printf `id="%s" %s` (htmlEscape .) $actionAttrs }}{{ end -}}
+    {{- $action := $args.action | default "" -}}
+    {{ $header = printf `<div class="d-flex align-items-%s gap-3 section-title-row">%s<div %s>%s</div></div>` ($args.actionAlign | default "center") $header $actionAttrs $action | safeHTML }}
+{{ end }}
+
+{{ $links := "" }}
+{{ if $args.links }}
+    {{ $links = partial "assets/links.html" (dict
+        "page"      $page
+        "links"     $args.links
+        "align"     $args.heading.align
+        "justify"   $args.justify
+        "link-type" $args.linkType
+    ) }}
+{{ end }}
+
+{{/* Main code */}}
+{{ if or $args.heading.title $args.heading.content }}
+    <div class="section-title text-{{ $args.heading.align | default "start" }}{{ with $justify }} {{ . }}{{ end }}{{ with $args.class }} {{ . }}{{ end }} {{ with $width }}{{ . }}{{ else }}w-100{{ end }}">
+        {{ if and $preheading (eq $arrangement "first") }}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 col-{{ $breakpoint.current }}-2 p-0">
+                        {{ with $preheading }}
+                            <p class="preheading {{ if ne $args.color "body" }}text-{{ $args.color }}{{ else }}text-primary{{ end }}">
+                                {{ . | $page.RenderString | safeHTML }}
+                            </p>
+                        {{ end }}
+                    </div>
+                    <div class="col-12 col-{{ $breakpoint.current }}-8 p-0">
+                        {{ $header }}
+                        {{ with $args.heading.content }}
+                            <div{{ with $args.contentId }} id="{{ . }}"{{ end }} class="{{ $contentStyle }}{{ with $padding.y }} pt-{{ . }}{{ end }}">{{ . | $page.RenderString | safeHTML }}</div>
+                        {{ end }}
+                        {{ $links }}
+                    </div>
+                </div>
+            </div>
+
+        {{/* Place the preheading and title in a narrow column to the left of the content. The row drops
+             its gutter so it cannot overflow the section, and the title column pads its trailing edge
+             instead. */}}
+        {{ else if eq $arrangement "split" }}
+            <div class="row g-0">
+                <div class="col-12 col-{{ $breakpoint.current }}-4 pe-{{ $breakpoint.current }}-5">
+                    {{ with $preheading }}
+                        <p class="preheading {{ if ne $args.color "body" }}text-{{ $args.color }}{{ else }}text-primary{{ end }}">
+                            {{ . | $page.RenderString | safeHTML }}
+                        </p>
+                    {{ end }}
+                    {{ $header }}
+                </div>
+                <div class="col-12 col-{{ $breakpoint.current }}-8">
+                    {{ with $args.heading.content }}
+                        <div{{ with $args.contentId }} id="{{ . }}"{{ end }} class="{{ $contentStyle }} pt-{{ with $padding.y }}{{ . }}{{ else }}0{{ end }} pt-{{ $breakpoint.current }}-1">{{ . | $page.RenderString | safeHTML }}</div>
+                    {{ end }}
+                    {{ $links }}
+                </div>
+            </div>
+
+        {{/* Place above */}}
+        {{ else }}
+            {{ with $preheading }}
+                <p class="preheading {{ if ne $args.color "body" }}text-{{ $args.color }}{{ else }}text-primary{{ end }}">
+                    {{ . | $page.RenderString | safeHTML }}
+                </p>
+            {{ end }}
+            {{ $header }}
+            {{ with $args.heading.content }}<div{{ with $args.contentId }} id="{{ . }}"{{ end }} class="{{ $contentStyle }}{{ with $padding.y }} pt-{{ . }}{{ end }}">{{ . | $page.RenderString | safeHTML }}</div>{{ end }}
+            {{ $links }}
+        {{ end }}
+    </div>
+{{ end }}

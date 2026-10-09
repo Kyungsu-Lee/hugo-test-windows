@@ -1,0 +1,15 @@
+{{- /*
+  layouts/partials/menu.html
+
+  This partial renders the main navigation menu.
+  It ranges over the `main` menu items defined in the site's `hugo.toml`.
+*/}}
+<nav class="main-nav" id="main-nav">
+  <ul>
+    {{- range .Site.Menus.main.ByWeight }}
+      {{- $isCurrent := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) }}
+      {{- $isExternal := strings.HasPrefix .URL "http" }}
+      <li class="{{ if $isCurrent }}active{{ end }}"><a href="{{ if $isExternal }}{{ .URL }}{{ else }}{{ .URL | relURL }}{{ end }}"{{ if $isExternal }} target="_blank" rel="{{ .Params.rel | default "noopener" }}"{{ end }}>{{ .Name }}</a></li>
+    {{- end }}
+  </ul>
+</nav>

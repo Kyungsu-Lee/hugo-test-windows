@@ -1,0 +1,32 @@
+<section class="post-list" aria-label="Posts">
+    {{ $pages := where .Site.RegularPages "Section" "posts" }}
+    {{ if eq (len $pages) 0 }}
+    {{ $pages = .Site.RegularPages }}
+    {{ end }}
+    {{ range $pages }}
+    <article class="tweet">
+        <a class="tweet-link" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
+        {{ partial "avatar.html" . }}
+        <div class="tweet-content">
+            <header>
+                <strong>{{ .Site.Params.displayName | default .Site.Title }}{{ if .Site.Params.verified }} {{ partial "icon.html" "verified" }}{{ end }}</strong>
+                <span>@{{ .Site.Params.username | default .Site.Title | urlize }}</span>
+                <span>·</span>
+                <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2" }}</time>
+                <span class="tweet-menu">{{ partial "icon.html" "more" }}</span>
+            </header>
+            <h2>{{ .Title }}</h2>
+            <p>{{ with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 140 }}{{ end }}</p>
+            {{ with .Params.tags }}
+            <p class="tweet-tags">{{ range . }}<span>#{{ . | urlize }}</span>{{ end }}</p>
+            {{ end }}
+            <footer class="tweet-actions" aria-label="Post actions">
+                <span class="tweet-action reply">{{ partial "icon.html" "reply" }}<span>{{ .ReadingTime }}</span></span>
+                <span class="tweet-action repost">{{ partial "icon.html" "repost" }}<span>{{ len .Title }}</span></span>
+                <span class="tweet-action like">{{ partial "icon.html" "like" }}<span>{{ .WordCount }}</span></span>
+                <span class="tweet-action share">{{ partial "icon.html" "share" }}</span>
+            </footer>
+        </div>
+    </article>
+    {{ end }}
+</section>

@@ -1,0 +1,109 @@
+comment: >-
+  Renders the sidebar navigation of a single page, typically used in
+  documentation sections. On smaller screens it is replaced with an offcanvas element.
+group: partial
+arguments:
+  page:
+    type:
+      - '*hugolib.pageState'
+      - '*hugolib.pageForShortcode'
+    optional: false
+    comment: Context of the current page.
+    group: partial
+  menu:
+    type: '[]interface {}'
+    optional: true
+    comment: Path of the sidebar navigation menu.
+  version:
+    type: string
+    optional: true
+    comment: >-
+      Version of the sidebar navigation, used to define the base URL of
+      generated links, together with the page's section.
+  baseURL:
+    type: string
+    optional: true
+    group: partial
+    release: v3.3.0
+    comment: >-
+      Base URL of the site for the current language, used to resolve relative
+      menu links. Pass it explicitly (see `page/sidebar-cached.html`) so the
+      renderer performs no per-page Scratch reads; defaults to `/`.
+  filename:
+    type: string
+    optional: true
+    group: partial
+    release: v3.3.0
+    comment: >-
+      Path of the data file that defines the sidebar menu, used in error
+      messages only. Passed explicitly by `page/sidebar-cached.html` so the
+      renderer performs no per-page Scratch reads.
+  auto-generate:
+    type: bool
+    optional: true
+    default: false
+    comment: >-
+      Flag to auto-generate the content of the sidebar. When set, the sidebar
+      lists all pages of the current section. Use `nested`, `reverse`, and
+      `sort` arguments to refine the behavior.
+    release: v2.0.0
+  nested:
+    default: true
+    release: v2.0.0
+  reverse:
+    default: false
+    release: v2.0.0
+  sort:
+    optional: true
+    default: weight
+    release: v2.0.0
+  level-min:
+    type: int
+    optional: true
+    default: 0
+    comment: >-
+      Minimum menu depth to render (1-based). Use with level-max to filter
+      rendered levels. 0 means no minimum filter.
+  level-max:
+    type: int
+    optional: true
+    default: 0
+    comment: >-
+      Maximum menu depth to render (1-based). Use 1 to render only
+      top-level entries. 0 means no maximum filter.
+  collapsible:
+    type: bool
+    optional: true
+    default: false
+    comment: >-
+      When true, renders a toggle button that collapses the sidebar to icon-only
+      view. Only effective in Mode A (level-max = 1). Default: false.
+  logo:
+    type: path
+    optional: true
+    comment: >-
+      Address of the brand logo to render at the top of the sidebar (Mode A
+      only). Visible when the sidebar is expanded.
+  logo-collapsed:
+    type: path
+    optional: true
+    comment: >-
+      Address of the brand logomark to render at the top of the sidebar (Mode A
+      only). Visible when the sidebar is in icon-only collapsed mode. Falls
+      back to `logo` if omitted.
+  logo-mode:
+    type: bool
+    default: false
+    optional: true
+    comment: >-
+      Flag indicating if the brand logo and logomark should support color
+      modes. If set, the sidebar searches for images having a matching
+      color-mode suffix such as `-light` or `-dark`.
+  logo-height:
+    type: int
+    optional: true
+    comment: >-
+      Height in pixels of the brand logo and logomark (Mode A only). The width
+      is derived automatically from the image's aspect ratio, mirroring the
+      navbar's `logo-height` behavior. When omitted, the images are sized via
+      CSS instead.

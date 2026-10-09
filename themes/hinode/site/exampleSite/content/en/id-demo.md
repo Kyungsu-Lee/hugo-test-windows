@@ -1,0 +1,96 @@
+---
+title: Id Demo
+---
+
+## Accordion
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* accordion */>}}
+  {{</* accordion-item title="A1" */>}}First accordion, first item.{{</* /accordion-item */>}}
+  {{</* accordion-item title="A2" */>}}First accordion, second item.{{</* /accordion-item */>}}
+{{</* /accordion */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* accordion */>}}
+  {{</* accordion-item title="B1" */>}}Second accordion, first item.{{</* /accordion-item */>}}
+{{</* /accordion */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+## Carousel
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* carousel ratio="21x9" class="col-12" */>}}
+  {{</* img src="img/coffee.jpg" caption="First carousel, first slide" */>}}
+  {{</* img src="img/coffee.jpg" caption="First carousel, second slide" */>}}
+{{</* /carousel */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* carousel ratio="21x9" class="col-12" */>}}
+  {{</* img src="img/coffee.jpg" caption="Second carousel, first slide" */>}}
+  {{</* img src="img/coffee.jpg" caption="Second carousel, second slide" */>}}
+{{</* /carousel */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+## Nav
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* nav class="id-demo-nav" */>}}
+  {{</* nav-item title="Tab 1" show="true" */>}}First nav, tab one.{{</* /nav-item */>}}
+  {{</* nav-item title="Tab 2" */>}}First nav, tab two.{{</* /nav-item */>}}
+{{</* /nav */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* nav class="id-demo-nav" */>}}
+  {{</* nav-item title="Tab 1" show="true" */>}}Second nav, tab one.{{</* /nav-item */>}}
+  {{</* nav-item title="Tab 2" */>}}Second nav, tab two.{{</* /nav-item */>}}
+{{</* /nav */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+## Toast
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* toast */>}}First toast.{{</* /toast */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+<!-- markdownlint-disable MD037 -->
+{{< example lang="hugo" >}}
+{{</* toast */>}}Second toast.{{</* /toast */>}}
+{{< /example >}}
+<!-- markdownlint-enable MD037 -->
+
+## Minimal nav (no parent args, single item)
+
+Rendered directly (not via the example shortcode): a single-item nav whose parent
+has no arguments. This is the most natural nav usage and it used to crash the build.
+
+{{< nav >}}
+{{< nav-item title="Only tab" show="true" >}}A single-item nav whose parent has no arguments.{{< /nav-item >}}
+{{< /nav >}}
+
+## Nav with a shown tab that is not the first
+
+Rendered directly: `show="true"` sits on the third item, so the shown tab and the
+tab at index 0 are different elements.
+
+{{< nav id="nav-show-fixture" >}}
+{{< nav-item title="Tab 1" >}}First tab pane, not shown.{{< /nav-item >}}
+{{< nav-item title="Tab 2" >}}Second tab pane, not shown.{{< /nav-item >}}
+{{< nav-item title="Tab 3" show="true" >}}Third tab pane, shown on load.{{< /nav-item >}}
+{{< /nav >}}

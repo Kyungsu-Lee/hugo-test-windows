@@ -1,0 +1,46 @@
+{{ $cfg := partial "func/defaults" . }}
+<header class="site-header {{ if $cfg.ui.stickyHeader }}is-sticky{{ end }}">
+  <div class="container header-inner">
+    <div class="site-identity">
+      <a href="{{ .Site.Home.RelPermalink }}" class="site-brand">
+        {{ if .Site.Params.logo }}
+          <img src="{{ .Site.Params.logo | relURL }}" alt="{{ .Site.Title }} logo">
+        {{ end }}
+        <span class="site-title">{{ .Site.Title }}</span>
+      </a>
+      {{ with .Site.Params.tagline }}
+        <p class="site-tagline">{{ . }}</p>
+      {{ end }}
+    </div>
+    <button id="nav-toggle" class="nav-toggle" aria-label="Menu" aria-controls="site-nav" aria-expanded="false">
+      {{ partial "icons/menu.html" }}
+      {{ partial "icons/close.html" }}
+    </button>
+    <nav id="site-nav" class="site-nav">
+      <div class="main-nav">
+        <ul>
+          {{ $currentPage := . }}
+          {{ range .Site.Menus.main }}
+          <li>
+            <a href="{{ .URL | relLangURL }}" class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">{{ .Name }}</a>
+          </li>
+          {{ end }}
+        </ul>
+      </div>
+      <div class="nav-utils">
+        <a href="{{ "index.xml" | absURL }}" class="nav-rss" aria-label="RSS Feed" target="_blank" rel="noopener">
+          {{ partial "icons/rss.html" }}
+        </a>
+        {{ if $cfg.ui.showSearch }}
+        <a href="{{ "search" | relLangURL }}" class="nav-search" aria-label="Search">
+          {{ partial "icons/search.html" }}
+        </a>
+        {{ end }}
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
+          {{ partial "icons/sun.html" }}
+          {{ partial "icons/moon.html" }}
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>

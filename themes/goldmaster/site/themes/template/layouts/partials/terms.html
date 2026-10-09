@@ -1,0 +1,30 @@
+<!--
+  layouts/partials/terms.html
+
+  This is a partial for displaying the terms (tags, categories, etc.) assigned to a single page.
+  Not used for taxonomy list pages.
+-->
+
+{{- /*
+For a given taxonomy, renders a list of terms assigned to the page.
+
+@context {page} page The current page.
+@context {string} taxonomy The taxonomy.
+
+@example: {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+*/}}
+
+{{- $page := .page }}
+{{- $taxonomy := .taxonomy }}
+
+{{- with $page.GetTerms $taxonomy }}
+  {{- $label := (index . 0).Parent.LinkTitle }}
+  <div>
+    <div>{{ $label }}:</div>
+    <ul>
+      {{- range . }}
+        <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+  </div>
+{{- end }}

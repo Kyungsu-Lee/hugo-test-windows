@@ -1,0 +1,19 @@
+{{ define "header_css" }}{{ end }}
+
+{{ define "main" }}
+<div class="grid grid-cols-3 gap-4">
+  {{ if .Site.Params.widgets.display }}
+  <main class="col-span-3 lg:col-span-2">
+  {{ else }}
+  <main class="col-span-3">
+  {{ end }}
+    <article class="bg-white dark:bg-warmgray-900 dark:text-white rounded-xl shadow-sm p-6 my-4">
+      <h1 class="title text-4xl font-bold mb-2">{{.Title}}</h1>
+      <div class="content prose md:prose-base lg:prose-lg max-w-none dark:prose-invert py-1">{{.Content}}</div>
+    </article>
+  </main>
+  {{ if .Site.Params.widgets.display }}
+    {{ partial "widgets.html" . }}
+  {{ end }}
+</div>
+{{ end }}

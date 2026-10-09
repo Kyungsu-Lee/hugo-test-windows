@@ -1,0 +1,78 @@
+# Auto-generated file - do not modify
+[build]
+  command = 'git fetch --tags --force > /dev/null 2>&1; HUGO_HINODE_VERSION=$(git describe --tags --abbrev=0 2> /dev/null) npm run build:example'
+  publish = 'exampleSite/public'
+
+  [build.environment]
+    DART_SASS_VERSION = '1.98.0'
+    GOGC = '400'
+    HUGO_ENABLEGITINFO = 'true'
+    HUGO_ENV = 'production'
+    NODE_VERSION = '24.12.0'
+    NPM_VERSION = '11.6.2'
+
+[context]
+  [context.branch-deploy]
+    command = 'git fetch --tags --force > /dev/null 2>&1; HUGO_HINODE_VERSION=$(git describe --tags --abbrev=0 2> /dev/null) npm run build:example -- -b $DEPLOY_PRIME_URL'
+
+  [context.deploy-preview]
+    command = 'git fetch --tags --force > /dev/null 2>&1; HUGO_HINODE_VERSION=$(git describe --tags --abbrev=0 2> /dev/null) npm run build:example -- -b $DEPLOY_PRIME_URL'
+
+[dev]
+  autoLaunch = false
+  command = 'git fetch --tags --force > /dev/null 2>&1; HUGO_HINODE_VERSION=$(git describe --tags --abbrev=0 2> /dev/null) npm run start:example'
+  framework = '#custom'
+  port = 8888
+  publish = 'public'
+  targetPort = 1313
+
+[[plugins]]
+  package = 'netlify-plugin-hugo-cache-resources'
+
+[[headers]]
+  for = '/**'
+
+  [headers.values]
+    Access-Control-Allow-Origin = '*'
+    Content-Security-Policy = """
+        base-uri 'self'; \
+        connect-src 'self' *.cookieyes.com cdn-cookieyes.com *.analytics.google.com *.google.com *.google-analytics.com *.googletagmanager.com; \
+        default-src 'none'; \
+        font-src 'self' fonts.gstatic.com data:; \
+        form-action 'self'; \
+        frame-ancestors 'self' gethinode.com; \
+        frame-src *.wikipedia.org www.openstreetmap.org *.googletagmanager.com player.cloudinary.com www.youtube-nocookie.com www.youtube.com player.vimeo.com; \
+        img-src 'self' cdn-cookieyes.com *.google-analytics.com *.googletagmanager.com googletagmanager.com ssl.gstatic.com www.gstatic.com data: *.imgix.net *.imagekit.io *.cloudinary.com i.ytimg.com tile.openstreetmap.org i.vimeocdn.com; \
+        manifest-src 'self'; \
+        media-src 'self'; \
+        object-src 'none'; \
+        script-src 'self' cdn-cookieyes.com *.google-analytics.com *.googletagmanager.com *.analytics.google.com googletagmanager.com tagmanager.google.com player.vimeo.com; \
+        style-src 'self' 'unsafe-inline' googletagmanager.com tagmanager.google.com fonts.googleapis.com www.youtube.com; \
+        """
+    Permissions-Policy = 'geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(), payment=() '
+    Referrer-Policy = 'strict-origin'
+    Strict-Transport-Security = 'max-age=31536000; includeSubDomains; preload'
+    X-Content-Type-Options = 'nosniff'
+    X-XSS-Protection = '1; mode=block'
+    cache-control = 'max-age=0, no-cache, no-store, must-revalidate '
+
+[[redirects]]
+  from = '/fr/*'
+  status = 404
+  to = '/fr/404.html'
+
+[[redirects]]
+  from = '/nl/*'
+  status = 404
+  to = '/nl/404.html'
+
+[[redirects]]
+  from = '/en/*'
+  status = 404
+  to = '/en/404.html'
+
+[[redirects]]
+  from = '/*'
+  status = 404
+  to = '/en/404.html'
+

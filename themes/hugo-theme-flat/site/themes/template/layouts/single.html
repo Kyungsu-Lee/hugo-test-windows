@@ -1,0 +1,59 @@
+{{ define "main" }}
+
+<section class="single">
+    <h1 class="title">{{ .Title }}</h1>
+
+    {{ $showPublishDate := .Params.showPublishDate | default .Site.Params.showPublishDate | default true }}
+    {{ $showWordCount := .Params.showWordCount | default .Site.Params.showWordCount | default true }}
+    {{ $showReadingTime := .Params.showReadingTime | default .Site.Params.showReadingTime | default true }}
+    <div class="tip">
+        {{ if $showPublishDate }}
+        <time datetime="{{ .PublishDate }}">{{ .PublishDate.Format "2006/01/02" }}</time>
+        {{ end }}
+        {{ if $showWordCount }}
+            {{ if $showPublishDate }}
+                <span class="split">·</span>
+            {{ end }}
+            <span> {{ .WordCount }} words </span>
+        {{ end }}
+        {{ if $showReadingTime }}
+            {{ if or $showPublishDate $showWordCount }}
+                <span class="split">·</span>
+            {{ end }}
+            <span> {{ .ReadingTime }} minutes to read </span>
+        {{ end }}
+    </div>
+
+    <div class="taxonomies">
+        {{ with .Params.categories }}
+        <div>
+            Categories:
+            {{ range . }}
+                <a href="{{ "categories/" | relURL }}{{ . | urlize }}">{{ . }}</a>
+            {{ end }}
+        </div>
+        {{ end }}
+
+        {{ with .Params.tags }}
+            <div>
+                Tags:
+                {{ range . }}
+                    <a href="{{ "tags/" | relURL }}{{ . | urlize }}">{{ . }}</a>
+                {{ end }}
+            </div>
+        {{ end }}
+    </div>
+
+    <hr />
+
+    <div class="content">
+        {{ .Content }}
+    </div>
+
+    {{ with and .Site.Params.remark42 .Params.show_comments }}
+        <hr />
+        {{ partial "comment.html" . }}
+    {{ end }}
+</section>
+
+{{ end }}

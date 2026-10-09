@@ -1,0 +1,195 @@
+{{ define "main" }}
+<div class="homepage-intro">
+  <div class="h-card" style="display: none;">
+    <a class="u-url p-name" href="{{ .Site.BaseURL }}" rel="me">{{ .Site.Params.author | default .Site.Title }}</a>
+    <img class="u-photo" src="{{ "favicon.ico" | absURL }}" alt="" />
+    <span class="p-note">{{ .Site.Params.description | default "The official website for Goldmaster, a music producer, DJ, photographer, and data hoarder." }}</span>
+  </div>
+  <h1>Welcome</h1>
+  <p>The official website for Goldmaster, a music producer, DJ, photographer, and data hoarder.</p>
+</div>
+
+<div class="homepage-grid">
+  
+  <!-- Latest News -->
+  {{ $latestNews := first 1 (where .Site.RegularPages.ByDate.Reverse "Section" "news") }}
+  {{ if $latestNews }}
+    {{ range $latestNews }}
+      <a href="{{ .RelPermalink }}" class="homepage-card-link">
+        <div class="homepage-card">
+          <div class="card-header">
+            <h3>Latest News</h3>
+          </div>
+          <div class="card-content">
+            <h4>{{ .Title }}</h4>
+          <p class="card-meta">{{ .Date.Format "January 2, 2006" }}</p>
+          <p>{{ .Summary }}</p>
+            <span class="card-link">Read More &rarr;</span>
+          </div>
+        </div>
+      </a>
+        {{ end }}
+      {{ else }}
+    <div class="homepage-card">
+      <div class="card-header">
+        <h3>Latest News</h3>
+      </div>
+      <div class="card-content">
+        <p>No news yet. Check back soon!</p>
+      </div>
+    </div>
+  {{ end }}
+
+  <!-- Latest Release -->
+  {{/*
+        To sort releases with mixed date formats (e.g., "2023" and "2025-01-26"),
+        we create a temporary, standardised date for sorting purposes only.
+        This does NOT change the original data, so year-only releases are still displayed as just the year.
+        We check the string length to identify year-only dates for better Hugo version compatibility.
+      */}}
+  {{ $releasesWithSortDate := slice }}
+  {{ range hugo.Data.discography }}
+    {{ $sortDate := .release_date }}
+    {{ if eq (len .release_date) 4 }}
+      {{ $sortDate = printf "%s-01-01" .release_date }}
+    {{ end }}
+    {{ $releasesWithSortDate = $releasesWithSortDate | append (dict "item" . "sort_date" $sortDate) }}
+  {{ end }}
+
+  {{ with first 1 (sort $releasesWithSortDate "sort_date" "desc") }}
+    {{ range . }}
+      {{ $release := .item }}
+      {{ $categorySlug := $release.category | urlize }}
+      {{ $titleSlug := $release.title | urlize }}
+      {{ $releaseURL := printf "/discography/%s/%s/" $categorySlug $titleSlug }}
+      <a href="{{ $releaseURL }}" class="homepage-card-link">
+        <div class="homepage-card">
+          <div class="card-header">
+            <h3>Latest Release</h3>
+          </div>
+          <div class="card-content">
+            {{/* Format the release date, showing only the year if that's all that's available */}}
+            {{ $formattedDate := "" }}
+            {{ if eq (len $release.release_date) 4 }}
+              {{ $formattedDate = $release.release_date }}
+            {{ else }}
+              {{ $formattedDate = (time $release.release_date).Format "January 2, 2006" }}
+            {{ end }}
+            
+            <h4>{{ $release.title }}</h4>
+            <p class="card-meta">{{ $formattedDate }} &bull; {{ $release.category }}</p>
+
+            <div class="card-image-wrapper">
+              {{ if and $release.cover_art (ne $release.cover_art "/images/placeholders/no-cover-art.jpg") }}
+                <img src="{{ $release.cover_art }}" alt="Cover art for {{ $release.title }}" class="card-image">
+              {{ end }}
+            </div>
+
+            <span class="card-link">View Release &rarr;</span>
+          </div>
+        </div>
+      </a>
+    {{ end }}
+  {{ else }}
+    <div class="homepage-card">
+      <div class="card-header">
+        <h3>Latest Release</h3>
+      </div>
+      <div class="card-content">
+        <p>No releases found.</p>
+      </div>
+    </div>
+  {{ end }}
+
+  <!-- Latest Photo (moved here after Latest Release) -->
+  {{ $latestPhoto := "" }}
+  {{ $eligiblePages := slice }}
+  {{ range where .Site.Pages "Section" "photos" }}
+    {{/*
+      A page is eligible if it has a valid date AND an image parameter.
+      We check both conditions for each page in the photos section.
+      This is more robust than nested `where` clauses.
+    */}}
+    {{ if and (not .Date.IsZero) .Params.image }}
+      {{ $eligiblePages = $eligiblePages | append . }}
+    {{ end }}
+  {{ end }}
+  {{ with $eligiblePages }}
+    {{ $latestPhoto = first 1 (sort . "Date" "desc") }}
+  {{ end }}
+  {{ if $latestPhoto }}
+    {{ range $latestPhoto }}
+      <a href="{{ .RelPermalink }}" class="homepage-card-link">
+        <div class="homepage-card">
+          <div class="card-header">
+            <h3>Latest Photo</h3>
+          </div>
+          <div class="card-content">
+            <h4>{{ .Title }}</h4>
+            <p class="card-meta">{{ .Date.Format "January 2, 2006" }}</p>
+            <div class="card-image-wrapper">
+              {{ with .Params.image }}
+                {{/* Handle both external (http) and local image links */}}
+                <img src="{{ if hasPrefix . "http" }}{{ . }}{{ else }}{{ . | relURL }}{{ end }}" alt="Latest photo: {{ $.Title }}" class="card-image">
+              {{ end }}
+            </div>
+            <span class="card-link">View Photo &rarr;</span>
+          </div>
+        </div>
+      </a>
+    {{ end }}
+  {{ else }}
+    <div class="homepage-card">
+      <div class="card-header">
+        <h3>Latest Photo</h3>
+      </div>
+      <div class="card-content">
+        <p>The photo gallery is coming soon. Stay tuned for visual updates!</p>
+      </div>
+    </div>
+  {{ end }}
+
+  <!-- Latest Photo -->
+  <!-- On This Day (placeholder card - populated by JS) -->
+  <a href="#" id="on-this-day-card-link" class="homepage-card-link" style="display:block;">
+    <div class="homepage-card">
+      <div class="card-header">
+        <h3>On This Day</h3>
+      </div>
+      <div class="card-content">
+        <h4>—</h4>
+        <p class="card-meta">No matching items for today.</p>
+        <p style="margin:1em 0;">If there are posts or releases that match today's date, they'll appear here.</p>
+        <span class="card-link">View Post &rarr;</span>
+      </div>
+    </div>
+  </a>
+  
+{{ if hugo.Data.discography }}
+{{ $blogPosts := slice }}
+{{ range where .Site.RegularPages "Section" "news" }}
+    {{ $img := "" }}
+    {{ if .Params.image }}{{ $img = .Params.image }}{{ end }}
+    {{ $blogPosts = $blogPosts | append (dict "title" .Title "date" (.Date.Format "2006-01-02") "image" $img "summary" .Summary "link" .RelPermalink "type" "blog") }}
+{{ end }}
+
+{{ $photos := slice }}
+{{ range where .Site.Pages "Section" "photos" }}
+    {{ if and (not .Date.IsZero) .Params.image }}
+        {{ $img := "" }}
+        {{ if hasPrefix .Params.image "http" }}
+            {{ $img = .Params.image }}
+        {{ else }}
+            {{ $img = .Params.image | relURL }}
+        {{ end }}
+        {{ $photos = $photos | append (dict "title" .Title "date" (.Date.Format "2006-01-02") "image" $img "link" .RelPermalink "type" "photo") }}
+    {{ end }}
+{{ end }}
+
+<div id="on-this-day-container" style="display: none;" data-discography="{{ hugo.Data.discography | jsonify }}" data-posts="{{ $blogPosts | jsonify }}" data-photos="{{ $photos | jsonify }}">
+    <!-- Items injected via JS -->
+</div>
+{{ end }}
+
+</div>
+{{ end }}

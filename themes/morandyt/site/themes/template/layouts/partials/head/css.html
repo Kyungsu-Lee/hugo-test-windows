@@ -1,0 +1,16 @@
+{{- $style := resources.Get "css/main.scss" | toCSS }} 
+{{- if eq hugo.Environment "development" }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" />
+{{- else }} {{- $style = $style | minify | fingerprint }}
+<link
+	rel="stylesheet"
+	href="{{ $style.RelPermalink }}"
+	integrity="{{ $style.Data.Integrity }}"
+	crossorigin="anonymous"
+/>
+{{- end }}
+
+{{- $light := resources.Get "css/chroma-light.css" | resources.Minify -}}
+<link id="chromaLight" rel="stylesheet" href="{{ $light.RelPermalink }}">
+{{- $dark := resources.Get "css/chroma-dark.css" | resources.Minify -}}
+<link id="chromaDark"  rel="stylesheet" href="{{ $dark.RelPermalink }}" disabled>

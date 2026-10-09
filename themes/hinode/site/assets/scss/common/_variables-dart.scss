@@ -1,0 +1,106 @@
+// Bootstrap variables overrides for theme
+$enable-negative-margins:       true;
+$enable-important-utilities:    true !default;
+
+// Remove the border from the focused navigation toggler
+$navbar-toggler-focus-width:    0 !default;
+
+$base-url:                      h.$base-url;
+
+$font-family-sans-serif:        h.$theme-font, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-size-base:                h.$font-size-base !default;
+$headings-font-weight:          600 !default;
+$font-weight-lighter:           lighter !default;
+$font-weight-light:             200 !default;
+$font-weight-normal:            300 !default;
+$font-weight-bold:              600 !default;
+$font-weight-bolder:            bolder !default;
+
+strong {
+    font-weight:                600 if($enable-important-utilities, !important, null);
+}
+
+$theme-border-radius:           0.375rem;
+
+$navbar-height:                 h.$navbar-height;
+$navbar-offset:                 h.$navbar-offset;
+$navbar-offset-xs:              h.$navbar-offset-xs;
+$navbar-size:                   h.$navbar-size;
+$main-breakpoint:               h.$main-breakpoint;
+$overlay-offset:                h.$overlay-offset;
+$section-height:                h.$section-height;
+$max-section-height:            h.$max-section-height;
+$primary:                       h.$primary;
+$secondary:                     h.$secondary;
+$success:                       h.$success;
+$info:                          h.$info;
+$warning:                       h.$warning;
+$danger:                        h.$danger;
+$light:                         h.$light;
+$dark:                          h.$dark;
+$white:                       #fff !default;
+$black:                       #000 !default;
+$body-bg:                     #fff !default;
+$gray-100:                    #f8f9fa !default;
+$btn-toggle-color:              $black !default;
+
+$carousel-dark-indicator-active-bg:  #fff !default;
+$carousel-dark-caption-color:        #fff !default;
+$carousel-dark-control-icon-filter:  invert(0) grayscale(100) !default;
+
+$primary-text-emphasis-dark:        mix(white, h.$primary, h.$dark-mode-tint) !default;
+$secondary-text-emphasis-dark:      mix(white, h.$secondary, h.$dark-mode-tint) !default;
+$link-color-dark:                   mix(white, h.$primary, h.$dark-mode-tint) !default;
+$primary-bg-subtle-dark:            mix(black, h.$primary, h.$dark-mode-shade) !default;
+$primary-border-subtle-dark:        mix(black, h.$primary, calc(h.$dark-mode-shade / 2)) !default;
+
+// Shared by every element that repaints on a color mode switch, so they stay in sync.
+$theme-mode-transition: background-color .5s ease-in-out, color .5s ease-in-out, border-color .5s ease-in-out !default;
+
+// Timing of the sidebar collapse/expand gesture. Several properties animate at
+// once and on more than one element — the label's max-width and inline-start
+// margin here, the column's width in a downstream theme — so they share a
+// duration and easing rather than each carrying its own literal. Exposed as a
+// duration/easing pair, not a `transition` shorthand, because the property
+// lists differ per element. Changing either value retimes the whole gesture.
+$sidebar-collapse-transition-duration: 0.2s !default;
+$sidebar-collapse-transition-easing: ease !default;
+
+// Sequencing for the collapsed-mode centring refinements on a sidebar item. These
+// are discrete properties, so they land on the tick the collapsed class flips —
+// before the column and the labels have finished collapsing. A zero-duration
+// transition defers the change without animating it; the `-delayed` variant holds
+// it until the collapse geometry has settled. Exposed because `transition` is a
+// shorthand: a downstream theme declaring its own on `.sidebar-item` replaces
+// these slots rather than extending them, and has to restate them. Only valid
+// inside `@supports (transition-behavior: allow-discrete)`.
+$sidebar-collapse-refinement-transition: text-align 0s allow-discrete, justify-content 0s allow-discrete !default;
+$sidebar-collapse-refinement-transition-delayed: text-align 0s $sidebar-collapse-transition-duration allow-discrete, justify-content 0s $sidebar-collapse-transition-duration allow-discrete !default;
+
+$dropdown-transition: opacity .15s ease-in-out !default;
+$dropdown-horizontal-margin-top: calc((-1.5 * 1rem) - 2px);
+$dropdown-horizontal-padding-y: calc(1rem + 2px);
+
+$theme-colors: (
+  "primary":       $primary,
+  "secondary":     $secondary,
+  "success":       $success,
+  "info":          $info,
+  "warning":       $warning,
+  "danger":        $danger,
+  "light":         $light,
+  "dark":          $dark,
+  "white":         $white,
+  "black":         $black,
+  "body":          $body-bg,
+  "body-tertiary": $gray-100,
+);
+
+$btn-padding-y-xs:            .08rem !default;
+$btn-padding-x-xs:            0.3rem !default;
+$btn-font-size-xs:            $font-size-base * .6 !default;
+$btn-border-radius-xs:        .2rem !default;
+
+// Padding settings
+$padding-x: h.$padding-x;
+$padding-y: h.$padding-y;

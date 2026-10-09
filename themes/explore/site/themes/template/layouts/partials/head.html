@@ -1,0 +1,54 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} &middot; {{ .Site.Title }}{{ end }}</title>
+
+{{ with .Description | default .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
+{{ with .Params.author | default .Site.Params.author }}<meta name="author" content="{{ . }}">{{ end }}
+<link rel="canonical" href="{{ .Permalink }}">
+{{ with .OutputFormats.Get "rss" }}
+  {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
+{{ end }}
+
+<!-- Favicon -->
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | relURL }}">
+<link rel="manifest" href="{{ "manifest.webmanifest" | relURL }}">
+
+<!-- SEO -->
+{{ partial "seo/opengraph.html" . }}
+{{ partial "seo/schema.html" . }}
+{{ if ne .Kind "page" }}
+  {{ with .Paginator }}
+    {{ if .HasPrev }}<link rel="prev" href="{{ .Prev.URL }}">{{ end }}
+    {{ if .HasNext }}<link rel="next" href="{{ .Next.URL }}">{{ end }}
+  {{ end }}
+{{ end }}
+
+<!-- Preload fonts -->
+{{ $fontPreset := .Site.Params.style.fontPreset | default "inter" }}
+{{ if eq $fontPreset "google-sans" }}
+<link rel="preload" href="{{ "fonts/google-sans-flex-regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/google-sans-flex-bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/google-sans-code-regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{ else }}
+<link rel="preload" href="{{ "fonts/inter-regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/inter-bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/jetbrains-mono-regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{ end }}
+
+<!-- CSS -->
+{{ $cssOptions := (dict "targetPath" "css/style.css" "outputStyle" "compressed") }}
+{{ $style := resources.Get "css/main.scss" | resources.ExecuteAsTemplate "style.main.scss" . | css.Sass $cssOptions | fingerprint }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+
+<!-- Inline theme init to prevent flash of white on dark mode -->
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {}
+  })();
+</script>

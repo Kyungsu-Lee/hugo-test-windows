@@ -1,0 +1,166 @@
+{{ partial "header.html" . }}
+
+{{ if not .IsHome }}
+<h1>{{ .Title | markdownify }}</h1>
+{{ end }}
+
+{{ partial "work_in_progress.html" . }}
+
+{{ .Content }}
+
+{{ partial "support-buttons.html" . }}
+
+<!-- Get all projects from the projects section -->
+{{ $allProjects := where site.RegularPages "Section" "projects" }}
+
+<!-- Separate active and discontinued projects -->
+{{ $activeProjects := slice }}
+{{ $discontinuedProjects := slice }}
+
+{{ range $allProjects }}
+  {{ $status := .Params.status | default "active" }}
+  {{ if eq $status "discontinued" }}
+    {{ $discontinuedProjects = $discontinuedProjects | append . }}
+  {{ else }}
+    {{ $activeProjects = $activeProjects | append . }}
+  {{ end }}
+{{ end }}
+
+<!-- Get featured projects from frontmatter -->
+{{ $featuredSlugs := .Params.featured_projects | default slice }}
+{{ $featuredProjects := slice }}
+{{ $nonFeaturedActive := slice }}
+
+{{ range $activeProjects }}
+  {{ $slug := path.Base .File.Dir | default (replace .File.BaseFileName ".md" "") }}
+  {{ $fileName := .File.BaseFileName }}
+  {{ if or (in $featuredSlugs $slug) (in $featuredSlugs $fileName) }}
+    {{ $featuredProjects = $featuredProjects | append . }}
+  {{ else }}
+    {{ $nonFeaturedActive = $nonFeaturedActive | append . }}
+  {{ end }}
+{{ end }}
+
+<!-- Sort non-featured active projects by date (latest first) -->
+{{ $nonFeaturedActive = sort $nonFeaturedActive ".Date" "desc" }}
+
+<!-- Featured Projects Section -->
+{{ if $featuredProjects }}
+<section class="new-featured-section">
+  <h2 class="section-title">Featured Projects</h2>
+  <div class="new-featured-grid">
+    {{ range $featuredProjects }}
+      <div class="new-featured-card">
+        <a href="{{ .RelPermalink }}" class="new-featured-link">
+          <div class="new-featured-image">
+            {{ if .Params.featured_image }}
+              {{ $img := resources.Get .Params.featured_image }}
+              {{ if $img }}
+                {{ partial "responsive-project-image.html" (dict
+                  "image" $img
+                  "alt" .Title
+                  "widths" (slice 300 400 500)
+                  "quality" 90
+                  "sizes" "(max-width: 649px) calc(100vw - 6rem), (max-width: 979px) calc(50vw - 4rem), calc(33.3vw - 4rem)"
+                  "loading" "lazy"
+                ) }}
+              {{ end }}
+            {{ end }}
+          </div>
+          <div class="new-featured-content">
+            <h3>{{ .Title }}</h3>
+            {{ if .Params.tldr_description }}
+              <p>{{ .Params.tldr_description }}</p>
+            {{ end }}
+            {{ if .Params.focus_area }}
+              <span class="focus-badge">{{ .Params.focus_area }}</span>
+            {{ end }}
+          </div>
+        </a>
+      </div>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<!-- Active Projects Grid -->
+<section class="new-active-section">
+  <h2 class="section-title">Active Projects</h2>
+  <div class="new-active-grid">
+    {{ range $nonFeaturedActive }}
+      <div class="new-active-card">
+        <a href="{{ .RelPermalink }}" class="new-active-link">
+          <div class="new-active-image">
+            {{ if .Params.featured_image }}
+              {{ $img := resources.Get .Params.featured_image }}
+              {{ if $img }}
+                {{ partial "responsive-project-image.html" (dict
+                  "image" $img
+                  "alt" .Title
+                  "widths" (slice 200 300)
+                  "quality" 85
+                  "sizes" "(max-width: 479px) calc(50vw - 1rem), (max-width: 767px) calc(50vw - 2rem), (max-width: 1023px) calc(33vw - 2rem), calc(25vw - 2rem)"
+                  "loading" "lazy"
+                ) }}
+              {{ else }}
+                <div class="new-active-placeholder">
+                  <span>{{ substr .Title 0 2 | upper }}</span>
+                </div>
+              {{ end }}
+            {{ else }}
+              <div class="new-active-placeholder">
+                <span>{{ substr .Title 0 2 | upper }}</span>
+              </div>
+            {{ end }}
+          </div>
+          <div class="new-card-overlay">
+            <h4 class="new-card-title">{{ .Title }}</h4>
+            {{ if .Params.focus_area }}
+              <div class="new-card-tags">
+                <span class="new-card-tag">{{ .Params.focus_area }}</span>
+              </div>
+            {{ end }}
+            {{ if .Params.tldr_description }}
+              <p class="new-card-desc">{{ .Params.tldr_description | truncate 80 }}</p>
+            {{ end }}
+          </div>
+        </a>
+      </div>
+    {{ end }}
+  </div>
+</section>
+
+<!-- Discontinued Projects Strip -->
+{{ if $discontinuedProjects }}
+<section class="new-discontinued-section">
+  <h2 class="section-title section-title-muted">Archived Projects</h2>
+  <div class="new-discontinued-compact">
+    {{ range $discontinuedProjects }}
+      <a href="{{ .RelPermalink }}" class="new-discontinued-chip">
+        {{ if .Params.featured_image }}
+          {{ $img := resources.Get .Params.featured_image }}
+          {{ if $img }}
+            {{ partial "responsive-project-image.html" (dict
+              "image" $img
+              "alt" .Title
+              "widths" (slice 60)
+              "quality" 80
+              "sizes" "28px"
+              "class" "new-chip-img"
+              "loading" "lazy"
+            ) }}
+          {{ end }}
+        {{ end }}
+        <span class="new-chip-name">{{ .Title }}</span>
+        {{ if .Params.discontinue_date }}
+          <span class="new-chip-date">{{ dateFormat "2006" .Params.discontinue_date }}</span>
+        {{ end }}
+      </a>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<div class="clear"></div>
+
+{{ partial "footer.html" . }}

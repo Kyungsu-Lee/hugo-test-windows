@@ -1,0 +1,91 @@
+{{/* TODO: replace scratch with dict */}}
+
+{{/* Adapted from doks */}}
+{{ with .Params.meta.title }}
+    {{ $title := . }}
+    {{ $title = partial "utilities/TitleCase.html" (dict "page" $ "text" $title) }}
+    {{ $.Scratch.Set "title" $title -}}
+{{ else }}
+    {{ $title := .Title | default .Site.Title }}
+    {{ $title = partial "utilities/TitleCase.html" (dict "page" $ "text" $title) }}
+    {{ $.Scratch.Set "title" $title -}}
+{{ end }}
+
+{{ $description := or (partial "utilities/GetDescription.html" (dict "page" . "meta" true)) .Site.Params.main.description }}
+{{ if gt (strings.RuneCount $description) 150 }}
+    {{ $description = print (substr $description 0 150) "..." }}
+{{ end }}
+{{ $.Scratch.Set "description" $description -}}
+
+{{- $thumbnail := "" -}}
+{{ if reflect.IsMap .Params.Thumbnail }}{{ $thumbnail = .Params.Thumbnail.url }}{{ else }}{{ $thumbnail = .Params.Thumbnail }}{{ end }}
+
+{{ if $thumbnail -}}
+    {{ $imgURL := index (partial "assets/helpers/image-dimension.html" (dict "src" $thumbnail "image-width" 1280 "image-height" 640 "page" .)) "target" }}
+    {{ $.Scratch.Set "thumbnail" ($imgURL | absURL) -}}
+{{ else -}}
+    {{ with .Site.Params.schema.image.url -}}    
+        {{ $.Scratch.Set "thumbnail" (. | absURL) -}}
+    {{ else -}}
+        {{ $images := $.Resources.ByType "image" -}}
+        {{ $featured := $images.GetMatch "*feature*" -}}
+        {{ if not $featured -}}
+            {{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" -}}
+        {{ end -}}
+        {{ with $featured -}}
+            {{ $.Scratch.Set "thumbnail" $featured.Permalink -}}
+        {{ else -}}
+            {{ with $.Site.Params.opengraph.images -}}
+                {{ $.Scratch.Set "thumbnail" (index . 0 | absURL) -}}
+            {{ end -}}
+        {{ end -}}
+    {{ end -}}
+{{ end -}}
+
+
+{{ if eq .Kind "404" -}}
+    <meta name="robots" content="noindex, follow">
+{{ else }}
+  {{ with or .Params.robots .Params.meta.robots .Site.Params.meta.robots -}}
+    <meta name="robots" content="{{ . }}">
+  {{ else -}}
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  {{ end -}}
+{{ end -}}
+
+    {{ if .IsHome -}}
+        <title>{{ .Site.Title }} {{ if .Site.Params.head.tagline }} {{ .Site.Params.main.separator }} {{ .Site.Params.head.tagline }}{{ end }}</title>
+    {{ else -}}
+        <title>{{ .Title }} {{ .Site.Params.main.separator }} {{ .Site.Title }} </title>
+    {{ end -}}
+
+    <meta name="description" content="{{ $.Scratch.Get "description" }}">
+
+{{/* Self-referencing canonical URL.
+
+     Emitted for regular pages only. On a list page .Permalink is pager-invariant —
+     while rendering /blog/page/2/ it still reports /blog/ — so emitting it there would
+     canonicalize every pager onto page 1, which Google's pagination guidance advises
+     against. The URL of the current pager is reachable only through .Paginator, and
+     touching that here is not an option: it builds the paginator with the site's default
+     page size before a layout can call .Paginate with its own, after which Hugo silently
+     ignores the layout's size rather than raising an error.
+
+     Set `canonical` in front matter to emit one anyway — on a section landing page that
+     is known not to paginate, for example, or to point a duplicate at its original. */ -}}
+{{ $canonical := or .Params.canonical .Params.meta.canonical -}}
+{{ if and (not $canonical) (eq .Kind "page") }}{{ $canonical = .Permalink }}{{ end -}}
+{{ with $canonical -}}
+    <link rel="canonical" href="{{ . | absURL }}">
+{{ end -}}
+
+{{ partial "head/opengraph.html" . }}
+{{ partial "head/twitter_cards.html" . }}
+
+{{ range .AlternativeOutputFormats }}
+    {{ printf "<link rel=%q type=%q href=%q>" .Rel .MediaType.Type .Permalink | safeHTML }}
+{{ end }}
+
+{{ partial "head/structured-data.html" . }}

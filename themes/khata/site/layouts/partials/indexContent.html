@@ -1,0 +1,14 @@
+{{ range first 6 (sort (where .Site.RegularPages "Params.hidefrommenu" "!="
+true) "Date" "desc") }}
+<div class="p-2">
+  <small class="me-2 py-2">{{ .Date.Format "2006-01-02" }}</small>&middot;
+  {{ with site.GetPage .Section }}
+  <a href="{{.Permalink }}">{{ .Title }}</a>
+  {{ end }}
+  <p class="fs-4">
+    <a href="{{ .Permalink }}">{{ .Title }}</a>
+  </p>
+
+  <div class="d-flex flex-row align-items-center ms-2"></div>
+</div>
+{{ end }}

@@ -1,0 +1,19 @@
+{
+  "name": "hugo-theme-void",
+  "version": "1.0.0",
+  "description": "A clean, modern Hugo blog theme built with Tailwind CSS",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Daucloud/hugo-theme-void.git"
+  },
+  "homepage": "https://github.com/Daucloud/hugo-theme-void#readme",
+  "bugs": {
+    "url": "https://github.com/Daucloud/hugo-theme-void/issues"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.15",
+    "tailwindcss": "^4.0.15"
+  }
+}

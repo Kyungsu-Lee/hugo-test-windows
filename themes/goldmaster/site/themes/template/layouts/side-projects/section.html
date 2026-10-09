@@ -1,0 +1,69 @@
+{{ define "main" }}
+<div class="side-projects-section-page-container">
+    <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ $breadcrumbs }}</h1>
+        {{/* The breadcrumbs partial now acts as the main title area */}}
+    </div>
+
+    {{ if eq .RelPermalink "/side-projects/" }}
+        {{/* This is the TOP-LEVEL /side-projects/ page. Display categories as a list. */}}
+        <div class="project-category-list">
+            {{ range .Sections.ByTitle }}
+                {{ $categoryPage := . }}
+                <a href="{{ $categoryPage.RelPermalink }}" class="category-list-item">
+                    <div class="category-list-icon-wrapper">
+                        {{ with $categoryPage.Params.category_icon }}
+                            <img src="{{ . }}" alt="Icon for {{ $categoryPage.Title }}" class="category-icon">
+                        {{ else }}
+                            <img src="/images/placeholders/image-unavailable.jpg" alt="Category: {{ $categoryPage.Title }}" class="category-icon placeholder-icon">
+                        {{ end }}
+                    </div>
+                    <div class="category-list-info">
+                        <h2>{{ $categoryPage.Title }}</h2>
+                        <p>{{ $categoryPage.Pages | len }} Projects</p>
+                    </div>
+                </a>
+            {{ end }}
+        </div>
+    {{ else }}
+        {{/* This is a CATEGORY page (e.g., /side-projects/cgi/). Display projects. */}}
+        <div class="page-content">
+            {{ .Content }} {{/* This will render content from _index.md of the category */}}
+        </div>
+
+        <div class="projects-grid">
+            {{ range .RegularPages.ByDate.Reverse }}
+                <div class="project-item">
+                    {{ if .Params.buttons }}
+                        {{/* If buttons exist, the main card is NOT clickable */}}
+                        <div class="project-card-main-link">
+                            <div class="project-info">
+                                <h2>{{ .Title }}</h2>
+                                <p>{{ .Params.summary }}</p>
+                            </div>
+                        </div>
+                        {{/* Render the separate, clickable buttons */}}
+                        <div class="project-buttons">
+                            {{ range .Params.buttons }}
+                                <a href="{{ .url }}" class="project-button" {{ if (hasPrefix .url "http") }}target="_blank" rel="noopener noreferrer"{{ end }}>
+                                    {{ .title }}
+                                </a>
+                            {{ end }}
+                        </div>
+                    {{ else }}
+                        {{/* If NO buttons exist, the main card IS clickable */}}
+                        <a href="{{ .Params.external_url | default .RelPermalink }}" class="project-card-main-link" {{ with .Params.external_url }}target="_blank" rel="noopener noreferrer"{{ end }}>
+                            <div class="project-info">
+                                <h2>{{ .Title }}</h2>
+                                <p>{{ .Params.summary }}</p>
+                            </div>
+                        </a>
+                    {{ end }}
+                </div>
+            {{ end }}
+        </div>
+    {{ end }}
+
+</div>
+{{ end }}

@@ -1,0 +1,144 @@
+// Self-sufficient default: child themes commonly shadow common/_variables.scss
+// with their own fork, which silently drops variables added upstream. Declaring
+// the default at the point of use keeps the build working either way; a fork
+// that does define the variable still wins through !default.
+$theme-mode-transition: background-color .5s ease-in-out, color .5s ease-in-out, border-color .5s ease-in-out !default;
+
+@if $enable-dark-mode {
+    [data-bs-theme-animate="true"] body {
+        transition: $theme-mode-transition;
+    }
+}
+
+//
+// Always reserve scrollbar space at the document level so the viewport's
+// usable width stays consistent between short pages (no scrollbar) and long
+// pages (scrollbar visible). Prevents content from horizontally shifting as a
+// page's content grows past the viewport, and — for layouts with a
+// `position: fixed` navbar — keeps the fixed navbar's right edge aligned with
+// the body's content right edge regardless of scroll state, so trailing items
+// (logo, hamburger, user controls) don't drift over the scrollbar gutter.
+//
+html {
+    scrollbar-gutter: stable;
+
+    // Expose the theme border radius as a custom property so components in
+    // module stylesheets — which compile standalone, without theme SCSS
+    // variables in scope — can pick up the theme radius instead of falling
+    // back to Bootstrap's default.
+    --theme-border-radius: #{$theme-border-radius};
+}
+
+//
+// Remove underline from all links
+//
+a:link,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+}
+
+div.rounded, img.rounded {
+    --bs-border-radius: #{$theme-border-radius};
+}
+
+//
+// Sticky-footer: body fills at least the full viewport; .main grows to fill
+// remaining space, pushing the footer to the bottom without JS measurement.
+//
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+
+//
+// Ensure main page is rendered to full viewport height
+//
+.main {
+    --navbar-height: #{$navbar-height};
+    --overlay-offset: #{$overlay-offset};
+
+    // Height of a cover section (`cover: true`), set from `main.sectionHeight`.
+    // The default 88vh deliberately falls short of the viewport so the next
+    // section peeks above the fold and invites scrolling; set it to 100vh for a
+    // true full-screen hero. `--max-section-height` (`main.maxSectionHeight`)
+    // caps it on xxl and tall viewports — raise that too, or a 100vh section
+    // still stops at 1024px there. Both are plain custom properties, so a
+    // downstream theme can also override them per page or per section.
+    --section-height: #{$section-height};
+    --max-section-height: #{$max-section-height};
+
+    flex: 1;
+}
+
+// Fixed navbar is out of flow: offset .main so content starts below the navbar
+.navbar-fixed .main {
+    margin-top: var(--navbar-offset);
+}
+
+// footerBelowFold: push footer just past the viewport edge.
+// Fixed (--navbar-offset = navbar height): margin-top = --navbar-offset, so subtract once.
+// Non-fixed (--navbar-offset = 0): navbar is in flow; subtract --navbar-height (actual height,
+//   always set from site.Params.navigation.offset regardless of the fixed setting).
+.navbar-fixed.footer-below-fold .main {
+    min-height: calc(100vh - var(--navbar-offset));
+}
+
+.footer-below-fold:not(.navbar-fixed) .main {
+    min-height: calc(100vh - var(--navbar-height));
+}
+
+main:has(section:first-of-type.section-cover), main:has(section:first-of-type.background-container) {
+    margin-top: var(--overlay-offset);
+}
+
+.overlay-spacer {
+    padding-top: var(--navbar-height);
+}
+
+.tickmark li::marker {
+    content: "✓ ";
+}
+
+.anchor
+{
+    color: transparent;
+}
+
+.heading:hover .anchor
+{
+    transition: 0.25s ease-in-out;
+    color: $primary;
+}
+
+:root {
+    --nav-height: 90px;
+}
+
+.section-cover {
+    min-height: calc(var(--section-height) - var(--overlay-offset));
+}
+
+.hero-title {
+    width: 100%;
+}
+
+@include media-breakpoint-up(xxl) {
+    .section-cover {
+        min-height: calc(min(calc(var(--section-height) - var(--overlay-offset)), var(--max-section-height)));
+    }    
+}
+
+/* stylelint-disable media-feature-range-notation */
+@media (min-height: 1400px) { 
+    .section-cover {
+        min-height: calc(min(calc(var(--section-height) - var(--overlay-offset)), var(--max-section-height)));
+    }
+}
+/* stylelint-enable media-feature-range-notation */
+
+.width-100 {
+    width: 100%;
+}

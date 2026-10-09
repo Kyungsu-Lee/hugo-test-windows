@@ -1,0 +1,71 @@
+<div class="col-md-12 col-lg-12{{ if .Draft }} draft{{ end }}">
+    <article>
+        {{ partial "shared/post-title-image-or-gallery.html" . }}
+        {{- $topRadius := " post_text_top_radius" -}}
+        <div class="post_text{{ $topRadius }} story">
+            <div class="post_internal_gallery swiper">
+                <div class="swiper-wrapper title-gallery" style="text-align: center">
+
+                    {{- $story := . -}}
+
+                    {{- $lines := split $story.RawContent "\n" -}}
+                    {{- $titles := dict -}}
+                    {{- $descriptions := dict -}}
+                    {{- $videos := dict -}}
+                    {{- range $lines -}}
+                        {{- $descr := split . ";" -}}
+                        {{- if strings.Contains (index $descr 0) ":" -}}
+                            {{- $imgVideo := split (index $descr 0) ":"  -}}
+                            {{- $titles = merge $titles (dict (index $imgVideo 0) (index $descr 1)) -}}
+                            {{- $videos = merge $videos (dict (index $imgVideo 0) (index $imgVideo 1)) -}}
+                        {{- else -}}
+                            {{- $titles = merge $titles (dict (index $descr 0) (index $descr 1)) -}}
+                        {{- end -}}
+                        {{- $descriptions = merge $descriptions (dict (index $descr 0) (index $descr 2)) -}}
+                    {{- end -}}
+
+                    {{ $images := .Resources.ByType "image" }}
+                    {{- range $images -}}
+                        {{- $title := index $titles .Name -}}
+                        {{- $description := index $descriptions .Name -}}
+                        {{- $originalImage := . -}}
+                        {{- $context := printf " in story summary %q" $.Page.File.Path -}}
+                        {{- $image := partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90" "context" $context) -}}
+                        {{- $orientation := partial "_funcs/get-image-orientation.html" $originalImage -}}
+                        {{- if eq 6 $orientation -}}
+                            {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r270" "context" $context) -}}
+                        {{- else if eq 8 $orientation -}}
+                            {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r90" "context" $context) -}}
+                        {{- else if eq 3 $orientation -}}
+                            {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r180" "context" $context) -}}
+                        {{- end -}}
+                        {{- if $image -}}
+                        {{- $preview := partial "_funcs/process-image.html" (dict "resource" $image "method" "Fit" "spec" "970x728 q100" "context" $context) -}}
+                        {{- $thumb := partial "_funcs/process-image.html" (dict "resource" $image "method" "Fit" "spec" "96x76 q100" "context" $context) -}}
+                        {{- if and $preview $thumb -}}
+
+                        {{- if isset $videos .Name -}}
+                            {{- if strings.Contains (index $videos .Name) "youtu" -}}
+                                <figure data-src="{{- index $videos .Name -}}" data-poster="{{ $image.RelPermalink | relURL }}"{{ if $description }} data-sub-html="<strong>{{ $title }}</strong>. {{ $description }}"{{ end }} class="swiper-slide">
+                                    <img src="{{ $preview.RelPermalink | relURL }}" alt="{{ $title }}">
+                                </figure>
+                            {{- else -}}
+                                <figure data-video='{"source": [{"src":"{{- $story.RelPermalink -}}{{- index $videos .Name -}}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}' data-poster="{{ $image.RelPermalink | relURL }}"{{ if $description }} data-sub-html="<strong>{{ $title }}</strong>. {{ $description }}"{{ end }} class="swiper-slide">
+                                    <img src="{{ $preview.RelPermalink | relURL }}" alt="{{ $title }}">
+                                </figure>
+                            {{- end -}}
+                        {{- else -}}
+                            <figure data-src="{{ $image.RelPermalink | relURL }}" data-thumb="{{ $thumb.RelPermalink | relURL }}"{{ if $description }} data-sub-html="<strong>{{ $title }}</strong>. {{ $description }}"{{ end }} class="swiper-slide">
+                                <img src="{{ $preview.RelPermalink | relURL }}" alt="{{ $title }}">
+                            </figure>
+                        {{- end -}}
+                        {{- end -}}
+                        {{- end -}}
+                    {{- end -}}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            {{- if .Title -}}<div class="story-title"><h1 class="story_title"><a href="{{ .RelPermalink | relURL }}">{{ .Title }}</a></h1></div>{{- end -}}
+        </div>
+    </article>
+</div>

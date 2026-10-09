@@ -1,0 +1,290 @@
+@layer highlight {
+  :root {
+    /* Base text colors */
+    --highlight-color-text: var(--color-neutral-800);
+    --highlight-color-text-1: var(--color-neutral-700);
+    --highlight-color-text-2: var(--color-neutral-600);
+
+    /* Semantic colors */
+    --highlight-color-err: var(--color-red-500);
+    --highlight-color-warning: var(--color-yellow-400);
+    --highlight-color-success: var(--color-green-500);
+    --highlight-color-info: var(--color-blue-600);
+
+    /* Primary colors */
+    --highlight-color-primary: var(--color-blue-600);
+    --highlight-color-primary-light: var(--color-blue-500);
+  }
+
+  .dark {
+    /* Dark theme overrides */
+    --highlight-color-text: var(--color-neutral-200);
+    --highlight-color-text-1: var(--color-neutral-300);
+    --highlight-color-text-2: var(--color-neutral-400);
+
+    --highlight-color-err: var(--color-red-400);
+    --highlight-color-warning: var(--color-yellow-300);
+    --highlight-color-success: var(--color-green-400);
+    --highlight-color-info: var(--color-blue-400);
+
+    --highlight-color-primary: var(--color-blue-400);
+    --highlight-color-primary-light: var(--color-blue-300);
+  }
+}
+
+pre code {
+  @apply bg-transparent;
+}
+
+.highlight pre code {
+  @apply block;
+}
+
+/* Basic elements */
+.chroma .cl {
+  color: var(--highlight-color-text);
+}
+.chroma .x {
+  color: var(--highlight-color-text);
+}
+.chroma .err {
+  color: var(--highlight-err);
+}
+
+/* Line handling */
+.chroma .lnlinks {
+  @apply outline-none no-underline text-current;
+}
+.chroma .lntd {
+  @apply align-top m-0 border-0;
+  padding: 0 calc(var(--highlight-spacing) * 0);
+}
+.chroma .lntable {
+  @apply border-spacing-0 p-0 m-0 border-0;
+}
+.chroma .hl {
+  @apply relative;
+  background-color: var(--highlight-primary);
+}
+.chroma .hl::before {
+  @apply content-['']
+         absolute
+         left-0
+         top-0
+         bottom-0
+         w-1;
+  background-color: var(--highlight-primary);
+}
+.chroma .lnt,
+.chroma .ln {
+  @apply select-none
+         px-4
+         py-0
+         whitespace-pre;
+  color: var(--highlight-color-text-2);
+}
+.chroma .line {
+  @apply flex;
+}
+
+.highlight > .chroma .lntd:first-child {
+  width: 32px;
+}
+
+.chroma .lntd pre.chroma {
+  @apply px-1;
+}
+
+.chroma .lntd:first-child pre.chroma {
+  @apply border-r-0;
+  @apply rounded-none;
+  @apply rounded-l-md;
+}
+.chroma .lntd:last-child pre.chroma {
+  @apply rounded-none;
+  @apply rounded-r-md;
+}
+
+/* Names - Fluent Design 2 style */
+.chroma .n {
+  color: var(--highlight-color-text);
+} /* variable name */
+.chroma .na {
+  color: var(--highlight-color-info);
+} /* attribute name */
+.chroma .nb {
+  color: var(--highlight-color-primary);
+} /* built-in name */
+.chroma .bp {
+  color: var(--highlight-color-info);
+} /* built-in name pseudo */
+.chroma .nc {
+  color: var(--highlight-color-primary-light);
+} /* class name */
+.chroma .no {
+  color: var(--highlight-color-info);
+} /* constant name */
+.chroma .nd {
+  color: var(--highlight-color-primary);
+} /* decorator name */
+.chroma .ni {
+  color: var(--highlight-color-info);
+} /* entity name */
+.chroma .ne {
+  color: var(--highlight-color-err);
+} /* exception name */
+.chroma .nf {
+  color: var(--highlight-color-primary);
+} /* function name */
+.chroma .fm {
+  color: var(--highlight-color-primary);
+} /* method name */
+.chroma .nl {
+  color: var(--highlight-color-info);
+} /* label name */
+.chroma .nn {
+  color: var(--highlight-color-primary-light);
+} /* namespace name */
+.chroma .nx {
+  color: var(--highlight-color-text);
+} /* other name */
+.chroma .py {
+  color: var(--highlight-color-info);
+} /* attribute name */
+.chroma .nt {
+  color: var(--highlight-color-primary);
+} /* HTML/XML tag */
+.chroma .nv {
+  color: var(--highlight-color-info);
+} /* variable name */
+.chroma .vc {
+  color: var(--highlight-color-info);
+} /* class variable */
+.chroma .vg {
+  color: var(--highlight-color-info);
+} /* global variable */
+.chroma .vi {
+  color: var(--highlight-color-info);
+} /* instance variable */
+.chroma .vm {
+  color: var(--highlight-color-info);
+} /* magic variable */
+
+/* Keywords - Fluent Design 2 style */
+.chroma .k,
+.chroma .kc,
+.chroma .kd,
+.chroma .kn,
+.chroma .kp,
+.chroma .kr {
+  color: var(--highlight-color-primary); /* keyword */
+}
+.chroma .kt {
+  color: var(--highlight-color-primary-light);
+} /* type keyword */
+
+/* Literals */
+.chroma .l {
+  color: var(--highlight-color-text);
+}
+.chroma .ld {
+  color: var(--highlight-color-success);
+} /* date literal */
+.chroma .s,
+.chroma .sa,
+.chroma .sb,
+.chroma .sc,
+.chroma .dl,
+.chroma .sd,
+.chroma .s2,
+.chroma .se,
+.chroma .sh,
+.chroma .si,
+.chroma .sx,
+.chroma .sr,
+.chroma .s1,
+.chroma .ss {
+  color: var(--highlight-color-success); /* string literal */
+}
+
+/* Numbers */
+.chroma .m,
+.chroma .mb,
+.chroma .mf,
+.chroma .mh,
+.chroma .mi,
+.chroma .il,
+.chroma .mo {
+  color: var(--highlight-color-warning); /* number literal */
+}
+
+/* Operators */
+.chroma .o {
+  color: var(--highlight-color-text);
+}
+.chroma .ow {
+  color: var(--highlight-color-primary);
+}
+
+/* Punctuation */
+.chroma .p {
+  color: var(--highlight-color-text);
+}
+
+/* Comments */
+.chroma .c,
+.chroma .ch,
+.chroma .cm,
+.chroma .c1,
+.chroma .cs {
+  color: var(--highlight-color-text-2); /* comment */
+  @apply italic;
+}
+.chroma .cp,
+.chroma .cpf {
+  color: var(--highlight-color-primary); /* preprocessor */
+}
+
+/* Generic */
+.chroma .g {
+  color: var(--highlight-color-text);
+}
+.chroma .gd {
+  color: var(--highlight-color-err);
+}
+.chroma .ge {
+  @apply italic;
+}
+.chroma .gr {
+  color: var(--highlight-color-err);
+}
+.chroma .gh {
+  color: var(--highlight-color-primary);
+  @apply font-semibold;
+}
+.chroma .gi {
+  color: var(--highlight-color-success);
+}
+.chroma .go {
+  color: var(--highlight-color-text-2);
+}
+.chroma .gp {
+  color: var(--highlight-color-text);
+  @apply font-semibold;
+}
+.chroma .gs {
+  @apply font-semibold;
+}
+.chroma .gu {
+  color: var(--highlight-color-info);
+  @apply font-semibold;
+}
+.chroma .gt {
+  color: var(--highlight-color-err);
+}
+.chroma .gl {
+  color: var(--highlight-color-text-2);
+}
+.chroma .w {
+  color: var(--highlight-color-text-1);
+}

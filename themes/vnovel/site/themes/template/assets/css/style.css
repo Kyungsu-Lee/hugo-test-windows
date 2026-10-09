@@ -1,0 +1,166 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@source "hugo_stats.json";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant reader-light (&:where(.reader-theme-light, .reader-theme-light *));
+@custom-variant reader-sepia (&:where(.reader-theme-sepia, .reader-theme-sepia *));
+@custom-variant reader-dark (&:where(.reader-theme-dark, .reader-theme-dark *));
+
+/* Hamburger Menu Styles */
+.spmenu {
+  float: left;
+  display: block;
+  background: rgba(255, 255, 255, 0);
+  position: relative;
+  z-index: 1000;
+}
+
+.spmenu span {
+  transition: all 0.3s;
+  transform: rotate(0deg);
+  width: 40px;
+  height: 2px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -20px;
+}
+
+.spmenu .top {
+  transform: translateY(-14px);
+}
+
+.spmenu .bottom {
+  transform: translateY(14px);
+}
+
+.spmenu.is-open .middle {
+  background: rgba(255, 255, 255, 0);
+}
+
+.spmenu.is-open .top {
+  transform: rotate(-45deg) translateY(0px);
+}
+
+.spmenu.is-open .bottom {
+  transform: rotate(45deg) translateY(0px);
+}
+
+/* Reader Theme: Sepia */
+.reader-theme-sepia {
+    background-color: #fcf6e6 !important;
+    color: #433422 !important;
+    border-color: #e6dec3 !important;
+}
+
+/* Sepia - Typography Overrides */
+.prose.reader-theme-sepia-content {
+    --tw-prose-body: #433422;
+    --tw-prose-headings: #2c2216;
+    --tw-prose-links: #2c2216;
+    --tw-prose-bold: #2c2216;
+    --tw-prose-counters: #433422;
+    --tw-prose-bullets: #433422;
+    --tw-prose-hr: #e6dec3;
+    --tw-prose-quotes: #433422;
+    --tw-prose-quote-borders: #e6dec3;
+    --tw-prose-captions: #433422;
+    --tw-prose-code: #433422;
+    --tw-prose-pre-code: #433422;
+    --tw-prose-pre-bg: #e6dec3;
+    --tw-prose-th-borders: #e6dec3;
+    --tw-prose-td-borders: #e6dec3;
+    color: #433422 !important;
+}
+
+/* Sepia - Settings Panel */
+.reader-theme-sepia #settings-panel {
+    background-color: #f4ecd8 !important;
+    border-color: #e6dec3 !important;
+}
+.reader-theme-sepia #settings-panel .text-gray-700,
+.reader-theme-sepia #settings-panel .dark\:text-gray-300 {
+    color: #433422 !important;
+}
+.reader-theme-sepia #settings-panel button {
+    border-color: #e6dec3 !important;
+}
+
+/* Reader Theme: Light */
+.reader-theme-light {
+    background-color: #ffffff !important;
+    color: #1a202c !important;
+    border-color: #e5e7eb !important;
+}
+
+.reader-theme-light #settings-panel {
+    background-color: #f9fafb !important;
+    border-color: #e5e7eb !important;
+}
+.reader-theme-light #settings-panel .text-gray-700,
+.reader-theme-light #settings-panel .dark\:text-gray-300 {
+    color: #374151 !important;
+}
+
+/* Reader Theme: Dark */
+.reader-theme-dark {
+    background-color: #262626 !important;
+    color: #ffffff !important;
+    border-color: #404040 !important;
+}
+
+.reader-theme-dark #settings-panel {
+    background-color: #171717 !important;
+    border-color: #404040 !important;
+}
+.reader-theme-dark #settings-panel .text-gray-700,
+.reader-theme-dark #settings-panel .dark\:text-gray-300 {
+    color: #d1d5db !important;
+}
+
+
+/* Reader Fonts */
+.reader-font-serif {
+    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
+}
+
+.reader-font-sans {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* Reader Font Sizes */
+.reader-font-size-small {
+    font-size: 0.875rem !important;
+}
+.reader-font-size-small p {
+    font-size: 0.875rem !important;
+    line-height: 1.6 !important;
+}
+
+.reader-font-size-medium {
+    font-size: 1rem !important;
+}
+.reader-font-size-medium p {
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
+}
+
+.reader-font-size-large {
+    font-size: 1.25rem !important;
+}
+.reader-font-size-large p {
+    font-size: 1.25rem !important;
+    line-height: 1.8 !important;
+}
+
+/* Scroll to Top Button */
+#scroll-to-top.show {
+    opacity: 1;
+    translate: 0;
+    pointer-events: auto;
+}
+#scroll-to-top {
+    pointer-events: none;
+}

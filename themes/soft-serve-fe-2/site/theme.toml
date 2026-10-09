@@ -1,0 +1,24 @@
+name = "Prizma Theme"
+license = "MIT"
+licenselink = "https://github.com/anastasiiaxfr/soft-serve-fe-2/blob/main/LICENSE"
+description = "A Hugo theme for brand product projects"
+
+# The home page of the theme, where the source can be found.
+homepage = "https://github.com/anastasiiaxfr/soft-serve-fe-2/"
+
+# If you have a running demo of the theme.
+demosite = "https://prizma-xforeal.netlify.app/"
+
+tags = ["landing-page", "brand", "product", "company"]
+features = ["fast", "blog", "responsive", "seo"]
+
+# If the theme has a single author
+[author]
+    name = "Anastasiia Berest"
+    homepage = "https://ab-portfolio-pearl.vercel.app/"
+
+# If porting an existing theme
+[original]
+    author = "Anastasiia Berest"
+    homepage = "https://ab-portfolio-pearl.vercel.app/"
+    repo = "https://github.com/anastasiiaxfr/soft-serve-fe-2"

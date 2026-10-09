@@ -1,0 +1,135 @@
+{{ partial "header.html" . }}
+
+{{ if not .IsHome }}
+<h1>{{ .Title | markdownify }}</h1>
+{{ end }}
+
+{{ partial "work_in_progress.html" . }}
+
+{{ .Content }}
+
+<!-- Get all projects from the projects section -->
+{{ $allProjects := where site.RegularPages "Section" "projects" }}
+
+<!-- Separate active and discontinued projects -->
+{{ $activeProjects := slice }}
+{{ $discontinuedProjects := slice }}
+
+{{ range $allProjects }}
+  {{ $status := .Params.status | default "active" }}
+  {{ if eq $status "discontinued" }}
+    {{ $discontinuedProjects = $discontinuedProjects | append . }}
+  {{ else }}
+    {{ $activeProjects = $activeProjects | append . }}
+  {{ end }}
+{{ end }}
+
+<!-- Get featured projects from frontmatter -->
+{{ $featuredSlugs := .Params.featured_projects | default slice }}
+{{ $featuredProjects := slice }}
+{{ $nonFeaturedActive := slice }}
+
+{{ range $activeProjects }}
+  {{ $slug := path.Base .File.Dir | default (replace .File.BaseFileName ".md" "") }}
+  {{ $fileName := .File.BaseFileName }}
+  {{ if or (in $featuredSlugs $slug) (in $featuredSlugs $fileName) }}
+    {{ $featuredProjects = $featuredProjects | append . }}
+  {{ else }}
+    {{ $nonFeaturedActive = $nonFeaturedActive | append . }}
+  {{ end }}
+{{ end }}
+
+<!-- Featured Projects Section -->
+{{ if $featuredProjects }}
+<section class="bifurcated-featured">
+  <h2 class="section-title">Featured Projects</h2>
+  <div class="featured-grid">
+    {{ range $featuredProjects }}
+      <div class="featured-card">
+        <a href="{{ .RelPermalink }}" class="featured-link">
+          <div class="featured-image">
+            {{ if .Params.featured_image }}
+              {{ $img := resources.Get .Params.featured_image }}
+              {{ if $img }}
+                {{ if eq $img.MediaType.SubType "svg" }}
+                  <img src="{{ $img.RelPermalink }}" alt="{{ .Title }}" />
+                {{ else }}
+                  <img src="{{ ($img.Resize "500x q90").RelPermalink }}" alt="{{ .Title }}" />
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          </div>
+          <div class="featured-content">
+            <h3>{{ .Title }}</h3>
+            {{ if .Params.tldr_description }}
+              <p>{{ .Params.tldr_description }}</p>
+            {{ end }}
+            {{ if .Params.focus_area }}
+              <span class="focus-badge">{{ .Params.focus_area }}</span>
+            {{ end }}
+          </div>
+        </a>
+      </div>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<!-- Active Projects Grid -->
+<section class="bifurcated-active">
+  <h2 class="section-title">Active Projects</h2>
+  <div class="active-grid">
+    {{ range $nonFeaturedActive }}
+      <div class="active-card">
+        <a href="{{ .RelPermalink }}" class="active-link">
+          <div class="active-image">
+            {{ if .Params.featured_image }}
+              {{ $img := resources.Get .Params.featured_image }}
+              {{ if $img }}
+                {{ if eq $img.MediaType.SubType "svg" }}
+                  <img src="{{ $img.RelPermalink }}" alt="{{ .Title }}" />
+                {{ else }}
+                  <img src="{{ ($img.Resize "300x q85").RelPermalink }}" alt="{{ .Title }}" />
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          </div>
+          <div class="active-overlay">
+            <h4>{{ .Title }}</h4>
+          </div>
+        </a>
+      </div>
+    {{ end }}
+  </div>
+</section>
+
+<!-- Discontinued Projects Strip -->
+{{ if $discontinuedProjects }}
+<section class="bifurcated-discontinued">
+  <h2 class="section-title section-title-muted">Archived Projects</h2>
+  <div class="discontinued-compact">
+    {{ range $discontinuedProjects }}
+      <a href="{{ .RelPermalink }}" class="discontinued-chip">
+        {{ if .Params.featured_image }}
+          {{ $img := resources.Get .Params.featured_image }}
+          {{ if $img }}
+            {{ if eq $img.MediaType.SubType "svg" }}
+              <img src="{{ $img.RelPermalink }}" alt="{{ .Title }}" class="chip-img" />
+            {{ else }}
+              <img src="{{ ($img.Resize "60x q80").RelPermalink }}" alt="{{ .Title }}" class="chip-img" />
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        <span class="chip-name">{{ .Title }}</span>
+        {{ if .Params.discontinue_date }}
+          <span class="chip-date">{{ dateFormat "2006" .Params.discontinue_date }}</span>
+        {{ end }}
+      </a>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<div class="clear"></div>
+
+{{ partial "footer.html" . }}

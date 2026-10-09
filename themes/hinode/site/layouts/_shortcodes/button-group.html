@@ -1,0 +1,42 @@
+{{/* 
+    Copyright © 2022 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+*/}}
+
+{{/* Validate and initialize arguments */}}
+{{ $args := partial "utilities/InitArgs.html" (dict "structure" "button-group" "args" .Params "named" .IsNamedParams "group" "shortcode") }}
+{{ if or $args.err $args.warnmsg }}
+    {{ partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial"  "shortcodes/button-group.html" 
+        "warnid"   "warn-invalid-arguments"
+        "msg"      "Invalid arguments"
+        "details"  ($args.errmsg | append $args.warnmsg)
+        "file"     .Page.File
+        "position" .Position
+    )}}
+{{ end }}
+
+{{/* Initialize local arguments */}}
+{{ $label := or $args.label $args.ariaLabel }}
+{{ $role := or $args.ariaRole "group" }}
+{{ $inner := .Scratch.Get "inner" }}
+{{ $input := trim .Inner " \r\n" }}
+{{ if $input }}
+    {{ $input = replace $input "\n" "\n  " }}
+    {{ warnf "Unexpected inner content: %s\r\n      %s" .Position $input }}
+{{ end }}
+
+{{/* A "tablist" role requires its buttons to expose role="tab" (WCAG / aria-required-children);
+     the inner button shortcodes don't carry it, so inject it when the group is a tablist. */}}
+{{ if eq $role "tablist" }}{{ $inner = replaceRE `<(a|button)([ >])` `<${1} role="tab"${2}` $inner }}{{ end }}
+
+{{/* Main code */}}
+{{ if not $args.err }}
+    <div class="btn-group" role="{{ $role }}"
+        {{ with $label }}aria-label="{{ . }}"{{ end -}}
+        {{- range $key, $val := $args.attributes }} {{ printf "%s=%q" $key $val | safeHTMLAttr }}{{ end -}}
+    >
+        {{ $inner | safeHTML }}
+    </div>
+{{ end }}

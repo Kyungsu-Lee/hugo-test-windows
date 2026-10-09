@@ -1,0 +1,277 @@
+# 页脚翻译
+[footer_share_knowledge]
+other = "分享知识、经验和想法"
+
+# 导航部分
+[footer_navigation]
+other = "导航"
+
+# 联系部分
+[footer_stay_connected]
+other = "保持联系"
+
+[footer_subscribe_contact]
+other = "订阅我的内容或联系我"
+
+[footer_contact_me]
+other = "联系我"
+
+# 社交媒体
+[footer_github]
+other = "GitHub"
+
+[footer_zhihu]
+other = "知乎"
+
+[footer_email]
+other = "邮箱"
+
+# 版权部分
+[footer_rights_reserved]
+other = "保留所有权利"
+
+[footer_built_with]
+other = "使用"
+
+[footer_built]
+other = "构建"
+
+[footer_theme]
+other = "主题"
+
+[footer_total_visits]
+other = "总访问量"
+
+# 主导航（菜单项通过 identifier 匹配这些键）
+[nav_home]
+other = "首页"
+
+[nav_posts]
+other = "文章"
+
+[nav_categories]
+other = "分类"
+
+[nav_tags]
+other = "标签"
+
+[nav_about]
+other = "关于"
+
+[skip_to_content]
+other = "跳到正文"
+
+# 首页
+[home_recent_posts]
+other = "最新文章"
+
+[home_view_all_posts]
+other = "查看所有文章"
+
+[home_welcome]
+other = "欢迎来到我的博客"
+
+# 列表页面
+[list_read_more]
+other = "阅读全文"
+
+[year_indicator]
+other = "年份指示器"
+
+[decorative_halo]
+other = "装饰性光晕"
+
+[article_list]
+other = "文章列表"
+
+[list_view_by_year]
+other = "按年份查看"
+
+[list_view_by_category]
+other = "按分类查看"
+
+[list_article_count]
+other = "共 {{ .Count }} 篇文章"
+
+[all_posts]
+other = "所有文章"
+
+# About页面
+[about_skills]
+other = "技能"
+
+[about_experience]
+other = "经历"
+
+[about_education]
+other = "教育背景"
+
+[about_projects]
+other = "项目经验"
+
+[about_interests]
+other = "兴趣爱好"
+
+[about_contact]
+other = "联系方式"
+
+[about_research]
+other = "研究经历"
+
+[about_download_cv]
+other = "下载简历"
+
+[about_view_cv]
+other = "查看完整简历"
+
+[about_personal_summary]
+other = "个人总结"
+
+# 文章页面
+[reading_time]
+other = "分钟阅读"
+
+[page_views]
+other = "阅读量"
+
+[back_to_home]
+other = "返回首页"
+
+[last_updated]
+other = "最后更新于"
+
+[post_previous]
+other = "上一篇"
+
+[post_next]
+other = "下一篇"
+
+[tags_label]
+other = "标签"
+
+# 文章日期格式
+[date_month_day_format]
+other = "01月02日"
+
+[date_year]
+other = "年"
+
+# 标签相关
+[tag_icon_title]
+other = "标签"
+
+[all_tags]
+other = "所有标签"
+
+[tags_help_text]
+other = "点击任意标签查看相关文章"
+
+[categories_help_text]
+other = "点击分类展开或收起文章"
+
+[articles]
+other = "篇文章"
+
+# 通用按钮和提示
+[back_to_top]
+other = "返回顶部"
+
+[search_placeholder]
+other = "搜索..."
+
+[pagination_next]
+other = "下一页"
+
+[pagination_previous]
+other = "上一页"
+
+[pagination_page]
+other = "第 {{ .PageNumber }} 页"
+
+[related_posts]
+other = "相关文章"
+
+[table_of_contents]
+other = "目录"
+
+# 分享
+[share]
+other = "分享"
+
+[share_copy_link]
+other = "复制链接"
+
+[share_copy_summary]
+other = "复制摘要"
+
+[share_copied]
+other = "已复制"
+
+[share_native]
+other = "分享…"
+
+[share_copy_link_success]
+other = "链接已复制。"
+
+[share_copy_summary_success]
+other = "分享内容已复制。"
+
+[share_copy_failed]
+other = "复制失败。"
+
+[share_native_failed]
+other = "当前环境不支持系统分享。"
+
+# 评论
+[comments]
+other = "评论"
+
+[load_comments]
+other = "加载评论"
+
+[loading_comments]
+other = "评论加载中…"
+
+[comments_load_failed]
+other = "评论加载失败。评论系统 Disqus 在中国大陆需要代理才能访问。"
+
+[retry]
+other = "重试"
+
+# 404
+[not_found_title]
+other = "页面不存在"
+
+[not_found_body]
+other = "你访问的页面不存在，或者已经被移动。"
+
+# Series
+[series]
+other = "系列"
+
+[series_part_of]
+other = "本文属于系列"
+
+[series_help_text]
+other = "按阅读顺序排列的多篇连载"
+
+[all_series]
+other = "所有系列"
+
+
+# Search (Pagefind)
+[search]
+other = "搜索"
+
+[search_unavailable]
+other = "搜索索引在部署时生成，本地构建中不可用。"
+
+[search_zero_results]
+other = "没有找到与 [SEARCH_TERM] 相关的结果"
+
+[search_clear]
+other = "清除"
+
+[search_load_more]
+other = "加载更多结果"
+

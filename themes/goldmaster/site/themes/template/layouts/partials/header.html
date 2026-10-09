@@ -1,0 +1,15 @@
+    <header class="site-header">
+        <div class="container nav-container">
+            <a href="{{ "/" | relURL }}" class="logo-link">
+                <img src="{{ "images/home/home.svg" | relURL }}" alt="Logo" class="logo">
+                <img src="{{ "images/home/home-hover.svg" | relURL }}" alt="Home" class="home-icon">
+            </a>
+            {{ partial "menu.html" . }}
+            <button class="hamburger hamburger--emphatic" type="button" aria-label="Open navigation" aria-expanded="false">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
+        </div>
+        <div class="nav-overlay" id="navOverlay"></div>
+    </header>

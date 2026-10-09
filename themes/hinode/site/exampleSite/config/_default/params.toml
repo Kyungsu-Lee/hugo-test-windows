@@ -1,0 +1,248 @@
+[main]
+    separator = "-"
+    description = "Hinode is a clean documentation and blog theme for your Hugo site based on Bootstrap 5."
+    enableLanguageSelectionStorage = true
+    canonifyAssetsURLs = false
+    footerBelowFold = false
+    loading = "lazy"
+    breakpoint = "md"
+    titleCase = true
+    [main.padding]
+        x = 4
+        y = 4
+    [main.internalLinks]
+        validate = true
+        pretty = true
+    [main.externalLinks]
+        cue = true
+        tab = true
+    [main.build]
+        transpiler = "dartsass"
+        silenceDeprecations = true
+    [main.colorMode]
+        enabled = true
+        modes = ["light", "dark"]
+        toggle = true
+    [main.cards]
+        linkIcon = false
+        buttonIcon = false
+
+[icons]
+    # Color mode toggle
+    colorModeLight       = "sun"
+    colorModeDark        = "moon-stars"
+    # Navbar
+    navbarLanguage       = "globe2"
+    navbarOverflow       = "three-dots"
+    navbarVersionCheck   = "check"
+    navbarDropdown       = "chevron-down"
+    # Pagination
+    paginationFirst      = "chevron-double-left"
+    paginationPrev       = "chevron-left"
+    paginationNext       = "chevron-right"
+    paginationLast       = "chevron-double-right"
+    # Other navigation
+    breadcrumbBack       = "chevron-left"
+    pageNavPrev          = "arrow-left"
+    pageNavNext          = "arrow-right"
+    # Content
+    tocSort              = "sort-down"
+    cardReadMore         = "chevron-right"
+    externalLink         = "box-arrow-up-right"
+    testimonialNext      = "chevron-right"
+    testimonialQuote     = "quote"
+    headingAnchor        = "link"
+    notFoundPage         = "link-45deg"
+    sharingWebshare      = "share"
+    sharingDownload      = "download"
+    # Search (mod-flexsearch)
+    search          = "search"
+    # Testimonial carousel controls (mod-blocks)
+    carouselPrev    = "chevron-left"
+    carouselNext    = "chevron-right"
+    # CTA and contact action links (mod-blocks)
+    ctaAction       = "chevron-right"
+    # Preview component device tabs and error state (mod-blocks)
+    previewDesktop  = "display"
+    previewTablet   = "tablet"
+    previewMobile   = "phone"
+    previewError    = "exclamation-triangle"
+    [icons.admonition]
+        note       = "info-circle"
+        info       = "info-circle"
+        tip        = "lightbulb"
+        important  = "exclamation"
+        warning    = "exclamation-triangle"
+        caution    = "hand-index-thumb"
+    [icons.release]
+        deprecated = "trash"
+        feature    = "rocket-takeoff"
+
+[debugging]
+    showJS = false
+    showSCSS = false
+    includeSVGOrigin = true
+
+[docs]
+    basePath = "/"
+    github = "https://github.com/gethinode/hinode"
+    release = "https://github.com/gethinode/hinode/releases/tag/"
+    checkVersion = false
+
+[navigation]
+    anchor = true
+    logo = "/img/logo_icon.svg"
+    logo-mode = false
+    logo-align = "center"
+    logo-height = 30
+    color = "body"
+    fixed = true
+    overlay = false
+    overlayMode = "dark"
+    transparent = false
+    horizontal = false
+    offset = "5.7rem"
+    offsetXS = "5.7rem"
+    breadcrumb = true
+    toc = true
+    sidebar = true
+    size = "md"
+    fontsizeCollapsed = 6
+    startLevel = 2
+    endLevel = 3
+    maxNumHeadings = 9
+    tocShortenLength = 24
+    tocSkipParams = true
+    [navigation.language]
+        inline = false
+    [navigation.padding]
+        x = 4
+        y = 4
+    [navigation.search]
+        enabled = true
+        modal = false
+
+[messages]
+    placement = "bottom-right"
+
+[pages]
+    readingTime = true
+    wordCount = true
+
+[dam]
+    dimensions = "dimensions.yml"
+    videoCodecs = [
+        "webm/vp9",
+        "mp4/h265",
+        "mp4"
+    ]
+
+[[dam.providers]]
+    name = "Cloudinary"
+    pattern = "cloudinary"
+    adapter = "assets/adapters/cloudinary.html"
+
+[sharing]
+    enabled = true
+    sort = "weight"
+    reverse = false
+    webshare = true
+
+[[sharing.providers]]
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/sharing/share-offsite/?url={url}"
+    icon = "fab linkedin"
+    weight = 10
+
+[[sharing.providers]]
+    name = "Twitter"
+    url = "https://twitter.com/home?status={url}"
+    icon = "fab x-twitter"
+    weight = 20
+
+[[sharing.providers]]
+    name = "Facebook"
+    url = "https://www.facebook.com/sharer.php?u={url}"
+    icon = "fab facebook"
+    weight = 30
+
+[[sharing.providers]]
+    name = "WhatsApp"
+    url = "whatsapp://send?text={title}%20{url}"
+    icon = "fab whatsapp"
+    weight = 40
+
+[[sharing.providers]]
+    name = "email"
+    url = "{url}"
+    icon = "link"
+    weight = 50
+    clipboard = true
+
+[favicon]
+    logo = "img/favicon.png"
+    sizes = [16, 32, 48]
+
+# toml-docs-start theme-colors
+[style]
+    primary = "#d43900"
+    secondary = "#6c757d"
+    success = "#198754"
+    info = "#0dcaf0"
+    warning = "#ffc107"
+    danger = "#dc3545"
+    light = "#f8f9fa"
+    dark = "#212529"
+    themeOpacity = "10"
+    darkModeShade = "20%"
+    darkModeTint = "40%"
+    themeFont = "Inter"
+    # themeFontPath = "https://fonts.googleapis.com/css2?family=Inter:wght@200;300;600&display=swap" # external path
+    themeFontPath = "/fonts" # local path
+    themeFontPreload = "/fonts/inter-v12-latin-regular.woff2"
+    purge = true
+# toml-docs-end theme-colors
+
+[schema]
+    type = "Organization"
+    name = "Hinode"
+    # locale = "en-US" # defaults to the locale of the current site language
+    # twitter = "https://twitter.com/gethinode"
+    # linkedIn = ""
+    github = "https://github.com/gethinode/hinode"
+    section = "blog"
+    [schema.author]
+        name = "Mark Dumay"
+        # twitter = "https://twitter.com/markdumay"
+        linkedin = "https://www.linkedin.com/in/markdumay/"
+        github = "https://github.com/markdumay"
+    [schema.logo]
+        url = "img/logo512x512.png"
+        width = 512
+        height = 512
+    [schema.image]
+        url = "img/logo1280x640.png"
+        width = 1280
+        height = 640
+
+[opengraph]
+    images = ["logo.png"]
+    # locale = "en_US" # defaults to the locale of the current site language
+
+[links]
+    bs_badge_heading = "https://getbootstrap.com/docs/5.3/components/badge/#headings"
+    hinode_docs = "https://gethinode.com"
+    hugo_imaging = "https://gohugo.io/content-management/image-processing/#imaging-configuration"
+    mozilla_image = "https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images"
+    observatory = "https://observatory.mozilla.org/analyze/demo.gethinode.com"
+    pagespeed = "https://pagespeed.web.dev/report?url=https%3A%2F%2Fdemo.gethinode.com%2F"
+    hinode = "https://gethinode.com"
+
+[modules.cookieyes]
+    url = "https://cdn-cookieyes.com/client_data/a54b5553f349dd13bd225f8e/script.js"
+
+[modules.mermaid]
+    elk = true
+
+[modules.fontawesome]
+  defaultFamily = "bi"

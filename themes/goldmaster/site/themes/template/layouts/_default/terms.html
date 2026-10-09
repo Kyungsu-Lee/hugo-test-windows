@@ -1,0 +1,14 @@
+<!--
+  layouts/_default/terms.html
+
+  This is a full-page template for taxonomy list pages (e.g., /tags/ or /categories/).
+  Do not confuse with partials/terms.html, which is a reusable snippet for showing terms on a single page.
+-->
+{{ define "main" }}
+  <h1>{{ .Title }}</h1>
+  <ul>
+    {{ range .Data.Terms.Alphabetical }}
+      <li><a href="{{ .Page.RelPermalink }}">{{ .LinkTitle }}</a> ({{ .Count }})</li>
+    {{ end }}
+  </ul>
+{{ end }}

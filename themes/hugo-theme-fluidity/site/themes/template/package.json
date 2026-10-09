@@ -1,0 +1,29 @@
+{
+  "author": "WayJam So",
+  "comments": {
+    "dependencies": {},
+    "devDependencies": {
+      "@tailwindcss/cli": "project",
+      "@tailwindcss/typography": "project",
+      "prettier": "project",
+      "prettier-plugin-go-template": "project",
+      "tailwindcss": "project"
+    }
+  },
+  "dependencies": {},
+  "description": "A fluid and responsive Hugo theme.",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0-beta.4",
+    "@tailwindcss/typography": "^0.5.15",
+    "prettier": "^3.4.1",
+    "prettier-plugin-go-template": "^0.0.15",
+    "tailwindcss": "^4.0.0-beta.4"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "name": "fluidity",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,35 @@
+[categories]
+other = "CATEGORY"
+
+[tags]
+other = "TAG"
+
+[related]
+other = "RELATED POSTS"
+
+[toc]
+other = "TABLE OF CONTENT"
+
+[about]
+other = "ABOUT"
+
+[first]
+other = "FIRST"
+
+[prev]
+other = "PREV"
+
+[next]
+other = "NEXT"
+
+[last]
+other = "LAST"
+
+[read]
+other = "Read More"
+
+[docs]
+other = "Ducument"
+
+[sites]
+other = "Useful Sites"

@@ -1,0 +1,15 @@
+<header>
+{{ partial "logo.html" . }}
+  <hgroup>
+      <h1><a href="{{ $.Site.BaseURL }}">{{ .Site.Title }}</a></h1>
+      <nav aria-label="Main navigation">
+          <ul>
+              {{ $current := . }}
+              {{ range .Site.Menus.header.ByWeight }}
+              <li><a href="{{ .URL | relURL }}">{{- .Name -}}</a></li>
+              {{ end }}
+          </ul>
+      </nav>
+  </hgroup>
+</header>
+

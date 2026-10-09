@@ -1,0 +1,118 @@
+<div
+  class="mt-16 border-t border-neutral-200/80 dark:border-neutral-800/20 
+            bg-gradient-to-b from-white/80 via-sky-50/30 to-blue-50/20
+            dark:from-neutral-900/90 dark:via-neutral-900/50 dark:to-neutral-800/30 
+            backdrop-blur-md">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 lg:gap-8">
+      <!-- About Section -->
+      <div class="col-span-1 md:col-span-2">
+        <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-50 mb-4">
+          {{- if (where .Site.RegularPages "Layout" "==" "about") -}}
+            <a
+              href="{{ "about" | relURL }}"
+              class="inline-flex items-center underline-offset-2
+                      text-neutral-900 dark:text-neutral-50
+                      hover:underline
+                      transition-colors duration-300 ease-in-out">
+              {{- i18n "about" | strings.Title -}}
+            </a>
+          {{- else -}}
+            {{- i18n "about" | strings.Title -}}
+          {{- end -}}
+        </h3>
+        <p class="text-slate-600 dark:text-slate-300 italic text-sm sm:text-base">
+          {{- .Site.Params.description | default "" -}}
+        </p>
+      </div>
+
+      <!-- Categories Section -->
+      <div>
+        <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-50 mb-4">
+          {{- i18n "sections" | strings.Title -}}
+        </h3>
+        {{- $sections := slice -}}
+        {{- range .Site.Sections -}}
+          {{- $section := . -}}
+          {{- $count := len $section.Pages -}}
+          {{- if gt $count 0 -}}
+            {{- $sections = $sections | append (dict "Title" .Title "Count" $count "URL" .RelPermalink) -}}
+          {{- end -}}
+        {{- end -}}
+        {{- $sortedSections := sort $sections "Count" "desc" -}}
+        <ul class="space-y-2 text-slate-600 dark:text-slate-300 text-sm sm:text-base">
+          {{- range first 5 $sortedSections -}}
+            <li>
+              <a
+                href="{{ .URL }}"
+                class="group flex items-center gap-2
+                        hover:text-sky-600 dark:hover:text-sky-300 
+                        transition-all duration-300 ease-in-out">
+                <span class="transform group-hover:translate-x-1 transition-transform duration-300">
+                  {{- .Title -}}
+                </span>
+                <span
+                  class="text-sm text-neutral-500 dark:text-neutral-400
+                           group-hover:text-sky-500 dark:group-hover:text-sky-400
+                           transition-colors duration-300">
+                  ({{ .Count }})
+                </span>
+              </a>
+            </li>
+          {{- end -}}
+        </ul>
+      </div>
+
+      <!-- Connect Section -->
+      <div>
+        <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-50 mb-4">
+          {{- i18n "connect" | strings.Title -}}
+        </h3>
+        <ul class="space-y-2">
+          {{- partial "inline/connect/item.html" (dict "icon" "rss" "title" "RSS Feed" "url" ("index.xml" | relURL)) -}}
+          {{- partial "utils/social-connect.html" . -}}
+        </ul>
+      </div>
+    </div>
+
+    <div class="relative flex justify-center my-4">
+      <div
+        class="absolute inset-x-0 top-1/2 h-[1px] -translate-y-1/2 bg-gradient-to-r from-transparent via-sky-200 dark:via-sky-800 to-transparent opacity-50 blur-[0.5px]"></div>
+      <span
+        class="relative z-10 rounded-full 
+                   bg-sky-50 dark:bg-neutral-900
+                   px-4 py-0.5
+                   text-neutral-600 dark:text-neutral-400 
+                   text-xs font-mono italic">
+        Site built with
+        <a
+          rel="nofollow"
+          class="underline decoration-neutral-300 
+                  hover:text-sky-600 dark:hover:text-sky-400 
+                  transition-colors duration-300"
+          target="_blank"
+          href="https://gohugo.io">
+          Hugo
+        </a>
+        &&
+        <a
+          class="underline decoration-neutral-300 
+                  hover:text-sky-600 dark:hover:text-sky-400 
+                  transition-colors duration-300"
+          rel="nofollow"
+          target="_blank"
+          href="https://github.com/wayjam/hugo-theme-fluidity">
+          Theme Fluidity
+        </a>
+      </span>
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center text-neutral-600 dark:text-neutral-400 font-sans text-sm sm:text-base">
+      <p>
+        &copy; {{ now.Year }} {{ .Site.Title }}.
+        {{- i18n "allRightsReserved" | default "All rights reserved." | title -}}
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<section class="profile"{{ if and .Site.Params.enableXDynamic .Site.Params.xUsername }} data-x-profile="{{ .Site.Params.xUsername }}"{{ end }}>
+    <header class="timeline-topbar">
+        <a class="back-link" href="{{ .Site.Home.RelPermalink }}" aria-label="Back">←</a>
+        <div>
+            <h1><span data-x-name>{{ .Site.Params.displayName | default .Site.Title }}</span>{{ if .Site.Params.verified }} {{ partial "icon.html" "verified" }}{{ end }}</h1>
+            <p>{{ len (where .Site.RegularPages "Section" "posts") }} posts</p>
+        </div>
+        <div class="topbar-actions">{{ partial "icon.html" "grok" }}{{ partial "icon.html" "search" }}</div>
+    </header>
+
+    <div class="profile-banner">
+        {{ with .Site.Params.banner }}
+        <img src="{{ . | relURL }}" alt="">
+        {{ end }}
+    </div>
+
+    <div class="profile-body">
+        <div class="profile-avatar-row">
+            {{ partial "avatar.html" . }}
+            {{ $xUsername := .Site.Params.xUsername | default .Site.Params.username }}
+            {{ if and .Site.Params.xFollowButton $xUsername }}
+            <div class="x-follow-widget">
+                <a class="twitter-follow-button"
+                   href="https://twitter.com/{{ $xUsername }}"
+                   data-show-count="true"
+                   data-show-screen-name="false"
+                   data-dnt="true"
+                   data-size="large">Follow</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+            {{ else }}
+                {{ with .Site.Params.profileUrl }}
+                <a class="follow-button outline" href="{{ . }}">{{ $.Site.Params.profileButtonText | default "Edit profile" }}</a>
+                {{ else }}
+                {{ $profileButtonUrl := $.Site.Params.profileButtonUrl | default $.Site.Home.RelPermalink }}
+                <a class="follow-button outline" href="{{ $profileButtonUrl | relURL }}">{{ $.Site.Params.profileButtonText | default "Edit profile" }}</a>
+                {{ end }}
+            {{ end }}
+        </div>
+        <h2><span data-x-name>{{ .Site.Params.displayName | default .Site.Title }}</span>{{ if .Site.Params.verified }} {{ partial "icon.html" "verified" }}{{ end }}</h2>
+        <p class="handle" data-x-handle>@{{ .Site.Params.username | default .Site.Title | urlize }}</p>
+        {{ if .Site.Params.translation }}
+        <a class="translation" href="{{ .Site.Home.RelPermalink }}">{{ partial "icon.html" "grok" }} Show translation</a>
+        {{ end }}
+        <p class="bio">{{ .Site.Params.bio | default .Site.Params.description | default "A Hugo timeline theme." }}</p>
+        <p class="profile-meta">
+            {{ with .Site.Params.location }}<span>{{ partial "icon.html" "location" }} {{ . }}</span>{{ end }}
+            {{ with .Site.Params.website }}<span>{{ partial "icon.html" "link" }} <a href="{{ . }}">{{ replaceRE "^https?://(www\\.)?" "" . }}</a></span>{{ end }}
+            {{ with .Site.Params.joined }}<span>{{ partial "icon.html" "calendar" }} Joined {{ . }}</span>{{ end }}
+        </p>
+        {{ $twitter := hugo.Data.twitter | default dict }}
+        {{ $hasFollowing := or (isset $twitter "following_count") (isset .Site.Params "following") }}
+        {{ $hasFollowers := or (isset $twitter "followers_count") (isset .Site.Params "followers") }}
+        {{ $following := cond (isset $twitter "following_count") $twitter.following_count .Site.Params.following }}
+        {{ $followers := cond (isset $twitter "followers_count") $twitter.followers_count .Site.Params.followers }}
+        {{ if or $hasFollowing $hasFollowers }}
+        <p class="profile-stats" data-x-stats>
+            {{ if $hasFollowing }}
+            <span><strong data-x-following data-x-number-only>{{ lang.FormatNumber 0 $following }}</strong> Following</span>
+            {{ end }}
+            {{ if $hasFollowers }}
+            <span><strong data-x-followers data-x-number-only>{{ lang.FormatNumber 0 $followers }}</strong> Followers</span>
+            {{ end }}
+        </p>
+        {{ else if and .Site.Params.enableXDynamic .Site.Params.xUsername }}
+        <p class="profile-stats" data-x-stats>
+            <span><strong data-x-following data-x-number-only>…</strong> Following</span>
+            <span><strong data-x-followers data-x-number-only>…</strong> Followers</span>
+        </p>
+        {{ end }}
+    </div>
+
+    <nav class="tabs" aria-label="Profile sections">
+        <a class="active" href="{{ .Site.Home.RelPermalink }}">Posts</a>
+        <a href="{{ "posts/" | relURL }}">Replies</a>
+        <a href="{{ "tags/" | relURL }}">Highlights</a>
+        <a href="{{ "posts/" | relURL }}">Articles</a>
+        <a href="{{ "posts/" | relURL }}">Media</a>
+        <a href="{{ "index.xml" | relURL }}">Likes</a>
+    </nav>
+</section>

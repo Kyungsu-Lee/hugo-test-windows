@@ -1,0 +1,140 @@
+baseURL = "https://example.com/"
+
+title = "My Blog"
+
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
+enableGitInfo = false
+enableRobotsTXT = true
+
+[languages]
+[languages.en]
+contentDir = "content/en"
+languageName = "English"
+weight = 1
+[languages.en.params]
+description = "A blog powered by Hugo and Primer CSS"
+
+[languages.ja]
+contentDir = "content/ja"
+languageName = "日本語"
+weight = 2
+[languages.ja.params]
+description = "Hugo と Primer CSS で構築されたブログ"
+
+[params]
+author = "Your Name" 
+dateFormat = "2006-01-02" 
+defaultTheme = "auto" 
+description = "A blog powered by Hugo and Primer CSS" 
+ogImage = "https://picsum.photos/seed/ogimage/1200/630" 
+primaryColor = "#f67717ff" # Purple (GitHub style)
+recentPostsCount = 5 
+showAuthor = true 
+showReadingTime = true 
+showShareButtons = true 
+sidebar = true 
+twitterSite = "your-username" 
+
+# Sidebar modules (loaded from layouts/partials/sidebar/*.html)
+# Order determines display order
+[[params.sidebarModules]]
+partial = "aboutme"
+
+[[params.sidebarModules]]
+partial = "social"
+
+[[params.sidebarModules]]
+partial = "recentPosts"
+
+[[params.sidebarModules]]
+partial = "tags"
+
+[[params.sidebarModules]]
+partial = "categories"
+
+[[params.sidebarModules]]
+partial = "archive"
+
+[[params.sidebarModules]]
+partial = "links"
+
+[params.social]
+bluesky = "your-username.bsky.social"
+github = "your-username"
+x = "your-username"
+
+[menus]
+[[menus.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menus.main]]
+name = "Posts"
+url = "/posts/"
+weight = 2
+
+[[menus.main]]
+name = "Tags"
+url = "/tags/"
+weight = 3
+
+[[menus.main]]
+name = "About"
+url = "/about/"
+weight = 4
+
+[[menus.footer]]
+name = "Privacy"
+url = "/privacy/"
+weight = 1
+
+[[menus.footer]]
+name = "Terms"
+url = "/terms/"
+weight = 2
+
+[taxonomies]
+archive = "archives"
+category = "categories"
+tag = "tags"
+
+[markup]
+[markup.highlight]
+anchorLineNos = false
+codeFences = true
+guessSyntax = true
+hl_Lines = ""
+hl_inline = false
+lineAnchors = ""
+lineNoStart = 1
+lineNos = false
+lineNumbersInTable = true
+noClasses = false
+noHl = false
+style = "github"
+tabWidth = 4
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+
+[outputs]
+home = ["HTML", "RSS", "LLMS"]
+page = ["HTML", "Markdown"]
+section = ["HTML", "RSS"]
+taxonomy = ["HTML"]
+term = ["HTML", "RSS"]
+
+[sitemap]
+changefreq = "weekly"
+filename = "sitemap.xml"
+priority = 0.5
+
+[frontmatter]
+date = ["date", "publishDate", "lastmod"]
+lastmod = ["lastmod", ":git", "date", "publishDate"]
+
+[pagination]
+pagerSize = 10

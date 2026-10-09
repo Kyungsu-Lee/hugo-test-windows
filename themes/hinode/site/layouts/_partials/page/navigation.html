@@ -1,0 +1,52 @@
+{{/* Render previous / next navigation */}}
+{{- $pageNavPrev := partial "utilities/GetThemeIcon.html" (dict "id" "pageNavPrev" "default" "fas arrow-left") -}}
+{{- $pageNavNext := partial "utilities/GetThemeIcon.html" (dict "id" "pageNavNext" "default" "fas arrow-right") -}}
+
+{{/* Read the section's configuration to get the reverse setting */}}
+{{- $sectionPage := .CurrentSection -}}
+{{- $reverseParam := false -}}
+{{- with $sectionPage -}}
+    {{- range .Params.content_blocks -}}
+        {{- if eq ._bookshop_name "articles" -}}
+            {{- with .input.reverse -}}
+                {{- $reverseParam = . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $result := partial "assets/live-pages.html" (dict "section" .CurrentSection.Section "sort" "title" "reverse" $reverseParam) -}}
+{{- $pages := $result.pages -}}
+
+{{/* Hugo's .Prev/.Next have inverted semantics - they always need to be swapped */}}
+{{/* Regardless of sort direction, .Next goes to earlier page, .Prev goes to later page */}}
+{{- $prevPage := "" -}}
+{{- $nextPage := "" -}}
+{{ if eq (printf "%T" $pages) "page.Pages" }}
+    {{- $prevPage = $pages.Next . -}}
+    {{- $nextPage = $pages.Prev . -}}
+{{ end }}
+
+{{/* The trailing &nbsp; in each visually hidden prefix separates it from the link title in the accessible name */}}
+<div class="row row-cols-2 mt-5 mb-3">
+    <div class="col">
+        {{- with $prevPage -}}
+            {{- if .OutputFormats.Get "html" -}}
+                <a class="page-nav-prev" href="{{ .RelPermalink }}">
+                    <span class="visually-hidden">{{ T "paginationPrevious" }}:&nbsp;</span>
+                    {{- partial "assets/icon.html" (dict "page" $ "icon" $pageNavPrev "spacing" false) }}&nbsp;{{ .LinkTitle }}
+                </a>
+            {{- end -}}
+        {{- end -}}
+    </div>
+    <div class="col text-end">
+        {{- with $nextPage -}}
+            {{- if .OutputFormats.Get "html" -}}
+                <a class="page-nav-next" href="{{ .RelPermalink }}">
+                    <span class="visually-hidden">{{ T "paginationNext" }}:&nbsp;</span>
+                    {{- .LinkTitle }}&nbsp;{{- partial "assets/icon.html" (dict "page" $ "icon" $pageNavNext "spacing" false) }}
+                </a>
+            {{- end -}}
+        {{- end -}}
+    </div>
+</div>

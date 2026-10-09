@@ -1,0 +1,6 @@
+{{- $resource := $.Page.Resources.GetMatch (.Get 0) -}}
+{{- $context := printf " in img shortcode on %q" $.Page.File.Path -}}
+{{- $resource = partial "_funcs/process-image.html" (dict "resource" $resource "method" "Fit" "spec" "1920x1080" "context" $context) -}}
+{{- if $resource -}}
+<img src="{{- $resource.Permalink | relURL }}" title="{{- (.Get 1) -}}" alt="{{- (.Get 1) -}}" class="zoomable">
+{{- end -}}

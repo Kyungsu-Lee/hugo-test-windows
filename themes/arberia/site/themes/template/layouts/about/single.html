@@ -1,0 +1,67 @@
+{{ define "main" }}
+
+<div class="container main-content">
+  <div class="row justify-content-center">
+    <div class="col-md-11 col-lg-8 article ">
+      <div class="article-body page-body">
+        {{/*  Avatar  */}}
+        <div class="col-6 mx-auto">
+
+          {{ if  .Params.avatar }}
+          {{ $img := .Resources.GetMatch "me.webp" }}
+          {{ if $img }}
+            <div class="embed-responsive embed-responsive-1by1 mb-3">
+              {{ $small := $img.Resize "200x" }}
+              {{ $medium := $img.Resize "400x" }}
+              {{ $large := $img.Resize "800x" }}
+              <img 
+                src="{{ $large.RelPermalink }}"
+                srcset="{{ $small.RelPermalink }} 200w, {{ $medium.RelPermalink }} 400w, {{ $large.RelPermalink }} 800w"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                alt="{{ .Params.author | safeHTML }}"
+                class="rounded-circle img-fluid embed-responsive-item"
+                width="{{ $large.Width }}"
+                height="{{ $large.Height }}">
+            </div>
+          {{ end }}
+          {{end}}
+          
+
+        </div>
+
+        {{/*  Social Link  */}}
+        <div class="col text-center">
+          <h1>{{ i18n "about" }} {{ .Params.author  | markdownify }}</h1>
+          <ul class="list-inline small">
+
+            <li class="list-inline-item"><a href="{{ .Params.website }}" class=""><i
+              class="fa fa-user" style=""></i> Personal
+            Website</a></li> 
+
+            <li class="list-inline-item"><a href="{{ .Params.twitter }}" class=""><i
+              class="fa fa-twitter-square"></i>
+            Twitter</a></li>
+
+              <li class="list-inline-item"><a href="{{ .Params.instagram}}"
+                class=""><i class="fa fa-instagram"></i>
+                Instagram</a></li>               
+
+            <li class="list-inline-item"><a href="{{ .Params.github}}" class=""><i
+                  class="fa fa-github-square" style=""></i>
+                GitHub</a></li>
+
+            <li class="list-inline-item"><a href="{{ .Params.linkedin }}"
+                class=""><i class="fa fa-linkedin-square" style=""></i>
+                LinkedIn</a></li>
+          </ul>
+        </div>
+        {{ .Content }}
+      </div>
+      {{- partial "components/mailchimp.html" . -}}
+    </div>
+
+
+  </div>
+</div>
+
+{{ end }}

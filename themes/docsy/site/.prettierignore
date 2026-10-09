@@ -1,0 +1,6 @@
+/content/en/docs/update/convert-site-to-module.md
+/content/en/tests/alerts.md
+
+/layouts
+/lychee.toml
+/tests/md-output/goldens/**/*.*

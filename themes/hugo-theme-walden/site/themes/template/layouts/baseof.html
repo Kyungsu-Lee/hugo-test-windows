@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.LanguageCode }}" data-theme="{{.Site.Params.themestyle}}">
+    <head>
+        {{ partial "baseof/head.html" . }}
+    </head>
+    <body>
+        <header id="header">
+            {{ partial "baseof/header.html" . }}
+        </header>
+        <div id="stager">
+            <aside class="stage-sider-left">
+                {{ block "stage-sider-left" . }}{{ end }}
+            </aside>
+            <main class="stage-main">
+                {{ block "stager-main" . }}{{ end }}
+            </main>
+            <aside class="stage-sider-right">
+                {{ block "stage-sider-right" . }}{{ end }}
+            </aside>
+        </div>
+        <footer id="footer">
+            {{ partial "baseof/footer.html" . }}
+        </footer>
+        {{ partial "baseof/foot.html" . }}
+    </body>
+</html>

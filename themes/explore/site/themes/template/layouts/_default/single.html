@@ -1,0 +1,103 @@
+{{ define "main" }}
+{{ $cfg := partial "func/defaults" . }}
+<div id="reading-progress" class="reading-progress" aria-hidden="true"></div>
+{{/* Determine sidebar position from front matter, then site config */}}
+{{ $widgetSidebarPosition := .Params.sidebar.position | default $cfg.sidebar.globalPosition }}
+
+{{/* Determine ToC settings */}}
+{{ $siteTocConfig := $cfg.single.toc }}
+{{ $pageTocConfig := .Params.toc }}
+
+{{/* Start with site-wide defaults */}}
+{{ $tocEnabled := $siteTocConfig.enable }}
+{{ $tocPosition := $siteTocConfig.position }}
+
+{{/* Handle page-level overrides from front matter */}}
+{{ if isset .Params "toc" }}
+  {{ if reflect.IsMap $pageTocConfig }}
+    {{/* If toc is a map, check for 'enable' and 'position' keys */}}
+    {{ with $pageTocConfig.enable }}{{ $tocEnabled = . }}{{ end }}
+    {{ with $pageTocConfig.position }}{{ $tocPosition = . }}{{ end }}
+  {{ else }}
+    {{/* Otherwise, assume it's a boolean to just enable/disable */}}
+    {{ $tocEnabled = $pageTocConfig }}
+  {{ end }}
+{{ end }}
+
+{{ $showToc := and $tocEnabled (ne .TableOfContents "") (ne $tocPosition "off") }}
+
+{{/* Determine final layout based on ToC and widget sidebars */}}
+{{ $layoutPosition := "none" }}
+{{ if and $showToc (or (eq $tocPosition "left") (eq $tocPosition "right")) }}
+  {{ $layoutPosition = $tocPosition }}
+{{ else if or (eq $widgetSidebarPosition "left") (eq $widgetSidebarPosition "right") }}
+  {{ $layoutPosition = $widgetSidebarPosition }}
+{{ end }}
+
+<div class="container">
+  <div class="layout-grid {{ if ne $layoutPosition "none" }}layout-grid--sidebar-{{ $layoutPosition }}{{ end }}">
+    <article class="post-single main-content {{ if eq $layoutPosition "left" }}main-content--sidebar-left{{ end }}">
+      <header class="post-header">
+        {{ partial "breadcrumbs.html" . }}
+        <h1 class="post-title">{{ .Title }}</h1>
+        <div class="post-meta">
+          {{ with .Date }}
+            <span>
+              {{ partial "icons/calendar.html" }}
+              <time datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ .Format $cfg.dateFormat }}</time>
+            </span>
+          {{ end }}
+
+          {{ with .Params.categories }}
+            <span class="post-categories">
+              {{ partial "icons/folder.html" }}
+              {{ range $i, $cat := . }}
+                {{ if gt $i 0 }}, {{ end }}
+                <a href="{{ "categories/" | relLangURL }}{{ . | urlize }}/">{{ . }}</a>
+              {{ end }}
+            </span>
+          {{ end }}
+
+          {{ with .Params.author | default $.Site.Params.author }}
+            <span>
+              {{ partial "icons/user.html" }}
+              {{ . }}
+            </span>
+          {{ end }}
+        </div>
+      </header>
+
+      {{ if and $showToc (eq $tocPosition "inline") }}
+        {{ partial "toc.html" . }}
+      {{ end }}
+
+      <div class="post-content">
+        {{ .Content }}
+      </div>
+
+      <footer>
+        {{ with .Params.tags }}
+        <div class="post-tags">
+          {{ range . }}
+            <a href="{{ "tags/" | relLangURL }}{{ . | urlize }}/" class="tag-link">{{ . }}</a>
+          {{ end }}
+        </div>
+        {{ end }}
+      </footer>
+    </article>
+
+    {{/* Render sidebar if position is left or right */}}
+    {{ if ne $layoutPosition "none" }}
+      {{ partial "sidebar.html" (dict "context" . "showToc" $showToc "tocPosition" $tocPosition "widgetSidebarPosition" $widgetSidebarPosition) }}
+    {{ end }}
+  </div>
+
+  {{ if $cfg.single.showPrevNext }}
+    {{ partial "post/prevnext.html" . }}
+  {{ end }}
+
+  {{ if $cfg.single.showRelated }}
+    {{ partial "post/related.html" . }}
+  {{ end }}
+</div>
+{{ end }}

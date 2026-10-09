@@ -1,0 +1,140 @@
+{{ define "main" }}
+<main class="main-content">
+  <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ $breadcrumbs }}</h1>
+        {{/* The breadcrumbs partial now acts as the main title area */}}
+    </div>
+
+  {{/* Find the specific release data from data/discography.json by its ID. */}}
+  {{ $release := index (where hugo.Data.discography "id" .Params.mbid) 0 }}
+
+  {{ if $release }}
+    {{/* --- TOP SECTION: Cover Art & Main Info --- */}}
+    <div class="discography-detail-container">
+      <div class="discography-section-page-container">
+        <div class="discography-detail-grid">
+          <div id="detail-cover-art" class="detail-cover-art-wrapper">
+            {{/* Render cover art directly. absURL handles both external and local placeholder paths. */}}
+            <img src="{{ $release.cover_art | absURL }}" alt="Cover art for {{ .Title }}" loading="lazy">
+          </div>
+
+          <div class="detail-info-wrapper">
+            <h1 id="detail-title">{{ .Title }}</h1>
+
+            {{/* Date formatting logic using Hugo's built-in functions. */}}
+            {{ $dateStr := $release.release_date }}
+            {{ $formattedDate := $dateStr }} {{/* Default to the raw string, e.g., "2015" */}}
+            {{ if findRE `^\d{4}-\d{2}-\d{2}$` $dateStr }}
+                {{/* YYYY-MM-DD format */}}
+                {{ $dateObject := time.AsTime $dateStr }}
+                {{ $formattedDate = $dateObject.Format "2 of January 2006" }}
+            {{ else if findRE `^\d{4}-\d{2}$` $dateStr }}
+                {{/* YYYY-MM format */}}
+                {{ $dateObject := time.AsTime (printf "%s-01" $dateStr) }}
+                {{ $formattedDate = $dateObject.Format "January 2006" }}
+            {{ end }}
+
+            <p id="detail-info-line" class="detail-info-line">{{ $formattedDate }} • {{ $release.category }}</p>
+
+            <div id="detail-links" class="detail-links-container">
+              {{/* Render links directly. */}}
+              {{ if and (isset $release "links") (gt (len $release.links) 0) }}
+                {{ range $release.links }}
+                  <a href="{{ .url }}" class="action-button detail-link-button" target="_blank" rel="noopener noreferrer">
+                    {{ .platform }}
+                  </a>
+                {{ end }}
+              {{ else }}
+                <p>No streaming or purchase links available for this release.</p>
+              {{ end }}
+            </div>
+            {{ if .Params.related_link }}
+              <div style="margin-top: 1.5em;">
+                  <a href="{{ .Params.related_link }}" class="read-more-btn">Read More</a>
+              </div>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{/* --- BOTTOM SECTION: Annotation and Tracklist --- */}}
+    <div class="discography-extended-container">
+      <div class="discography-extended-info">
+          {{ if $release.annotation }}
+          <div class="release-annotation">
+              <h3>About this Release</h3>
+              <p>{{ $release.annotation | markdownify }}</p>
+          </div>
+          {{ end }}
+
+          {{ if $release.tracklist }}
+          <div class="release-tracklist">
+              <h3>Tracklist</h3>
+              {{ range $index, $element := $release.tracklist }}
+                  <details open>
+                      <summary class="tracklist-summary">
+                          <span class="medium-number">{{ add $index 1 }}</span>
+                          <span class="summary-arrow"></span>
+                          <span class="medium-format">{{ $element.formats }}</span>
+                      </summary>
+                      <div class="tracklist-content">
+                          {{ with index $element.media 0 }}
+                              <table class="tracklist-table">
+                                  <thead>
+                                      <tr>
+                                          <th class="track-pos-header">#</th>
+                                          <th class="track-title-header">Title</th>
+                                          <th class="track-artist-header">Artist</th>
+                                          <th class="track-length-header">Length</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                              {{ range .tracks }}
+                                  <tr>
+                                      <td class="track-pos">{{ .position }}</td>
+                                      <td class="track-title">
+                                          {{ .title }}
+                                          {{ if .credits }}<div class="track-credits">{{ .credits | safeHTML }}</div>{{ end }}
+                                      </td>
+                                      <td class="track-artist">{{ .artist }}</td>
+                                      <td class="track-length">{{ .length }}</td>
+                                  </tr>
+                              {{ end }}
+                                  </tbody>
+                              </table>
+                          {{ end }}
+                      </div>
+                  </details>
+              {{ end }}
+          </div>
+          {{ end }}
+      </div>
+    </div>
+  {{ else }}
+    {{/* Fallback if the release is not found in the data file */}}
+    <div class="discography-detail-container">
+      <div class="discography-section-page-container">
+        <h1>Release Not Found</h1>
+        <p>Could not find details for a release with ID: {{ .Params.mbid }}. Please try running the fetch script again.</p>
+      </div>
+    </div>
+  {{ end }}
+
+  {{ if site.Params.addToAny.enabled }}
+    <div class="add-to-any-container">
+      {{ $addToAnyConfig := readFile "add-to-any.config.json" | unmarshal }}
+      <!-- AddToAny BEGIN -->
+      <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+      <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+      {{ range $addToAnyConfig.buttons }}
+        <a class="a2a_button_{{ . }}"></a>
+      {{ end }}
+      </div>
+      <script async src="https://static.addtoany.com/menu/page.js"></script>
+      <!-- AddToAny END -->
+    </div>
+  {{ end }}
+</main>
+{{ end }}

@@ -1,0 +1,36 @@
+# Merge the menu configuration from the docs module
+# See https://gohugo.io/configuration/introduction/#merge-configuration-settings
+_merge = "deep"
+
+[[main]]
+  name = "Blog"
+  pageRef = "/blog/"
+  weight = 10
+
+[[main]]
+  name = "Docs"
+  pageRef = "/docs/"
+  weight = 20
+
+[[main]]
+  name = "Tags"
+  pageRef = "/tags/"
+  weight = 30
+
+[[social]]
+  name = "LinkedIn"
+  pre = "fab linkedin"
+  url = "https://linkedin.com/"
+  weight = 10
+
+[[social]]
+  name = "GitHub"
+  pre = "fab fa-github"
+  url = "https://github.com/"
+  weight = 20
+
+[[social]]
+  name = "Medium"
+  pre = "fab medium"
+  url = "https://medium.com/"
+  weight = 30

@@ -1,0 +1,108 @@
+// Reusable lightbox dialog (opened by the `lightbox` JS module).
+dialog.lightbox {
+  width: 95vw;
+  height: 95vh;
+  max-width: 95vw;
+  max-height: 95vh;
+  padding: 0;
+  border: 0;
+  border-radius: #{$theme-border-radius};
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  overflow: hidden;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .lightbox-content {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  // A mermaid diagram cloned in should fill the available space.
+  .diagram-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Keep a cloned diagram's own top-right controls clear of the close button,
+  // and vertically aligned with it.
+  .diagram-controls {
+    top: 0.5rem;
+    right: 3.25rem;
+  }
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  color: var(--bs-body-color);
+
+  // Frosted background matching the mermaid diagram controls, so the close
+  // button stays legible when it overlays diagram or image content.
+  background-color: rgba(var(--bs-body-bg-rgb), 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 0;
+  border-radius: #{$theme-border-radius};
+  cursor: pointer;
+  opacity: 0.7;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  // Fade + subtle scale on both open and close. `@starting-style` supplies the
+  // pre-open value so the entry transition runs, and `allow-discrete` on
+  // `display`/`overlay` keeps the dialog in the top layer long enough to animate
+  // out before it is hidden. Browsers without these features simply skip the
+  // animation (the dialog appears/disappears instantly) — no worse than a cut.
+  dialog.lightbox {
+    opacity: 0;
+    transform: scale(0.98);
+    transition:
+      opacity 0.2s ease-out,
+      transform 0.2s ease-out,
+      overlay 0.2s ease-out allow-discrete,
+      display 0.2s ease-out allow-discrete;
+  }
+
+  dialog.lightbox[open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @starting-style {
+    dialog.lightbox[open] {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+  }
+
+  dialog.lightbox::backdrop {
+    opacity: 0;
+    transition:
+      opacity 0.2s ease-out,
+      overlay 0.2s ease-out allow-discrete,
+      display 0.2s ease-out allow-discrete;
+  }
+
+  dialog.lightbox[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    dialog.lightbox[open]::backdrop {
+      opacity: 0;
+    }
+  }
+}

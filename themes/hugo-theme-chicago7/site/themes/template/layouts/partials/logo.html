@@ -1,0 +1,6 @@
+{{ if .Site.Params.Logo }}
+    <a href="{{ $.Site.BaseURL }}" class="logo">
+        <img src="{{ .Site.Params.Logo | relURL }}" alt="{{ .Site.Title }}" width="55">
+    </a>
+{{ end }}
+

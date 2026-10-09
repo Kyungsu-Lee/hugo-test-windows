@@ -1,0 +1,60 @@
+{{- $name := .Get 0 -}}
+{{- $path := printf "%s%s" "embedded-gallery/" $name -}}
+{{- $contentPath := printf "%s%s" "content/" $path -}}
+{{- $allowedExtentions := ".jpg .jpeg .gif .tiff .webp .svg .eps .ai .xcf .png" -}}
+{{- $imgCount := 0 -}}
+
+{{- if os.FileExists $contentPath -}}
+    {{- range os.ReadDir $contentPath -}}
+        {{- $filePath := printf "%s/%s" $contentPath .Name -}}
+        {{- if not .IsDir -}}
+            {{- $ext := path.Ext $filePath -}}
+            {{- $isImage := in $allowedExtentions (lower $ext) -}}
+            {{- if $isImage -}}
+                {{- $imgCount = add $imgCount 1 -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if eq $imgCount 0 -}}
+        **Error rendering embedded gallery. Directory "{{- $contentPath -}}" doesn't contain files of types {{ $allowedExtentions }}.**
+    {{- else -}}
+        {{- $gallery := .Site.GetPage $path -}}
+        {{- $lines := split $gallery.RawContent "\n" -}}
+        {{- $map := dict -}}
+        {{- range $lines -}}
+            {{- $descr := split . ";" -}}
+            {{- $map = merge $map (dict (index $descr 0) (index $descr 1)) -}}
+        {{- end -}}
+<div class="post_internal_gallery swiper">
+    <div class="swiper-wrapper title-gallery" style="text-align: center">
+        {{- range $gallery.Resources.ByType "image" -}}
+            {{- $originalImage := . -}}
+            {{- $title := index $map $originalImage.Name -}}
+            {{- $context := printf " in embedded-gallery shortcode %q" $path -}}
+            {{- $image := partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90" "context" $context) -}}
+            {{- $orientation := partial "_funcs/get-image-orientation.html" $originalImage -}}
+            {{- if eq 6 $orientation -}}
+                {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r270" "context" $context) -}}
+            {{- else if eq 8 $orientation -}}
+                {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r90" "context" $context) -}}
+            {{- else if eq 3 $orientation -}}
+                {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r180" "context" $context) -}}
+            {{- end -}}
+            {{- if $image -}}
+            {{- $preview := partial "_funcs/process-image.html" (dict "resource" $image "method" "Fit" "spec" "970x728 q100" "context" $context) -}}
+            {{- $thumb := partial "_funcs/process-image.html" (dict "resource" $image "method" "Fit" "spec" "96x76 q100" "context" $context) -}}
+            {{- if and $preview $thumb -}}
+
+        <figure data-src="{{ $image.RelPermalink | relURL }}" data-thumb="{{ $thumb.RelPermalink | relURL }}" class="swiper-slide">
+            <img src="{{ $preview.RelPermalink | relURL }}" alt="{{ $title }}">
+        </figure>
+            {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    </div>
+    <div class="swiper-pagination"></div>
+</div>
+    {{- end -}}
+{{- else -}}
+    **Error rendering embedded gallery. Path "{{- $contentPath -}}" is not exists.**
+{{- end -}}

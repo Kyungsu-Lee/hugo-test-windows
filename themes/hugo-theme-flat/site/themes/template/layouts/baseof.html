@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html class="theme-{{ .Site.Params.themeMode | default "auto" }}">
+    <head>
+        {{ partial "head.html" . }}
+    </head>
+
+    <body>
+        {{ partial "header.html" . }}
+        <main class="main-wrapper">
+            <div class="main">
+                {{ block "main" . }}{{ end }}
+            </div>
+            <div class="side">
+                {{ range .Site.Sections }}
+                    {{ partial "side-recent.html" . }}
+                {{ end }}
+                {{ if .Site.Taxonomies.categories }}
+                    {{ partial "side-categories.html" . }}
+                {{ end }}
+                {{ if .Site.Taxonomies.tags }}
+                    {{ partial "side-tags.html" . }}
+                {{ end }}
+            </div>
+        </main>
+        {{ partial "footer.html" . }}
+    </body>
+</html>

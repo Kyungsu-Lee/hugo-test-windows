@@ -1,0 +1,28 @@
+{{ define "main" }}
+{{ .Scratch.Set "figure_count" 1 }}
+<article>
+
+  <h1 class="my-4">{{- .Title -}}</h1>
+  <div class="metadata-panel p-2 mb-3 rounded border">
+    {{ partial "metadata/metadata-author" . }}
+    {{ partial "metadata/metadata-date" . }}    
+    {{ partial "metadata/metadata-readingtime" . }}
+    {{ if ne $.Kind "section" }}
+    {{ partial "metadata/metadata-section" . }}
+    {{ end }}
+    {{ partial "metadata/metadata-taxonomy" . }}
+    {{ partial "metadata/metadata-description" . }}
+  </div>
+  
+  
+
+  {{ $toc := .TableOfContents }}
+  {{ $items := findRE `</li>` $toc }}
+  {{ $numItems := len $items }}
+  {{ if gt $numItems 1 }}
+  <div class="TableOfContents border rounded p-2 ms-2 mb-2">{{ $toc }}</div>
+  {{ end }}
+  {{ .Content }}
+</article>
+
+{{ end }}

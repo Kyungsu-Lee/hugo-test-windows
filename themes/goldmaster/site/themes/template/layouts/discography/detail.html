@@ -1,0 +1,27 @@
+{{ define "main" }}
+<div class="discography-detail-container">
+  <div id="detail-breadcrumbs" class="breadcrumbs">
+    <!-- Breadcrumbs will be inserted here by JavaScript -->
+  </div>
+  <!-- This is the main grid for the two-column layout -->
+  <div class="discography-detail-grid">
+    
+    <!-- Column 1: Cover Art -->
+    <div id="detail-cover-art" class="detail-cover-art-wrapper">
+      <!-- Cover art image will be inserted here by JavaScript -->
+      <div class="placeholder-image">Loading...</div>
+    </div>
+
+    <!-- Column 2: Title, Info, and Links -->
+    <div class="detail-info-wrapper">
+      <h1 id="detail-title">Loading...</h1>
+      <p id="detail-info-line" class="detail-info-line">&nbsp;</p>
+      <div id="detail-links" class="detail-links-container">
+        <!-- Links will be inserted here by JavaScript -->
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="/js/discography-detail.js"></script>
+{{ end }}

@@ -1,0 +1,37 @@
+{{ define "main" }}
+<article class="project-detail">
+    <header class="project-header">
+        <div class="page-header">
+            {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+            <h1>{{ if ne (strings.TrimSpace $breadcrumbs) "" }}{{ $breadcrumbs | safeHTML }}{{ else }}{{ .Title }}{{ end }}</h1>
+        </div>
+        <p class="project-summary">{{ .Params.summary }}</p>
+        <div class="project-meta">
+            <span>Published: {{ .Date.Format "January 2, 2006" }}</span>
+            {{ with .Params.tags }}
+            <div class="project-tags">
+                Tags:
+                {{ range . }}
+                    <span class="tag">{{ . }}</span>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </header>
+
+    {{ with .Resources.GetMatch .Params.cover_image }}
+        <div class="project-cover-image">
+            <img src="{{ .RelPermalink }}" alt="Cover image for {{ $.Title }}">
+        </div>
+    {{ end }}
+
+    <div class="project-links">
+        {{ with .Params.project_url }}<a href="{{ . }}" class="button" target="_blank" rel="noopener noreferrer">View Project</a>{{ end }}
+        {{ with .Params.source_url }}<a href="{{ . }}" class="button" target="_blank" rel="noopener noreferrer">View Source</a>{{ end }}
+    </div>
+
+    <div class="project-content">
+        {{ .Content }}
+    </div>
+</article>
+{{ end }}

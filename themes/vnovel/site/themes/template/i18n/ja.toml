@@ -1,0 +1,71 @@
+[words]
+other = "文字"
+
+[minutes]
+other = "分"
+
+[posts]
+other = "小説一覧"
+
+[others]
+other = "他の小説"
+
+[theme]
+other = "背景色"
+
+[font]
+other = "書体"
+
+[link_copy]
+other = "リンクをコピーしました"
+
+[search]
+other = "タグを検索..."
+
+[sort_name]
+other = "名前順"
+
+[sort_count]
+other = "件数順"
+
+[no_results]
+other = "タグが見つかりませんでした"
+
+[toggle_theme]
+other = "テーマを切り替え"
+
+[serif]
+other = "明朝"
+
+[sans_serif]
+other = "ゴシック"
+
+[size]
+other = "サイズ"
+
+[small]
+other = "小"
+
+[medium]
+other = "中"
+
+[large]
+other = "大"
+
+[comments]
+other = "コメント"
+
+[share]
+other = "共有"
+
+[previous_next]
+other = "前後の作品"
+
+[see_all]
+other = "作品一覧"
+
+[next_page]
+other = "次へ"
+
+[prev_page]
+other = "前へ"

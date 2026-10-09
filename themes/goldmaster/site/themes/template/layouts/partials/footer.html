@@ -1,0 +1,43 @@
+<footer class="site-footer">
+    <div class="footer-columns">
+        <div class="footer-col">
+            <h3>Music</h3>
+            <ul>
+                {{- range .Site.Menus.footer_music.ByWeight }}
+                <li>
+                    <a href="{{ .URL }}" target="_blank" rel="{{ .Params.rel | default "noopener" }}">
+                        {{- if .Params.icon }}
+                        <img src="{{ .Params.icon | relURL }}" class="footer-icon" alt="{{ .Name }} icon">
+                        {{- end }}
+                        {{ .Name }}
+                    </a>
+                </li>
+                {{- end }}
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Socials</h3>
+            <ul>
+                {{- range .Site.Menus.footer_socials.ByWeight }}
+                <li>
+                    <a href="{{ .URL }}" target="_blank" rel="{{ .Params.rel | default "noopener" }}">
+                        {{- if .Params.icon }}
+                        <img src="{{ .Params.icon | relURL }}" class="footer-icon" alt="{{ .Name }} icon">
+                        {{- end }}
+                        {{ .Name }}
+                    </a>
+                </li>
+                {{- end }}
+            </ul>
+        </div>
+    </div>
+    <div class="footer-backtotop">
+        <a href="#">Back to top</a>
+    </div>
+    <div class="footer-meta">
+        <p>Website running <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> using <a href="https://gitlab.com/goldmaster/goldmaster" target="_blank" rel="noopener">Goldmaster theme</a></p>
+        {{ with .Site.GetPage "/terms" }}
+        <p><a href="{{ .RelPermalink }}">Terms</a></p>
+        {{ end }}
+    </div>
+</footer>

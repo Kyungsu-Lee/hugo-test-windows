@@ -1,0 +1,18 @@
+{{ define "main" }}
+<div class="news-section-page-container">
+    <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ $breadcrumbs }}</h1>
+    </div>
+<div class="news-timeline">
+  {{ range .Pages.ByDate.Reverse }}
+    <article class="news-item">
+      <div class="news-date">{{ .Date.Format "2006-01-02" }}</div>
+      <div class="news-content">
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        <p>{{ .Params.summary }}</p>
+      </div>
+    </article>
+  {{ end }}
+</div>
+{{ end }}

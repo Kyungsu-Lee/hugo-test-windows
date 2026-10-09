@@ -1,0 +1,9 @@
+{{- $orientation := 1 -}}
+{{- if reflect.IsImageResourceWithMeta . -}}
+    {{- with .Meta -}}
+        {{- with .Orientation -}}
+            {{- $orientation = . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- return $orientation -}}

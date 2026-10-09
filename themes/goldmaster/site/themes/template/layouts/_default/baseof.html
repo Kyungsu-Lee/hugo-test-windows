@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Locale | default "en" }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ block "title" . }}{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}{{ end }}</title>
+
+    {{/* Stylesheets */}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hamburgers@1.2.1/dist/hamburgers.min.css">
+    <link rel="stylesheet" href="{{ "css/styles.css" | relURL }}">
+    <link rel="alternate" type="application/rss+xml" href="{{ "index.xml" | absURL }}" title="{{ .Site.Title }}">
+
+    {{/* GoatCounter Analytics - Standard Implementation */}}
+    {{ if and .Site.Params.goatcounter .Site.Params.goatcounter.code (ne .Site.Params.goatcounter.code "changeme") }}
+      <script data-goatcounter="https://{{ .Site.Params.goatcounter.code }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    {{ end }}
+
+    {{/* Bridgy Fed Webmention Discovery */}}
+    <link rel="webmention" href="https://fed.brid.gy/webmention">
+    
+    {{/* Fediverse Creator Tag */}}
+    {{ range .Site.Menus.footer_socials }}
+        {{ $fediverse_platforms := slice "mastodon" "pixelfed" "threads" "flipboard" "tumblr" "micro.blog" "lemmy" "kbin" "peertube" "bookwyrm" "friendica" "funkwhale" }}
+        {{ if in $fediverse_platforms (lower .Name) }}
+            {{ with .URL }}
+                {{ $url := urls.Parse . }}
+                {{ $username := path.Base $url.Path }}
+                {{ if not (strings.HasPrefix $username "@") }}
+                    {{ $username = printf "@%s" $username }}
+                {{ end }}
+                {{ $host := replaceRE "^www\\." "" $url.Host }}
+                <meta name="fediverse:creator" content="{{ $username }}@{{ $host }}">
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    
+    {{/* Bridgy Fed Profile Meta Tags */}}
+    {{ with .Site.Params.author }}
+    <meta name="author" content="{{ . }}">
+    {{ end }}
+    {{ with .Site.Params.description }}
+    <meta name="description" content="{{ . }}">
+    {{ end }}
+
+    {{/* Open Graph / Twitter Card Metadata */}}
+    <meta property="og:title" content="{{ .Title | default .Site.Title }}">
+    <meta property="og:description" content="{{ .Description | default (.Summary | plainify | htmlUnescape) | default .Site.Params.description }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:site_name" content="{{ .Site.Title }}">
+    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+
+    <meta name="twitter:title" content="{{ .Title | default .Site.Title }}">
+    <meta name="twitter:description" content="{{ .Description | default (.Summary | plainify | htmlUnescape) | default .Site.Params.description }}">
+
+    {{/* Open Graph / Twitter Card Image */}}
+    {{ $og_image := "/favicon.ico" | absURL }}
+    {{ $twitter_card := "summary" }}
+
+    {{/* 1. Check Page Resources (e.g. leaf bundles) */}}
+    {{ with .Resources.ByType "image" }}
+        {{ with index . 0 }}
+            {{ $og_image = .Permalink }}
+            {{ $twitter_card = "summary_large_image" }}
+        {{ end }}
+    {{ end }}
+
+    {{/* 2. Check content for the first image (nearest to top) - Overrides Resources */}}
+    {{ $img_matches := findRE "(?i)<img[^>]+src=\"([^\"]+)\"" .Content 1 }}
+    {{ range $img_matches }}
+        {{ $src := replaceRE "(?i)<img[^>]+src=\"([^\"]+)\".*" "$1" . }}
+        {{ $og_image = $src | absURL }}
+        {{ $twitter_card = "summary_large_image" }}
+    {{ end }}
+
+    {{/* 3. Check Discography Data (Music Releases) - Overrides Content */}}
+    {{ if .Params.mbid }}
+        {{ if hugo.Data.discography }}
+            {{ $release := where hugo.Data.discography "id" .Params.mbid }}
+            {{ with index $release 0 }}
+                {{ if .cover_art }}
+                    {{ $og_image = .cover_art }}
+                    {{ $twitter_card = "summary_large_image" }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+
+    {{/* 4. Check Frontmatter (Explicit Override) - Overrides everything */}}
+    {{ if .Params.images }}
+        {{ $og_image = index .Params.images 0 | absURL }}
+        {{ $twitter_card = "summary_large_image" }}
+    {{ end }}
+    <meta property="og:image" content="{{ $og_image }}">
+    <meta name="twitter:image" content="{{ $og_image }}">
+    <meta name="twitter:card" content="{{ $twitter_card }}">
+</head>
+<body>
+    {{ partial "header.html" . }}
+
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+
+    {{ partial "footer.html" . }}
+
+    <script src="{{ "js/scripts.js" | relURL }}"></script>
+</body>
+</html>

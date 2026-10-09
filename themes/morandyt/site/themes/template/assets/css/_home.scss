@@ -1,0 +1,63 @@
+/*-------------- for home.html and anything on homepage --------------*/
+.home-img-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	top: 100%;
+	width: 100%;
+	height: 500px;
+	margin-bottom: 30px;
+	background-size: cover; // Same proportion
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.home-img-title {
+	color: #000000;
+}
+.home-img-desc {
+	color: #000000;
+}
+.home-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 20px auto;
+	padding: 0 20px;
+	max-width: 1000px;
+}
+.home-content h1 {
+	text-align: center;
+}
+
+.home-feat {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 50px 0;
+}
+
+.home-cat {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 20px auto;
+	padding: 0 20px;
+	max-width: 1000px;
+}
+.home-cat-title {
+	margin: 0;
+}
+
+.home-post-title {
+	margin: 20px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	// margin: 20px auto;
+	padding: 0 20px;
+	max-width: 1000px;
+}

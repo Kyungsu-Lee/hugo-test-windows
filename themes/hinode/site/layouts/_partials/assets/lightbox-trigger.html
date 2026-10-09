@@ -1,0 +1,15 @@
+{{/*
+    Convenience: render a lightbox trigger button for arbitrary content. The
+    lightbox shell and JS are core theme furniture (always present), so no
+    module registration is needed. Call with:
+      {{ partial "assets/lightbox-trigger.html" (dict "page" . "source" "#my-figure") }}
+    `source` is a CSS selector for the node to clone into the lightbox.
+    Keep it unique: an id selector must not collide with a Hugo heading
+    anchor (heading/page slug), or querySelector may match the wrong element.
+*/}}
+{{- $source := .source -}}
+{{- $icon := partial "utilities/GetThemeIcon.html" (dict "id" "lightboxExpand" "default" "fas expand") -}}
+<button type="button" class="control-btn-lightbox" data-lightbox-trigger data-lightbox-source="{{ $source }}"
+        aria-label="{{ i18n "lightboxExpand" }}">
+    {{- partial "assets/icon.html" (dict "page" .page "icon" $icon "class" "fa-fw fa-xl" "spacing" false) -}}
+</button>

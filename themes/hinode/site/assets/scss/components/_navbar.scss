@@ -1,0 +1,612 @@
+// stylelint-disable annotation-no-unknown
+
+// Self-sufficient default — see common/_styles.scss for the rationale
+// (child themes shadowing common/_variables.scss).
+$theme-mode-transition: background-color .5s ease-in-out, color .5s ease-in-out, border-color .5s ease-in-out !default;
+
+// horizontal gap between navbar items; applies to the item's border box, so a
+// button-styled item is spaced from its border rather than from its label
+$navbar-item-margin-x: .15rem !default;
+
+// adapted from https://www.codeply.com/p/UsTEwDkzNp#
+.checkbox {
+	opacity: 0;
+	position: absolute;
+}
+
+.mode-switch {
+    --#{$prefix}mode-switch-width: 3em;
+}
+
+.mode-switch .label {
+	border-color: var(--#{$prefix}border-color);
+    border-style: solid;
+    border-width: 1px;
+	border-radius: var(--#{$prefix}mode-switch-width);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 5px;
+	position: relative;
+	height: calc(1px + var(--#{$prefix}mode-switch-width) / 2);
+	width: var(--#{$prefix}mode-switch-width);
+    transform: scale(0.9);
+}
+
+.notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+}
+
+.mode-switch .label .ball {
+    background-color: var(--#{$prefix}border-color);
+	border-radius: 50%;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	height: calc((var(--#{$prefix}mode-switch-width) / 2) - 5px);
+	width: calc((var(--#{$prefix}mode-switch-width) / 2) - 5px);
+	transition: transform 0.2s linear;
+}
+
+.mode-switch .checkbox:checked + .label .ball {
+	transform: translateX(calc((var(--#{$prefix}mode-switch-width) / 2) - 1px));
+}
+
+@if $enable-dark-mode {
+    [data-bs-theme="light"] .mode-switch .ball {
+        transform: translateX(calc((var(--#{$prefix}mode-switch-width) / 2) - 1px));
+    }
+}
+
+.mode-switch .fa-moon {
+	color: $yellow;
+    transform: scale(0.8);
+}
+
+.mode-switch .fa-sun {
+	color: var(--#{$prefix}bs-body-color);
+    transform: scale(0.8);
+}
+
+.mode-toggle > input {
+	z-index: 1;
+	cursor: pointer;
+    height: 25px;
+    width: 25px;
+}
+
+.mode-toggle > label {
+	z-index: 0;
+	cursor: pointer;
+}
+
+// Source: https://jsfiddle.net/njhgr40m/
+
+@if $enable-dark-mode {
+    [data-bs-theme-animate="true"] .navbar {
+        transition: $theme-mode-transition;
+    }
+}
+
+.navbar {
+    --bs-navbar-expanded-color: var(--bs-body-bg);
+    --bs-navbar-toggler-color: var(--bs-navbar-hover-color);
+
+    background-color: transparent;
+
+    @each $state, $val in $theme-colors {
+        --bs-navbar-color-#{$state}: #{$val};
+    }
+}
+
+.navbar[data-transparent="true"] {
+    backdrop-filter: none;
+
+    // this rule would otherwise shadow the color mode transition, as it shares its
+    // specificity but comes later; keep the blur on its own, faster curve
+    transition: $theme-mode-transition, backdrop-filter 0.3s ease;
+
+    &.navbar-scrolled {
+        backdrop-filter: blur(10px);
+    }
+}
+
+.nav-active, .navbar-expanded {
+    background-color: var(--bs-navbar-expanded-color);
+    border-bottom: 1px solid var(--bs-secondary-bg);
+}
+
+.nav-link {
+    margin: 0 $navbar-item-margin-x;
+    display: inline-flex;
+}
+
+// nav items rendered as buttons: their padding and border sit inside the visible
+// edge, so the margin must also absorb the nav-link padding for the button's
+// border — not its label — to keep pace with the other navbar items
+.navbar-nav .btn {
+    margin: 0 calc(var(--bs-navbar-nav-link-padding-x) + #{$navbar-item-margin-x});
+}
+
+.navbar-title, .navbar-title-center, .navbar-title-start {
+    display: inline-block;
+    white-space: normal;
+    vertical-align: middle;
+    padding: 0 $spacer;
+    width: 100% !important;
+}
+
+.navbar-title, .navbar-title-center {
+    text-align: center !important;
+}
+
+.navbar-contrast .nav-link.active, .navbar-contrast .nav-link.show, .navbar-contrast .nav-link:hover {
+    border-bottom: solid 1px var(--bs-navbar-hover-color);
+    margin-bottom: -1px;
+}
+
+.navbar-brand {
+    margin-right: 0;
+}
+
+.navbar-contrast {
+    --bs-navbar-color: white !important;
+    --bs-navbar-hover-color: white !important;
+    --bs-navbar-disabled-color: white !important;
+    --bs-navbar-active-color: white !important;
+    --bs-navbar-toggler-color: white;
+
+    .navbar-title, .navbar-brand, .mode-switch {
+        --#{$prefix}border-color: white;
+
+        color: white !important;
+    }
+
+    .mode-switch .fa-moon {
+        color: $white;
+    }
+}
+
+.navbar-expanded {
+    box-shadow: $box-shadow-sm;
+    min-height: 100vh;
+    align-items: start;
+}
+
+.navbar-expanded .navbar-collapse {
+    margin-top: 2rem;
+}
+
+@each $h, $size in $font-sizes {
+    .navbar-fs-#{$h} {
+        font-size: #{$size};
+    }
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $next: breakpoint-next($breakpoint, $grid-breakpoints);
+    $infix: breakpoint-infix($next, $grid-breakpoints);
+
+    @if $infix != '' {
+        @include media-breakpoint-up($next) {
+            .navbar#{$infix}-fs { 
+                font-size: inherit;
+            } 
+        }
+    }
+}
+
+.navbar-icon {
+    padding-right: var(--bs-navbar-nav-link-padding-x);
+    padding-left: var(--bs-navbar-nav-link-padding-x);
+}
+
+.nav-item .vr {
+    color: var(--bs-navbar-color);
+}
+
+.navbar .nav-item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.navbar-collapse:not(.show, .collapsing) .nav-item:first-of-type {
+    // double padding between brand logo / search bar and first nav item
+    // only apply when navbar is fully expanded (not toggled to show)
+    padding-left: var(--bs-navbar-nav-link-padding-x);
+}
+
+// Remove padding when navbar is toggled open on small devices
+.navbar-collapse.show .nav-item:first-of-type {
+    padding-left: 0;
+}
+
+.navbar-collapse .dropdown {
+    display: inline;
+    align-items: normal;
+}
+
+// Hide Bootstrap's caret when a custom dropdown icon is used
+.dropdown-toggle-icon::after {
+    display: none;
+}
+
+.navbar-expanded .btn {
+    font-size: 1em;
+}
+
+.navbar .btn {
+    border-radius: #{$theme-border-radius};    
+}
+
+.navbar-expanded .search-input {
+    margin-bottom: 1rem;
+}
+
+/* Remove border from toggler */
+.navbar-toggler {
+    border: 0 if($enable-important-utilities, !important, null);
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    outline: none if($enable-important-utilities, !important, null);
+    box-shadow: none if($enable-important-utilities, !important, null);
+    border: 0 if($enable-important-utilities, !important, null);
+}
+
+.fw-30 {
+    width: 30px !important;
+}
+
+/* Lines of the Toggler */
+.toggler-icon {
+    width: 30px;
+    height: 3px;
+    display: block;
+    transition: all 0.2s;
+}
+
+/* Adds Space between the lines */
+.middle-bar {
+    margin: 5px auto;
+}
+
+/* State when navbar is opened (START) */
+.navbar-toggler .top-bar {
+    transform: rotate(45deg);
+    transform-origin: 10% 10%;
+}
+
+.navbar-toggler .middle-bar {
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.navbar-toggler .bottom-bar {
+    transform: rotate(-45deg);
+    transform-origin: 10% 90%;
+}
+
+/* State when navbar is opened (END) */
+
+/* State when navbar is collapsed (START) */
+.navbar-toggler.collapsed .top-bar {
+    transform: rotate(0);
+}
+
+.navbar-toggler.collapsed .middle-bar {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.navbar-toggler.collapsed .bottom-bar {
+    transform: rotate(0);
+}
+
+/* State when navbar is collapsed (END) */
+
+/* Color of Toggler when collapsed */
+.navbar-toggler.collapsed .toggler-icon {
+    background-color: var(--bs-navbar-toggler-color);
+}
+
+.emphasis {
+    background-color: var(--bs-navbar-toggler-color);
+}
+
+@include color-mode(dark) {
+    .emphasis {
+        background-color: $white if($enable-important-utilities, !important, null);
+    }
+}
+
+// stylelint-enable annotation-no-unknown
+
+.navbar .dropdown-divider-bg {
+    color: var(--#{$prefix}navbar-color);
+}
+
+// Coerce a unitless zero (numeric `0` or the string `"0"`) into a typed
+// `0rem`. `$navbar-offset`/`$navbar-offset-xs` normally arrive as typed
+// lengths (e.g. `6rem`) from `navigation.offset`/`offsetXS` in the site
+// config, but a config that supplies a bare `0` would otherwise interpolate
+// as a bare zero below — invalid wherever the resulting custom property is
+// later substituted into a length calc() (see `.toc-sidebar`'s
+// `calc(var(--navbar-offset) + 1rem)` and the `.app-shell-active` override
+// further down this file).
+@function navbar-offset-typed($value) {
+    @if $value == 0 or $value == "0" {
+        // stylelint-disable-next-line length-zero-no-unit -- the unit is the
+        // point: this return value feeds a custom property substituted into
+        // length calc()s, where a bare zero is invalid at computed-value time.
+        @return 0rem;
+    }
+
+    @return $value;
+}
+
+:root {
+    --dropdown-horizontal-bg: var(--#{$prefix}light);
+    --navbar-offset: #{navbar-offset-typed($navbar-offset-xs)};
+}
+
+.navbar-container {
+    min-height: calc(2rem + 10px);
+    width: 100% !important;
+}
+
+@include media-breakpoint-up(#{$navbar-size}) {
+    :root {
+        --navbar-offset: #{navbar-offset-typed($navbar-offset)};
+    }
+
+    .navbar-container {
+        width: auto !important;
+    }
+
+    .navbar-title {
+        text-align: initial !important;
+        padding: 0;
+    }
+
+    .navbar-brand {
+        margin-right: var(--bs-navbar-brand-margin-end);
+    }
+}
+
+@if $enable-dark-mode {
+    @include color-mode(dark) {
+        --dropdown-horizontal-bg: var(--#{$prefix}tertiary-bg);
+    }
+}
+
+.dropdown-horizontal {
+    @each $breakpoint in map-keys($grid-breakpoints) {
+        $next: breakpoint-next($breakpoint, $grid-breakpoints);
+        $infix: breakpoint-infix($next, $grid-breakpoints);
+
+        @include media-breakpoint-up($next) {
+            &#{$infix} { 
+                position: static !important; 
+            } 
+    
+            &#{$infix} > .dropdown-menu {
+                opacity: 0;
+                display: block;
+                visibility: hidden;
+                background-color: var(--dropdown-horizontal-bg) if($enable-important-utilities, !important, null);
+                width: 100%;
+                height: auto;
+                text-align: center;
+                border-radius: 0;
+                border: 0;
+                margin-top: $dropdown-horizontal-margin-top;
+                padding-top: $dropdown-horizontal-padding-y;
+                padding-bottom: $dropdown-horizontal-padding-y;
+                box-shadow: 0.125rem 0.25rem rgba(0, 0, 0, .075);
+            
+                @include transition($dropdown-transition);
+            }
+    
+            &#{$infix} > .dropdown-menu.show {
+                visibility: visible;
+                opacity: 1;
+            }
+    
+            &#{$infix} > .dropdown-menu > li {
+                display: inline-block;
+                padding-left: $spacer;
+                padding-right: $spacer;
+            }
+    
+            &#{$infix} > .dropdown-menu > li > a {
+                padding-left: .25 * $spacer;
+                padding-right: .25 * $spacer;
+
+                &.active,
+                &:hover,
+                &:focus {
+                    color: var(--bs-body-color);
+                    border-bottom: solid 1px var(--bs-navbar-hover-color);
+                    margin-bottom: -1px;
+                    background-color: transparent;
+                }
+            }
+            
+            &#{$infix} > .nav-link.show {
+                background-color: var(--dropdown-horizontal-bg) if($enable-important-utilities, !important, null);
+            }            
+        }
+    }
+}
+
+.navbar-overlay {
+    position: absolute;
+    z-index: $zindex-fixed;
+}
+
+.form-control.is-search {
+    border: 1px solid var(--bs-border-color) !important;
+}
+
+.d-none-main-light, .d-none-inline-main-light {
+  display: none !important;
+}
+
+.d-none-main-dark {
+  display: block !important;
+}
+
+.d-none-inline-main-dark {
+  display: inline !important;
+}
+
+[data-bs-main-theme="dark"] .d-none-main-light {
+  display: block !important;
+}
+
+[data-bs-main-theme="dark"] .d-none-inline-main-light {
+  display: inline !important;
+}
+
+[data-bs-main-theme="dark"] .d-none-main-dark, [data-bs-main-theme="dark"] .d-none-inline-main-dark {
+  display: none !important;
+}
+
+.inline-menu li {
+  display: inline-block;
+  padding: 0.5rem;
+  color: var(--bs-nav-link-color);
+}
+
+.inline-menu li .active, .inline-menu li>a:hover {
+    box-shadow: inset 0 -1px 0 var(--bs-navbar-hover-color);
+}
+
+ul.inline-menu {
+  padding: 0;
+}
+
+body.navbar-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+// scss-docs-start app-shell
+// Full-height L1 sidebar + navbar-on-the-right composition. Activated by
+// rendering `assets/shell.html` from baseof when `navigation.shell` is true.
+// Below the navbar breakpoint, the shell collapses to a single column: the
+// sidebar is hidden inline and accessed through Hinode's offcanvas, the navbar
+// reverts to spanning the viewport width.
+.app-shell {
+    display: flex;
+    align-items: stretch;
+    min-height: 100dvh;
+}
+
+.app-shell-sidebar {
+    flex: 0 0 auto;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: none;
+
+    // No `scrollbar-gutter: stable` — in a narrow icon-only collapsed sidebar
+    // the reserved gutter eats a significant fraction of the width and shifts
+    // the icon column off-centre.
+}
+
+.app-shell-main {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    // No `overflow-x: hidden` — it would clip absolutely-positioned popups
+    // (dropdowns, tooltips, offcanvas) and the visible portion of any
+    // descendant scroll container (`.table-responsive`, code blocks) that
+    // extends past the column edge.
+}
+
+// Wide embeds shrink to fit the main column rather than triggering a
+// page-level horizontal scrollbar. Tables that need horizontal scroll opt in
+// via the `.table-responsive` wrapper (which has its own `overflow-x: auto`).
+.app-shell-content :where(svg, embed, iframe, video, canvas, picture > img, img) {
+    max-width: 100%;
+    height: auto;
+}
+
+
+.app-shell-content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+@include media-breakpoint-up(md) {
+    .app-shell-sidebar {
+        display: block;
+    }
+
+    // At md+ the sidebar is visible and the navbar is sticky inside its own
+    // column, so the body doesn't need the legacy `--navbar-offset` spacer.
+    // The zero must carry a unit: consumers substitute this custom property
+    // into length calc()s (e.g. `.toc-sidebar`'s `calc(var(--navbar-offset) + 1rem)`),
+    // and a bare `0` makes those declarations invalid at computed-value time.
+    .app-shell-active {
+        --navbar-offset: 0rem;
+    }
+
+    // Stick the navbar to the top of its column. The sticky positioning
+    // sits on the `.container-fluid` wrapper rather than the inner `.navbar`,
+    // because a sticky element can't slide past its containing block — and
+    // the inner `.navbar`'s natural containing block (`.container-fluid`) is
+    // only the navbar's own height, so sticking it there would let it scroll
+    // away after a single navbar height. The wrapper's containing block is
+    // the full-height `.app-shell-main` flex column, which is what we want.
+    .app-shell-main > .container-fluid {
+        position: sticky;
+        top: 0;
+        z-index: $zindex-sticky;
+    }
+}
+
+// Below the navbar breakpoint the sidebar is hidden and the navbar reverts
+// to `fixed-top` positioning so the expanded mobile collapse overlays content
+// rather than pushing it down — and `body.navbar-open` scroll-lock keeps
+// working. We override `--navbar-offset` to the mobile navbar's actual height
+// here because Hinode's stylesheet partial only computes a non-zero value
+// when `navigation.fixed = true` (which the shell intentionally avoids at
+// md+). The value drives both the body's `padding-top` and the
+// `.navbar-collapse.show { max-height: calc(100dvh - var(--navbar-offset)) }`
+// rule so the expanded mobile menu fits below the navbar header and scrolls
+// internally when content is tall.
+@include media-breakpoint-down(md) {
+    .app-shell-active {
+        --navbar-offset: 6rem;
+    }
+
+    .app-shell-main > .container-fluid > .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: $zindex-fixed;
+    }
+
+    .app-shell-content {
+        padding-top: var(--navbar-offset);
+    }
+}
+
+// scss-docs-end app-shell

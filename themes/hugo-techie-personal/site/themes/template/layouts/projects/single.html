@@ -1,0 +1,290 @@
+{{ partial "header.html" . }}
+
+{{ partial "breadcrumbs.html" . }}
+
+{{ if not .IsHome }}
+<h1 class="project-title">{{ .Title | markdownify }}</h1>
+{{ end }}
+
+{{ partial "work_in_progress.html" . }}
+
+{{/* Show project status if discontinued */}}
+{{ if eq .Params.status "discontinued" }}
+<hr />
+<div class="project-status-section">
+  <div class="project-status-discontinued">
+    <h2>⚠️ Project Status: Discontinued</h2>
+    <div class="status-content">
+      {{ if .Params.discontinue_date }}
+        <p><strong>📅 Discontinued:</strong> {{ dateFormat "January 2006" .Params.discontinue_date }}</p>
+      {{ end }}
+      <p><strong>ℹ️ Note:</strong> This project is no longer actively maintained or developed. The information below is kept for archival purposes and may not reflect current best practices or technologies.</p>
+    </div>
+  </div>
+</div>
+<hr />
+{{ end }}
+
+<div class="gadget_center">
+  {{ if .Params.featured_image }}
+    {{ $img := resources.Get .Params.featured_image }}
+    {{ if $img }}
+      {{ if eq $img.MediaType.SubType "svg" }}
+        <img src="{{ $img.RelPermalink }}" alt="Image for {{ .Title }}" class="project-image-svg" />
+      {{ else }}
+        <img src="{{ ($img.Resize "x400 q100").RelPermalink }}" alt="Image for {{ .Title }}" class="project-image-regular" />
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    {{ $img_loc := printf "%s.*" .Path | printf "%s%s" "/images" }}
+    {{ $img_found := resources.GetMatch $img_loc }}
+    {{ if $img_found }}
+      {{ if eq $img_found.MediaType.SubType "svg" }}
+        <img src='{{ $img_found.RelPermalink }}' class="project-image-svg" />
+      {{ else }}
+        <img src='{{ ($img_found.Resize "x400 q100").RelPermalink }}' class="project-image-regular" />
+      {{ end }}
+    {{ else }}
+      {{ $placeholder := resources.Get (site.Params.placeholders.project | default "images/project-placeholder.svg") }}
+      {{ if $placeholder }}
+        <img src="{{ $placeholder.RelPermalink }}" alt="Placeholder for {{ $.Title }}" class="project-image-svg" style="opacity: 0.7;" />
+      {{ end }}
+    {{ end }}
+  {{ end }}
+</div>
+
+{{/* Project Links - Prominently displayed below image */}}
+{{ if or .Params.website_url .Params.github_url }}
+<div class="project-links-hero">
+  {{ if .Params.website_url }}
+    <a href="{{ .Params.website_url }}" target="_blank" rel="noopener" title="Website" class="project-link-button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+      </svg>
+      <span>Website</span>
+    </a>
+  {{ end }}
+  {{ if .Params.github_url }}
+    <a href="{{ .Params.github_url }}" target="_blank" rel="noopener" title="GitHub" class="project-link-button">
+      {{ $githubIcon := resources.Get "images/github.svg" }}
+      {{ if $githubIcon }}
+        <img src="{{ $githubIcon.RelPermalink }}" alt="GitHub" style="width: 20px; height: 20px;" />
+      {{ end }}
+      <span>GitHub</span>
+    </a>
+  {{ end }}
+</div>
+{{ end }}
+
+{{/* Related Timeline Entries Section */}}
+{{ $currentProjectSlug := .File.TranslationBaseName }}
+{{ $relatedTimelineEntries := slice }}
+
+{{/* Find all timeline entries that reference this project */}}
+{{ range where .Site.Pages "Section" "timeline" }}
+  {{ if .Params.project_links }}
+    {{ if in .Params.project_links $currentProjectSlug }}
+      {{ $relatedTimelineEntries = $relatedTimelineEntries | append . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+
+{{/* Always show TL;DR section if parameters exist */}}
+{{ if or .Params.tldr_description .Params.tldr_best_for .Params.tldr_key_features }}
+<hr />
+<div class="project-tldr-section">
+  <h2>TL;DR</h2>
+  <div class="tldr-content">
+    {{ if .Params.tldr_description }}
+      <p><strong>🚀 What it does:</strong> {{ .Params.tldr_description }}</p>
+    {{ end }}
+    {{ if .Params.tldr_best_for }}
+      <p><strong>💡 Best for:</strong> {{ .Params.tldr_best_for }}</p>
+    {{ end }}
+    {{ if .Params.tldr_key_features }}
+      <p><strong>🔍 Key features:</strong> {{ .Params.tldr_key_features }}</p>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{/* Show content only if show_content parameter is true */}}
+{{ if .Params.show_content }}
+<hr />
+{{ .Content }}
+{{ end }}
+
+{{/* Show related timeline entries if they exist */}}
+{{ if $relatedTimelineEntries }}
+<hr />
+<div class="related-timeline-entries">
+  <h3>📅 Related Timeline Entries ({{ len $relatedTimelineEntries }})</h3>
+  
+  {{/* Group entries by activity type */}}
+  {{ $talks := slice }}
+  {{ $tools := slice }}
+  {{ $trainings := slice }}
+  {{ $others := slice }}
+  
+  {{ range $relatedTimelineEntries }}
+    {{ $activity := .Params.activity }}
+    {{ if reflect.IsSlice $activity }}
+      {{ $activity = index $activity 0 }}
+    {{ end }}
+    {{ $activity = $activity | lower }}
+    {{ if eq $activity "talk" }}
+      {{ $talks = $talks | append . }}
+    {{ else if eq $activity "tool" }}
+      {{ $tools = $tools | append . }}
+    {{ else if eq $activity "training" }}
+      {{ $trainings = $trainings | append . }}
+    {{ else }}
+      {{ $others = $others | append . }}
+    {{ end }}
+  {{ end }}
+  
+  {{/* Display Talks section */}}
+  {{ if $talks }}
+    <div class="timeline-section">
+      <h4 class="timeline-section-title">
+        {{ $talkIcon := resources.Get "images/talk.svg" }}
+        {{ if $talkIcon }}<img src="{{ $talkIcon.RelPermalink }}" alt="Talk" class="section-title-icon" />{{ end }}
+        Talks ({{ len $talks }})
+      </h4>
+      <div class="timeline-entries-grid">
+        {{ $sortedTalks := sort $talks ".Date" "desc" }}
+        {{ range $sortedTalks }}
+          <div class="timeline-entry-card">
+            {{ $red_url := default .RelPermalink .Params.redirect_url }}
+            <a href="{{ $red_url }}"{{ if .Params.redirect_url }} target="_blank" rel="noreferrer noopener nofollow"{{ end }} class="timeline-entry-card-link">
+              <div class="timeline-card-header">
+                <div class="timeline-card-date">{{ .Date.Format "Jan '06" }}</div>
+                <div class="timeline-card-activity">
+                  {{ $activityDisplay := .Params.activity }}{{ if reflect.IsSlice .Params.activity }}{{ $activityDisplay = index .Params.activity 0 }}{{ end }}
+                  {{ $activityIcon := resources.Get (printf "images/%s.svg" $activityDisplay) }}
+                  {{ if $activityIcon }}<img src="{{ $activityIcon.RelPermalink }}" alt="{{ $activityDisplay }}" class="activity-icon" />{{ end }}
+                  {{ $activityDisplay | humanize | title }}
+                </div>
+              </div>
+              <div class="timeline-card-title">{{ .Title | markdownify }}</div>
+              {{ if .Params.event }}
+                <div class="timeline-card-event">{{ .Params.event | markdownify }}</div>
+              {{ end }}
+            </a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+  
+  {{/* Display Tools section */}}
+  {{ if $tools }}
+    <div class="timeline-section">
+      <h4 class="timeline-section-title">
+        {{ $toolIcon := resources.Get "images/tool.svg" }}
+        {{ if $toolIcon }}<img src="{{ $toolIcon.RelPermalink }}" alt="Tool" class="section-title-icon" />{{ end }}
+        Tool Demos ({{ len $tools }})
+      </h4>
+      <div class="timeline-entries-grid">
+        {{ $sortedTools := sort $tools ".Date" "desc" }}
+        {{ range $sortedTools }}
+          <div class="timeline-entry-card">
+            {{ $red_url := default .RelPermalink .Params.redirect_url }}
+            <a href="{{ $red_url }}"{{ if .Params.redirect_url }} target="_blank" rel="noreferrer noopener nofollow"{{ end }} class="timeline-entry-card-link">
+              <div class="timeline-card-header">
+                <div class="timeline-card-date">{{ .Date.Format "Jan '06" }}</div>
+                <div class="timeline-card-activity">
+                  {{ $activityDisplay := .Params.activity }}{{ if reflect.IsSlice .Params.activity }}{{ $activityDisplay = index .Params.activity 0 }}{{ end }}
+                  {{ $activityIcon := resources.Get (printf "images/%s.svg" $activityDisplay) }}
+                  {{ if $activityIcon }}<img src="{{ $activityIcon.RelPermalink }}" alt="{{ $activityDisplay }}" class="activity-icon" />{{ end }}
+                  {{ $activityDisplay | humanize | title }}
+                </div>
+              </div>
+              <div class="timeline-card-title">{{ .Title | markdownify }}</div>
+              {{ if .Params.event }}
+                <div class="timeline-card-event">{{ .Params.event | markdownify }}</div>
+              {{ end }}
+            </a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+  
+  {{/* Display Trainings section */}}
+  {{ if $trainings }}
+    <div class="timeline-section">
+      <h4 class="timeline-section-title">
+        {{ $trainingIcon := resources.Get "images/training.svg" }}
+        {{ if $trainingIcon }}<img src="{{ $trainingIcon.RelPermalink }}" alt="Training" class="section-title-icon" />{{ end }}
+        Trainings ({{ len $trainings }})
+      </h4>
+      <div class="timeline-entries-grid">
+        {{ $sortedTrainings := sort $trainings ".Date" "desc" }}
+        {{ range $sortedTrainings }}
+          <div class="timeline-entry-card">
+            {{ $red_url := default .RelPermalink .Params.redirect_url }}
+            <a href="{{ $red_url }}"{{ if .Params.redirect_url }} target="_blank" rel="noreferrer noopener nofollow"{{ end }} class="timeline-entry-card-link">
+              <div class="timeline-card-header">
+                <div class="timeline-card-date">{{ .Date.Format "Jan '06" }}</div>
+                <div class="timeline-card-activity">
+                  {{ $activityDisplay := .Params.activity }}{{ if reflect.IsSlice .Params.activity }}{{ $activityDisplay = index .Params.activity 0 }}{{ end }}
+                  {{ $activityIcon := resources.Get (printf "images/%s.svg" $activityDisplay) }}
+                  {{ if $activityIcon }}<img src="{{ $activityIcon.RelPermalink }}" alt="{{ $activityDisplay }}" class="activity-icon" />{{ end }}
+                  {{ $activityDisplay | humanize | title }}
+                </div>
+              </div>
+              <div class="timeline-card-title">{{ .Title | markdownify }}</div>
+              {{ if .Params.event }}
+                <div class="timeline-card-event">{{ .Params.event | markdownify }}</div>
+              {{ end }}
+            </a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+  
+  {{/* Display Others section */}}
+  {{ if $others }}
+    <div class="timeline-section">
+      <h4 class="timeline-section-title">
+        {{ $presentationIcon := resources.Get "images/presentation.svg" }}
+        {{ if $presentationIcon }}<img src="{{ $presentationIcon.RelPermalink }}" alt="Other Activities" class="section-title-icon" />{{ end }}
+        Other Activities ({{ len $others }})
+      </h4>
+      <div class="timeline-entries-grid">
+        {{ $sortedOthers := sort $others ".Date" "desc" }}
+        {{ range $sortedOthers }}
+          <div class="timeline-entry-card">
+            {{ $red_url := default .RelPermalink .Params.redirect_url }}
+            <a href="{{ $red_url }}"{{ if .Params.redirect_url }} target="_blank" rel="noreferrer noopener nofollow"{{ end }} class="timeline-entry-card-link">
+              <div class="timeline-card-header">
+                <div class="timeline-card-date">{{ .Date.Format "Jan '06" }}</div>
+                {{ if .Params.activity }}
+                  <div class="timeline-card-activity">
+                    {{ $activityDisplay := .Params.activity }}{{ if reflect.IsSlice .Params.activity }}{{ $activityDisplay = index .Params.activity 0 }}{{ end }}
+                    {{ $activityIcon := resources.Get (printf "images/%s.svg" $activityDisplay) }}
+                    {{ if $activityIcon }}<img src="{{ $activityIcon.RelPermalink }}" alt="{{ $activityDisplay }}" class="activity-icon" />{{ end }}
+                    {{ $activityDisplay | humanize | title }}
+                  </div>
+                {{ end }}
+              </div>
+              <div class="timeline-card-title">{{ .Title | markdownify }}</div>
+              {{ if .Params.event }}
+                <div class="timeline-card-event">{{ .Params.event | markdownify }}</div>
+              {{ end }}
+            </a>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+  
+</div>
+{{ end }}
+
+{{ partial "prev_next_nav.html" . }}
+
+{{ partial "footer.html" . }}

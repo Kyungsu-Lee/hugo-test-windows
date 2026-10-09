@@ -1,0 +1,13 @@
+{{- /* Site JavaScript: one ES-module bundle built by Hugo (esbuild), loaded with `defer`. */ -}}
+{{- with resources.Get "js/main.js" }}
+  {{- $opts := dict "minify" hugo.IsProduction "targetPath" "js/main.js" }}
+  {{- with . | js.Build $opts }}
+    {{- if hugo.IsProduction }}
+      {{- with . | fingerprint }}
+<script defer src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous"></script>
+      {{- end }}
+    {{- else }}
+<script defer src="{{ .RelPermalink }}"></script>
+    {{- end }}
+  {{- end }}
+{{- end }}

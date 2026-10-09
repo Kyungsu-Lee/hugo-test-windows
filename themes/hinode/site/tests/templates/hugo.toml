@@ -1,0 +1,201 @@
+baseURL = 'https://example.org/'
+title = 'template tests'
+# Deliberately not 'en-us': utilities/GetLocale.html has to refine a matching language with
+# this setting and ignore it for every other one, and only a value differing from the region
+# it would otherwise guess for English tells those two branches apart. Set through the
+# deprecated `languageCode` rather than its v0.158.0 replacement `locale`, so the assertions
+# still run at the advertised v0.146.0 floor — v0.164 maps the old key onto the new one, so
+# both ends of the supported range agree. Swap it when #2049 moves the floor.
+languageCode = 'en-gb'
+disableKinds = ['taxonomy', 'term', 'RSS', 'sitemap', 'robotsTXT', '404']
+[params]
+  [params.main]
+    titleCase = true
+    titleCaseExceptions = ["npm", "pnpm"]
+    # Deliberately not the theme's own default of 4. The card assertions have to show that a
+    # card's internal spacing is no longer a function of the site's section rhythm, and only a
+    # value the card would otherwise have emitted - and that nothing else in the card's markup
+    # produces by coincidence - makes a reintroduction of the coupling visible as a `pb-5`.
+    [params.main.padding]
+      y = 5
+  [params.navigation]
+    toc = true
+  [params.pages]
+    readingTime = true
+    wordCount = true
+    [params.pages.blog]
+      readingTime = false
+      includeToc = false
+
+# Defining any custom [[module.mounts]] disables Hugo's implicit default mounts, so the
+# ones this harness needs are restated explicitly. `content` provides the page fixtures
+# used to exercise the `(dict "page" PAGE "text" STRING)` contract; `layouts` provides this
+# site's own templates (the assertion table plus minimal default layouts for the fixture
+# pages). The last mount reaches above the site root with a relative path to mount the real
+# partial under test directly from its location in the theme — not a copy. Symlinks do not
+# work here: Hugo does not follow them when walking the `layouts` mount.
+[[module.mounts]]
+  source = 'content'
+  target = 'content'
+[[module.mounts]]
+  source = 'layouts'
+  target = 'layouts'
+[[module.mounts]]
+  source = '../../layouts/_partials/utilities/TitleCase.html'
+  target = 'layouts/_partials/utilities/TitleCase.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/utilities/GetPageFlag.html'
+  target = 'layouts/_partials/utilities/GetPageFlag.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/utilities/GetIncludeTOC.html'
+  target = 'layouts/_partials/utilities/GetIncludeTOC.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/utilities/GetLocale.html'
+  target = 'layouts/_partials/utilities/GetLocale.html'
+
+# assets/section-title.html initializes its arguments through mod-utils (InitArgs and the
+# structure data it reads), so those come from the vendored module — `mod:vendor` populates
+# `_vendor` and CI runs it before `test:templates`. The two `data/structures` mounts merge:
+# the theme file provides the section-title structure, the module directory provides the
+# global argument and type definitions it inherits from.
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/section-title.html'
+  target = 'layouts/_partials/assets/section-title.html'
+[[module.mounts]]
+  source = '../../_vendor/github.com/gethinode/mod-utils/v6/layouts/_partials/utilities'
+  target = 'layouts/_partials/utilities'
+[[module.mounts]]
+  source = '../../data/structures/section-title.yml'
+  target = 'data/structures/section-title.yml'
+[[module.mounts]]
+  source = '../../_vendor/github.com/gethinode/mod-utils/v6/data/structures'
+  target = 'data/structures'
+
+# assets/link.html resolves its destination against the site and the calling page, so the
+# assertions need the real partial and its argument structure. Its icon call site is only
+# reached for external links with a cue, which none of the cases exercise, so no icon
+# partial is mounted.
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/link.html'
+  target = 'layouts/_partials/assets/link.html'
+[[module.mounts]]
+  source = '../../data/structures/link.yml'
+  target = 'data/structures/link.yml'
+
+# assets/sidebar.html renders real rows through assets/link.html and real icons through
+# mod-fontawesome, and both are what the assertions read, so neither is stubbed. The icon
+# module brings its own data (the structure it validates against plus the icon table), which
+# merges with the `data/structures` mounts above.
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/sidebar.html'
+  target = 'layouts/_partials/assets/sidebar.html'
+[[module.mounts]]
+  source = '../../data/structures/sidebar.yml'
+  target = 'data/structures/sidebar.yml'
+[[module.mounts]]
+  source = '../../_vendor/github.com/gethinode/mod-fontawesome/v6/layouts/_partials/assets/icon.html'
+  target = 'layouts/_partials/assets/icon.html'
+[[module.mounts]]
+  source = '../../_vendor/github.com/gethinode/mod-fontawesome/v6/data'
+  target = 'data'
+# Where mod-fontawesome's own config mounts the icon set it resolves by name; without it
+# every icon renders as an error and the assertions could no longer tell an icon-bearing row
+# from an icon-less one.
+[[module.mounts]]
+  source = '../../_vendor/github.com/FortAwesome/Font-Awesome/svgs'
+  target = 'assets/svgs/fa'
+
+# assets/card.html is the element under test for the card assertions. It renders its own
+# button through assets/button.html and its icon column through assets/card-icon.html, and
+# the classes on both are what the assertions read, so neither is stubbed. No case sets a
+# thumbnail, so the image render hook is never reached and no image pipeline is mounted.
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/card.html'
+  target = 'layouts/_partials/assets/card.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/button.html'
+  target = 'layouts/_partials/assets/button.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/card-icon.html'
+  target = 'layouts/_partials/assets/card-icon.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/utilities/OmitEmpty.html'
+  target = 'layouts/_partials/utilities/OmitEmpty.html'
+[[module.mounts]]
+  source = '../../data/structures/card.yml'
+  target = 'data/structures/card.yml'
+[[module.mounts]]
+  source = '../../data/structures/card-icon.yml'
+  target = 'data/structures/card-icon.yml'
+[[module.mounts]]
+  source = '../../data/structures/button.yml'
+  target = 'data/structures/button.yml'
+
+# The card shortcode is mounted as well, because the argument passthrough it owns cannot be
+# reached through the partial: the assertions for it render a fixture page whose body calls
+# the shortcode, which is the only path on which the shortcode's own argument handling runs.
+[[module.mounts]]
+  source = '../../layouts/_shortcodes/card.html'
+  target = 'layouts/_shortcodes/card.html'
+
+# The padding cascade cannot be reached through a bare card: it is the card-group
+# shortcode that a nested card reads its parent value from, so the group and the
+# partial behind it are mounted too. The group renders a "more" link through
+# assets/button.html (already mounted) and, when paginated, assets/pagination.html.
+[[module.mounts]]
+  source = '../../layouts/_shortcodes/card-group.html'
+  target = 'layouts/_shortcodes/card-group.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/card-group.html'
+  target = 'layouts/_partials/assets/card-group.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/pagination.html'
+  target = 'layouts/_partials/assets/pagination.html'
+[[module.mounts]]
+  source = '../../data/structures/card-group.yml'
+  target = 'data/structures/card-group.yml'
+[[module.mounts]]
+  source = '../../data/structures/pagination.yml'
+  target = 'data/structures/pagination.yml'
+
+# assets/nav.html is the element under test for the nav assertions. Its companion dropdown is
+# rendered by assets/panel-dropdown.html and the identifiers and classes on both are what the
+# assertions read, so neither is stubbed. No case sets `nav-icons`, so the icon call site inside
+# the button group is never reached and the vendored icon partial above is not exercised here.
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/nav.html'
+  target = 'layouts/_partials/assets/nav.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/panel-dropdown.html'
+  target = 'layouts/_partials/assets/panel-dropdown.html'
+[[module.mounts]]
+  source = '../../data/structures/nav.yml'
+  target = 'data/structures/nav.yml'
+
+# The nav shortcodes are mounted for the one thing a direct partial call cannot show: that the
+# identifier a page writes reaches every element that derives one from it. The shortcode resolves
+# the id and assembles the panes, assets/nav-item.html renders them, and the chain the companion
+# dropdown depends on - wrapper, control, pane, data-link - only exists once all four run.
+[[module.mounts]]
+  source = '../../layouts/_shortcodes/nav.html'
+  target = 'layouts/_shortcodes/nav.html'
+[[module.mounts]]
+  source = '../../layouts/_shortcodes/nav-item.html'
+  target = 'layouts/_shortcodes/nav-item.html'
+[[module.mounts]]
+  source = '../../layouts/_partials/assets/nav-item.html'
+  target = 'layouts/_partials/assets/nav-item.html'
+[[module.mounts]]
+  source = '../../data/structures/nav-item.yml'
+  target = 'data/structures/nav-item.yml'
+
+# utilities/GetBackgroundStyle.html returns the class string a section, timeline or
+# testimonial paints its background with. The assertions call it directly; its
+# argument structure comes from the theme, and InitArgs plus the global argument
+# definitions from the vendored mod-utils mounted above.
+[[module.mounts]]
+  source = '../../layouts/_partials/utilities/GetBackgroundStyle.html'
+  target = 'layouts/_partials/utilities/GetBackgroundStyle.html'
+[[module.mounts]]
+  source = '../../data/structures/background.yml'
+  target = 'data/structures/background.yml'

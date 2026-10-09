@@ -1,0 +1,783 @@
+// Self-sufficient defaults — see common/_styles.scss for the rationale
+// (child themes shadowing common/_variables.scss). Downstream themes that
+// animate their own part of the collapse gesture reference these, so the
+// column and the labels inside it retime together instead of drifting apart.
+$sidebar-collapse-transition-duration: 0.2s !default;
+$sidebar-collapse-transition-easing: ease !default;
+$sidebar-collapse-refinement-transition: text-align 0s allow-discrete, justify-content 0s allow-discrete !default;
+$sidebar-collapse-refinement-transition-delayed: text-align 0s $sidebar-collapse-transition-duration allow-discrete, justify-content 0s $sidebar-collapse-transition-duration allow-discrete !default;
+$sidebar-collapse-clipping-transition: white-space 0s allow-discrete, overflow 0s allow-discrete !default;
+$sidebar-collapse-clipping-transition-delayed: white-space 0s $sidebar-collapse-transition-duration allow-discrete, overflow 0s $sidebar-collapse-transition-duration allow-discrete !default;
+
+// The widest a sidebar label may get, and the open end of its collapse
+// transition - `max-width` cannot animate from `none`, so this has to be a
+// definite length. Only an upper bound: a label with less room than this is
+// capped by the room instead (see `.sidebar-item-label`).
+$sidebar-label-max-width: 200px !default;
+
+// The unit a nested sidebar row is indented by.
+//
+// The indent used to sit on the list that held the row - `ps-3`, or a wider class when the
+// parent group led with an icon - which moved the row's box along with its text. A row's
+// hover and active surface is its box, so a child's highlight started one indent to the
+// right of its parent's while both ended at the sidebar's edge, and the deeper the row the
+// narrower its highlight. The indent is now spent as padding on the row itself: the text
+// lands exactly where it did, and every box stays the full width of the sidebar.
+//
+// That trades a nesting list for arithmetic, because padding on a row does not accumulate
+// the way padding on nested lists does - so `assets/sidebar.html` sums the depth as it
+// recurses and publishes the total on each child list as a step count, which the table at
+// the foot of this file turns back into a length.
+//
+// A step count rather than the length itself because the markup is rendered through
+// `partialCached` and a Content-Security-Policy site cannot carry an inline `style`. And the
+// count rides a *class* rather than a data attribute, which the enumeration below exists to
+// decode: PurgeCSS runs against `hugo_stats.json`, and Hugo records only tags, classes and
+// ids there - an attribute selector is invisible to it and the whole table is dropped from
+// the production stylesheet, leaving every row at the `0rem` fallback and the nesting flat.
+// A consuming site can list an attribute under PurgeCSS's `dynamicAttributes`, but a theme
+// cannot require every consumer to have done so, and the `ps-3` this replaces was a class
+// for the same reason.
+//
+// Two steps is the plain nesting indent, the width of the `ps-3` it replaces. Three is what
+// a group with a leading icon gives its children so they line up with its label rather than
+// its icon: `fa-fw` (1.25rem) plus the icon's `me-1` gutter (0.25rem). Retuning the step
+// therefore rescales the plain indent and the icon column together, and only the plain one
+// is free to move - the other has to match the icon it hangs under.
+$sidebar-nav-indent-step: 0.5rem !default;
+
+// How deep the step table goes. Each level costs one selector, and a menu deeper than this
+// stops indenting further rather than losing the alignment it has.
+$sidebar-nav-indent-max: 16 !default;
+
+// scss-docs-start sidebar
+.sidebar {
+    top: var(--navbar-offset);
+}
+
+// Brand block at the top of the sidebar (Mode A only). Two images are
+// rendered; visibility flips with the collapsed state so the label-style
+// transition stays consistent.
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem 0.5rem 0.75rem;
+    line-height: 1;
+
+    .sidebar-brand-full,
+    .sidebar-brand-mark {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .sidebar-brand-full {
+        opacity: 1;
+    }
+
+    .sidebar-brand-mark {
+        display: none;
+        opacity: 0;
+    }
+}
+
+.sidebar-collapsed .sidebar-brand,
+html.sidebar-pre-collapsed .sidebar-collapsible .sidebar-brand {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+
+    .sidebar-brand-full {
+        display: none;
+        opacity: 0;
+    }
+
+    .sidebar-brand-mark {
+        display: inline-block;
+        opacity: 1;
+    }
+}
+
+.sidebar-overflow {
+    top: calc(var(--navbar-offset) + 1rem);
+    max-height: calc(100vh - var(--navbar-offset));
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+
+    // `scrollbar-gutter: stable` reserves the gutter only for classic
+    // scrollbars. On macOS, Chrome/Safari default to overlay scrollbars,
+    // which take no layout space — so the gutter collapses to 0 and the bar
+    // floats over the sidebar content (the group chevrons). Styling the
+    // scrollbar opts the element out of overlay mode, giving a non-overlay bar
+    // that reserves width and sits in the stable gutter, consistent across
+    // browsers. A muted thumb on a transparent track keeps it subtle and
+    // light/dark aware.
+    @include scrollbar(
+        $foreground-color: var(--bs-border-color),
+        $background-color: transparent,
+        $size: 8px
+    );
+}
+
+.sidebar-item {
+    --bs-border-radius: #{$theme-border-radius};
+    --bs-border-radius-sm: #{$theme-border-radius};
+    --bs-border-radius-lg: #{$theme-border-radius};
+    --bs-border-radius-xl: #{$theme-border-radius};
+    --bs-border-radius-xxl: #{$theme-border-radius};
+
+    color: rgba(0, 0, 0, 0.65);
+    margin-left: 0 !important;
+    display: block;
+    padding: 0.1875rem 0.5rem !important;
+
+    // The nesting indent, paid by the row so its box stays full width - see
+    // `$sidebar-nav-indent-step`. Restated after the shorthand above, which would
+    // otherwise reset it; `!important` only because that shorthand carries one.
+    padding-left: calc(0.5rem + var(--sidebar-indent, 0rem)) !important;
+
+    &.active {
+        color: $primary;
+    }
+
+    &:hover,
+    &:focus {
+        color: $primary;
+        background-color: tint-color($primary, 90%);
+    }
+}
+
+.sidebar-item-group {
+    --#{$prefix}link-opacity: 0.65;
+
+    border-radius: #{$theme-border-radius};
+
+    // A group is the current page whenever its own title is what the reader navigated to,
+    // and `critical/sidebar-active.js` marks it here rather than only on the title anchor:
+    // the row's surface is this element - it spans the chevron too, which the anchor does
+    // not - so an active group otherwise could not be given the same treatment as an active
+    // leaf. The anchor is restated because `> div > a` below sets a colour of its own, which
+    // an inherited one would lose to.
+    &.active {
+        color: $primary;
+
+        > div > a {
+            color: $primary;
+        }
+    }
+
+    &:hover,
+    &:focus {
+        color: $primary;
+        background-color: tint-color($primary, 90%);
+    }
+
+    > div > a {
+        display: block;
+        width: 100%;
+        color: rgba(var(--#{$prefix}body-color-rgb), var(--#{$prefix}link-opacity, 1));
+        text-decoration: none;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            color: $primary;
+        }
+    }
+}
+
+// A group header sits on the wrapper's padding rather than its own, so the nesting indent
+// lands here - which is what keeps `.sidebar-item-group` itself, the row's hover and active
+// surface, at the full width of the sidebar.
+.sidebar-item-group > div {
+    padding: 0.1875rem 0 0.1875rem calc(0.5rem + var(--sidebar-indent, 0rem)) !important;
+}
+
+// Hanging indent for rows that lead with an icon.
+//
+// A sidebar row is a single block-level anchor holding an inline icon followed by
+// the label text, so a label long enough to wrap starts its second line at the
+// anchor's content edge - underneath the icon - instead of under the first line's
+// text. The icon occupies a fixed column (the template renders it `.fa-fw`, which
+// is 1.25em) and `.me-1` supplies the gap to the label, so the two can be
+// reclaimed as a hanging indent: pad the block out by that width and pull the
+// first line back by the same amount. Single-line rows are unaffected - the
+// padding and the outdent cancel - and only continuation lines move.
+//
+// The width is repeated here rather than shared through a variable because it
+// mirrors the utility classes the template emits, not a design knob: retuning it
+// without changing `assets/sidebar.html` would only break the alignment.
+$sidebar-item-icon-column: calc(1.25em + #{$spacer * 0.25});
+
+// Scoped three ways:
+//
+//   * `:has()` on a leading icon, because a row without one must keep its text
+//     flush with the padding edge - a blanket rule would outdent its first line.
+//   * Not `.d-flex`, the shape a downstream row with a trailing suffix icon uses
+//     (see the collapsed-mode block below). `text-indent` does not apply to a
+//     flex container, so the padding would shift such a row without the outdent
+//     to cancel it - and a flex row already aligns its wrapped text correctly.
+//   * Not a collapsible sidebar. There the label is a `.sidebar-item-label` span
+//     that is `white-space: nowrap` by design, so it never wraps; its gap to the
+//     icon is `.me-1` plus the span's own `.ms-1`, so this width would be wrong;
+//     and its geometry is sequenced by the collapse choreography below, which a
+//     padding change lands outside of.
+.sidebar:not(.sidebar-collapsible) {
+    // `padding-left` needs `!important` only because the base `.sidebar-item`
+    // padding above carries one.
+    .sidebar-item:not(.d-flex):has(> svg:first-child, > i:first-child) {
+        padding-left: calc(0.5rem + var(--sidebar-indent, 0rem) + #{$sidebar-item-icon-column}) !important;
+        text-indent: calc(-1 * #{$sidebar-item-icon-column});
+    }
+
+    // Group headers carry no padding of their own - it sits on the wrapping
+    // `.sidebar-item-group > div` - so the indent is the icon column alone.
+    .sidebar-item-group > div > a:has(> svg:first-child, > i:first-child) {
+        padding-left: $sidebar-item-icon-column;
+        text-indent: calc(-1 * #{$sidebar-item-icon-column});
+    }
+}
+
+// Hold the icon column open on rows that have no icon.
+//
+// A menu is free to mix the two - a "Home" entry among icon-bearing sections is
+// the common case - and the row without an icon then starts its label at the
+// padding edge while every neighbour starts one icon-width further right. The
+// labels no longer form a column, and the odd row reads as misplaced rather
+// than as merely unadorned.
+//
+// So such a row reserves the same column instead. `assets/sidebar.html` sets
+// the class on a row that has no icon in a list where something else does, so
+// the reservation follows the list it has to line up with: a list that uses no
+// icons at all is untouched, and neither is a nested list of its own.
+//
+// This is the width alone - no `text-indent` to go with it, unlike the hanging
+// indent above. There is no icon to pull the first line back past, and the
+// wrapped lines of a row whose text starts at the padding edge already line up
+// underneath it. Applies in both the collapsible and the plain sidebar, since
+// what it corrects is the resting layout the two share; in icon-only mode the
+// row has nothing left to show and the reserved column costs nothing.
+//
+// `!important` for the same reason the block above needs it: the base
+// `.sidebar-item` padding carries one.
+.sidebar-item.sidebar-item-icon-indent {
+    padding-left: calc(0.5rem + var(--sidebar-indent, 0rem) + #{$sidebar-item-icon-column}) !important;
+}
+
+// Group headers again sit on the wrapper's padding, so they reserve the column
+// alone. They are not `.sidebar-item`, so this needs its own selector.
+.sidebar-item-group > div > a.sidebar-item-icon-indent {
+    padding-left: $sidebar-item-icon-column;
+}
+
+.btn-toggle-group {
+    padding: 0.25rem 0.5rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: transparent;
+
+    &:hover,
+    &:focus {
+        background-color: transparent;
+    }
+
+    &::before {
+        width: 1.25em;
+        line-height: 0;
+        content: $btn-toggle;
+        transition: transform 0.35s ease;
+        transform-origin: 0.5em 50%;
+    }
+}
+
+.btn-toggle-group[aria-expanded="true"] {
+    &::before {
+        transform: rotate(90deg);
+    }
+}
+
+@if $enable-dark-mode {
+    @include color-mode(dark) {
+        .sidebar-item {
+            --#{$prefix}link-opacity: 0.65;
+
+            color: rgba(var(--#{$prefix}body-color-rgb), var(--#{$prefix}link-opacity, 1));
+
+            &.active {
+                color: $primary-text-emphasis-dark !important;
+            }
+
+            &:hover,
+            &:focus {
+                color: $primary-text-emphasis-dark !important;
+                background-color: transparent;
+                box-shadow: inset 0 0 0 1px $primary-bg-subtle-dark;
+            }
+        }
+
+        .sidebar-item-group {
+            color: var(--bs-body-color) !important;
+
+            &.active {
+                color: $primary-text-emphasis-dark !important;
+
+                > div > a {
+                    color: $primary-text-emphasis-dark !important;
+                }
+            }
+
+            &:hover,
+            &:focus {
+                color: $primary-text-emphasis-dark !important;
+                background-color: transparent;
+                box-shadow: inset 0 0 0 1px $primary-bg-subtle-dark;
+            }
+
+            > div > a {
+                &:hover,
+                &:focus {
+                    color: $primary-text-emphasis-dark !important;
+                }
+            }
+        }
+
+        .btn-toggle-group {
+            color: var(--bs-body-color);
+        
+            &:hover,
+            &:focus {
+                background-color: transparent;
+            }
+        
+            &::before {
+                content: $btn-toggle-dark;
+            }
+        }
+
+        .btn-toggle-group[aria-expanded="true"] {
+            color: var(--bs-secondary-color);
+        }
+                    }
+}
+
+// No-JS fallback: the collapse trail and active highlight are applied client-side by
+// sidebar-active.js, and Bootstrap's collapse toggles require JavaScript. Without JavaScript
+// (the `no-js` class set in baseof.html is swapped for `js` by critical/js-detect.js) render
+// every sidebar group expanded instead.
+.no-js .sidebar .collapse {
+    display: block;
+}
+
+// Collapsible sidebar
+.sidebar-no-transition,
+.sidebar-no-transition * {
+    transition: none !important;
+}
+
+html.sidebar-pre-collapsed .sidebar-collapsible .sidebar-item-label {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    margin-inline-start: 0 !important;
+}
+
+.sidebar-toggle-btn {
+    color: rgba(0, 0, 0, 0.65);
+
+    &:hover {
+        color: $primary;
+    }
+
+    .sidebar-icon-toggle {
+        transition: transform 0.4s ease;
+    }
+}
+
+// Cap the label at the room actually left beside the icon.
+//
+// `$sidebar-label-max-width` is a fixed length because the collapse transition
+// needs one, which leaves it blind to the track it sits in. The label is an
+// inline-block that neither shrinks to fit nor is clipped by its row, so once
+// the icon and a full-width label no longer fit side by side, the whole label
+// box drops onto a second line underneath the icon - doubling the row height -
+// and in a narrower track it then spills out past the sidebar's edge. Hinode
+// does not set the sidebar's width (a downstream theme does, see
+// `.app-shell-sidebar`), so the fixed cap and the real track are free to
+// disagree; measured against a 6-row menu, rows start dropping at a 240px track
+// and start spilling at 208px.
+//
+// `min()` keeps the fixed cap wherever it still fits and yields to the
+// remaining room where it does not, so a track of 256px or wider renders
+// exactly as before. The row publishes its own budget as a custom property so
+// the label keeps one low-specificity `max-width` declaration and the collapsed
+// states below still override it on the cascade. The subtrahends are the
+// label's own `.ms-1` and, for a row that leads with an icon, the icon column.
+.sidebar-item {
+    --sidebar-label-max: min(#{$sidebar-label-max-width}, calc(100% - #{$spacer * 0.25}));
+
+    &:has(> svg:first-child, > i:first-child) {
+        --sidebar-label-max: min(
+            #{$sidebar-label-max-width},
+            calc(100% - #{$sidebar-item-icon-column} - #{$spacer * 0.25})
+        );
+    }
+}
+
+.sidebar-item-label {
+    display: inline-block;
+    max-width: var(--sidebar-label-max, #{$sidebar-label-max-width});
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    // Geometry rides the shared collapse timing; the fade is deliberately
+    // shorter so the label is gone before the track finishes narrowing.
+    transition:
+        max-width $sidebar-collapse-transition-duration $sidebar-collapse-transition-easing,
+        opacity 0.15s ease,
+        margin-inline-start $sidebar-collapse-transition-duration $sidebar-collapse-transition-easing;
+}
+
+.sidebar-collapsed {
+    .sidebar-item-label {
+        max-width: 0;
+        opacity: 0;
+        margin-inline-start: 0 !important;
+    }
+
+    .sidebar-toggle-btn .sidebar-icon-toggle {
+        transform: rotate(180deg);
+    }
+}
+
+// Collapsed-mode refinements:
+//   * Items use white-space: nowrap so the (max-width: 0) label inline-block
+//     stays on the same line as the icon. Without this the label wraps to a
+//     second line at narrow widths and silently doubles each row's height.
+//   * Toggle container and menu items center horizontally so the icon column
+//     reads as a single vertical track.
+//   * The icon's `.me-1` trailing margin is zeroed so it truly centers (the
+//     utility otherwise pulls each icon 4px to the left).
+.sidebar-collapsed,
+html.sidebar-pre-collapsed .sidebar-collapsible {
+    // The base template emits a `.ps-1` (padding-left: 0.25rem) on the nav
+    // for the expanded layout's hanging indent. In icon-only mode that
+    // asymmetric padding shifts the icon column off-centre — zero it out.
+    &.sidebar {
+        padding-left: 0 !important;
+    }
+
+    .sidebar-toggle-container {
+        justify-content: center !important;
+        padding-right: 0 !important;
+    }
+
+    .sidebar-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    // `text-align: center` doesn't apply to flex layouts. Items rendered with
+    // `.d-flex` (e.g. a sidebar entry with a trailing suffix icon) need their
+    // (now zero-width) flex children grouped via `justify-content: center`.
+    .sidebar-item.d-flex {
+        justify-content: center;
+    }
+
+    .sidebar-item .me-1 {
+        margin-right: 0 !important;
+    }
+}
+
+// Sequence the centring refinements above behind the geometry they belong to.
+//
+// They are position changes, not animations: `text-align` and `justify-content`
+// are discrete, and the paddings flip in one step. So they all land on the tick
+// the collapsed class flips, while the labels (and, in a downstream theme, the
+// column width) are still mid-collapse. Centring an icon+label pair inside a
+// still-full-width column throws the icon far to the right for one frame — ~50px
+// in a 16rem column — after which it sweeps back past its resting place as the
+// column narrows, because the icon sits at `(columnWidth - contentWidth) / 2` and
+// those two shrink on different curves. Three direction changes for a gesture
+// that should read as one motion.
+//
+// A zero-duration transition with a delay defers a value change without animating
+// it, and `transition-behavior: allow-discrete` lets the keyword properties take
+// part at all. The delay is the shared collapse duration, so the refinements land
+// exactly as the labels and the column finish: the icon holds still throughout and
+// steps once into its centred position. The gesture is not lengthened.
+//
+// Only the collapsed state carries the delay. A transition takes its timing from
+// the after-change style, so collapsing defers and expanding does not — which is
+// what expand needs: the refinements have to be gone before the column widens, or
+// the now icon-only rows would re-centre in an ever-wider track and sweep right.
+//
+// `white-space` and `overflow` carry the mirror image of that delay, because the
+// direction that needs them held is the opposite one. They are the clipping pair:
+// `nowrap` keeps the (max-width: 0) label on the icon's line and `hidden` stops it
+// spilling out of a column narrower than its text.
+//
+// Collapsing, they must land at once — the label is still full width on the tick
+// the class flips, so anything later lets it wrap. Expanding, landing at once is
+// exactly the bug: `nowrap` is *removed* on that tick while the column is still
+// widening, so for a few frames the label sits in a track too narrow to hold it,
+// wraps to a second line, and doubles every row's height until the width catches
+// up. Measured at 1440x900: rows peak at 54.77px against a settled 30.77px, with
+// the column only 140px wide and the label already 82px.
+//
+// So the delay goes on the expanded state, not the collapsed one — the inverse of
+// the centring refinements above. Same mechanism, opposite assignment: the
+// after-change style supplies the timing, so the clipping pair defers on expand
+// and lands immediately on collapse, and both directions hold their row height.
+//
+// Progressive enhancement: without `transition-behavior` every property here lands
+// immediately, exactly as it did before this block existed.
+@supports (transition-behavior: allow-discrete) {
+    .sidebar-collapsible {
+        &.sidebar {
+            transition: padding-left 0s;
+        }
+
+        .sidebar-toggle-container {
+            transition: justify-content 0s allow-discrete, padding-right 0s;
+        }
+
+        .sidebar-item {
+            transition: $sidebar-collapse-refinement-transition, $sidebar-collapse-clipping-transition-delayed;
+        }
+
+        .sidebar-item .me-1 {
+            transition: margin-right 0s;
+        }
+    }
+
+    .sidebar-collapsed {
+        &.sidebar,
+        .sidebar-toggle-container,
+        .sidebar-item .me-1 {
+            transition-delay: $sidebar-collapse-transition-duration;
+        }
+
+        .sidebar-item {
+            transition: $sidebar-collapse-refinement-transition-delayed, $sidebar-collapse-clipping-transition;
+        }
+    }
+}
+
+// Crossfade the two brand marks rather than cutting between them.
+//
+// The brand swap is a `display` change, so it is discrete by nature: the full
+// logo vanishes and the mark appears on the same tick the collapsed class
+// flips, while the column is still 16rem and narrowing. Deferring the swap to
+// the end of the gesture does not fix that — a later hard cut is still a hard
+// cut. Overlapping the two with opacity is what makes it read as one motion.
+//
+// Three pieces are needed:
+//
+//   * The brand becomes a single-cell grid so both marks share one origin.
+//     While both are rendered a flex row would place them side by side and the
+//     brand would visibly double in width mid-gesture.
+//   * `display` joins the transition with `transition-behavior: allow-discrete`,
+//     which keeps the outgoing mark rendered for the whole fade instead of
+//     dropping it on the tick, and `@starting-style` gives the incoming mark a
+//     value to fade up from.
+//   * The brand's own centring is deferred behind the collapse, exactly as the
+//     item rows' is above. Without it `justify-content: center` lands on the
+//     click tick and the fade happens at the centre of a column that is still
+//     full width — the mark appears ~100px to the right of the logo it is
+//     replacing and then slides back as the column narrows. Deferred, the two
+//     marks sit at the same x for the whole fade.
+//
+// Rest states are unchanged: exactly one mark is rendered at rest, so the grid
+// track is sized by it alone and the layout matches the `display` swap this
+// replaces. Both directions are covered — a transition takes its timing from
+// the after-change style, and the fade is symmetric, so only the deferral of
+// the centring is one-directional (collapse defers, expand does not, for the
+// same reason the item rows' does).
+//
+// Progressive enhancement: without `transition-behavior` the whole block is
+// skipped, the brand stays a flex row and the marks cut over exactly as before.
+@supports (transition-behavior: allow-discrete) {
+    .sidebar-collapsible .sidebar-brand {
+        display: grid;
+        transition: justify-content 0s allow-discrete, padding-left 0s, padding-right 0s;
+
+        // Stack every child in the one cell. The brand renders each mark
+        // through `assets/image.html`, which wraps it when light and dark
+        // variants are supplied — so match the children, not the marks.
+        > * {
+            grid-area: 1 / 1;
+        }
+
+        // `@starting-style` competes on specificity like any other rule, so the
+        // starting value has to be declared at least as specifically as the
+        // `opacity: 1` it fades up from. Scoped one class shorter, this loses to
+        // the collapsed-state rule and the incoming mark appears at full opacity
+        // on collapse while only the outgoing one fades.
+        .sidebar-brand-full,
+        .sidebar-brand-mark {
+            transition:
+                opacity $sidebar-collapse-transition-duration $sidebar-collapse-transition-easing,
+                display $sidebar-collapse-transition-duration allow-discrete;
+
+            @starting-style {
+                opacity: 0;
+            }
+        }
+    }
+
+    .sidebar-collapsed .sidebar-brand {
+        transition-delay: $sidebar-collapse-transition-duration;
+    }
+}
+
+@if $enable-dark-mode {
+    @include color-mode(dark) {
+        .sidebar-toggle-btn {
+            color: var(--bs-body-color);
+
+            &:hover {
+                color: $primary-text-emphasis-dark;
+            }
+        }
+    }
+}
+
+// Secondary group row: stack vertically (button above link) when sidebar is icon-only
+.sidebar-collapsed .sidebar-secondary-row,
+html.sidebar-pre-collapsed .sidebar-secondary-row {
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+// Secondary group — icon rotates down (180°) when collapsed, up (0°) when expanded
+.sidebar-secondary-icon {
+    transition: transform 0.2s ease;
+    transform: rotate(180deg);
+}
+
+.sidebar-secondary-toggle[aria-expanded="true"] .sidebar-secondary-icon {
+    transform: rotate(0deg);
+}
+
+// Secondary group toggle button
+.sidebar-secondary-toggle {
+    color: rgba(0, 0, 0, 0.65);
+    padding: 0.1875rem 0.5rem;
+    border-radius: #{$theme-border-radius};
+
+    &:hover,
+    &:focus {
+        color: $primary;
+        background-color: tint-color($primary, 90%);
+    }
+}
+
+@if $enable-dark-mode {
+    @include color-mode(dark) {
+        .sidebar-secondary-toggle {
+            color: rgba(var(--#{$prefix}body-color-rgb), 0.65);
+
+            &:hover,
+            &:focus {
+                color: $primary-text-emphasis-dark;
+                background-color: transparent;
+                box-shadow: inset 0 0 0 1px $primary-bg-subtle-dark;
+            }
+        }
+    }
+}
+
+// Flex column sidebar so .sidebar-spacer pushes the secondary group to the bottom
+// and .sidebar-footer (always-visible items) stays glued to the nav's bottom edge.
+@include media-breakpoint-up(md) {
+    .sidebar-has-spacer {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+
+        > ul.list-unstyled {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .sidebar-spacer {
+        flex: 1 1 0;
+        min-height: 1rem;
+    }
+}
+
+// When the sidebar contains a .sidebar-footer the nav becomes a flex column so
+// the footer is always anchored to the bottom regardless of content height.
+.sidebar:has(> .sidebar-footer) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+
+    > ul.list-unstyled {
+        flex: 1 1 auto;
+    }
+}
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+// Sidebar footer line: keep the always-visible item (e.g. "Infusal Status")
+// vertically centred on the same baseline as the page footer's copyright line
+// in BOTH the expanded and collapsed states. The link is shorter than the
+// secondary toggle, so centring (rather than bottom-anchoring) is what lands its
+// icon on the footer baseline. `min-height` holds the row at the toggle's height
+// so that baseline is identical whether or not the toggle shares the line, and
+// `position: relative` is the positioning context the collapsed toggle is lifted
+// into (see below).
+.sidebar-footer .sidebar-secondary-row {
+    align-items: center !important;
+    position: relative;
+    min-height: 2rem;
+}
+
+// Collapsed (icon-only) mode: the link is the single in-flow child and stays
+// centred on the footer line, while the secondary toggle is lifted out of flow
+// and stacked directly above it. This keeps the always-visible icon anchored to
+// the page-footer baseline and stops the two stacked icons from inflating the
+// footer band (the toggle overflows up into the empty space above the footer).
+.sidebar-collapsed .sidebar-footer .sidebar-secondary-row,
+html.sidebar-pre-collapsed .sidebar-collapsible .sidebar-footer .sidebar-secondary-row {
+    flex-direction: row;
+    align-items: center !important;
+}
+
+.sidebar-collapsed .sidebar-footer .sidebar-secondary-toggle,
+html.sidebar-pre-collapsed .sidebar-collapsible .sidebar-footer .sidebar-secondary-toggle {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+// The step table: turn the depth `assets/sidebar.html` counted back into a length.
+//
+// A list publishes the indent its rows are to spend, and the rows read it through this
+// custom property (see `$sidebar-nav-indent-step` for why the renderer counts steps rather
+// than emitting the length itself). The property inherits, so a row picks up the value of
+// the nearest list above it and a deeper list simply overrides it - a group header, which
+// belongs to the list its *parent* opened, is indented by that list rather than by its own.
+//
+// Scoped under `.sidebar` so the class means nothing outside a sidebar, and setting only a
+// custom property so it cannot compete with the rules that spend it.
+@for $level from 1 through $sidebar-nav-indent-max {
+    .sidebar .sidebar-nav-indent-#{$level} {
+        --sidebar-indent: #{$level * $sidebar-nav-indent-step};
+    }
+}
+
+// scss-docs-end sidebar
+
+.dropdown-toggle {
+    outline: 0;
+    display: flex;
+    align-items: center;
+}

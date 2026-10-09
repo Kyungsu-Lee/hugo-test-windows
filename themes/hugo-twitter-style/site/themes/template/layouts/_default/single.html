@@ -1,0 +1,32 @@
+{{ define "main" }}
+<article class="tweet-detail">
+    <header class="detail-topbar">
+        <a class="back-link" href="{{ .Site.Home.RelPermalink }}" aria-label="Back to timeline">←</a>
+        <div>
+            <p>Post</p>
+            <span>{{ .Site.Params.username | default .Site.Title }}</span>
+        </div>
+    </header>
+
+    <div class="tweet-author">
+        {{ partial "avatar.html" . }}
+        <div>
+            <strong>{{ .Site.Params.displayName | default .Site.Title }}</strong>
+            <span>@{{ .Site.Params.username | default .Site.Title | urlize }}</span>
+        </div>
+    </div>
+
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p class="tweet-lede">{{ . }}</p>{{ end }}
+    <div class="tweet-body">
+        {{ .Content }}
+    </div>
+    <footer class="tweet-meta detail-meta">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.01.02" }}</time>
+        {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+        {{ with .Params.tags }}
+        <span>{{ range . }}#{{ . | urlize }} {{ end }}</span>
+        {{ end }}
+    </footer>
+</article>
+{{ end }}

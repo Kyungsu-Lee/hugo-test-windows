@@ -1,0 +1,111 @@
+{{/* 
+    Copyright © 2025 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+*/}}
+
+{{ define "_partials/inline/toc-item.html" }}
+    {{ $base := .base }}
+    {{ $page := .page }}
+    {{ $startLevel := .startLevel }}
+    {{ $endLevel := .endLevel }}
+    {{ $item := .item }}
+    {{ $maxNumHeadings := .maxNumHeadings }}
+    {{ $result := .result | default slice }}
+
+    {{ if and (ge $item.Level $startLevel) (le $item.Level $endLevel) }}
+        {{- $attrs := dict "class" (printf "toc-item toc-level-%d" (add 1 (sub $item.Level $startLevel))) }}
+        {{- with $item.ID }}
+            {{/* Strip Hugo's HAHAHUGOSHORTCODE placeholder — see _markup/render-heading.html. */}}
+            {{- $cleanID := replaceRE `(?i)hahahugoshortcode\d+s\d+hbhb` "-" . -}}
+            {{- $cleanID = trim (replaceRE `-+` "-" $cleanID) "-" -}}
+            {{- $attrs = merge $attrs (dict "href" (printf "%s#%s" $base $cleanID)) }}
+        {{- end }}
+
+        {{ $htmlAttr := "" }}
+        {{ range $k, $v := $attrs }}{{ $htmlAttr = printf "%s %s=%q" $htmlAttr $k $v | safeHTMLAttr }}{{ end }}
+        {{- $cleanTitle := replaceRE `(?i)HAHAHUGOSHORTCODE\d+s\d+HBHB` " " $item.Title -}}
+        {{- $cleanTitle = trim (replaceRE `\s+` " " $cleanTitle) " " -}}
+        {{- $cleanTitle = partial "utilities/ShortenTocTitle.html" (dict "page" .page "title" $cleanTitle) -}}
+        {{ $rendered := printf "<a %s>%s</a>" $htmlAttr $cleanTitle }}
+        {{ $result = $result | append $rendered }}
+    {{ end }}
+
+    {{ if lt $item.Level $endLevel }}
+        {{ range $item.Headings }}
+            {{ $result = $result | append (partial "inline/toc-item.html" (dict
+                "base"           $base
+                "page"           $page
+                "item"           .
+                "startLevel"     $startLevel
+                "endLevel"       $endLevel
+                "maxNumHeadings" $maxNumHeadings
+            )) }}
+        {{ end }}
+    {{ end }}
+
+    {{ return $result }}
+{{ end }}
+
+{{- /* Get configuration. */}}
+{{- $startLevel := or (.Site.Params.navigation.startLevel | int) 2 }}
+{{- $endLevel := or (.Site.Params.navigation.endLevel | int) 3 }}
+{{- $minNumHeadings := or (.Site.Params.navigation.minNumHeadings | int) 2 }}
+{{- $maxNumHeadings := or (.Site.Params.navigation.maxNumHeadings | int) 9 }}
+
+{{- /* Render */}}
+{{- if .Site.Params.navigation.toc }}
+    {{- /* Check for custom headings in Page.Params, otherwise use Page.Fragments */}}
+    {{- $customHeadings := .Page.Params.Headings }}
+    {{- $customHeadingsMap := .Page.Params.HeadingsMap }}
+
+    {{- $fragments := cond $customHeadings (dict "Headings" $customHeadings "HeadingsMap" $customHeadingsMap) .Page.Fragments }}
+
+    {{- with $fragments }}
+        {{- if (ge (len .HeadingsMap) $minNumHeadings) }}
+            <h2 class="h6 fw-bold lh-base mt-0 mb-2" id="toc-heading">{{ T "toc" }}</h2>
+            <nav class="toc" aria-labelledby="toc-heading">
+                {{ $result := slice }}
+                {{ range .Headings }}
+                    {{ $result = $result | append (partial "inline/toc-item.html" (dict
+                        "page"           $.Page
+                        "base"           $.RelPermalink
+                        "item"           .
+                        "startLevel"     $startLevel
+                        "endLevel"       $endLevel
+                        "maxNumHeadings" $maxNumHeadings
+                    )) }}
+                {{ end }}
+
+                {{ range $i, $v := $result }}
+                    {{ if eq $i $maxNumHeadings }}
+                        {{ partial "assets/button.html" (dict
+                            "page"        $.Page
+                            "id"          "btnTOCShowMore"
+                            "collapse-id" "toc-collapse-items"
+                            "link-type"   "link"
+                            "class"       "toc-item"
+                            "title"       (T "tocShowMore" (sub (len $result) $i))
+                            "spacing"     false
+                        ) }}
+                        <div class="collapse" id="toc-collapse-items">
+                        {{ end }}
+                    {{ print $v | safeHTML }}
+                {{ end }}
+
+                {{ if gt (len $result) $maxNumHeadings }}
+                    &nbsp;
+                    {{ partial "assets/button.html" (dict
+                        "page"        $.Page
+                        "id"          "btnTOCShowLess"
+                        "collapse-id" "toc-collapse-items"
+                        "link-type"   "link"
+                        "class"       "toc-item"
+                        "title"       (T "tocShowLess")
+                        "spacing"     false
+                    ) }}
+                </div>{{ end }}
+            </nav>
+        {{ end }}
+    {{ end }}
+{{ end }}

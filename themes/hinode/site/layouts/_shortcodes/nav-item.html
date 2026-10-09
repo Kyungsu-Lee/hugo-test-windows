@@ -1,0 +1,121 @@
+{{/* 
+    Copyright © 2022 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+*/}}
+
+{{/* Initialize arguments */}}
+{{- $args := partial "utilities/InitArgs.html" (dict "structure" "nav-item" "args" .Params "group" "shortcode" "named" .IsNamedParams) -}}
+{{- if or $args.err $args.warnmsg -}}
+    {{- partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial"  "shortcodes/nav-item.html" 
+        "warnid"   "warn-invalid-arguments"
+        "msg"      "Invalid arguments"
+        "details"  ($args.errmsg | append $args.warnmsg)
+        "file"     .Page.File
+        "position" .Position
+    ) -}}
+{{- end -}}
+
+{{/* Initialize arguments */}}
+{{- if not .Parent -}}
+    {{- errorf "The nav-item shortcode should be contained within a nav shortcode: %s" .Position -}}
+{{- else if not $args.err -}}
+    {{- $id := .Ordinal -}}
+    {{- $parent := .Parent.Get "id" -}}
+    {{- if not $parent -}}
+        {{- $parent = .Parent.Scratch.Get "resolved-id" -}}
+        {{- if not $parent -}}
+            {{- $parent = partial "utilities/UniqueID.html" (dict "prefix" "nav" "page" $.Page) -}}
+            {{- .Parent.Scratch.Set "resolved-id" $parent -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $fade := $args.fade -}}
+    {{- $parentFade := false }}
+    {{- if and .Parent.IsNamedParams (isset .Parent.Params "fade") }}{{ $parentFade = partial "utilities/CastBool.html" (.Parent.Get "fade") }}{{ end -}}
+    {{- $fade = or $fade $parentFade -}}
+    {{- $title := or $args.title $args.header -}}
+    {{- $itemID := printf "%s-btn-%d" $parent $id }}
+    {{- $disabledID := cond $args.disabled $itemID "" }}
+    {{- $body := trim .Inner " \r\n" -}}
+    {{/*
+        assets/nav-item.html resolves a pane body with `$args.body | $args.page.RenderString`,
+        which is right for prose but destroys a body that is already HTML — a nested shortcode's
+        output reaches RenderString indistinguishable from raw HTML typed into markdown, and a
+        site running goldmark with renderer.unsafe = false then escapes or drops it. The partial
+        already accepts a `raw` field that bypasses RenderString; raw-body wires it from the
+        shortcode. Empty when unset, so `or $args.raw (...)` keeps the original path.
+    */}}
+    {{- $raw := cond $args.rawBody $body "" -}}
+    {{- $current := "" -}}
+
+    {{/* Main code */}}
+    {{/*
+        The pane is described here and rendered by the nav shortcode rather than emitted here.
+        Its `active` class is the one property an item cannot settle on its own: when no item
+        carries `show` the group falls back to its first entry, and an item rendered in document
+        order cannot know whether a later sibling will claim that. Handing the parent a
+        description instead of markup is what lets the fallback reach the pane as well as the
+        control - it is the only place that sees the whole set before anything is emitted.
+    */}}
+    {{- $itemArgs := dict
+        "page"      .Page
+        "id"        $id
+        "parent-id" $parent
+        "fade"      $fade
+        "title"     $title
+        "class"     $args.class
+        "body"      $body
+        "raw"       $raw
+        "show"      $args.show
+        "disabled"  $args.disabled
+        "_default"  $args.default
+    -}}
+
+    {{- $current := .Parent.Scratch.Get "inner-args" -}}
+    {{- $titles := .Parent.Scratch.Get "inner-title" -}}
+    {{- $disabled := .Parent.Scratch.Get "inner-disabled" -}}
+    {{- $icons := .Parent.Scratch.Get "inner-icon" -}}
+    {{- $itemAttrs := .Parent.Scratch.Get "inner-attrs" -}}
+    {{- if $args.show }}{{ .Parent.Scratch.Set "inner-show" $itemID }}{{ end -}}
+    {{- if $current -}}
+        {{- .Parent.Scratch.Set "inner-args" ($current | append $itemArgs) -}}
+        {{- .Parent.Scratch.Set "inner-title" ($titles | append $title) -}}
+        {{- .Parent.Scratch.Set "inner-disabled" ($disabled | append $disabledID) -}}
+        {{- .Parent.Scratch.Set "inner-icon" ($icons | append $args.icon) -}}
+        {{- .Parent.Scratch.Set "inner-attrs" ($itemAttrs | append $args.attributes) -}}
+    {{- else -}}
+        {{- .Parent.Scratch.Set "inner-args" (slice $itemArgs) -}}
+        {{- .Parent.Scratch.Set "inner-title" (slice $title) -}}
+        {{- .Parent.Scratch.Set "inner-disabled" (slice $disabledID) -}}
+        {{- .Parent.Scratch.Set "inner-icon" (slice $args.icon) -}}
+        {{- .Parent.Scratch.Set "inner-attrs" (slice $args.attributes) -}}
+    {{- end }}
+
+    {{/* The accordion rendering is kept eager. Nothing in this theme reads `alternative`, but it
+         reaches an override of the nav shortcode the same way `inner` used to, so it stays as it
+         was rather than changing a contract this fix has no reason to touch. */}}
+    {{- $alternative := partial "assets/nav-item.html" (dict 
+        "page"         .Page
+        "id"           $id
+        "parent-id"    $parent
+        "fade"         $fade
+        "title"        $title
+        "class"        $args.class
+        "body"         $body
+        "raw"          $raw
+        "show"         $args.show
+        "disabled"     $args.disabled
+        "navitem-type" "accordion"
+        "_default"     $args.default
+        )
+    -}}
+
+    {{- $current := .Parent.Scratch.Get "alternative" -}}
+    {{- if $current -}}
+        {{- .Parent.Scratch.Set "alternative" (print $current $alternative) -}}
+    {{- else -}}
+        {{- .Parent.Scratch.Set "alternative" $alternative -}}
+    {{ end }}
+{{ end }}

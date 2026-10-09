@@ -1,0 +1,34 @@
+{{ $class := .Attributes.class }}
+{{ $text := chomp .Text }}
+{{ $text = partial "utilities/TitleCase.html" (dict "page" .Page "text" $text) }}
+{{- $headingAnchor := partial "utilities/GetThemeIcon.html" (dict "id" "headingAnchor" "default" "fas link") -}}
+
+{{/* Strip Hugo's HAHAHUGOSHORTCODE placeholder from .Anchor — different render passes
+     assign different counters, so the raw anchor would not match the TOC link. */}}
+{{- $anchor := replaceRE `(?i)hahahugoshortcode\d+s\d+hbhb` "-" .Anchor -}}
+{{- $anchor = trim (replaceRE `-+` "-" $anchor) "-" -}}
+
+{{ $useAnchor := and site.Params.navigation.anchor $text }}
+
+{{/* Build the class list:
+     - "heading" is added only on the anchor variant — it hooks `.heading:hover .anchor`.
+     - `.Attributes.class` preserves any IAL on the heading.
+
+     Title casing is applied to $text above rather than via CSS, so that headings obey
+     Hugo's `titleCaseStyle` exactly as page titles and navigation do. `text-transform:
+     capitalize` could not: it has no stopword awareness and ignores the setting. */}}
+{{ $classList := slice }}
+{{ if $useAnchor }}{{ $classList = $classList | append "heading" }}{{ end }}
+{{ with $class }}{{ $classList = $classList | append . }}{{ end }}
+{{ $classAttr := delimit $classList " " }}
+
+{{ if $useAnchor }}
+<h{{ .Level }} id="{{ $anchor | safeURL }}" class="{{ $classAttr }}">
+    {{- $text | safeHTML -}}
+    <a href="#{{ $anchor | safeURL }}" aria-labelledby="{{ $anchor | safeURL }}">
+        {{- partial "assets/icon.html" (dict "page" .Page "icon" $headingAnchor "class" "anchor") }}
+    </a>
+</h{{ .Level }}>
+{{ else }}
+<h{{ .Level }} id="{{ $anchor | safeURL }}"{{ with $classAttr }} class="{{ . }}"{{ end }}>{{ $text | safeHTML }}</h{{ .Level }}>
+{{ end }}

@@ -1,0 +1,13 @@
+<div class="card">
+    <div class="card-title">{{i18n "sites"}}</div>
+    <div class="card-content">
+        {{ $data := index .Site.Data "sites" }}
+        {{ range $data }}
+        <a class="images" href="{{.url | absURL }}" target="_blank">
+            <img src="{{.img}}" alt="{{.name}}">
+        </a>
+        {{ end }}
+
+    </div>
+</div>
+

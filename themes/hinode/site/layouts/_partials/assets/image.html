@@ -1,0 +1,88 @@
+{{/* 
+    Copyright © 2022 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+*/}}
+
+{{- $error := false -}}
+
+{{/* Initialize arguments */}}
+{{- $args := partial "utilities/InitArgs.html" (dict "structure" "image" "args" . "group" "partial") -}}
+{{- if or $args.err $args.warnmsg -}}
+    {{- partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict 
+        "partial" "assets/image.html" 
+        "warnid"  "warn-invalid-arguments"
+        "msg"     "Invalid arguments"
+        "details" ($args.errmsg | append $args.warnmsg)
+        "file"    (or $args.page page).File
+    ) -}}
+    {{- $error = $args.err -}}
+{{- end -}}
+
+{{/* Resolve the intrinsic page; fall back to the global page for one release */}}
+{{- $page := $args.page -}}
+{{- if not $page -}}
+    {{- $noop := partial "utilities/LogWarn.html" (dict
+        "partial" "assets/image.html"
+        "warnid"  "warn-missing-page-argument"
+        "msg"     "Missing argument 'page', falling back to the global page context"
+        "details" (slice "Pass the rendering page explicitly; this fallback will be removed in a future release")
+        "file"    page.File
+    ) -}}
+    {{- $page = page -}}
+{{- end -}}
+
+{{/* Initialize global arguments */}}
+{{- $absoluteURL := site.Params.main.canonifyAssetsURLs | default false -}}
+{{- $modes := site.Params.main.modes | default (slice "light" "dark") -}}
+
+{{/* Initialize local arguments */}}
+{{- $caption := $args.caption -}}
+{{- $caption = partial "utilities/TitleCase.html" (dict "page" $page "text" $caption) -}}
+{{- $src := or $args.src $args.url -}}
+
+{{/* Main code */}}
+{{- $params := dict -}}
+{{- $params = merge $params (dict
+    "page"         $page
+    "ratio"        $args.ratio
+    "portrait"     $args.portrait
+    "image-width"  $args.imageWidth
+    "image-height" $args.imageHeight
+    "wrapper"      $args.wrapper
+    "class"        $args.class
+    "title"        $args.title
+    "caption"      $caption
+    "figclass"     $args.figclass
+    "loading"      $args.loading
+    "priority"     $args.priority
+    "sizes"        $args.sizes
+    "absolute-url" $absoluteURL
+    "plain"        $args.plain
+    "anchor"       $args.anchor
+    )
+-}}
+
+{{- if not $error -}}
+    {{- if $args.mode -}}
+        {{- $ext := path.Ext $src -}}
+        {{- $base := strings.TrimSuffix $ext $src -}}
+        {{- range $suffix := $modes -}}
+            {{- $base = strings.TrimSuffix (printf "-%s" $suffix) $base -}}
+        {{- end -}}
+
+        {{- range $suffix := $modes -}}
+            {{- $image := printf "%s-%s%s" $base $suffix $ext -}}
+            {{- $hidden := printf "d-none-%s" (cond (eq $suffix "dark") "light" "dark") -}}
+            {{- $wrapper := cond (eq $args.wrapper nil) $hidden (printf "%s %s" $args.wrapper $hidden) -}}
+            {{- $params = merge $params (dict
+                    "src"     $image
+                    "wrapper" $wrapper
+            ) -}}
+            {{- partial "assets/helpers/image-definition.html" $params -}}
+        {{- end -}}
+    {{ else }}
+        {{- $params = merge $params (dict "src" $src) -}}
+        {{- partial "assets/helpers/image-definition.html" $params -}}
+    {{- end -}}
+{{- end -}}

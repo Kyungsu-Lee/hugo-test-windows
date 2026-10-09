@@ -1,0 +1,14 @@
+name = "khata"
+license = "MIT"
+licenselink = "https://github.com/darshanbaral/khata/blob/master/LICENSE"
+description = "Documentation theme for Hugo"
+homepage = "https://github.com/darshanbaral/khata"
+demosite = "https://darshanbaral.github.io/khata/"
+tags = ["documentation", "simple"]
+features = ["documentation", "bootstrap", "responsive"]
+min_version = "0.147.9"
+theme_version = "3.0.0"
+
+[author]
+  name = "Darshan Baral"
+  homepage = "https://www.darshanbaral.com/"

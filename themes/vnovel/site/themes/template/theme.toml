@@ -1,0 +1,14 @@
+name = "VNovel"
+license = "MIT"
+licenselink = "https://github.com/opera7133/vnovel/blob/master/LICENSE"
+description = "Pixiv-like theme for novels."
+
+homepage = "https://github.com/opera7133/vnovel/"
+demosite = "https://vnovel.pages.dev"
+
+tags = ["minimal", "light", "dark", "simple", "clean", "tailwindcss", "personal", "responsive"]
+features = ["simple"]
+
+[author]
+  name = "wamo"
+  homepage = "https://wmsci.com"

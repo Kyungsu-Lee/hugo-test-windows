@@ -1,0 +1,12 @@
+<header>
+  <div class="py-4 flex items-center justify-between">
+    {{ partial "social.html" . }}
+    <div>
+      <i
+        class="p-2 icons toggle-theme cursor-pointer bi {{ if eq .Site.Params.theme `light` }}bi-lightbulb-off-fill{{ else }}bi-lightbulb-fill{{ end }} text-gray-700 hover:text-gray-500 dark:text-gray-100 dark:hover:text-gray-300"
+        onclick="toggleTheme(this)"
+      ></i>
+    </div>
+  </div>
+  <hr />
+</header>

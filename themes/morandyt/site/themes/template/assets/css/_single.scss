@@ -1,0 +1,174 @@
+.single-head {
+	padding: 0 20px;
+}
+.single-title {
+	text-align: center;
+	margin-top: 40px;
+	margin-bottom: 5px;
+	line-height: 1.2;
+}
+.single-desc {
+	margin: 0;
+	text-align: center;
+}
+.single-date {
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.single-content-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: stretch;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+	width: 100%;
+}
+
+.single-left {
+	width: 20%;
+	padding-right: 15px;
+}
+
+.single-content-box {
+	width: 60%;
+	// max-width: 840px;
+	// width: 100%;
+	padding: 0 20px;
+	// margin: 0 20px;
+	word-break: break-word;
+	overflow-wrap: break-word;
+}
+@media screen and (max-width: 768px) {
+	.single-content-box {
+		width: 100%;
+		padding: 0;
+		word-break: break-word;
+		overflow-wrap: break-word;
+	}
+}
+
+.single-content{
+	width: 100%;
+}
+
+.single-content img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+.single-right {
+	width: 20%;
+}
+
+@media screen and (max-width: 768px) {
+	.single-left {
+		display: none;
+	}
+	.single-content {
+		width: 100%;
+	}
+	.single-right {
+		display: none;
+	}
+}
+
+.single-supports {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 20px 0;
+}
+.likecoin {
+	margin: 20px 0;
+}
+.buymeacoffee {
+	margin: 20px 0;
+}
+
+.single-comments {
+	max-width: 1000px;
+	width: 90%;
+	// margin: 0 20px;
+}
+
+/* TOC itself */
+.single-toc {
+	position: sticky;
+	top: 50px;
+	border-radius: 5px;
+	background-color: var(--post-box-bg);
+	margin-top: 50px;
+	padding: 10px;
+	padding-left: 0;
+	color: var(--text-color);
+}
+
+#TableOfContents {
+	padding-left: 1rem;
+	margin: 10px 0;
+	ul {
+		padding: 0 1rem;
+		list-style-type: none;
+		counter-reset: item;
+		li a {
+			color: var(--text-color);
+		}
+	}
+}
+
+// toc-style: "order"
+.toc-style-order #TableOfContents ul {
+	list-style-type: none;
+	counter-reset: item;
+}
+.toc-style-order #TableOfContents li a:first-of-type::before {
+	counter-increment: item;
+	content: counters(item, ".") ". ";
+	font-weight: bold;
+	margin-right: 5px;
+	color: var(--text-color);
+}
+
+// toc style: "dot"
+.toc-style-dot #TableOfContents ul {
+	list-style-type: disc;
+	padding-left: 1.5rem;
+}
+.toc-style-dot #TableOfContents li a:first-of-type::before {
+	content: none;
+}
+// toc style: "none"
+.toc-style-none #TableOfContents ul {
+	list-style-type: none;
+}
+.toc-style-none #TableOfContents li a:first-of-type::before {
+	content: none;
+}
+
+// TOC inline
+@media (min-width: 768px) { // more than 768px not show
+	.toc-inline {
+		display: none;
+	}
+}
+.toc-inline {
+	padding: 0 20px;
+	margin-bottom: 60px;
+}
+.toc-title {
+	text-align: center;
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 0;
+}
+.toc-desc {
+	text-align: center;
+	margin-top: 0;
+	color: rgba(185, 183, 183, 0.5);
+}

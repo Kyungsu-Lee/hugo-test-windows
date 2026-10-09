@@ -1,0 +1,13 @@
+<nav class="breadcrumbs" aria-label="breadcrumb">
+    <ol>
+        {{/* Add ancestors in order from top-level section down to immediate parent */}}
+        {{- range .Ancestors.Reverse -}}
+            {{- if not .IsHome -}} {{/* Avoid adding Home again if it's already added or if Ancestors includes it */}}
+                <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+            {{- end -}}
+        {{- end -}}
+
+        {{/* Add the current page title (not a link) */}}
+        <li class="active" aria-current="page">{{ .Title }}</li>
+    </ol>
+</nav>

@@ -1,0 +1,201 @@
+{{- define "main" -}}
+  {{- $metadataPosition := lower (default "header" .Site.Params.articleMetadata.position) -}}
+  {{- $enableComments := and (not .Site.Params.comment.disabled) (not (in .Site.Params.comment.disableByType .Type)) -}}
+
+
+
+  <div class="container mt-1 mx-auto px-2 py-2 md:px-2 md:py-4 lg:px-4 lg:py-8 min-h-screen">
+    <!-- Article Header -->
+    <header class="md:mb-4 lg:mb-8">
+      <h1 class="fluidity-page-title text-4xl group mb-2 md:mb-4 lg:mb-8">
+        <span class="relative inline-block">
+          {{ .Title }}
+          <span class="fluidity-page-title-line"></span>
+        </span>
+      </h1>
+
+      {{- if eq $metadataPosition "header" -}}
+        {{- partial "article-metadata" . -}}
+      {{- end -}}
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
+      <!-- Article Content -->
+      <div id="main-content" class="col-span-1 lg:col-span-2 order-2 lg:order-1">
+        <div
+          class="relative overflow-hidden
+                bg-gradient-to-br from-white/95 to-neutral-50/90
+                dark:from-neutral-900/95 dark:to-neutral-800/90
+                rounded-xl px-4 md:px-8 py-3 md:py-6
+                border border-neutral-200/80 dark:border-neutral-700/80
+                backdrop-blur-md
+                shadow-lg shadow-sky-100/20 dark:shadow-sky-900/20
+                transition-all duration-300 ease-out">
+          <article class="prose prose-neutral dark:prose-invert">
+            {{ .Content }}
+          </article>
+
+          <!-- Decorative gradient line -->
+          <div class="fluidity-decorative-gradient-line"></div>
+        </div>
+      </div>
+      <!-- Sidebar -->
+      <aside id="sidebar" class="lg:block lg:col-span-1 order-1 lg:order-2">
+        {{- if eq $metadataPosition "sidebar" -}}
+          {{- partial "article-metadata" . -}}
+        {{- end -}}
+
+
+        <div
+          class="sticky top-4 rounded-xl p-4
+                    relative overflow-hidden
+                    bg-gradient-to-br from-white/95 to-neutral-50/90
+                    dark:from-neutral-900/95 dark:to-neutral-800/90
+                    border border-neutral-200/80 dark:border-neutral-700/80
+                    backdrop-blur-md
+                    shadow-lg shadow-sky-100/20 dark:shadow-sky-900/20
+                    transition-all duration-300 ease-out">
+          {{- $enableToc := and (gt .WordCount 400) (and (not (eq .Params.toc false)) (not .Site.Params.toc.disabled)) -}}
+          {{- $enableToc = not (eq .TableOfContents "<nav id=\"TableOfContents\"></nav>") -}}
+          {{- $enableShare := false -}}
+          {{ if and (isset .Site.Params "social") (isset .Site.Params.social "share") }}
+            {{ $enableShare = and (not .Site.Params.social.share.disabled) (not (in .Site.Params.social.share.disableByType .Type)) }}
+          {{ end }}
+
+          {{- if and $enableToc -}}
+            <div class="relative">
+              {{- partial "toc.html" . -}}
+            </div>
+          {{- end -}}
+
+          {{- if and $enableToc $enableShare -}}
+            <div class="border-b border-neutral-200/60 dark:border-neutral-700/60 my-4"></div>
+          {{- end -}}
+
+          {{- if $enableShare -}}
+            <div class="relative">
+              {{- partial "utils/share.html" . -}}
+            </div>
+          {{- end -}}
+
+          {{- if or $enableToc $enableShare -}}
+            <div class="border-b border-neutral-200/60 dark:border-neutral-700/60 my-4 hidden md:block"></div>
+          {{- end -}}
+
+
+          <div
+            class="flex flex-wrap gap-2 justify-between text-sm text-neutral-700 dark:text-neutral-400 hidden md:flex">
+            <button
+              onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+              class="group inline-flex items-center gap-1 py-1.5 rounded-lg cursor-pointer
+                     hover:text-sky-600 dark:hover:text-sky-400
+                     transform-gpu motion-safe:hover:-translate-y-0.5
+                     transition-all duration-300 ease-out">
+              <span
+                class="text-sky-600 dark:text-sky-400 transition-transform duration-300
+                           group-hover:scale-110 group-hover:-translate-y-0.5">
+                {{- partial "utils/icon.html" (dict "icon" "arrow-export-up") -}}
+              </span>
+              <span>{{ i18n "backToTop" | default "Back to Top" | title }}</span>
+            </button>
+
+            {{- if $enableComments }}
+              <button
+                onclick="document.getElementById('comments').scrollIntoView({behavior: 'smooth'})"
+                class="group inline-flex items-center gap-1 py-1.5 rounded-lg cursor-pointer
+                     hover:text-sky-600 dark:hover:text-sky-400
+                     transform-gpu motion-safe:hover:-translate-y-0.5
+                     transition-all duration-300 ease-out">
+                <span
+                  class="text-sky-600 dark:text-sky-400 transition-transform duration-300
+                           group-hover:scale-110 group-hover:-translate-y-0.5">
+                  {{- partial "utils/icon.html" (dict "icon" "comments") -}}
+                </span>
+                <span>{{ i18n "jumpToComments" | default "Jump to Comments" | title }}</span>
+              </button>
+            {{- end }}
+
+
+            <button
+              id="toggle-sidebar"
+              aria-expanded="true"
+              data-hide-label="{{ i18n "hide" | default "Hide" | title }}"
+              data-show-label="{{ i18n "show" | default "Show" | title }}"
+              class="group inline-flex items-center gap-1 py-1.5 rounded-lg cursor-pointer
+                     hover:text-sky-600 dark:hover:text-sky-400
+                     transform-gpu motion-safe:hover:-translate-y-0.5
+                     transition-all duration-300 ease-out">
+              <span
+                class="text-sky-600 dark:text-sky-400 transition-transform duration-300
+                           group-hover:scale-110 group-hover:rotate-12">
+                {{- partial "utils/icon.html" (dict "icon" "slide-hide") -}}
+              </span>
+              <span>{{ i18n "hide" | default "Hide" | title }}</span>
+            </button>
+
+            <!-- Decorative gradient line -->
+            <div class="fluidity-decorative-gradient-line"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <aside id="article-aside" class="mt-4 lg:mt-12">
+      {{- $enableComments := and (not .Site.Params.comment.disabled) (not (in .Site.Params.comment.disableByType .Type)) -}}
+      {{- $enableRelated := and (not .Site.Params.relatedPosts.disabled) (not (in .Site.Params.relatedPosts.disableByType .Type)) (.Site.RegularPages.Related .) -}}
+      {{- $activeTab := "comments" -}}
+      {{- if not $enableComments -}}
+        {{- $activeTab = "related" -}}
+      {{- end -}}
+      {{- if not $enableRelated -}}
+        {{- $activeTab = "" -}}
+      {{- end -}}
+
+
+      <div class="w-fit">
+        <nav class="fluidity-tab-list flex gap-6" aria-label="Tabs" role="tablist">
+          {{- if $enableComments -}}
+            {{- partial "inline/single/tab-button.html" (dict "Name" "comments" "Title" (i18n "comment" | strings.Title) "ActiveTab" $activeTab) -}}
+          {{- end -}}
+          {{- if $enableRelated -}}
+            {{- partial "inline/single/tab-button.html" (dict "Name" "related" "Title" (i18n "relatedArticles" | strings.Title) "ActiveTab" $activeTab) -}}
+          {{- end -}}
+        </nav>
+      </div>
+
+      <div class="mt-4">
+        {{ if $enableComments }}
+          <div id="comments" class="tab-content hidden" role="tabpanel">
+            {{- partial "comment.html" . -}}
+          </div>
+        {{- end -}}
+        {{- if $enableRelated -}}
+          <div id="related" class="tab-content hidden" role="tabpanel">
+            {{- partial "related-article.html" . -}}
+          </div>
+        {{- end -}}
+      </div>
+    </aside>
+  </div>
+{{- end -}}
+
+{{- define "partials/inline/single/tab-button.html" -}}
+  <button
+    data-tab="{{ .Name }}"
+    role="tab"
+    aria-label="{{ .Title }}"
+    class="tab-button border-b-4 px-1 pb-2 text-base font-medium
+      text-neutral-600 dark:text-neutral-400
+      border-transparent cursor-pointer
+      hover:border-sky-500
+      hover:text-sky-600 dark:hover:text-sky-400
+      transition-colors duration-200"
+    aria-selected="{{- if eq .Name .ActiveTab -}}
+      true
+    {{- else -}}
+      false
+    {{- end -}}">
+    {{ .Title }}
+  </button>
+{{- end -}}

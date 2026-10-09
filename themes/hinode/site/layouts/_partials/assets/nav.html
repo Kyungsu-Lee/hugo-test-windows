@@ -1,0 +1,195 @@
+{{/*
+    Copyright © 2022 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+*/}}
+
+{{- $error := false -}}
+
+{{/* Initialize arguments */}}
+{{- $args := partial "utilities/InitArgs.html" (dict "structure" "nav" "args" . "group" "partial") -}}
+{{- if or $args.err $args.warnmsg -}}
+    {{- partial (cond $args.err "utilities/LogErr.html" "utilities/LogWarn.html") (dict
+        "partial" "assets/nav.html"
+        "warnid"  "warn-invalid-arguments"
+        "msg"     "Invalid arguments"
+        "details" ($args.errmsg | append $args.warnmsg)
+        "file"    (or $args.page page).File
+    ) -}}
+    {{- $error = $args.err -}}
+{{- end -}}
+
+{{/* Initialize global arguments */}}
+{{- $padding := partial "utilities/GetPadding.html" -}}
+{{- $breakpoint := partial "utilities/GetBreakpoint.html" -}}
+
+{{/* Initialize local arguments */}}
+{{- $page := $args.page -}}
+{{- $id := $args.id | default "0" -}}
+{{- $type := or $args.tabType $args.type -}}
+{{- $wrap := $args.wordWrap -}}
+{{- $isBtnGroup := eq $type "buttons" -}}
+{{- $isVertical := $args.vertical -}}
+{{- $align := cond (not $isVertical) $args.align "" -}}
+{{- $controlsPlacement := cond (not $isVertical) (or $args.controlsPlacement "top") "" -}}
+{{- $alignClass := cond (eq $align "center") " justify-content-center" (cond (eq $align "end") " justify-content-end" "") -}}
+{{- $titles := slice -}}
+{{- range $args.list }}{{ $titles = $titles | append .Title }} {{ end -}}
+{{- if reflect.IsSlice $args.navTitles }}{{ $titles = $titles | append $args.navTitles }}{{ end -}}
+{{- $icons := $args.navIcons -}}
+{{- $itemAttrs := $args.navItemAttrs -}}
+
+{{/* The companion dropdown mirrors the nav, so it has to start on the same entry. `nav-show` names
+     that entry by item id rather than position, so resolve it to an index here - built from the same
+     `{id}-btn-{index}` expression the nav's own controls use below, so the two cannot disagree.
+     Falls back to the first entry when `nav-show` is unset or names an item that does not exist.
+
+     It is `$id` rather than `$args.id`, because `$id` carries the fallback a caller that omits the
+     argument gets. Every `-btn-` expression in this file has to spell the identifier the same way or
+     a nav rendered without an id addresses buttons that were emitted under another name. */}}
+{{- $active := 0 -}}
+{{- if $args.navShow -}}
+    {{- range $index, $item := $titles -}}
+        {{- if eq $args.navShow (printf "%s-btn-%d" $id $index) -}}{{- $active = $index -}}{{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{/* Arguments of the companion dropdown that stands in for the control group below the breakpoint.
+     Every nav type gets one. `responsive` promises the controls collapse rather than disappear, and
+     the group is hidden below the breakpoint whatever its type - so a type left without a dropdown
+     loses its controls outright at narrow widths, with the panes still rendered and no way to reach
+     any but the active one.
+
+     The toggle takes the button treatment for a button group and the borderless text treatment for a
+     standard nav, which is the split assets/table.html already makes for its filter group: a control
+     standing in for buttons has to read as a button rather than as body copy. */}}
+{{- $dropdownArgs := dict
+    "id"     $id
+    "class"  (printf "d-%s-none py-%d" $breakpoint.current $padding.y)
+    "titles" $titles
+    "wrap"   $wrap
+    "active" $active
+-}}
+{{- if $isBtnGroup -}}
+    {{- $dropdownArgs = merge $dropdownArgs (dict "toggleClass" "btn btn-outline-primary") -}}
+{{- end -}}
+
+{{/* Tab-content class — spacing depends on type and controls-placement.
+     tabs/callout: border acts as the visual separator, no margin needed.
+     vertical:     left margin to offset from the vertical nav rail.
+     all others:   top margin when controls are above (default). */}}
+{{- $tabContentSpacing := "" -}}
+{{- if $isVertical -}}
+    {{- $tabContentSpacing = printf "ms-%s-3" $breakpoint.current -}}
+{{- else if and (not (in (slice "tabs" "callout") $type)) (ne $controlsPlacement "bottom") -}}
+    {{- $tabContentSpacing = "mt-3" -}}
+{{- end -}}
+{{- $tabContentClass := printf "tab-content %s%s" (cond (in (slice "tabs" "callout") $type) "border p-3 bg-body " "") $tabContentSpacing -}}
+
+{{/* Main code */}}
+{{- if not $error -}}
+{{- /* The wrapper carries the caller's `id` verbatim, which is the only element that does: every
+     other identifier here is derived from it (`nav-{id}` on the list, `dropdown-{id}` on the
+     companion, `{id}-btn-{index}` on the controls), so without this the argument documented as the
+     "unique identifier of the current element" named no element at all and `#{id}` resolved to
+     nothing. Emitted only when the caller supplied one - `$id` falls back to a constant, and
+     stamping that on the wrapper would repeat one id across every nav on the page. */ -}}
+<div {{ with $args.id }}id="{{ . }}" {{ end }}class="col col-12 col-{{ $breakpoint.current }}-{{ $args.width }} mx-auto">
+    {{- if $isVertical }}<div class="d-{{ if $args.responsive }}{{ $breakpoint.current }}{{ end }}-flex align-items-start">{{ end -}}
+
+    {{/* Responsive dropdown, controls-top position */}}
+    {{- if and $args.responsive (ne $controlsPlacement "bottom") -}}
+        {{ partial "assets/panel-dropdown.html" $dropdownArgs }}
+    {{- end -}}
+
+    {{/* Tab content — rendered first when controls-placement=below */}}
+    {{- if eq $controlsPlacement "bottom" -}}
+    <div class="{{ $tabContentClass }}">
+        {{- $args.navItems | safeHTML -}}
+    </div>
+    {{- end -}}
+
+    {{/* Nav controls */}}
+    <div class="{{ if $args.responsive }}d-none d-{{ $breakpoint.current }}-block{{ end }}{{ if eq $controlsPlacement "bottom" }} mt-3{{ end }}">
+    {{- if $isBtnGroup -}}
+        {{/* buttons tab-type */}}
+        <div class="btn-group{{ $alignClass }}" role="tablist"
+            {{- range $key, $val := $args.attributes }} {{ printf "%s=%q" $key $val | safeHTMLAttr }}{{ end }}
+            data-companion="dropdown-{{ $id }}"
+        >
+            {{- range $index, $item := $titles -}}
+                {{- $itemID := printf "%s-btn-%d" $id $index -}}
+                {{- $show := eq $index 0 -}}
+                {{- if $args.navShow }}{{- $show = eq $args.navShow $itemID -}}{{ end -}}
+                {{- $disabled := in $args.navDisabled $itemID -}}
+                {{- $itemIcon := index $icons $index -}}
+                {{- $itemAttrMap := index $itemAttrs $index -}}
+                <button
+                    type="button"
+                    class="btn btn-outline-primary{{ if $show }} active{{ end }}{{ if $disabled }} disabled{{ end }}"
+                    id="{{ $itemID }}"
+                    data-bs-toggle="tab"
+                    data-bs-target="#{{ $id }}-{{ $index }}"
+                    role="tab"
+                    aria-controls="{{ $id }}-{{ $index }}"
+                    aria-selected="{{ if $show }}true{{ else }}false{{ end }}"
+                    {{- if $itemIcon }} title="{{ $item }}" aria-label="{{ $item }}"{{ else if $item }} aria-label="{{ $item }}"{{ end -}}
+                    {{- range $key, $val := $itemAttrMap }} {{ printf "%s=%q" $key $val | safeHTMLAttr }}{{ end -}}
+                >
+                    {{- if $itemIcon -}}
+                        {{- partial "assets/icon.html" (dict "page" $page "icon" $itemIcon "spacing" false) -}}
+                    {{- else -}}
+                        {{ $item }}
+                    {{- end -}}
+                </button>
+            {{- end -}}
+        </div>
+    {{- else -}}
+        {{/* Standard nav (pills, tabs, underline, callout) */}}
+        <ul
+            class="nav nav-panel{{ with $type }} nav-{{ . }}{{ end -}}{{ $alignClass }}{{ with $args.class }} {{ . }}{{ end }}{{ if $isVertical }} flex-column{{ end }} tabs-dropdown"
+            id="nav-{{ $id }}"
+            role="tablist"
+            {{- if $isVertical }} aria-orientation="vertical"{{ end -}}
+            {{- range $key, $val := $args.attributes }} {{ printf "%s=%q" $key $val | safeHTMLAttr }}{{ end }}
+            data-companion="dropdown-{{ $id }}"
+        >
+            {{- range $index, $item := $titles -}}
+                {{ $itemID := printf "%s-btn-%d" $id $index -}}
+                {{- $show := eq $index 0 -}}
+                {{- if $args.navShow }}{{ $show = eq $args.navShow $itemID }}{{ end -}}
+                {{- $disabled := in $args.navDisabled $itemID -}}
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link{{ if not $wrap }} text-nowrap{{ end }}{{ if $show }} active{{ end }}{{ if $disabled }} disabled{{ end }}"
+                        id="{{ $itemID }}"
+                        data-bs-toggle="pill"
+                        data-bs-target="#{{ $id }}-{{ $index }}"
+                        type="button"
+                        role="tab"
+                        aria-controls="{{ $id }}-{{ $index }}"
+                        aria-selected="{{ if $show }}true{{ else }}false{{ end }}"
+                    >
+                        {{ $item }}
+                    </button>
+                </li>
+            {{ end -}}
+        </ul>
+    {{- end -}}
+    </div>
+
+    {{/* Tab content — rendered after controls by default (controls-placement=top) */}}
+    {{- if ne $controlsPlacement "bottom" -}}
+    <div class="{{ $tabContentClass }}">
+        {{- $args.navItems | safeHTML -}}
+    </div>
+    {{- end -}}
+
+    {{/* Responsive dropdown, controls-below position */}}
+    {{- if and $args.responsive (eq $controlsPlacement "bottom") -}}
+        {{ partial "assets/panel-dropdown.html" $dropdownArgs }}
+    {{- end -}}
+
+    {{- if $isVertical }}</div>{{ end -}}
+</div>
+{{- end -}}

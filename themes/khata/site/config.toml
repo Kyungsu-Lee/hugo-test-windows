@@ -1,0 +1,38 @@
+baseURL = "/"
+title = "khata"
+# theme = "khata"
+languageCode = "en-us"
+copyright = "2019. First Last"
+pluralizelisttitles = false
+disableKinds = ["taxonomy"]
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[params]
+  dateFormat = "2006-01-02"
+
+[params.author] 
+  name = "`khata`"
+  profilephoto = "homePageImage.jpg"
+  title = "[hugo](https://gohugo.io/) theme"
+  subtitle = "for documentation/note-taking"
+  about = '''
+  [`khata`](https://github.com/darshanbaral/khata) theme is a clean and responsive Hugo theme designed for documentation and note-taking. Khata is highly customizable and provides a simple, elegant layout to make your content easy to read and navigate.
+'''
+
+[[params.social]]
+  name = "Twitter"
+  link = "#"
+  iconclass= "bi bi-twitter-x"
+
+[[params.social]]
+  name = "LinkedIn"
+  link = "#"
+  iconclass= "bi bi-linkedin"
+
+[[params.social]]
+  name = "Email"
+  link = "mailto:username@domain.com"
+  iconclass= "bi bi-envelope-at-fill"

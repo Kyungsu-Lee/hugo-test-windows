@@ -1,0 +1,167 @@
+{{ define "main" }}
+<div class="photos-section-page-container">
+    <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ $breadcrumbs }}</h1>
+    </div>
+
+    {{ if eq .RelPermalink "/photos/" }}
+        {{/* This is the top-level /photos/ page. Display its categories. */}}
+        <div class="photo-grid">
+            {{ range .Sections.ByTitle }}
+                {{ $categoryPage := . }}
+
+                {{/* We use .Scratch to store the final URL. This avoids Hugo's variable scoping issues. */}}
+                {{ $categoryPage.Scratch.Set "displayPhotoUrl" "" }}
+
+                {{ if and $categoryPage.Params.image (ne $categoryPage.Params.image "") }}
+                    {{/* Case 1: An 'image' is set in the category's _index.md front matter. Use it. */}}
+                    {{ $categoryPage.Scratch.Set "displayPhotoUrl" $categoryPage.Params.image }}
+                {{ else }}
+                    {{/* Case 2: No cover_image. We must iterate through each shoot (sub-section) and collect its page resources. */}}
+                    {{ $categoryPage.Scratch.Set "collectedImages" slice }}
+
+                    {{ range $categoryPage.Sections }}
+                        {{ $imagesFromShoot := .Resources.ByType "image" }}
+                        {{ if $imagesFromShoot }}
+                            {{ $currentImages := $categoryPage.Scratch.Get "collectedImages" }}
+                            {{ $categoryPage.Scratch.Set "collectedImages" ($currentImages | union $imagesFromShoot) }}
+                        {{ end }}
+                    {{ end }}
+
+                    {{ $allCollectedImages := $categoryPage.Scratch.Get "collectedImages" }}
+                    {{ if $allCollectedImages }}
+                        {{ $latestPhoto := index (sort $allCollectedImages "Name" "desc") 0 }}
+                        {{ $categoryPage.Scratch.Set "displayPhotoUrl" $latestPhoto.RelPermalink }}
+                    {{ end }}
+                {{ end }}
+
+                <a href="{{ $categoryPage.RelPermalink }}" class="photo-grid-item">
+                    {{ with $categoryPage.Scratch.Get "displayPhotoUrl" }}
+                        <img src="{{ if hasPrefix . "http" }}{{ . }}{{ else }}{{ . | relURL }}{{ end }}" alt="Cover image for {{ $categoryPage.Title }}">
+                    {{ else }}
+                        <img src="/images/placeholders/image-unavailable.jpg" alt="Placeholder image">
+                    {{ end }}
+                    <div class="photo-grid-item-info">
+                        <h2>{{ $categoryPage.Title }}</h2>
+                    </div>
+                </a>
+            {{ end }}
+        </div>
+    {{ else if .Sections }}
+        {{/* This is a Category page (e.g., /photos/official/), display its shoots */}}
+        <div class="photo-grid">
+            {{ range .Sections.ByTitle }} {{/* Iterate over shoots in this category */}}
+                {{ $shootPage := . }}
+                {{ $coverImageUrl := "" }}
+
+                {{ if and .Params.image (ne .Params.image "") }}
+                    {{/* Case 1: User has manually set an 'image' in the _index.md front matter. Use it. */}}
+                    {{ $coverImageUrl = .Params.image }}
+                {{ else }}
+                    {{/* Case 2: No manual image. Fall back to original logic to find an image directly in this folder. */}}
+                    {{ with .Resources.ByType "image" }}
+                        {{ with index (sort . "Name" "desc") 0 }}
+                            {{ $coverImageUrl = .RelPermalink }}
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+
+                <a href="{{ $shootPage.RelPermalink }}" class="photo-grid-item">
+                    {{ with $coverImageUrl }}
+                        <img src="{{ if hasPrefix . "http" }}{{ . }}{{ else }}{{ . | relURL }}{{ end }}" alt="Cover image for {{ $shootPage.Title }}">
+                    {{ else }}
+                        <img src="/images/placeholders/image-unavailable.jpg" alt="Placeholder image">
+                    {{ end }}
+                    <div class="photo-grid-item-info">
+                        <h2>{{ $shootPage.Title | default (path.Base $shootPage.File.Dir | humanize) }}</h2>
+                    </div>
+                </a>
+            {{ end }}
+        </div>
+    {{ else if or (.Resources.ByType "image") .Params.images (and .Params.image (ne .Params.image "")) }}
+        {{/* This block now handles any page that is meant to display one or more images. */}}
+
+        {{ if .Params.images }}
+            {{/* --- MULTI-IMAGE EXTERNAL GALLERY --- */}}
+            <div class="photo-grid">
+                {{ range $index, $imageUrl := .Params.images }}
+                    <a href="{{ $imageUrl }}" class="photo-grid-item lightbox-trigger" data-index="{{ $index }}">
+                        <img src="{{ $imageUrl }}" alt="{{ $.Title }} - Photo {{ add $index 1 }}">
+                    </a>
+                {{ end }}
+            </div>
+
+        {{ else if and .Params.image (ne .Params.image "") }}
+            {{/* --- SINGLE IMAGE PAGE (from front matter 'image') --- */}}
+            <div class="photo-detail-container">
+                {{ $imageUrl := .Params.image }}
+                {{ $fullUrl := "" }}
+                {{ if hasPrefix $imageUrl "http" }}
+                    {{ $fullUrl = $imageUrl }}
+                {{ else }}
+                    {{ $fullUrl = $imageUrl | relURL }}
+                {{ end }}
+
+                <a href="{{ $fullUrl }}" class="lightbox-trigger" data-index="0">
+                    <img src="{{ $fullUrl }}" alt="{{ .Title }}">
+                </a>
+
+                {{ with .Params.links }}
+                <div class="photo-links">
+                    {{ range . }}
+                        <a href="{{ .url }}" class="photo-link" target="_blank" rel="noopener noreferrer">{{ .name }}</a>
+                    {{ end }}
+                </div>
+                {{ end }}
+
+                <div class="page-content">
+                    {{ .Content }}
+                </div>
+            </div>
+
+        {{ else }}
+            {{/* --- LOCAL IMAGE GALLERY (from page resources) --- */}}
+            {{ $images := sort (.Resources.ByType "image") "Name" }}
+            {{ if eq (len $images) 1 }}
+                {{/* --- SINGLE LOCAL IMAGE --- */}}
+                <div class="photo-detail-container">
+                    {{ with index $images 0 }}
+                        <a href="{{ .RelPermalink }}" class="lightbox-trigger" data-index="0"><img src="{{ .RelPermalink }}" alt="{{ $.Title }}"></a>
+                    {{ end }}
+                    {{ with .Params.links }}<div class="photo-links">{{ range . }}<a href="{{ .url }}" class="photo-link" target="_blank" rel="noopener noreferrer">{{ .name }}</a>{{ end }}</div>{{ end }}
+                    <div class="page-content">{{ .Content }}</div>
+                </div>
+            {{ else }}
+                {{/* --- MULTI-IMAGE LOCAL GALLERY --- */}}
+                <div class="photo-grid">
+                    {{ range $index, $image := $images }}
+                        <a href="{{ .RelPermalink }}" class="photo-grid-item lightbox-trigger" data-index="{{ $index }}">
+                            <img src="{{ .RelPermalink }}" alt="{{ $.Title }} - Photo {{ add $index 1 }}">
+                        </a>
+                    {{ end }}
+                </div>
+            {{ end }}
+        {{ end }}
+
+        {{/* --- LIGHTBOX STRUCTURE (Common to all gallery types) --- */}}
+        <div id="lightbox-overlay" class="lightbox-overlay">
+            <span id="lightbox-close" class="lightbox-close">&times;</span>
+            <span id="lightbox-prev" class="lightbox-prev">&#10094;</span>
+            <span id="lightbox-next" class="lightbox-next">&#10095;</span>
+            <div class="lightbox-content">
+                <img id="lightbox-image" src="" alt="Full-screen image">
+            </div>
+        </div>
+    {{ else }}
+        <p>No content found here.</p>
+    {{ end }}
+
+</div>
+
+{{/* Conditionally include photos.js if we are on a page with a gallery for lightbox functionality */}}
+{{ if and (not .Sections) (or (.Resources.ByType "image") .Params.images (and .Params.image (ne .Params.image ""))) }}
+    <script src="{{ "/js/photos.js" | relURL }}"></script>
+{{ end }}
+
+{{ end }}

@@ -1,0 +1,57 @@
+<aside class="rail rail-right" aria-label="Profile details"{{ with .Site.Params.xProfileProxy }} data-x-profile-proxy="{{ . }}"{{ end }}>
+    <section class="search-panel" aria-label="Search">
+        {{ partial "icon.html" "search" }}
+        <span>Search</span>
+    </section>
+    {{ $sidebar := hugo.Data.sidebar | default dict }}
+    {{ $suggestions := $sidebar.suggestions | default slice }}
+    {{ $trends := $sidebar.trends | default slice }}
+    {{ if $suggestions }}
+    <section class="side-panel">
+        <h2>{{ $sidebar.suggestionsTitle | default "You might like" }}</h2>
+        {{ range $suggestions }}
+        <div class="suggestion"{{ with .xUsername }} data-x-profile="{{ . }}"{{ end }}>
+            {{ if .avatar }}
+            <img class="suggestion-avatar" src="{{ .avatar }}" alt="">
+            {{ else if .xUsername }}
+            <img class="suggestion-avatar" src="https://unavatar.io/x/{{ .xUsername }}" alt="" data-x-avatar>
+            {{ else }}
+            <span class="suggestion-avatar"></span>
+            {{ end }}
+            <div>
+                <strong data-x-name>{{ .name }}</strong>
+                {{ with .handle }}<span data-x-handle>@{{ . }}</span>{{ else }}{{ with .xUsername }}<span data-x-handle>@{{ . }}</span>{{ end }}{{ end }}
+                {{ with .note }}<small>{{ . }}</small>{{ end }}
+                {{ if .xUsername }}<small class="x-profile-stats" data-x-stats><span data-x-following></span><span data-x-followers></span></small>{{ end }}
+            </div>
+            {{ if and .xFollowButton .xUsername }}
+            <a class="twitter-follow-button suggestion-follow-widget"
+               href="https://twitter.com/{{ .xUsername }}"
+               data-show-count="true"
+               data-show-screen-name="false">Follow</a>
+            {{ else }}
+            <a class="suggestion-follow" href="{{ .url }}">Follow</a>
+            {{ end }}
+        </div>
+        {{ end }}
+        {{ with $sidebar.suggestionsMoreUrl }}<a class="show-more" href="{{ . }}">{{ $sidebar.suggestionsMoreText | default "Show more" }}</a>{{ end }}
+    </section>
+    {{ end }}
+    {{ if $trends }}
+    <section class="side-panel">
+        <h2>{{ $sidebar.trendsTitle | default "What’s happening" }}</h2>
+        {{ range $trends }}
+        <a class="trend" href="{{ .url | default $.Site.Home.RelPermalink }}">
+            {{ with .meta }}<span>{{ . }}</span>{{ end }}
+            <strong>{{ .title }}</strong>
+            {{ with .description }}<small>{{ . }}</small>{{ end }}
+        </a>
+        {{ end }}
+        {{ with $sidebar.trendsMoreUrl }}<a class="show-more" href="{{ . }}">{{ $sidebar.trendsMoreText | default "Show more" }}</a>{{ end }}
+    </section>
+    {{ end }}
+    <p class="site-links">Terms of Service · Privacy Policy · Cookie Policy · © {{ now.Format "2006" }} {{ .Site.Title }}</p>
+    {{ if .Site.Params.enableXDynamic }}
+    <script async src="https://platform.x.com/widgets.js" charset="utf-8"></script>
+    {{ end }}
+</aside>

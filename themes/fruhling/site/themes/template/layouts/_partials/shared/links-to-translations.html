@@ -1,0 +1,7 @@
+{{- if .Page.IsTranslated -}}
+    <span class="post_meta_translations">
+    {{- range $translatedUrl := .Page.Translations -}}
+        <a href="{{- $translatedUrl.RelPermalink -}}">{{- $translatedUrl.Language.Lang -}}</a>
+    {{- end -}}
+    </span>
+{{- end -}}

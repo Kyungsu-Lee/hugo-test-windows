@@ -1,0 +1,6 @@
+{{ $avatar := .Site.Params.avatar }}
+{{ if $avatar }}
+<img class="avatar" src="{{ $avatar | relURL }}" alt="{{ .Site.Params.displayName | default .Site.Title }}">
+{{ else }}
+<div class="avatar avatar-fallback" aria-hidden="true">{{ substr (.Site.Params.displayName | default .Site.Title) 0 1 }}</div>
+{{ end }}

@@ -1,0 +1,13 @@
+{{- $post := (.Get 0) -}}
+{{- $imgName := (.Get 1) -}}
+{{- $title := (.Get 2) -}}
+{{- with .Site.GetPage $post -}}
+    {{- $resources := .Resources.ByType "image" -}}
+    {{- range where $resources "Name" "==" $imgName -}}
+        {{- $context := printf " in rel-img shortcode on %q" $.Page.File.Path -}}
+        {{- $image := partial "_funcs/process-image.html" (dict "resource" . "method" "Resize" "spec" "x1080 q90" "context" $context) -}}
+        {{- if $image -}}
+        <img src="{{ $image.RelPermalink -}}" title="{{- $title -}}" alt="{{- $title -}}" class="zoomable">
+        {{- end -}}
+    {{- end -}}
+{{- end -}}

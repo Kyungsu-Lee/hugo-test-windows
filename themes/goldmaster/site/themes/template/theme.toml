@@ -1,0 +1,21 @@
+name = 'Goldmaster'
+license = 'MIT'
+licenselink = 'https://opensource.org/licenses/MIT'
+description = """
+A clean, responsive, and feature-rich Hugo theme designed for music artists, DJs, developers, and creators. It offers multiple layouts for different content types like news, discography, and project portfolios.
+"""
+
+# Home page of the theme, where the source can be found
+homepage = 'https://gitlab.com/goldmaster/goldmaster'
+
+# Demo site
+demosite = 'https://goldmaster.site'
+
+# Taxonomy terms
+tags = ['blog', 'goldmaster']
+features = ['music', 'dj', 'producer']
+
+# Author
+[author]
+  name = 'Goldmaster'
+  homepage = 'https://goldmaster.site'

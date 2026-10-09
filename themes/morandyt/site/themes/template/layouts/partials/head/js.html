@@ -1,0 +1,37 @@
+<script>
+	(function () {
+		const theme = localStorage.getItem("theme");
+		const prefersDark = window.matchMedia(
+			"(prefers-color-scheme: dark)"
+		).matches;
+		const html = document.documentElement;
+
+		if (theme === "dark" || (!theme && prefersDark)) {
+			html.classList.add("dark");
+		} else {
+			html.classList.remove("dark");
+		}
+
+		const color = localStorage.getItem("pref-color");
+		if (color) {
+			html.classList.add(color);
+		}
+	})();
+</script>
+
+{{- with resources.Get "js/main.js" }} 
+	{{- if eq hugo.Environment "development"}}
+		{{- with . | js.Build }}
+			<script src="{{ .RelPermalink }}"></script>
+		{{- end }} 
+	{{- else }} 
+		{{- $opts := dict "minify" true }} 
+		{{- with . | js.Build $opts | fingerprint }}
+			<script
+				src="{{ .RelPermalink }}"
+				integrity="{{- .Data.Integrity }}"
+				crossorigin="anonymous"
+			></script>
+		{{- end }} 
+	{{- end }} 
+{{- end }}

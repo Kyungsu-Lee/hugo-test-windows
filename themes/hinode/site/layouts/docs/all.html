@@ -1,0 +1,51 @@
+{{/* Derived from layouts/single.html template, but applied to all docs pages (list and single) */}}
+{{/* Inserts auto-generated sidebar with section navigation */}}
+{{/* Renders blocks inside main body */}}
+{{ define "main" -}}
+    {{- $breakpoint := partialCached "utilities/GetBreakpoint.html" site -}}
+    {{- $padding := partial "utilities/GetPadding.html" -}}
+    
+    {{/* Auto-generated sidebar for docs */}}
+    {{- $menu := .Scratch.Get "sidebar" -}}
+    {{- if not (reflect.IsSlice $menu) }}{{ $none := dict }}{{ $menu = $none.missing }}{{ end }}
+    {{- $version := .Scratch.Get "version" -}}
+    {{- $sidebar := partial "page/sidebar-cached.html" (dict "page" . "menu" $menu "version" $version "auto-generate" true) -}}
+
+    {{/* Render the offcanvas sidebar */}}
+    {{- partial "page/sidebar-offcanvas.html" (dict "section" $.Section "raw" $sidebar) -}}
+
+    {{/* Render the page content using responsive columns */}}
+    <div class="container-xxl flex-fill {{ partial "utilities/PaddingClasses.html" (dict "padding" $padding "axis" "y") }} {{ partial "utilities/PaddingClasses.html" (dict "padding" $padding "axis" "x") }} px-xxl-0">
+        <div class="row row-cols-1 row-cols-{{ $breakpoint.current }}-2 row-cols-{{ $breakpoint.next }}-3">
+            <div class="col col-{{ $breakpoint.next }}-2 d-none d-{{ $breakpoint.next }}-block sidebar-overflow sticky-top p-0">
+                {{ $sidebar | safeHTML }}
+            </div>
+            <div class="col-12 col-{{ $breakpoint.current }}-9 col-{{ $breakpoint.next }}-8 mb-5">
+                {{/* Render the defined content blocks, using the default articles element as fallback for list pages */}}
+                {{ if .Params.content_blocks }}
+                    {{/* Blocks replace the page header here, so they own the h1 */}}
+                    {{- partial "page/blocks.html" (dict "page" . "embed" true "heading-level" 1) -}}
+                {{ else if eq .Kind "section" }}
+                    {{ $.Scratch.Set "articlesParams" (dict
+                        "sort"         "weight"
+                        "reverse"      false
+                        "class"        "card-emphasize border h-100"
+                        "header-style" "none"
+                        "icon-style"   "text-primary fa-xl"
+                        "padding"      $padding.x
+                    ) }}
+                    {{ partial "page/articles.html" . }}
+                {{ else }}
+                    {{ .Render "header" }}
+                {{ end }}
+
+                {{ .Render "body" }}
+                
+                {{ .Render "footer" }}
+            </div>
+            <div class="col col-{{ $breakpoint.current }}-3 col-{{ $breakpoint.next }}-2 d-none d-{{ $breakpoint.current }}-block">
+                {{ .Render "toc" }}
+            </div>
+        </div>
+    </div>
+{{ end -}}

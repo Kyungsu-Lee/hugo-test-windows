@@ -1,0 +1,36 @@
+comment: >-
+  Renders a styled page section title with optional heading, links, color, and
+  layout options.
+group: partial
+arguments:
+  page:
+    optional: true
+  heading:
+  links:
+  color:
+    default: body
+  class:
+  size:
+  use-title:
+  heading-level:
+    release: v3.19.0
+  heading-class:
+    release: v3.19.0
+  heading-id:
+    release: v3.26.0
+  content-id:
+    release: v3.26.0
+  justify:
+  link-type:
+  use-section:
+  arrangement:
+  heading-style:
+  content-style:
+  action:
+    optional: true
+  action-id:
+    release: v3.26.0
+  always-render-action:
+    release: v3.26.0
+  action-align:
+    release: v3.26.0

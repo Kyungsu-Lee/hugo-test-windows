@@ -1,0 +1,51 @@
+{{ $pag := $.Paginator }}
+{{ if gt $pag.TotalPages 1 }}
+<div class="flex justify-center flex-wrap gap-1 my-5">
+  {{/* Prev Button */}}
+  {{ if $pag.HasPrev }}
+  <a href="{{ $pag.Prev.URL }}" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+  </a>
+  {{ else }}
+  <div class="w-10 h-10 rounded-full flex items-center justify-center opacity-0">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+  </div>
+  {{ end }}
+
+  {{/* Page Numbers */}}
+  {{ range $pag.Pagers }}
+    {{ if eq . $pag }}
+      {{/* Current Page */}}
+      <span class="font-semibold w-10 h-10 rounded-full transition-colors hidden sm:flex items-center justify-center bg-black text-white">
+        {{ .PageNumber }}
+      </span>
+    {{ else if and (ge .PageNumber (sub $pag.PageNumber 2)) (le .PageNumber (add $pag.PageNumber 2)) }}
+      {{/* Nearby Pages */}}
+      {{ $.Scratch.Set "dot_rendered" false }}
+      <a href="{{ .URL }}" class="font-semibold w-10 h-10 rounded-full transition-colors hidden sm:flex items-center justify-center bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+        {{ .PageNumber }}
+      </a>
+    {{ else if eq ($.Scratch.Get "dot_rendered") false }}
+      {{/* Dots */}}
+      {{ $.Scratch.Set "dot_rendered" true }}
+      <span class="font-semibold w-10 h-10 rounded-full hidden sm:flex items-center justify-center text-gray-500">...</span>
+    {{ end }}
+  {{ end }}
+
+  {{/* Mobile Indicator */}}
+  <span class="sm:hidden flex items-center justify-center h-10 px-2 font-medium text-gray-700 dark:text-gray-300">
+    {{ $pag.PageNumber }} / {{ $pag.TotalPages }}
+  </span>
+
+  {{/* Next Button */}}
+  {{ if $pag.HasNext }}
+  <a href="{{ $pag.Next.URL }}" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-700">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+  </a>
+  {{ else }}
+  <div class="w-10 h-10 rounded-full flex items-center justify-center opacity-0">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+  </div>
+  {{ end }}
+</div>
+{{ end }}

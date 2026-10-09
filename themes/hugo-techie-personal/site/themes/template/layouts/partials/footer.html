@@ -1,0 +1,12 @@
+  <footer>
+  {{ with .Site.Params.footer }}
+  {{ . | markdownify }} {{ now.Format "2006" }}
+  {{ end }}
+  </footer>
+  {{/* Custom JS from site config */}}
+  {{ range .Site.Params.custom_js }}
+    <script src="{{ . | relURL }}"></script>
+  {{ end }}
+  {{ partial "foot_custom.html" . }}
+  </body>
+</html>

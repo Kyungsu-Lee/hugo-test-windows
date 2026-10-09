@@ -1,0 +1,324 @@
+{{ $url := "" }}
+{{ $page := "" }}
+{{ $variant := "list" }}
+{{ $layoutParam := "" }}
+{{ if reflect.IsMap . }}
+  {{ $url = .url }}
+  {{ $page = .page }}
+  {{ with .variant }}{{ $variant = . }}{{ end }}
+  {{ with .layout }}{{ $layoutParam = . }}{{ end }}
+{{ else }}
+  {{ $url = . }}
+  {{ $page = . }}
+{{ end }}
+
+{{ $out := "" }}
+{{ $videoUrl := urls.Parse $url }}
+{{ $matched := 0 }}
+{{ $isTwitter := false }}
+
+{{/* YouTube playlist detection — runs before the generic data-driven loop.
+     Playlist URLs are identified by having a list= query param without a
+     specific video (v=) or using the /playlist path. */}}
+{{ $playlistVideoIds := slice }}
+{{ $playlistLayout := "full" }}
+{{ $playlistId := "" }}
+{{ if findRE "(youtu)" $videoUrl.Host }}
+  {{ $qs := $videoUrl.Query }}
+  {{ with $qs.Get "list" }}
+    {{ $playlistId = . }}
+    {{ if or (eq $videoUrl.Path "/playlist") (not ($qs.Get "v")) }}
+      {{/* Resolve layout cascade: shortcode param > page frontmatter > site config > default */}}
+      {{ with site.Params.youtube.default_playlist_layout }}{{ $playlistLayout = . }}{{ end }}
+      {{ with $page.Params.playlist_layout }}{{ $playlistLayout = . }}{{ end }}
+      {{ if $layoutParam }}{{ $playlistLayout = $layoutParam }}{{ end }}
+
+      {{/* Strategy 1: YouTube Data API v3 (if api_key configured) */}}
+      {{ $apiKey := site.Params.youtube.api_key | default "" }}
+      {{ if $apiKey }}
+        {{ $nextPageToken := "" }}
+        {{ $hasMore := true }}
+        {{ range seq 10 }}
+          {{ if $hasMore }}
+            {{ $apiUrl := printf "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=%s&key=%s" $playlistId $apiKey }}
+            {{ if $nextPageToken }}
+              {{ $apiUrl = printf "%s&pageToken=%s" $apiUrl $nextPageToken }}
+            {{ end }}
+            {{ with try (resources.GetRemote $apiUrl) }}
+              {{ with .Err }}
+                {{ warnf "YouTube API error for playlist %q: %s" $playlistId . }}
+                {{ $hasMore = false }}
+              {{ else }}
+                {{ with try (.Value | transform.Unmarshal) }}
+                  {{ with .Err }}
+                    {{ warnf "YouTube API JSON parse error: %s" . }}
+                    {{ $hasMore = false }}
+                  {{ else }}
+                    {{ $resp := .Value }}
+                    {{ range $resp.items }}
+                      {{ with .snippet.resourceId.videoId }}
+                        {{ $playlistVideoIds = $playlistVideoIds | append . }}
+                      {{ end }}
+                    {{ end }}
+                    {{ with $resp.nextPageToken }}
+                      {{ $nextPageToken = . }}
+                    {{ else }}
+                      {{ $hasMore = false }}
+                    {{ end }}
+                  {{ end }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{/* Strategy 2: RSS feed fallback (max 15 videos, no API key needed) */}}
+      {{ if not $playlistVideoIds }}
+        {{ $rssUrl := printf "https://www.youtube.com/feeds/videos.xml?playlist_id=%s" $playlistId }}
+        {{ with try (resources.GetRemote $rssUrl) }}
+          {{ with .Err }}
+            {{ warnf "YouTube RSS error for playlist %q: %s" $playlistId . }}
+          {{ else }}
+            {{ with .Value }}
+              {{ $rssContent := .Content }}
+              {{ range findRE "<yt:videoId>([^<]+)</yt:videoId>" $rssContent }}
+                {{ $playlistVideoIds = $playlistVideoIds | append (replaceRE "<yt:videoId>([^<]+)</yt:videoId>" "$1" .) }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{ if $playlistVideoIds }}
+        {{ $matched = 1 }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* Playlist output — recursive partial calls produce full oembed-container
+     markup per video, so we output the playlist wrapper directly instead of
+     going through $out to avoid double-wrapping. */}}
+{{ if $playlistVideoIds }}
+<div class="oembed-playlist oembed-playlist-{{ $playlistLayout }}">
+  {{ range $playlistVideoIds }}
+    {{- partial "oembed.html" (dict "url" (printf "https://www.youtube.com/watch?v=%s" .) "page" $page "variant" $variant) -}}
+  {{ end }}
+</div>
+{{ end }}
+
+{{/* Try data-driven approach first */}}
+{{ $data := dict }}
+{{- range hugo.Data.oembed }}
+  {{- if le 1 ( findRE .pattern $videoUrl.Host | len ) }}
+    {{ $matched = 1 }}
+    {{ if or (eq .pattern "twitter.com") (eq .pattern "x.com") }}
+      {{ $isTwitter = true }}
+    {{ end }}
+    {{ $nowrapper := .nowrapper | default false }}
+    {{ $autoheight := .autoheight | default false }}
+    {{ $remove := .remove | default "" }}
+    {{ $privacyEnhanced := .privacy_enhanced | default false }}
+    {{ $privacyReplace := .privacy_replace }}
+    {{- $separator := "?" }}
+    {{- if (findRE "\\?" .endpoint) }}
+      {{- $separator = "&" }}
+    {{- end }}
+    {{- $jsonUrl := printf "%s%sformat=json&url=%s" .endpoint $separator $url }}
+    {{ with try (resources.GetRemote $jsonUrl) }}
+      {{ with .Err }}
+        {{ warnf "Error on %q : %s " $jsonUrl . }}
+      {{ else }}
+        {{ with try ( .Value | transform.Unmarshal) }}
+          {{ with .Err }}
+            {{ warnf "OEmbed JSON parse error: %s" . }}
+          {{ else }}
+            {{ $data = .Value }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    {{- with $data }}
+      {{ $html := .html }}
+      {{/* Apply remove pattern if specified */}}
+      {{ if $remove }}
+        {{ $html = replaceRE $remove "" $html }}
+      {{ end }}
+      {{/* Check if iframe already has title attribute */}}
+      {{ $titleAttr := "" }}
+      {{ if not (findRE "title\\s*=" $html) }}
+        {{ $titleAttr = printf "title='%s' " .title }}
+      {{ end }}
+      {{/* Configure lazy loading - default to true if not specified */}}
+      {{ $lazyLoading := .lazy_loading | default true }}
+      {{ $loadingAttr := "" }}
+      {{ if $lazyLoading }}
+        {{ $loadingAttr = "loading='lazy' " }}
+      {{ end }}
+      {{/* Build iframe style attributes dynamically */}}
+      {{ $baseStyle := "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" }}
+      {{ $marginStyle := "" }}
+      {{ if and (findRE "(youtu)" $videoUrl.Host) (findRE "/shorts/" $url) }}
+        {{ $marginStyle = " margin: 0 auto;" }}
+      {{ end }}
+      {{ $iframeStyle := printf "%s%s" $baseStyle $marginStyle }}
+      {{/* Handle privacy enhancement if configured */}}
+      {{ if and $privacyEnhanced $privacyReplace }}
+        {{ $html = replace $html $privacyReplace.from $privacyReplace.to }}
+      {{ end }}
+      {{ $frame := printf "iframe %s%sallow='accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share' style='%s'" $titleAttr $loadingAttr $iframeStyle }}
+      {{ $out = replace $html "iframe " $frame | safeHTML }}
+      {{if $nowrapper }}
+        {{/* Output directly without wrapper */}}
+      {{else}}
+        {{ if $autoheight }}
+          {{ $out = printf "<div class='oembed-container-auto' style='padding-bottom: %spx;'>%s</div>" .height $out | safeHTML }}
+        {{ else }}
+          {{ if and (findRE "(youtu)" $videoUrl.Host) (findRE "/shorts/" $url) }}
+            {{ $out = printf "<div class='oembed-container-auto oembed-youtube-shorts'>%s</div>" $out | safeHTML }}
+          {{ else }}
+            {{ $out = printf "<div class='oembed-container-auto'>%s</div>" $out | safeHTML }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* Same-site slides: if URL points to a local slides page, render embed directly
+     without remote fetching — faster, works during dev, avoids cache staleness */}}
+{{ if eq $matched 0 }}
+  {{ $parsedPath := strings.TrimRight "/" $videoUrl.Path }}
+  {{ with site.GetPage $parsedPath }}
+    {{ if eq .Section "slides" }}
+      {{ $matched = 1 }}
+      {{ $slug := .File.ContentBaseName }}
+      {{ $slideW := 0 }}
+      {{ $slideH := 0 }}
+      {{ with resources.Get (printf "slides/%s/slide-001.webp" $slug) }}
+        {{ $slideW = .Width }}
+        {{ $slideH = .Height }}
+      {{ end }}
+      {{ $chromeH := site.Params.slides.oembed.embed_chrome_height | default 70 }}
+      {{ $iframeStyle := "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" }}
+      {{ $iframe := printf "<iframe src='%sembed.html' loading='lazy' style='%s' allowfullscreen title='%s'></iframe>" .RelPermalink $iframeStyle (.Title | htmlEscape) }}
+      {{ $containerStyle := "" }}
+      {{ if and (gt $slideW 0) (gt $slideH 0) }}
+        {{ $slidePct := div (mul $slideH 100.0) $slideW }}
+        {{ $containerStyle = printf " style='padding-bottom: calc(%.4f%% + %dpx)'" $slidePct $chromeH }}
+      {{ end }}
+      {{ $out = printf "<div class='oembed-container-auto'%s>%s</div>" $containerStyle $iframe | safeHTML }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* OEmbed discovery: fetch page and look for <link> oembed discovery tag */}}
+{{ if eq $matched 0 }}
+  {{ with try (resources.GetRemote $url) }}
+    {{ with .Err }}
+      {{ warnf "OEmbed discovery: error fetching %q: %s" $url . }}
+    {{ else }}
+      {{ with .Value }}
+        {{ $pageHTML := .Content }}
+        {{ $linkTags := findRE "<link[^>]+json.oembed[^>]+>" $pageHTML 1 }}
+        {{ if $linkTags }}
+          {{ $linkTag := index $linkTags 0 }}
+          {{ $urlMatches := findRE "https?://[^ <>]+" $linkTag 1 }}
+          {{ if $urlMatches }}
+            {{ $oembedJsonUrl := index $urlMatches 0 }}
+            {{ $oembedJsonUrl = replaceRE "[^a-zA-Z0-9/]$" "" $oembedJsonUrl }}
+            {{ $oembedJsonUrl = replace $oembedJsonUrl "&amp;" "&" }}
+            {{ with try (resources.GetRemote $oembedJsonUrl) }}
+              {{ with .Err }}
+                {{ warnf "OEmbed discovery: error fetching oembed JSON %q: %s" $oembedJsonUrl . }}
+              {{ else }}
+                {{ with try (.Value | transform.Unmarshal) }}
+                  {{ with .Err }}
+                    {{ warnf "OEmbed discovery: JSON parse error: %s" . }}
+                  {{ else }}
+                    {{ $oData := .Value }}
+                    {{ with $oData.html }}
+                      {{ $matched = 1 }}
+                      {{ $html := . }}
+                      {{ $iframeStyle := "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" }}
+                      {{ $frame := printf "iframe loading='lazy' allow='accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share' style='%s'" $iframeStyle }}
+                      {{ $html = replace $html "iframe " $frame }}
+                      {{ $containerStyle := "" }}
+                      {{ $sw := 0 }}
+                      {{ $sh := 0 }}
+                      {{ $ch := 0 }}
+                      {{ with $oData.slide_width }}{{ $sw = . }}{{ end }}
+                      {{ with $oData.slide_height }}{{ $sh = . }}{{ end }}
+                      {{ with $oData.chrome_height }}{{ $ch = . }}{{ end }}
+                      {{ if and (gt $sw 0) (gt $sh 0) (gt $ch 0) }}
+                        {{ $slidePct := div (mul $sh 100.0) $sw }}
+                        {{ $containerStyle = printf " style='padding-bottom: calc(%.4f%% + %dpx)'" $slidePct (int $ch) }}
+                      {{ else }}
+                        {{ with $oData.width }}
+                          {{ with $oData.height }}
+                            {{ $containerStyle = printf " style='padding-bottom: %.4f%%'" (div (mul $oData.height 100.0) $oData.width) }}
+                          {{ end }}
+                        {{ end }}
+                      {{ end }}
+                      {{ $out = printf "<div class='oembed-container-auto'%s>%s</div>" $containerStyle $html | safeHTML }}
+                    {{ end }}
+                  {{ end }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* Fallback to Noti.st if configured and no match found */}}
+{{ if and (eq $matched 0) $page.Site.Params.notist_custom_domains }}
+  {{ $isNotistDomain := false }}
+  {{ range $page.Site.Params.notist_custom_domains }}
+    {{ if ( findRE . $videoUrl.Host 1) }}
+      {{ $isNotistDomain = true }}
+    {{ end }}
+  {{ end }}
+  {{ if $isNotistDomain }}
+    {{ $matched = 1 }}
+    {{ $url_id := index (split $videoUrl "/") 3 }}
+    {{ $notist_username := "" }}
+    {{ if $page.Site.Params.notist_username }}
+      {{ $notist_username = $page.Site.Params.notist_username }}
+    {{ else if $page.Site.Params.notist_custom_domains }}
+      {{ errorf "notist_custom_domains is configured but notist_username is missing. Please set params.notist_username in your config.toml" }}
+    {{ else }}
+      {{ $notist_username = "notist" }}
+    {{ end }}
+    {{ $notistW := "450" }}
+    {{ $notistH := "250" }}
+    {{ $notistClass := "frame_notist_list" }}
+    {{ if eq $variant "full" }}
+      {{ $notistW = "960" }}
+      {{ $notistH = "540" }}
+      {{ $notistClass = "frame_notist" }}
+    {{ end }}
+    {{ $frm_src := printf "%s" "/embed' frameborder='0' width='" | printf "%s%s%s' height='%s' allowfullscreen='allowfullscreen' class='%s' \u003e\u003c/iframe\u003e" $url_id $notistW $notistH $notistClass | printf "%s%s" (printf "\u003ciframe sandbox='allow-scripts' scrolling='no' src='https://noti.st/%s/" $notist_username) }}
+    {{ $out = $frm_src | safeHTML }}
+  {{ end }}
+{{ end }}
+
+{{/* Final fallback for unmatched URLs */}}
+{{ if eq $matched 0 }}
+  {{ $out = printf "<div class='oembed-error'><p>🔗 <a href='%s' target='_blank' rel='noopener'>View Link</a></p></div>" $url | safeHTML }}
+{{ end }}
+
+{{ with $out }}
+<div class="oembed-container">
+  {{ . }}
+</div>
+{{ end }}
+{{- if and $isTwitter (not ($page.Store.Get "twitter-widgets-loaded")) -}}
+  {{- $page.Store.Set "twitter-widgets-loaded" true -}}
+  {{- $policyJS := resources.Get "js/trusted-types-policy.js" | minify | fingerprint -}}
+  <script src="{{ $policyJS.RelPermalink }}"></script>
+  <script src="https://platform.twitter.com/widgets.js" async charset="utf-8"></script>
+{{- end -}}

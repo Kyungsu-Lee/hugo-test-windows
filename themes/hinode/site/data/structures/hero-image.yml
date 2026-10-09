@@ -1,0 +1,19 @@
+comment: Defines a hero image with optional overlay and positioning.
+group: partial
+arguments:
+  page:
+  icon:
+  image:
+  anchor:
+  mode:
+  ratio:
+  portrait:
+  sizes:
+  title:
+  wrapper:
+  class:
+  image-overlay:
+  # no inherited default: the image centers by default and only applies md
+  # justification when the caller sets it explicitly (v5 semantics; callers
+  # historically passed an empty string that the legacy engine suppressed)
+  justify: { default: }

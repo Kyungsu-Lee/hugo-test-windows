@@ -1,0 +1,36 @@
+{{- $resource := .resource -}}
+{{- $method := .method | default "Fit" -}}
+{{- $spec := .spec -}}
+{{- $context := .context | default "" -}}
+{{- $result := false -}}
+{{- if and $resource $spec -}}
+    {{- $name := $resource.Name | default $resource.RelPermalink -}}
+    {{- if eq $method "Fit" -}}
+        {{- with try ($resource.Fit $spec) -}}
+            {{- with .Err -}}
+                {{- warnf "Skipping image transform %s %q for %q%s: %s" $method $spec $name $context . -}}
+            {{- else with .Value -}}
+                {{- $result = . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if eq $method "Fill" -}}
+        {{- with try ($resource.Fill $spec) -}}
+            {{- with .Err -}}
+                {{- warnf "Skipping image transform %s %q for %q%s: %s" $method $spec $name $context . -}}
+            {{- else with .Value -}}
+                {{- $result = . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if eq $method "Resize" -}}
+        {{- with try ($resource.Resize $spec) -}}
+            {{- with .Err -}}
+                {{- warnf "Skipping image transform %s %q for %q%s: %s" $method $spec $name $context . -}}
+            {{- else with .Value -}}
+                {{- $result = . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else -}}
+        {{- warnf "Skipping image transform with unsupported method %q for %q%s" $method $name $context -}}
+    {{- end -}}
+{{- end -}}
+{{- return $result -}}

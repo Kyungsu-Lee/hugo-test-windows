@@ -1,0 +1,110 @@
+{{ partial "header.html" . }}
+
+{{ partial "breadcrumbs.html" . }}
+
+{{/* Featured Image Box */}}
+{{ $hasFeaturedImage := and .Params.featured_image (not (isset .Params "hide_featured")) }}
+{{ $shouldShowPlaceholder := and (not (isset .Params "hide_featured")) (not (in .Params.excerpt "https://")) }}
+{{ if or $hasFeaturedImage $shouldShowPlaceholder }}
+<div class="timeline-featured-box">
+  <div class="timeline-featured-content">
+    {{ if $hasFeaturedImage }}
+      {{ $img_loc := replace .Params.featured_image "/uploads" "images" }}
+      {{- $image := resources.Get $img_loc -}}
+      {{ if $image }}
+        <img src='{{ ($image.Resize "x400 q100").RelPermalink }}' alt='{{.Title}}' maxwidth='650px' maxheight='360px' loading="lazy" /> 
+      {{ else if $shouldShowPlaceholder }}
+        {{ $placeholder := resources.Get (site.Params.placeholders.timeline | default "images/timeline-placeholder.svg") }}
+        {{ if $placeholder }}
+          <img src="{{ $placeholder.RelPermalink }}" alt="Placeholder for {{ .Title }}" style="opacity: 0.7; max-width: 400px;" />
+        {{ end }}
+      {{ end }}
+    {{ else if $shouldShowPlaceholder }}
+      {{ $placeholder := resources.Get (site.Params.placeholders.timeline | default "images/timeline-placeholder.svg") }}
+      {{ if $placeholder }}
+        <img src="{{ $placeholder.RelPermalink }}" alt="Placeholder for {{ .Title }}" style="opacity: 0.7; max-width: 400px;" />
+      {{ end }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{/* Title and Meta Box */}}
+<div class="timeline-header-box">
+  <div class="timeline-header-content">
+    <h1><span class="title">{{ .Title | markdownify }}</span></h1>
+    {{ if .Params.event }}<h2 class="event-title">{{ .Params.event | markdownify }}</h2>{{ end }}
+    {{ if (gt .Params.date 0) }}<h2 class="date">{{ .Date.Format "02 January 2006" }}</h2>{{ end }}
+  </div>
+</div>
+
+{{/* Main Content Box - only show if there's content */}}
+{{ if .Content }}
+<div class="timeline-content-box">
+  <main class="timeline-main-content">
+    {{ .Content }}
+  </main>
+</div>
+{{ end }}
+
+{{/* AI Generated Summary — pulled from ai_summary/unified/ at build time */}}
+{{ partial "ai-summary.html" (dict "dir" "unified" "slug" .File.ContentBaseName "page" .) }}
+
+{{ partial "social-chatter.html" . }}
+
+{{/* Related Entities - unified block for project_links and related_links */}}
+{{ if or .Params.project_links .Params.related_links }}
+<hr />
+<div class="related-projects">
+  <h3>🔗 Related Entities</h3>
+  <div class="project-links-list">
+    {{/* Internal project links */}}
+    {{ range .Params.project_links }}
+      {{ $projectSlug := . }}
+      {{ $projectPage := $.Site.GetPage (printf "/projects/%s" $projectSlug) }}
+      {{ if $projectPage }}
+        <div class="project-link-item">
+          <a href="{{ $projectPage.RelPermalink }}" class="project-link">
+            <div class="project-link-image">
+              {{ if $projectPage.Params.featured_image }}
+                {{ $img := resources.Get $projectPage.Params.featured_image }}
+                {{ if $img }}
+                  {{ if eq $img.MediaType.SubType "svg" }}
+                    <img src="{{ $img.RelPermalink }}" alt="{{ $projectPage.Title }}" class="project-card-logo" />
+                  {{ else }}
+                    <img src="{{ ($img.Resize "x120 q90").RelPermalink }}" alt="{{ $projectPage.Title }}" class="project-card-logo" />
+                  {{ end }}
+                {{ else }}
+                  {{ $placeholder := resources.Get (site.Params.placeholders.project | default "images/project-placeholder.svg") }}
+                  {{ if $placeholder }}
+                    <img src="{{ $placeholder.RelPermalink }}" alt="{{ $projectPage.Title }}" class="project-card-logo placeholder" />
+                  {{ end }}
+                {{ end }}
+              {{ else }}
+                {{ $placeholder := resources.Get (site.Params.placeholders.project | default "images/project-placeholder.svg") }}
+                {{ if $placeholder }}
+                  <img src="{{ $placeholder.RelPermalink }}" alt="{{ $projectPage.Title }}" class="project-card-logo placeholder" />
+                {{ end }}
+              {{ end }}
+            </div>
+            <div class="project-link-info">
+              <strong>{{ $projectPage.Title }}</strong>
+              {{ if $projectPage.Params.tldr_description }}
+                <span class="project-description">{{ $projectPage.Params.tldr_description }}</span>
+              {{ end }}
+            </div>
+          </a>
+        </div>
+      {{ end }}
+    {{ end }}
+    {{/* External related links (OG metadata) */}}
+    {{ range .Params.related_links }}
+      {{ partial "related-link-card.html" . }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{ partial "prev_next_nav.html" . }}
+
+{{ partial "footer.html" . }}

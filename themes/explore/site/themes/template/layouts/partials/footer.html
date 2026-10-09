@@ -1,0 +1,14 @@
+{{ $cfg := partial "func/defaults" . }}
+<footer class="site-footer">
+  <div class="container">
+    {{ $sidebarPosition := .Params.sidebar.position | default $cfg.sidebar.globalPosition }}
+    {{ if eq $sidebarPosition "bottom" }}
+      <div class="footer-widgets">
+        {{ partial "sidebar.html" . }}
+      </div>
+    {{ end }}
+    <div class="copyright">
+      Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> &amp; <a href="https://github.com/yogirk/explore" target="_blank" rel="noopener">Explore Theme</a>.
+    </div>
+  </div>
+</footer>

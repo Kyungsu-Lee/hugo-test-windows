@@ -1,0 +1,70 @@
+{{ partial "header.html" . }}
+
+{{ partial "breadcrumbs.html" . }}
+
+<div class="timeline-text-page">
+  <div class="timeline-text-header">
+    <h1>{{ .Title | markdownify }}</h1>
+  </div>
+
+  <div class="timeline-text-content">
+    {{ .Content }}
+  </div>
+
+  <div class="text-timeline">
+  {{ $pages := where .Site.Pages "Section" "timeline" }}
+  {{ $pages = where $pages "Kind" "page" }}
+  {{ $pages = where $pages "Draft" "!=" true }}
+  
+  {{/* Group pages by year */}}
+  {{ $yearGroups := dict }}
+  {{ range $pages }}
+    {{ $year := .Date.Format "2006" }}
+    {{ $existingGroup := index $yearGroups $year }}
+    {{ if $existingGroup }}
+      {{ $yearGroups = merge $yearGroups (dict $year ($existingGroup | append .)) }}
+    {{ else }}
+      {{ $yearGroups = merge $yearGroups (dict $year (slice .)) }}
+    {{ end }}
+  {{ end }}
+  
+  {{/* Sort years in descending order */}}
+  {{ $sortedYears := slice }}
+  {{ range $year, $entries := $yearGroups }}
+    {{ $sortedYears = $sortedYears | append $year }}
+  {{ end }}
+  {{ $sortedYears = sort $sortedYears "value" "desc" }}
+  
+  {{/* Display entries by year */}}
+  {{ range $year := $sortedYears }}
+    {{ $entries := index $yearGroups $year }}
+    {{ $sortedEntries := sort $entries ".Date" "desc" }}
+    
+    <h2>{{ $year }}</h2>
+    <ul class="timeline-year-list">
+      {{ range $sortedEntries }}
+        <li class="timeline-entry-item">
+          {{ $red_url := default .RelPermalink .Params.redirect_url }}
+          <a href="{{ $red_url }}"{{ if .Params.redirect_url }} target="_blank" rel="noreferrer noopener nofollow"{{ end }} class="timeline-entry-link">
+          <span class="timeline-entry-date">{{ .Date.Format "Jan 02" }}</span>
+          {{ if .Params.activity }}
+            {{ $activityDisplay := .Params.activity }}
+            {{ if reflect.IsSlice .Params.activity }}
+              {{ $activityDisplay = index .Params.activity 0 }}
+            {{ end }}
+            {{ $activityLower := $activityDisplay | lower }}
+            <span class="timeline-entry-activity" data-activity="{{ $activityLower }}">{{ $activityDisplay | humanize | title }}</span>
+          {{ end }}
+            {{ .Title | markdownify }}
+          {{ if .Params.event }} 
+            <span class="timeline-entry-event">@ {{ .Params.event | markdownify }}</span>
+          {{ end }}
+        </a>
+        </li>
+      {{ end }}
+    </ul>
+  {{ end }}
+  </div>
+</div>
+
+{{ partial "footer.html" . }}

@@ -1,0 +1,51 @@
+<div class="search-container">
+  <div class="search-box-wrapper">
+    <i class="fa fa-search search-icon"></i>
+    <input id="searchBox" type="text" class="form-control" placeholder="Search...">
+    <i class="fa fa-close close-icon"></i>
+  </div>
+  <div id="searchResultsPage" class="search-results-page"></div>
+</div>
+
+<style>
+  .search-box-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon, .close-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+  }
+
+  .search-icon {
+    left: 10px;
+  }
+
+  .close-icon {
+    right: 10px;
+    cursor: pointer;
+  }
+
+  #searchBox {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchBox = document.getElementById('searchBox');
+    const closeIcon = document.querySelector('.close-icon');
+
+    closeIcon.addEventListener('click', function() {
+      searchBox.value = '';
+      searchBox.focus();
+      const searchResultsContainer = document.getElementById('searchResultsPage');
+      searchResultsContainer.innerHTML = '';
+    });
+  });
+</script>

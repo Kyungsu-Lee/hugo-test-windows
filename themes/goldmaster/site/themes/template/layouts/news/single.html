@@ -1,0 +1,39 @@
+{{ define "main" }}
+<article class="h-entry news-section-page-container">
+    <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ $breadcrumbs }}</h1>
+    </div>
+    <span class="p-name" style="display:none;">{{ .Title }}</span>
+    <a class="u-url" href="{{ .Permalink }}" style="display:none;"></a>
+  <div class="news-date">
+  <time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
+  </div>
+  <div class="news-body e-content">
+    {{ .Content }}
+  </div>
+  {{ with .Site.Params.author }}
+  <a rel="author" class="p-author h-card" href="{{ $.Site.BaseURL }}" style="display:none;">{{ . }}</a>
+  {{ end }}
+  {{ with .Params.tags }}
+    {{ range . }}
+      <a class="p-category" href="{{ $.Site.BaseURL }}/tags/{{ . | urlize }}/" style="display:none;">{{ . }}</a>
+    {{ end }}
+  {{ end }}
+
+          {{ if site.Params.addToAny.enabled }}
+            {{ $addToAnyConfig := readFile "add-to-any.config.json" | unmarshal }}
+            <!-- AddToAny BEGIN -->
+            <div style="display: flex; justify-content: center;">
+              <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+              <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+              {{ range $addToAnyConfig.buttons }}
+                <a class="a2a_button_{{ . }}"></a>
+              {{ end }}
+              </div>
+            </div>
+            <script async src="https://static.addtoany.com/menu/page.js"></script>
+            <!-- AddToAny END -->
+          {{ end }}
+</article>
+{{ end }}

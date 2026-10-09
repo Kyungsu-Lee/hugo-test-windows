@@ -1,0 +1,29 @@
+<aside class="rail rail-left" aria-label="Primary navigation">
+    <a class="brand" href="{{ .Site.Home.RelPermalink }}" aria-label="{{ .Site.Title }}">
+        {{ partial "icon.html" "x" }}
+    </a>
+    {{ $items := hugo.Data.navigation.items | default (slice
+        (dict "label" "Home" "icon" "home" "url" "/")
+        (dict "label" "Explore" "icon" "search" "url" "/tags/")
+        (dict "label" "Articles" "icon" "article" "url" "/posts/")
+        (dict "label" "Profile" "icon" "profile" "url" "/" "active" true)
+        (dict "label" "RSS" "icon" "bell" "url" "/index.xml")
+    ) }}
+    <nav class="primary-nav">
+        {{ range $items }}
+        <a class="nav-item{{ if .active }} active{{ end }}" href="{{ .url | relURL }}">
+            {{ partial "icon.html" (.icon | default "more") }}
+            <span>{{ .label }}</span>
+        </a>
+        {{ end }}
+    </nav>
+    <a class="post-button" href="{{ "posts/" | relURL }}">Post</a>
+    <div class="account-chip">
+        {{ partial "avatar.html" . }}
+        <div>
+            <strong>{{ .Site.Params.displayName | default .Site.Title }}</strong>
+            <span>@{{ .Site.Params.username | default .Site.Title | urlize }}</span>
+        </div>
+        {{ partial "icon.html" "more" }}
+    </div>
+</aside>

@@ -1,0 +1,19 @@
+{{- /* 
+Usage example:
+{{< gallery dir="folder-name" >}}
+
+Images must be saved as Page Resources within the post's folder.
+Example structure:
+content/posts/my-post/index.md
+content/posts/my-post/folder-name/image1.jpg
+content/posts/my-post/folder-name/image2.jpg
+*/ -}}
+
+{{ $dir := print (.Get "dir") "/*"}}
+{{ with .Page.Resources.Match $dir }}
+{{ range . }}
+ {{ $full := .Fit "1980x1080"}}
+ {{ $resized := .Fill "225x120 q80" }}
+ <a href="{{ $full.Permalink }}" data-lightbox="x"><img src="{{ $resized.Permalink }}" alt="{{ .Name }}"/></a>
+ {{ end }}
+{{ end }}

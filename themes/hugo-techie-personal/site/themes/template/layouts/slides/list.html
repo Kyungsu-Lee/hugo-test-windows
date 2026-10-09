@@ -1,0 +1,67 @@
+{{ partial "header.html" . }}
+
+{{ partial "breadcrumbs.html" . }}
+
+{{/* ===== Slides CSS ===== */}}
+{{ $slidesCSS := resources.Get "css/slides.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $slidesCSS.RelPermalink }}" />
+
+<div class="slides-listing">
+
+  <h1>{{ .Title | markdownify }}</h1>
+
+  {{/* Section description from config */}}
+  {{ with site.Params.description_talk }}
+    <p class="slides-listing__desc">{{ . | markdownify }}</p>
+  {{ end }}
+
+  {{ if .Content }}
+    <div class="slides-listing__content">
+      {{ .Content }}
+    </div>
+  {{ end }}
+
+  {{/* ===== Year-grouped listing (no JS) ===== */}}
+  {{ $presentations := .Pages.ByDate.Reverse }}
+  {{ if $presentations }}
+
+    {{/* Unique years, descending (order preserved from reverse iteration) */}}
+    {{ $years := slice }}
+    {{ range $presentations }}
+      {{ $y := .Date.Format "2006" }}
+      {{ if not (in $years $y) }}
+        {{ $years = $years | append $y }}
+      {{ end }}
+    {{ end }}
+
+    <p class="slides-listing__count">{{ len $presentations }} presentation{{ if gt (len $presentations) 1 }}s{{ end }}</p>
+
+    <nav class="slides-jump-to" aria-label="Jump to year">
+      Jump to:
+      {{ range $i, $year := $years }}
+        {{ if $i }} | {{ end }}
+        {{ $yearPres := where $presentations "Date.Year" (int $year) }}
+        <a href="#year-{{ $year }}">{{ $year }} ({{ len $yearPres }})</a>
+      {{ end }}
+    </nav>
+
+    {{ range $years }}
+      {{ $year := . }}
+      {{ $yearPres := where $presentations "Date.Year" (int $year) }}
+      <h2 class="slides-year-heading" id="year-{{ $year }}">{{ $year }}</h2>
+      <div class="slides-grid">
+        {{ range $yearPres }}
+          <div class="slides-grid__item">
+            {{ partial "slide-card.html" . }}
+          </div>
+        {{ end }}
+      </div>
+    {{ end }}
+
+  {{ else }}
+    <p>No presentations yet.</p>
+  {{ end }}
+
+</div>
+
+{{ partial "footer.html" . }}

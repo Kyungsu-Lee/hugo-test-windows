@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html 
+	lang="{{ site.Language.LanguageCode }}" 
+	dir="{{ or site.Language.LanguageDirection `ltr` }}" 
+	data-default-color="{{ .Site.Params.defaultColorMode }}" 
+	class="{{ .Site.Params.themeColor }}"
+	data-giscus-light="{{ .Site.Params.comments.giscus.lightTheme }}"
+	data-giscus-dark="{{ .Site.Params.comments.giscus.darkTheme }}"
+>
+	<head>
+		{{ partial "head.html" . }}
+	</head>
+
+		<!--body：header、main、footer-->
+	<body  >
+		<a id="gototop" href="javascript:scroll(0,0)"></a>
+
+		<header>{{ partial "header.html" . }}</header>
+
+		<main class="main">
+			{{ block "main" . }}{{ end }}
+		</main>
+
+		<footer>{{ partial "footer.html" . }}</footer>
+	</body>
+</html>

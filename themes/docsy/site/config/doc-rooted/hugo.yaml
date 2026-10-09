@@ -1,0 +1,12 @@
+# Details: content/en/docs/content/adding-content.md § Doc-rooted sites
+permalinks:
+  page:
+    docs: /:sections[1:]/:slug/
+  section:
+    docs: /:sections[1:]
+
+cascade:
+  - target: { path: / }
+    build: { render: link }
+  - target: { path: /docs }
+    outputs: [HTML, RSS, print, markdown, LLMS]

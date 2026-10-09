@@ -1,0 +1,22 @@
+{{ define "main" }}
+
+<!--DEBUG-->
+<!-- <p align="center">this page uses layouts/_default/list.html</p> -->
+
+<div class="list-content">
+	<h1>{{ .Title }}</h1>
+	{{ .Content }}
+	<!--posts/_index.md 、 about/_index.html 、 contact/_index.html-->
+</div>
+	
+{{ $pages := where .Pages "Params.hidden" "!=" true }}
+
+{{ $pages = sort $pages "Title" "asc" }}
+{{ $pages = sort $pages "Date" "desc" }}
+{{ $pages = sort $pages "Weight" "asc" }}
+
+{{ $paginator := .Paginate $pages }}
+
+{{ partial "pages.html" (dict "paginator" $paginator) }}
+
+{{ end }}

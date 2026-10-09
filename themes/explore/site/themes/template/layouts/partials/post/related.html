@@ -1,0 +1,17 @@
+{{ $cfg := partial "func/defaults" . }}
+{{ $related := .Site.RegularPages.Related . | first $cfg.single.relatedCount }}
+{{ with $related }}
+<section class="related-posts">
+  <h3 class="related-title">{{ i18n "relatedPosts" }}</h3>
+  <ul class="related-list">
+    {{ range . }}
+    <li class="related-item">
+      <a href="{{ .RelPermalink }}" class="related-link">
+        <span class="related-item-title">{{ .Title }}</span>
+        <time class="related-item-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+      </a>
+    </li>
+    {{ end }}
+  </ul>
+</section>
+{{ end }}

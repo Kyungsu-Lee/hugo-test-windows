@@ -1,0 +1,25 @@
+{{/*  Email Subscription Form example to use  */}}
+
+<div class="card mb-3 bg-secondary">
+    <form class="card-body" action="/optins/process/" method="post">
+        <div class="form-group">
+            <p class="h5 text-muted text-center">— FREE Email Series —</p>
+            <p class="h3 text-center">🐍 Python Tricks 💌</p>
+            <p><img class="img-fluid rounded"
+                    src="https://cdn.arberia.com/static/pytrick-dict-merge.4201a0125a5e.png"
+                    alt="Python Tricks Dictionary Merge" width="738" height="490"></p>
+        </div>
+
+        <div class="form-group">
+            <input type="hidden" name="csrfmiddlewaretoken"
+                value="mu27viBsA2Ua0rRFoILlCuXKmYEOOXxb0XXjtD3dEnZ2reyaByXoci2IS0LFUZqx">
+            <input type="hidden" name="slug" value="static-python-tricks-sidebar">
+            <input type="email" class="form-control form-control-md" name="email" placeholder="{{ i18n "email" }}…"
+                required="">
+        </div>
+        
+        <button type="submit" name="submit" class="btn btn-primary btn-md btn-block">Get Python Tricks
+            »</button>
+        <p class="mb-0 mt-2 text-muted text-center">🔒 No spam. Unsubscribe any time.</p>
+    </form>
+</div>

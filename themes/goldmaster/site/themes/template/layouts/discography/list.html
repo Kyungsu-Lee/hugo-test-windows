@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="discography-section-page-container">
+    <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ $breadcrumbs }}</h1>
+    </div>
+
+    <div id="filter-buttons" class="filter-container"></div>
+
+    {{/* Pass the data from /data/discography.json into a data attribute on the grid div. */}}
+    <div id="discography-grid" class="discography-grid" data-discography='{{ hugo.Data.discography | jsonify }}'>
+        <!-- Items will be dynamically loaded here by JavaScript -->
+    </div>
+</div>
+{{ end }}

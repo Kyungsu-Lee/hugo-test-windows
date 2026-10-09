@@ -1,0 +1,45 @@
+{{ define "main" }}
+<div class="projects-page-container">
+    <div class="page-header">
+        {{ $breadcrumbs := partial "breadcrumbs.html" . }}
+        <h1>{{ if ne (strings.TrimSpace $breadcrumbs) "" }}{{ $breadcrumbs | safeHTML }}{{ else }}{{ .Title }}{{ end }}</h1>
+    </div>
+
+    {{ if eq .RelPermalink "/projects/" }}
+        {{/* This is the TOP-LEVEL /projects/ page. Display categories. */}}
+        <div class="project-categories-grid">
+            {{ range .Sections.ByTitle }}
+                <div class="project-category-item">
+                    <a href="{{ .RelPermalink }}">
+                        {{/* You can add a cover image to the category's _index.md if you want */}}
+                        <img src="/images/placeholders/image-unavailable.jpg" alt="Category: {{ .Title }}">
+                        <div class="project-category-info">
+                            <h2>{{ .Title }}</h2>
+                            <p>{{ .Pages | len }} Projects</p>
+                        </div>
+                    </a>
+                </div>
+            {{ end }}
+        </div>
+    {{ else }}
+        {{/* This is a CATEGORY page. Display projects within it. */}}
+        <div class="projects-grid">
+            {{ range .RegularPages.ByDate.Reverse }}
+                <div class="project-item">
+                    <a href="{{ .RelPermalink }}">
+                        {{ with .Resources.GetMatch .Params.cover_image }}
+                            <img src="{{ .RelPermalink }}" alt="Cover for {{ .Title }}">
+                        {{ else }}
+                            <img src="/images/placeholders/image-unavailable.jpg" alt="Placeholder for {{ .Title }}">
+                        {{ end }}
+                        <div class="project-info">
+                            <h2>{{ .Title }}</h2>
+                            <p>{{ .Params.summary }}</p>
+                        </div>
+                    </a>
+                </div>
+            {{ end }}
+        </div>
+    {{ end }}
+</div>
+{{ end }}

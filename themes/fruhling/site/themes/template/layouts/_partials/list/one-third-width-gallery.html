@@ -1,0 +1,48 @@
+{{- $gallery := . -}}
+
+{{- $lines := split $gallery.RawContent "\n" -}}
+{{- $map := dict -}}
+{{- range $lines -}}
+    {{- $descr := split . ";" -}}
+    {{- $map = merge $map (dict (index $descr 0) (index $descr 1)) -}}
+{{- end -}}
+<div{{- if .Draft -}} class="draft"{{- end -}}>
+    <article>
+        <div class="post_img swiper post_text_top_radius">
+            <div class="swiper-wrapper title-gallery" style="text-align: center">
+                {{- range first 10 ($gallery.Resources.ByType "image") -}}
+                {{- $title := index $map .Name -}}
+                {{- $originalImage := . -}}
+                {{- $context := printf " in gallery card %q" $.Page.File.Path -}}
+                {{- $image := partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90" "context" $context) -}}
+                {{- $orientation := partial "_funcs/get-image-orientation.html" . -}}
+                {{- if eq 6 $orientation -}}
+                    {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r270" "context" $context) -}}
+                {{- else if eq 8 $orientation -}}
+                    {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r90" "context" $context) -}}
+                {{- else if eq 3 $orientation -}}
+                    {{- $image = partial "_funcs/process-image.html" (dict "resource" $originalImage "method" "Fit" "spec" "1920x1920 q90 r180" "context" $context) -}}
+                {{- end -}}
+                {{- if $image -}}
+                {{- $preview := partial "_funcs/process-image.html" (dict "resource" $image "method" "Fit" "spec" "970x728 q100" "context" $context) -}}
+                {{- $thumb := partial "_funcs/process-image.html" (dict "resource" $image "method" "Fit" "spec" "96x76 q100" "context" $context) -}}
+                {{- if and $preview $thumb -}}
+                <figure data-src="{{- $image.RelPermalink | relURL -}}" data-thumb="{{- $thumb.RelPermalink | relURL -}}" class="swiper-slide">
+                    <img src="{{- $preview.RelPermalink | relURL -}}" alt="{{- $title -}}">
+                </figure>
+                {{- end -}}
+                {{- end -}}
+                {{- end -}}
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+        <div class="post_text">
+            <div class="post_meta_top">
+                {{- partial "shared/tags.html" . -}}
+                {{- partial "shared/date.html" . -}}
+            </div>
+            <h4 class="post_title"><a href="{{- .RelPermalink | relURL -}}">{{- .Title -}}</a></h4>
+            <div class="post_nav"><a href="{{- .RelPermalink | relURL -}}" class="link-arrow">{{- i18n "fullGallery" -}} ➠</a></div>
+        </div>
+    </article>
+</div>

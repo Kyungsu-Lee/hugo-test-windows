@@ -1,0 +1,20 @@
+{{/* Initialize global variables */}}
+{{- $size := .Site.Params.style.title.size | default 4 -}}
+{{- $headingStyle := .Site.Params.style.title.headingStyle | default "display" -}}
+{{- $contentStyle := .Site.Params.style.title.contentStyle | default "lead text-muted" -}}
+{{- $padding := partial "utilities/GetPadding.html" -}}
+
+{{/* Initialize local variables */}}
+{{- $breakpoint := partialCached "utilities/GetBreakpoint.html" site -}}
+{{ $title := .Title }}
+{{ $title = partial "utilities/TitleCase.html" (dict "page" . "text" $title) }}
+
+<header>
+{{/* Display title */}}
+{{ with $title }}<h1 id="{{ anchorize . }}" class="{{ $headingStyle }}-{{ $size }} pt-1">{{ . }}</h1>{{ end }}
+
+{{/* Display description */}}
+{{ with .Description }}
+    <div class="{{ $contentStyle }} {{ partial "utilities/PaddingClasses.html" (dict "padding" $padding "axis" "y") }}">{{ . | $.RenderString | safeHTML }}</div>
+{{ end }}
+</header>

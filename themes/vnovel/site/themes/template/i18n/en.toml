@@ -1,0 +1,71 @@
+[words]
+other = "words"
+
+[previous_next]
+other = "Previous and next"
+
+[see_all]
+other = "See all"
+
+[minutes]
+other = "min read"
+
+[novels]
+other = "Novels"
+
+[others]
+other = "Other novels"
+
+[theme]
+other = "Theme"
+
+[font]
+other = "Font"
+
+[link_copy]
+other = "Link copied!"
+
+[search]
+other = "Search tags..."
+
+[sort_name]
+other = "Name (A-Z)"
+
+[sort_count]
+other = "Count"
+
+[no_results]
+other = "No tags found."
+
+[toggle_theme]
+other = "Toggle theme"
+
+[serif]
+other = "Serif"
+
+[sans_serif]
+other = "Sans-Serif"
+
+[size]
+other = "Size"
+
+[small]
+other = "S"
+
+[medium]
+other = "M"
+
+[large]
+other = "L"
+
+[comments]
+other = "Comments"
+
+[share]
+other = "Share"
+
+[next_page]
+other = "Next"
+
+[prev_page]
+other = "Previous"

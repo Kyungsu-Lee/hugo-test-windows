@@ -1,0 +1,34 @@
+.feat-ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	list-style: none;
+	margin: 0;
+	padding: 0 15px;
+}
+.feat-ul li {
+	margin: 10px 15px;
+	padding: 1px;
+}
+
+.feat-icon-wrapper {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.feat-icon-wrapper svg {
+	width: 60%;
+	height: 60%;
+	object-fit: contain;
+}
+
+.feat-a {
+	font-size: large;
+	color: var(--text-color);
+}
+.feat-a:hover {
+	color: var(--text-color);
+}

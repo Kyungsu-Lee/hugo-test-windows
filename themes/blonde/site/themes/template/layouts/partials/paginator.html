@@ -1,0 +1,84 @@
+{{ $pag := $.Paginator }}
+{{ if gt $pag.TotalPages 1 }}
+  <nav aria-label="page navigation">
+    <ul class="flex list-none my-6 p-0 justify-center items-center gap-1">
+      <!-- Don't show on 1st and 2nd page -->
+      {{ if and (ne $pag.PageNumber 1) (ne $pag.PageNumber 2) }}
+        <li class="page-item">
+          <a
+            href="{{ $pag.First.URL }}"
+            rel="first"
+            class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-warmgray-700 transition-colors duration-150"
+            >First</a
+          >
+        </li>
+      {{ end }}
+
+      {{ if $pag.HasPrev }}
+        <li class="page-item">
+          <a
+            href="{{ $pag.Prev.URL }}"
+            rel="prev"
+            class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-warmgray-700 transition-colors duration-150"
+            >Prev</a
+          >
+        </li>
+      {{ end }}
+
+      {{ range $pag.Pagers }}
+        {{ if eq . $pag }}
+          <!-- Current Page -->
+          <li class="page-item active">
+            <a
+              href="{{ .URL }}"
+              class="px-3 py-2 rounded-lg text-sm font-bold bg-sky-600 text-white"
+              >{{ .PageNumber }}</a
+            >
+          </li>
+        {{ else if and (ge .PageNumber (sub $pag.PageNumber 2)) (le .PageNumber (add $pag.PageNumber 2)) }}
+          {{ $.Scratch.Set "dot_rendered" false }}
+          <!-- Render prev 2 page and next 2 pages -->
+          <li class="page-item">
+            <a
+              href="{{ .URL }}"
+              class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-warmgray-700 transition-colors duration-150"
+              >{{ .PageNumber }}</a
+            >
+          </li>
+        {{ else if eq ($.Scratch.Get "dot_rendered") false }}
+          <!-- render skip pages -->
+          {{ $.Scratch.Set "dot_rendered" true }}
+          <li class="page-item disabled">
+            <span class="px-3 py-2 text-sm text-gray-400 dark:text-gray-600"
+              >...</span
+            >
+          </li>
+        {{ end }}
+      {{ end }}
+
+      {{ if $pag.HasNext }}
+        <li class="page-item">
+          <a
+            href="{{ $pag.Next.URL }}"
+            rel="next"
+            class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-warmgray-700 transition-colors duration-150"
+            >Next</a
+          >
+        </li>
+      {{ end }}
+
+
+      <!-- Don't show on last and 2nd last page -->
+      {{ if and (ne $pag.PageNumber $pag.TotalPages) ((ne $pag.PageNumber (sub $pag.TotalPages 1))) }}
+        <li class="page-item">
+          <a
+            href="{{ $pag.Last.URL }}"
+            rel="last"
+            class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-warmgray-700 transition-colors duration-150"
+            >Last</a
+          >
+        </li>
+      {{ end }}
+    </ul>
+  </nav>
+{{ end }}

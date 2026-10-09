@@ -1,0 +1,28 @@
+{{ define "stage-sider-left" }}
+    <div id="menutree" class="sider-left-inner-container">
+        {{ partial "components/menutree.html" . }}
+    </div>
+{{ end }}
+
+{{ define "stager-main" }}
+    <div class="main-inner-container">
+        {{ partial "components/breadcrumb.html" . }}
+        {{ if .IsSection }}
+            <article class="page">
+                <div class="markdown">
+                    <div>{{.Content}}</div>
+                </div>
+            </article>
+        {{ else }}
+            {{ partial "components/article.html" . }}
+            {{ partial "components/navigator.html" . }}
+        {{ end }}
+
+    </div>
+{{ end }}
+
+{{ define "stage-sider-right" }}
+    <div class="sider-right-inner-container">
+        {{ partial "components/tableofcontent.html" . }}
+    </div>
+{{ end }}

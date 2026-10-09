@@ -1,0 +1,6 @@
+<div class="mt-8 mb-8">
+  <h3>{{ .Site.Params.language.title }}</h3>
+  {{ range .Site.Params.language.list }}
+  <div class="flex"><span>{{ .language }} ({{ .level }})</span></div>
+  {{ end }}
+</div>

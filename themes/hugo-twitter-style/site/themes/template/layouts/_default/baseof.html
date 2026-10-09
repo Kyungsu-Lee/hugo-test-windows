@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Locale | default "ja" }}">
+    {{- partial "head.html" . -}}
+    <body>
+        <div class="site-shell">
+            {{- partial "header.html" . -}}
+            <main class="timeline" aria-label="Timeline">
+                {{- block "main" . }}{{- end }}
+            </main>
+            {{- partial "footer.html" . -}}
+        </div>
+    </body>
+</html>

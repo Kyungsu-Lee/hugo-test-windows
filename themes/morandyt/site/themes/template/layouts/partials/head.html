@@ -1,0 +1,16 @@
+{{ partialCached "head/js.html" . }}
+{{ partialCached "head/css.html" . }}
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="description" content="{{ .Site.Params.description }}" />
+<meta name="keywords" content="{{ delimit .Site.Params.keywords ", " }}">
+<title>
+	{{ if .IsHome }}
+		{{ site.Title }}
+	{{ else }}
+		{{ printf "%s | %s" .Title site.Title }}
+	{{ end }}
+</title>
+
+
