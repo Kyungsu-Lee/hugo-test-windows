@@ -12,6 +12,11 @@ PUBLIC=ROOT/'qa-public'; PUBLIC.mkdir(exist_ok=True)
 BASE='https://kyungsu-lee.github.io/hugo-test-windows/'
 TOOLS=Path(os.environ['RUNNER_TEMP'])/'qa-hugo'
 RESULT=[]
+tree=subprocess.run(['git','ls-tree','-rz','HEAD','--','themes'],capture_output=True,check=True).stdout
+objects={}
+for record in tree.split(b'\0'):
+    if not record: continue
+    meta,name=record.split(b'\t',1); objects[name.decode('utf-8')]=meta.split()[2].decode()
 def install(version):
     folder=TOOLS/version
     if not (folder/'hugo').is_file():
@@ -25,10 +30,22 @@ for row in ROWS:
     slug=row['slug']; cwd=ROOT/'themes'/slug; logs=LOGS/slug; logs.mkdir(exist_ok=True)
     result={'slug':slug,'windows_commit_sha':row['windows_commit_sha'],'batch_commit_sha':os.environ['GITHUB_SHA'],'run_id':os.environ['GITHUB_RUN_ID'],'build_status':'failed','started':time.time()}
     try:
+        # Git checkout attributes may change line endings. Restore raw committed blobs,
+        # then prove they are exactly the bytes from each Windows theme commit.
+        names=list(row['files'])
+        object_ids=[objects['themes/'+slug+'/'+rel] for rel in names]
+        payload=('\n'.join(object_ids)+'\n').encode()
+        blobs=subprocess.run(['git','cat-file','--batch'],input=payload,capture_output=True,check=True).stdout
+        offset=0
+        for rel in names:
+            end=blobs.index(b'\n',offset); size=int(blobs[offset:end].split()[2]); data=blobs[end+1:end+1+size]; offset=end+2+size
+            (cwd/rel).write_bytes(data)
+        del blobs
         # Verify every exported file against the bytes read back from Windows Git.
         for rel,expected in row['files'].items():
             p=cwd/rel
             if hashlib.sha256(p.read_bytes()).hexdigest()!=expected: raise ValueError('Windows committed bytes differ: '+rel)
+        result['windows_input_hashes_verified']=True
         state=json.loads((cwd/'.github-pages.json').read_text())
         env=dict(os.environ,HUGO_ENVIRONMENT='production',SITE_BASE_URL=BASE+slug+'/',GOMAXPROCS='2')
         env['PATH']=str(install(state['version']))+os.pathsep+env['PATH']
