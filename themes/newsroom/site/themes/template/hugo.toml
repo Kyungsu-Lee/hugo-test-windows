@@ -1,0 +1,8 @@
+# Theme-level configuration.
+# Declares the Hugo versions this theme supports; the themes site and Hugo
+# itself read this to warn when the theme is used with an incompatible build.
+# `extended` is required because the styles are authored in SASS.
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.156.0"

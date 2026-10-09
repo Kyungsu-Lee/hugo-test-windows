@@ -1,0 +1,40 @@
+{{- $id := .id | default "chart" }}
+
+{{- with .context.chart }}
+  {{- $indexAxis := .indexAxis | default "x" }}
+
+  <canvas id="{{ $id }}" class="js-chart" aria-label="{{ .title }}" aria-describedby="chart-table-{{ $id }}" role="img"
+    {{- with .title }} data-label="{{ . }}"{{ end}}
+    {{- with .type }} data-type="{{ . }}"{{ end}}
+    {{- with .backgroundColor }} data-background-color="{{ . }}"{{ end}}
+    {{- with .borderColor }} data-border-color="{{ . }}"{{ end}}
+    {{- with site.Params.chart.color }} data-color="{{ . }}"{{ end}}
+    {{- with .items }} data-items="{{ . | jsonify }}"{{ end}}>
+  </canvas>
+
+  {{- with .data }}
+    <script>
+      window.json = window.json || [];
+      window.json[{{ $id }}] = {{ (index . "json") | safeJS }};
+    </script>
+  {{- end }}
+
+  {{- if .items }}
+  <div class="transcription">
+    <details>
+      <summary>{{- i18n "accessibility.alternative" (dict "Title" .title) -}}</summary>
+      <div>
+        <table id="chart-table-{{ $id }}">
+          {{ range .items }}
+            <tr>
+              <th scope="row">{{ partial "func/PrepareHTML.html" .label }}</th>
+              <td>{{ .value }}</td>
+            </tr>
+          {{ end }}
+        </table>
+      </div>
+    </details>
+  </div>
+  {{- end }}
+
+{{- end }}

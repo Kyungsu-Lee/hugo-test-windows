@@ -1,0 +1,7 @@
+{{- $menu := hugo.Data.menu.header.secondary -}}
+{{- with index $menu (partial "func/GetLanguage.html").name -}}
+  {{- $menu = . -}}
+{{- end -}}
+{{- with $menu }}
+  {{- partial "nav/links.html" (dict "links" .links "name" "secondary") }}
+{{ end -}}

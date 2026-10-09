@@ -1,0 +1,54 @@
+{{/*
+
+  @context
+    id (string)
+    class (string) optional
+    loading (string) optional
+    title (string) optional
+
+  @example - Shortcode
+    {{< dailymotion 123456789 >}}
+    {{< dailymotion id="123456789" class="foo" title="My Video" >}}
+
+*/}}
+
+{{- /* Get arguments. */}}
+{{- $allowFullScreen := true }}
+{{- $class := or (.Get "class") false}}
+{{- $id := or (.Get "id") (.Get 0) }}
+{{- $loading := or (.Get "loading") "lazy" }}
+{{- $title := or (.Get "title") "" }}
+{{- if in (slice "true" true 1) (.Get "allowFullScreen") }}
+  {{- $allowFullScreen = true }}
+{{- else if in (slice "false" false 0) (.Get "allowFullScreen") }}
+  {{- $allowFullScreen = false }}
+{{- end }}
+{{- $iframeAllowList := "" }}
+{{- if $allowFullScreen }}
+  {{- $iframeAllowList = "fullscreen" }}
+{{- end }}
+
+{{- /* Render. */}}
+{{- with $id }}
+  {{- $src := printf "https://geo.dailymotion.com/player.html?video=%v" . }}
+  <div
+    {{- with $class }}
+      class="{{ . }}"
+    {{- else }}
+      {{- $divStyle := "position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;" }}
+      style="{{ $divStyle | safeCSS }}"
+    {{- end }}>
+    <iframe
+      src="{{- $src }}"
+      {{- if not $class }}
+        {{- $iframeStyle := "position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" }}
+        style="{{ $iframeStyle | safeCSS }}"
+      {{- end }}
+      {{- with $iframeAllowList }} allow="{{ . }}" {{- end }}
+      {{- with $loading }} loading="{{ . }}" {{- end }}
+      {{- with $title }} title="{{ . }}" {{- end }}>
+    </iframe>
+  </div>
+{{- else }}
+  {{- errorf "The %q shortcode requires a video id, either as the first positional argument or an argument named id. See %s" .Name .Position }}
+{{- end }}

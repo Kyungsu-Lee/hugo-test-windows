@@ -1,0 +1,11 @@
+{{- with .video }}
+  {{- if or .mp4 .webm }}
+    {{- $media_class := "hero-cover" -}}
+    {{- if .darken -}}
+      {{- $media_class = printf "%s hero-cover-darken" $media_class -}}
+    {{- end -}}
+    <div class="{{ $media_class }}">
+      {{ partial "commons/video.html" . }}
+    </div>
+  {{- end }}
+{{- end }}

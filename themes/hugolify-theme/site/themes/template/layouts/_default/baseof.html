@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{{- $language := partial "func/GetLanguage.html" }}
+<html
+  lang="{{ $language.locale }}"
+  dir="{{ $language.direction }}"
+  {{ partial "func/GetColorScheme.html" . }}
+>
+  <head>
+    {{ block "head" . }}{{ end }}
+  </head>
+  {{- $body_class := printf "%s-%s" .Kind .Type -}}
+  {{- with .Params.body_class -}}
+    {{- $body_class = printf "%s %s" $body_class . -}}
+  {{- end }}
+  <body class="preload {{ $body_class }}">
+    {{- partialCached "commons/schema.html" . -}}
+    {{- partialCached "nav/accessibility.html" . -}}
+    {{- partialCached "header/banner.html" . -}}
+    {{- partial "header/header.html" . -}}
+    {{- partial "commons/search.html" . -}}
+    {{- block "hero" . }}{{- end }}
+    <main id="main" role="main" tabindex="-1" {{- partial "func/SetSearchBody.html" . }}>
+      {{- block "main" . }}{{- end }}
+    </main>
+    {{- partial "footer/blocks.html" . -}}
+    {{- partial "nav/breadcrumb.html" . -}}
+    {{- partial "footer/footer.html" . -}}
+    {{- partial "footer/cookie-banner.html" . -}}
+    {{- partialCached "footer/js.html" . -}}
+    {{- partialCached "footer/scripts.html" . -}}
+  </body>
+</html>

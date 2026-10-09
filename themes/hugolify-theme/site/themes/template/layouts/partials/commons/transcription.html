@@ -1,0 +1,8 @@
+{{ with . }}
+  <div class="transcription">
+    <details>
+      <summary>{{ i18n "transcription" }}</summary>
+      {{- partial "commons/text.html" (dict "text" .) -}}
+    </details>
+  </div>
+{{ end }}

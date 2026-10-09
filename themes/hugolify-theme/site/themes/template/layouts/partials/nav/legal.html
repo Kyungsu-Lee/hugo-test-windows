@@ -1,0 +1,10 @@
+{{- $menu := hugo.Data.menu.legal -}}
+{{- with index $menu (partial "func/GetLanguage.html").name -}}
+  {{- $menu = . -}}
+{{- end -}}
+{{- with $menu }}
+<div>
+  {{ partial "nav/title.html" .title }}
+  {{- partial "nav/links.html" (dict "links" .links "name" "legal") }}
+</div>
+{{ end -}}

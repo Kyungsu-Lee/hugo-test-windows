@@ -1,0 +1,20 @@
+{{- $limit := .limit | default 3 -}}
+{{- with .section -}}
+  {{- $section := . -}}
+  {{- $pages := first $limit ( ( where site.RegularPages "Section" $section ).ByDate.Reverse ) -}}
+  {{- if gt ($pages | len) 0 -}}
+    {{- $title := i18n (printf "%s.latest" $section) | default (i18n "pages.latest") -}}
+    {{- $more := false -}}
+    {{- with site.GetPage (printf "/%s" $section) -}}
+      {{- $more = dict "url" .Permalink "label" (i18n (printf "%s.more" $section) | default (i18n "more")) -}}
+    {{- end -}}
+    {{- partial "commons/related.html" (dict
+      "section" $section
+      "pages" $pages
+      "title" $title
+      "more" $more
+      "variant" "latest"
+      "container" false
+    ) -}}
+  {{- end -}}
+{{- end -}}

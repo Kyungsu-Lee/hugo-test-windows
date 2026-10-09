@@ -1,0 +1,122 @@
+# doks
+
+## 2.0.2
+
+### Patch Changes
+
+- [#1415](https://github.com/thuliteio/doks/pull/1415) [`22e6879`](https://github.com/thuliteio/doks/commit/22e68793464566c758e7b61959aafa51ff72c8f2) Thanks [@h-enk](https://github.com/h-enk)! - fix: clarify PostProcess comment for PostCSS integration
+
+## 2.0.1
+
+### Patch Changes
+
+- [#1414](https://github.com/thuliteio/doks/pull/1414) [`48d53e6`](https://github.com/thuliteio/doks/commit/48d53e6f08b2ee6b3ae0673f1778c2c0afb92df3) Thanks [@h-enk](https://github.com/h-enk)! - chore: update dependencies and bump thulite version to 3.0.3
+
+## 2.0.0
+
+### Major Changes
+
+- [#1413](https://github.com/thuliteio/doks/pull/1413) [`0b5fb0e`](https://github.com/thuliteio/doks/commit/0b5fb0eca057816027411d3b55d637a9504b1d2d) Thanks [@h-enk](https://github.com/h-enk)! - # Major Changes
+
+  BREAKING CHANGE: LibSass support has been removed. Dart Sass is now required.
+
+  **WHAT changed:**
+
+  - Replaced LibSass with Dart Sass for CSS compilation
+  - All asset build pipelines now follow Hugo's official best practices
+  - JavaScript build aligned with Hugo's esbuild/Babel patterns
+
+  **WHY:**
+
+  - LibSass has been deprecated by the Sass team since 2020
+  - Dart Sass provides modern Sass language features and better maintenance
+  - Hugo's official patterns ensure future compatibility and reliability
+
+  **HOW to upgrade:**
+  Install Dart Sass in your environment:
+
+  - macOS (Homebrew): `brew install sass/sass/sass`
+  - Linux (Snap): `sudo snap install dart-sass`
+  - Windows (Scoop): `scoop install sass`
+  - Or: npm install -g sass
+
+  Other improvements:
+
+  - Enhanced Prettier, ESLint, and VS Code configuration
+  - Expanded Dependabot automation and dependency management
+  - Improved error handling and performance in JavaScript modules
+  - Modern CSS reset and better cross-browser consistency
+
+## 1.9.1
+
+### Patch Changes
+
+- [#1395](https://github.com/thuliteio/doks/pull/1395) [`f541384`](https://github.com/thuliteio/doks/commit/f5413844bab0b2de1d6b1e704b5496b63db11197) Thanks [@h-enk](https://github.com/h-enk)! - Update for security fix, Netlify fix, Hugo v0.156.0, and update dependencies
+
+## 1.9.0
+
+### Minor Changes
+
+- [#1394](https://github.com/thuliteio/doks/pull/1394) [`0d28299`](https://github.com/thuliteio/doks/commit/0d28299bc6a1c95fd9ecbedfc2c3615ad98ead18) Thanks [@h-enk](https://github.com/h-enk)! - Update for UX 2026
+
+## 1.8.2
+
+### Patch Changes
+
+- [#1392](https://github.com/thuliteio/doks/pull/1392) [`2a2b897`](https://github.com/thuliteio/doks/commit/2a2b897114105f66a7fb493bea2e01ecaa52c8fb) Thanks [@h-enk](https://github.com/h-enk)! - Update for create-thulite v2.0.2
+
+## 1.8.1
+
+### Patch Changes
+
+- [#1372](https://github.com/thuliteio/doks/pull/1372) [`bb44bf8`](https://github.com/thuliteio/doks/commit/bb44bf84e046d4dbd03ec6ef6b1051db5f6e80b1) Thanks [@h-enk](https://github.com/h-enk)! - Fix layouts mounting order
+
+## 1.8.0
+
+### Minor Changes
+
+- [#1369](https://github.com/thuliteio/doks/pull/1369) [`d03e363`](https://github.com/thuliteio/doks/commit/d03e3634a85f26bcd3c71e99b829d5258fd25c60) Thanks [@h-enk](https://github.com/h-enk)! - Update for new template system in Hugo v0.146.0
+
+- [#1356](https://github.com/thuliteio/doks/pull/1356) [`6f457a6`](https://github.com/thuliteio/doks/commit/6f457a6da7d6254fa0315e39b166423a4c389e90) Thanks [@LemonDouble](https://github.com/LemonDouble)! - fix : Fixes the issue of layout breaking due to changes in layout priority in Hugo 0.146.0
+
+### Patch Changes
+
+- [#1303](https://github.com/thuliteio/doks/pull/1303) [`f13c768`](https://github.com/thuliteio/doks/commit/f13c768d43cca497c77a6e7b4995f2c0cfc6b962) Thanks [@AndiKod](https://github.com/AndiKod)! - Tiny typo "by by" => "by"
+
+## 1.7.0
+
+### Minor Changes
+
+- [#1276](https://github.com/thuliteio/doks/pull/1276) [`b3145cd`](https://github.com/thuliteio/doks/commit/b3145cd021a9ab6ee244f3ad8aa38d8b3aa1c4a5) Thanks [@h-enk](https://github.com/h-enk)! - Update for migration from Hyas to Thulite
+
+### Patch Changes
+
+- [#1266](https://github.com/thuliteio/doks/pull/1266) [`009064a`](https://github.com/thuliteio/doks/commit/009064ad81d018521992ea2b6451b0906a02a1a0) Thanks [@l-zeuch](https://github.com/l-zeuch)! - Allow custom kroki host
+
+- [#1256](https://github.com/thuliteio/doks/pull/1256) [`5d475ea`](https://github.com/thuliteio/doks/commit/5d475ead4f845afe68c370734ca47365b81e2024) Thanks [@Rancho-rachit](https://github.com/Rancho-rachit)! - Added LinkedIn Social
+
+- [#1268](https://github.com/thuliteio/doks/pull/1268) [`7608454`](https://github.com/thuliteio/doks/commit/76084541c4d3c95f22a343f4dc538325088fba68) Thanks [@h-enk](https://github.com/h-enk)! - Add CodeSandbox support
+
+## 1.6.2
+
+### Patch Changes
+
+- [#1230](https://github.com/gethyas/doks/pull/1230) [`25f55a3`](https://github.com/gethyas/doks/commit/25f55a37fa4162b7546d6ded9b449434e4965164) Thanks [@h-enk](https://github.com/h-enk)! - Install prettier and vite as devDependencies
+
+## 1.6.1
+
+### Patch Changes
+
+- [#1229](https://github.com/gethyas/doks/pull/1229) [`7666ab6`](https://github.com/gethyas/doks/commit/7666ab62a9b04f0508530dfb8c7f5f7c6db0f966) Thanks [@h-enk](https://github.com/h-enk)! - Add gethyas dependency
+
+## 1.6.0
+
+### Minor Changes
+
+- [#1228](https://github.com/gethyas/doks/pull/1228) [`4be4a68`](https://github.com/gethyas/doks/commit/4be4a689619b49f62df4c65024d3e865c1ead99e) Thanks [@h-enk](https://github.com/h-enk)! - Update dependencies to latest versions
+
+## 1.5.0
+
+### Minor Changes
+
+- [#1226](https://github.com/gethyas/doks/pull/1226) [`664063e`](https://github.com/gethyas/doks/commit/664063eb6a02d24a3fceb61ea9ed8df589a11033) Thanks [@h-enk](https://github.com/h-enk)! - Update for new Hyas setup

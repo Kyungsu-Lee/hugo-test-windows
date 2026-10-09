@@ -1,0 +1,32 @@
+<div id="disqus_thread"></div>
+<script>
+  (function () {
+    var el = document.getElementById("disqus_thread");
+    var loaded = false;
+    function load() {
+      if (loaded) return;
+      loaded = true;
+      var s = document.createElement("script");
+      s.src = "https://{{ .Site.Params.disqus }}.disqus.com/embed.js";
+      s.setAttribute("data-timestamp", +new Date());
+      (document.head || document.body).appendChild(s);
+    }
+    if (!("IntersectionObserver" in window)) {
+      window.addEventListener("load", load);
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) {
+        io.disconnect();
+        load();
+      }
+    }, { rootMargin: "600px 0px" });
+    io.observe(el);
+  })();
+</script>
+<noscript
+  >Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript"
+    >comments powered by Disqus.</a
+  ></noscript
+>

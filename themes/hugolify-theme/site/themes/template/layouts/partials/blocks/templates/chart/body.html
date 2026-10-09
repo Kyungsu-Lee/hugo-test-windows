@@ -1,0 +1,2 @@
+{{- $id := printf "chart-%s" (.index | string) -}}
+{{ partial "commons/chart.html" (dict "id" $id "context" .) }}

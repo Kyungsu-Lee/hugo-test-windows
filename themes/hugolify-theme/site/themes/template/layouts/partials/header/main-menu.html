@@ -1,0 +1,24 @@
+{{/*  Main menu panel.
+
+      site.Params.header.layout          — drawer (default) or modal, CSS variant only
+      site.Params.header.expand          — sm | md | lg | xl | none
+      site.Params.header.drawer.position — start | end | top | bottom
+      site.Params.header.dialog.width    — any CSS length, e.g. 40rem  */}}
+{{- $type := cond (eq (site.Params.header.layout | default "drawer") "modal") "modal" "drawer" }}
+{{- $style := "" }}
+{{- if eq $type "modal" }}
+  {{- with site.Params.header.dialog }}
+    {{- with .width }}{{ $style = printf "--modal-max-width: %s;" . }}{{ end }}
+  {{- end }}
+{{- end }}
+{{ partial "commons/dialog.html" (dict
+  "id" "navigation"
+  "labelledby" "navigationLabel"
+  "class" "main-menu"
+  "button" (partialCached "header/button.html" .)
+  "params" site.Params.header
+  "type" $type
+  "style" $style
+  "content" (print
+    (partialCached "header/panel/header.html" .)
+    (partial "header/panel/content.html" .) | safeHTML)) }}

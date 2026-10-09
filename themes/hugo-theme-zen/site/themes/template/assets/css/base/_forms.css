@@ -1,0 +1,100 @@
+/* Form defaults. */
+
+form {
+  /* Add vertical rhythm margins. */
+  margin-block: 0 var(--spacing-m);
+}
+
+input,
+textarea,
+select {
+  margin-block: 0 var(--spacing-m);
+}
+
+label {
+  font-weight: var(--fw-bold);
+
+  /* Display as block if before input. */
+  &:has(+ input),
+  &:has(+ textarea) {
+    display: block;
+  }
+
+  /* Mark field as required if needed. */
+  &:has(+ :required) {
+    &::after {
+      content: '*';
+      color: var(--color-mark-highlight);
+    }
+  }
+}
+
+/* Valid and invalid state. */
+input,
+textarea {
+  --color-input: currentColor;
+  --color-input-bg: light-dark(
+    oklch(from var(--color-input) 100% 0.03 h),
+    oklch(from var(--color-input) calc(l - 0.4) c h)
+  );
+  --color-input-border: light-dark(
+    oklch(from var(--color-input) calc(l + 0.2) c h),
+    oklch(from var(--color-input) calc(l - 0.07) c h)
+  );
+
+  &:user-valid {
+    --color-input: var(--color-success);
+    border-color: var(--color-input-border);
+    border-style: solid;
+    background-color: var(--color-input-bg);
+  }
+
+  &:focus:user-valid {
+    border-color: transparent;
+  }
+
+  &:user-invalid {
+    --color-input: var(--color-error);
+    border-color: var(--color-input-border);
+    border-style: solid;
+    background-color: var(--color-input-bg);
+  }
+
+  &:focus:user-invalid {
+    --color-input: var(--color-warning);
+    border-color: transparent;
+    background-color: var(--color-input-bg);
+  }
+}
+
+/* Set max text line width for readability. */
+input,
+label,
+textarea,
+select {
+  max-width: var(--max-line-width);
+}
+
+fieldset {
+  border: 1px solid var(--color-border);
+}
+
+/* Make field where you enter more info a bit wider. */
+[type='email'],
+[type='password'],
+[type='range'],
+[type='search'],
+[type='url'] {
+  width: min(20em, 100%);
+}
+
+/* Make field where you enter more info a bit wider. */
+[type='text'],
+textarea {
+  width: min(30em, 100%);
+}
+
+/* Make sure textareas without a rows attribute are not tiny. */
+textarea:not([rows]) {
+  min-height: 7lh;
+}

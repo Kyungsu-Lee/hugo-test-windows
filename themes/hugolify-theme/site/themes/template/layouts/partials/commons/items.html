@@ -1,0 +1,71 @@
+{{- $pages := . -}}
+{{- $large := false -}}
+{{- $abovethefold := false -}}
+{{- $groupbyyear := false -}}
+{{- $scrollsnap := false -}}
+{{- $currentyear := false -}}
+{{- $abovethefoldLimit := 2 -}}
+{{- $block := false -}}
+{{- if reflect.IsMap . -}}
+  {{- $pages = .pages -}}
+  {{- $large = .large -}}
+  {{- $abovethefold = .abovethefold -}}
+  {{- $groupbyyear = .groupbyyear -}}
+  {{- $scrollsnap = .scrollsnap | default false -}}
+  {{- $block = .block | default false -}}
+{{- end -}}
+{{- /* Horizontal carousel below a breakpoint — see func/SetScrollsnap.html.
+       Inside a block it is configured under blocks.<type>.scrollsnap, falling
+       back to blocks.scrollsnap; anywhere else the generic param decides. */ -}}
+{{- $scrollsnapcontext := "" -}}
+{{- if $block }}{{ $scrollsnapcontext = printf "blocks.%s" $block }}{{ end -}}
+{{- $scrollsnapclass := partial "func/SetScrollsnap.html" (dict "scrollsnap" $scrollsnap "context" $scrollsnapcontext) -}}
+{{- with $pages }}
+  {{- if gt . 0 }}
+    {{- $first := index . 0 -}}
+    {{- $section := $first.Type -}}
+    {{- /* A section whose items are branch bundles (expertises, sectors…) holds
+           them in _index.md files, so they are pages of kind "section" and keep
+           their own item partial. Only the page listing the section itself falls
+           back to the generic one. */ -}}
+    {{- if and (eq $first.Kind "section") (eq $first.Path (printf "/%s" $first.Section)) -}}
+      {{- $section = "pages" -}}
+    {{- end -}}
+    {{- $partial := print $section "/item.html" -}}
+    {{- $hasPartial := cond (templates.Exists (printf "partials/%s" $partial)) true false -}}
+    {{- if not $hasPartial -}}
+      {{- $section = "pages" -}}
+      {{- $partial = "pages/item.html" -}}
+    {{- end -}}
+    <div class="items {{ $section }} {{- if $large}} {{ $section }}-large{{ end }} {{- $scrollsnapclass }}" {{- partial "func/SetSearchIgnore.html" . }}>
+      {{- range $index, $items := . }}
+        {{- .Scratch.Set "index" $index -}}
+        {{- .Scratch.Set "block" $block -}}
+        {{- if $groupbyyear -}}
+          {{- $year := .Date.Format "2006" -}}
+          {{- if ne $year $currentyear }}
+            {{- $animation := partial "func/SetAnim.html" (dict "element" "heading") -}}
+            <h2 class="year" {{- $animation }}>{{ $year }}</h2>
+            {{- $currentyear = $year -}}
+          {{- end }}
+        {{- end -}}
+        {{- if and ($abovethefold) (lt $index $abovethefoldLimit) -}}
+          {{- .Scratch.Set "lazy" false -}}
+        {{- end -}}
+        {{- if $scrollsnapclass -}}
+          {{- .Scratch.Set "scrollsnap" true -}}
+        {{- end }}
+        {{- if $large -}}
+          {{- .Scratch.Set "large" true -}}
+        {{- end -}}
+        <div {{- partial "func/SetParallax.html" (dict "element" "item") }}>
+          {{- $cacheKey := .RelPermalink -}}
+          {{- with .File -}}
+            {{- $cacheKey = .UniqueID -}}
+          {{- end -}}
+          {{ partialCached $partial . $cacheKey (.Scratch.Get "large") (.Scratch.Get "lazy") (.Scratch.Get "scrollsnap") }}
+        </div>
+      {{ end -}}
+    </div>
+  {{ end -}}
+{{ end -}}

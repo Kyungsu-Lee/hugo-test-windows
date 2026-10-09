@@ -1,0 +1,30 @@
+{{- $IsMultiLingual := hugo.IsMultilingual -}}
+{{- $Lang := (partial "func/GetLanguage.html").name -}}
+{{- with hugo.Data.banner -}}
+  {{- $state := false -}}
+  {{- $text := false -}}
+  {{- with .text -}}
+    {{- $text = . -}}
+  {{- end -}}
+  {{- with .state -}}
+    {{- $state = . -}}
+  {{- end -}}
+  {{- if $IsMultiLingual -}}
+    {{- with index . $Lang -}}
+      {{- with .text -}}
+        {{- $text = . -}}
+      {{- end -}}
+      {{- with .state -}}
+        {{- $state = . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- with $text }}
+    <div class="banner alert {{- with $state }} alert-{{ . }}{{ end }}" role="alert">
+      <div class="container">
+        <p>{{ partial "func/PrepareHTML.html" . | markdownify }}</p>
+      </div>
+    </div>
+  {{ end -}}
+{{- end -}}

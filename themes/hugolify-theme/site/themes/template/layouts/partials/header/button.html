@@ -1,0 +1,6 @@
+{{ partial "commons/dialog-trigger.html" (dict
+  "id" "navigation"
+  "class" "btn-menu"
+  "params" site.Params.header
+  "ariaLabel" (i18n "navigation.menu")
+  "content" (printf "<span>%s</span>" (i18n "navigation.menu") | safeHTML)) }}

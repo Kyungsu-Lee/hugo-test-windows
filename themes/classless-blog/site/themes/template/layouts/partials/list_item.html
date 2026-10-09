@@ -1,0 +1,27 @@
+<a href="{{ .Permalink }}">
+  <h2>
+    {{ .Title }}
+  </h2>
+
+  <small>
+    <time>
+      {{ .Date.Format "2006-01-02" }}
+    </time>
+  </small>
+
+  {{ if .Params.image }}
+  <p>
+    <img src="{{ .RelPermalink }}{{ .Params.image }}" alt="{{ .Title }}"/>
+  </p>
+  {{ end }}
+</a>
+
+
+<p>
+  {{ .Summary }}
+
+  {{ if .Truncated }}
+  <a href="{{ .Permalink }}">…</a>
+  {{ end }}
+</p>
+

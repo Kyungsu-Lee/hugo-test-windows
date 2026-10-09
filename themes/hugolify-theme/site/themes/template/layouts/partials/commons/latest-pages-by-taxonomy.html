@@ -1,0 +1,32 @@
+{{- $filename := .filename -}}
+{{- $section := .section -}}
+{{- $taxonomy := .taxonomy -}}
+{{- $additionalParams := .additionalParams -}}
+{{- $title := .title | default (i18n (printf "%s.latest" $section)) -}}
+{{- $name := .name -}}
+{{- $showMore := .more | default true -}}
+{{- $limit := .limit | default 3 -}}
+
+{{- $pages := partial "func/GetTaxonomyPageBySlug" (dict
+  "section" $section
+  "taxonomy" $taxonomy
+  "slug" $filename
+  "additionalParams" $additionalParams
+) -}}
+
+{{- with $pages -}}
+  {{- $count := . | len -}}
+  {{- $pages = first $limit . -}}
+  {{- $more := false -}}
+  {{- if and $showMore (gt $count $limit) -}}
+    {{- with partial "func/GetTaxonomy" (dict "slug" $filename "taxonomy" $taxonomy) -}}
+      {{- $more = dict "url" .Permalink "label" (i18n (printf "%s.more_person" $section) (dict "Person" $name)) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- partial "commons/related.html" (dict
+    "section" $section
+    "pages" $pages
+    "title" $title
+    "more" $more
+  ) -}}
+{{- end -}}

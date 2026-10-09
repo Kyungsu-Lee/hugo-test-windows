@@ -1,0 +1,18 @@
+{{/* UI */}}
+{{- $ui := partial "func/GetBlockUI" (merge (dict "type" "timeline") .) -}}
+
+{{/* Class */}}
+{{- $blockClass := partial "func/GetBlockClasses" (dict "type" "timeline" "ui" $ui) -}}
+
+{{/* Context */}}
+{{- $context := merge . (dict "ui" $ui) -}}
+
+{{- if .items }}
+<section class="{{- $blockClass }}" {{- partial "func/SetAnim.html" (dict "element" "block") }}>
+{{- partial "func/SetContainerRowColStart.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+  {{ partial "blocks/templates/timeline/header.html" . }}
+  {{ partial "blocks/templates/timeline/body.html" $context }}
+  {{ partial "blocks/templates/timeline/footer.html" . }}
+{{- partial "func/SetContainerRowColEnd.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+</section>
+{{ end -}}

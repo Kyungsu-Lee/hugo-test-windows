@@ -1,0 +1,61 @@
+theme: E25DX
+
+enableGitInfo: true
+enableRobotsTXT: true
+
+disableKinds: [ taxonomy, term ]
+
+defaultContentLanguage: en
+
+languages:
+  en:
+    weight: 1
+    languageName: English
+    languageCode: en-US
+    contentDir: content/en
+    title: Site Name
+    params:
+      description: Site Description
+
+services:
+  googleAnalytics:
+    ID: G-XXXXXXXXXX # To omit, put a ~ here
+
+markup:
+  highlight:
+    noClasses: false
+  goldmark:
+    renderer:
+      unsafe: true
+    parser:
+      attribute:
+        block: true
+        title: true
+  tableOfContents:
+    pre: <nav id="TableOfContents" aria-label="Table of Contents">
+    post: </nav>
+
+params:
+  project:
+    startYear: 2024 # To omit, put a ~ here
+    presentYear: 2026
+    repo:
+      main: username/repo
+    themeColor:
+      light: '#ffffff'
+      dark: '#101010'
+
+  author:
+    name: Name
+    url: https://github.com/username
+
+  pagination:
+    size: 6
+
+  enableOGXSEO: false # No automated OG image generation
+  enablePageFind: false # Run pagefind --site dir after build
+
+  services:
+    umami: # To omit, put a ~ here & remove id, scriptPath lines
+      id: xxx
+      scriptPath: https://cloud.umami.is/script.js

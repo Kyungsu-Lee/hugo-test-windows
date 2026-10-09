@@ -1,0 +1,8 @@
+{{ define "hero"}}
+  {{- partial "search/hero.html" . -}}
+{{ end }}
+
+{{ define "main" }}
+  {{ partial "search/schema.html" . }}
+  {{ partial "search/container.html" . }}
+{{ end }}

@@ -1,0 +1,9 @@
+{{- if .Content }}
+<div class="container container-single">
+  {{ partial "pages/heading-single.html" . }}
+  <div class="row">
+    {{ partial "commons/content.html" . }}
+    {{ partial "commons/sidebar.html" . }}
+  </div>
+</div>
+{{ end -}}

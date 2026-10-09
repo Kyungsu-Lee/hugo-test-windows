@@ -1,0 +1,11 @@
+<header role="banner">
+  <nav role="navigation" aria-label="{{ i18n "navigation.main" }}">
+    <div class="container">
+      {{ partialCached "header/logo.html" . }}
+      {{ partialCached "commons/search/button.html" . }}
+      {{ if or hugo.Data.menu.primary hugo.Data.menu.header.primary }}
+        {{ partial "header/main-menu.html" . }}
+      {{ end }}
+    </div>
+  </nav>
+</header>

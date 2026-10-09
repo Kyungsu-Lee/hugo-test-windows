@@ -1,0 +1,26 @@
+{{/* UI */}}
+{{- $ui := partial "func/GetBlockUI" (merge (dict "type" "editorial") .) -}}
+
+{{/* Image: half the block's grid on desktop, edge-to-edge (full-bleed) on mobile. */}}
+{{- $size := partial "func/GetBlockImageSize.html" (dict "columnDesktop" 2 "grid" $ui.grid "gridMobile" "full") -}}
+{{- $lazy := partial "func/isLazyImage" (dict "first" .first) -}}
+
+{{/* Context */}}
+{{- $context := merge . (dict
+  "desktop" $size.desktop
+  "mobile" $size.mobile
+  "lazy" $lazy
+  "ui" $ui
+) -}}
+
+{{/* Class */}}
+{{- $blockClass := partial "func/GetBlockClasses" (dict "type" "editorial" "ui" $ui "variant" $ui.direction) -}}
+
+{{/* Block */}}
+<section class="{{ $blockClass }}" {{- partial "func/SetAnim.html" (dict "element" "block") }}>
+{{- partial "func/SetContainerRowColStart.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+  {{ partial "blocks/templates/editorial/header.html" . }}
+  {{ partial "blocks/templates/editorial/body.html" $context }}
+  {{ partial "blocks/templates/editorial/footer.html" . }}
+{{- partial "func/SetContainerRowColEnd.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+</section>

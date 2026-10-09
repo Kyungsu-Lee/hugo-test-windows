@@ -1,0 +1,16 @@
+{{/* UI */}}
+{{- $ui := partial "func/GetBlockUI" (merge (dict "type" "map") .) -}}
+
+{{/* Class */}}
+{{- $blockClass := partial "func/GetBlockClasses" (dict "type" "map" "ui" $ui) -}}
+
+{{/* Context */}}
+{{- $context := merge . (dict "ui" $ui) -}}
+
+<section class="{{- $blockClass }}" {{- partial "func/SetAnim.html" (dict "element" "block") }}>
+{{- partial "func/SetContainerRowColStart.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+  {{ partial "blocks/templates/map/header.html" . }}
+  {{ partial "blocks/templates/map/body.html" $context }}
+  {{ partial "blocks/templates/map/footer.html" . }}
+{{- partial "func/SetContainerRowColEnd.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+</section>

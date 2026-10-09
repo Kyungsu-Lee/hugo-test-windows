@@ -1,0 +1,9 @@
+{{ with .items }}
+  <ol>
+    {{ range . }}
+      <li>
+        {{ partial "commons/quote.html" . }}
+      </li>
+    {{ end }}
+  </ol>
+{{ end }}

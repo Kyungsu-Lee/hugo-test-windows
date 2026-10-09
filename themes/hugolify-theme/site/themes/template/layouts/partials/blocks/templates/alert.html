@@ -1,0 +1,17 @@
+{{/* UI */}}
+{{- $ui := partial "func/GetBlockUI" (merge (dict "type" "alert") .) -}}
+
+{{/* Class */}}
+{{- $blockClass := partial "func/GetBlockClasses" (dict "type" "alert" "ui" $ui) -}}
+
+{{/* Context */}}
+{{- $context := merge . (dict "ui" $ui) -}}
+
+{{/* Block */}}
+<section class="{{- $blockClass }}" {{- partial "func/SetAnim.html" (dict "element" "block") }}>
+{{- partial "func/SetContainerRowColStart.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+  {{ partial "blocks/templates/alert/header.html" . }}
+  {{ partial "blocks/templates/alert/body.html" $context }}
+  {{ partial "blocks/templates/alert/footer.html" . }}
+{{- partial "func/SetContainerRowColEnd.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+</section>

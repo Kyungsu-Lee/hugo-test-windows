@@ -1,0 +1,29 @@
+/* Anchor */
+
+/* TODO: Implement anchor-positioning when uptake is good. */
+.anchor {
+  --anchor-gap: 0.5rem;
+  --anchor-opacity: 0.4;
+
+  & > a {
+    opacity: 0;
+    text-decoration: none;
+    padding-inline-start: var(--anchor-gap);
+  }
+
+  &:has(:focus-visible),
+  &:hover {
+    & > a {
+      opacity: var(--anchor-opacity);
+
+      &:focus-visible,
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  svg {
+    display: inline;
+  }
+}

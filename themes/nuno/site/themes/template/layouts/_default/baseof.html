@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Locale | default "en" }}" data-theme="dark" data-ground="{{ .Site.Params.ground | default "brown" }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+<a class="sr-only" href="#main">{{ i18n "skipToContent" }}</a>
+<div class="wrap {{ block "wrapclass" . }}{{ end }}">
+  {{ partial "nav.html" . }}
+  {{ block "main" . }}{{ end }}
+  {{ partial "footer.html" . }}
+</div>
+{{ partial "search.html" . }}
+{{ partial "scripts.html" . }}
+</body>
+</html>

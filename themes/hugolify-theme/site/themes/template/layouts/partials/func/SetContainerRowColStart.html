@@ -1,0 +1,9 @@
+{{- if ne .grid "full" }}
+<div class="container {{- with not .class }} block-content{{ end }}">
+  {{- with .class }}
+  <div class="row">
+    <div class="{{ . }} block-content">
+  {{ end -}}
+{{- else }}
+  <div class="block-content">
+{{- end }}

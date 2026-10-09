@@ -1,0 +1,330 @@
+# Popular: a Hugo theme for meetups & communities
+
+> *Built to make your community seen and famous.*
+
+> **AI agents / automated contributors:** read [AGENTS.md](AGENTS.md) before making changes. It covers the repo layout, build commands, the Hugo-Astro parity contract, and content conventions.
+
+> **Something not working as described?** Please [open an issue](https://github.com/Mariatta/hugo-theme-popular/issues/new) as you hit it, while it's fresh: a command that errors, a step that's out of date, a sentence you had to read three times. Setup friction is a bug. Reporting it here gets it fixed upstream, so the next person doesn't hit the same wall. Fixes to the wording are welcome as pull requests too.
+
+**Popular** is a warm, community-first [Hugo](https://gohugo.io) theme for meetups, user
+groups and small events. Named after the song *Pop!ular* by Darren Hayes, it ships
+everything a community or group needs:
+
+- A composable **home page** (hero, stats, "what we do", auto next-event, latest posts, organizers, testimonials, CTA)
+- A **blog** with tag filtering and per-post speaker bios
+- An **events** section that splits into *upcoming* and *past* automatically, with speaker
+  profiles, venue pages (address, buzz-code arrival notes, accessibility) and check-in instructions
+- An **organizers / team** page
+- A **docs area** for a handbook & step-by-step **runbooks**, with a scroll-tracking table of
+  contents and **checklists that remember your progress** (saved in the browser)
+- A dark footer with a **land-acknowledgement** slot and social links
+- **Alt text, required**: CI builds every site and fails if any image lacks alt text
+- **One-command imports**: populate events, speakers and venues from Sessionize or a
+  spreadsheet (`scripts/`), cross-referenced, dependency-free, never overwriting your edits
+- **Agent & human friendly**: ships [`AGENTS.md`](AGENTS.md) so AI coding agents follow the same rules as human contributors
+- **Translatable UI**: every template string lives in one place (Hugo `i18n/`, Astro `STRINGS` config), so a site can run in any language
+
+Every colour and font is driven from your site config, so you can **re-brand the whole theme
+without touching a line of CSS**.
+
+> **Project site + four demos.** `site/` is the theme's own documentation site
+> (dogfooded on the theme: docs with a Hugo|Astro switcher, blog, about).
+> `demos/` holds four complete fictional example sites, **Rocky Cove Aquarium
+> Club** (teal), **Lucky Town Foodie Club** (copper), **KDrama Fan Club** (indigo),
+> and **Truly Madly Riley** (gold, a personal site for one fictional superfan),
+> all running the same theme code with different configs. `exampleSite/` is a
+> neutral starter skeleton. The deploy workflow publishes the project site at the
+> Pages root with the demos at subpaths, linked by a floating demo switcher
+> (`params.demoBar`: never set it on a real site and it never appears).
+> All demo communities, venues and people are made up for demonstration.
+
+**Multi-author blogging:** posts support `authors = ["slug"]` (profiles in
+`content/authors/` with bio, photo, socials, website → linked profile pages
+listing their posts) and inline `[[guestAuthors]]` blocks for one-off guest
+writers: plus the plain `author = "Name"` string as a fallback.
+
+---
+
+## Versioning & staying up to date
+
+Releases are tagged `v0.x` (semver, in lockstep with
+[`astro-theme-popular`](https://github.com/Mariatta/astro-theme-popular)); the
+1.0 release will mark the content model and brand keys as stable. Changes are
+documented in [CHANGELOG.md](CHANGELOG.md). To hear about updates, watch this
+repo (Watch → Custom → Releases) or subscribe to the
+[releases feed](https://github.com/Mariatta/hugo-theme-popular/releases.atom).
+Update with `hugo mod get -u` (module), a tag checkout (submodule), or by
+re-copying (vendored copy); the full per-method guide is at
+[/docs/updating/](https://popular.mariatta.ca/docs/updating/).
+
+Releases are cut by the Release workflow after the CHANGELOG entry is merged:
+`gh workflow run release.yml -f version=X.Y.Z`, run in **both** repos. It
+validates the CHANGELOG section and cross-repo parity, then tags `vX.Y.Z` and
+publishes the GitHub Release with that section as the notes.
+
+## Requirements
+
+- **Hugo Extended is _not_ required.** Popular uses plain CSS (no SCSS), so standard Hugo works.
+- Hugo **v0.146.0 or newer** (uses `[cascade.build]` and `.Fragments.Headings`); CI tests this floor and latest.
+  Maintainers: raising the floor also means `theme.toml`, the CI matrix, and the Netlify preview's
+  `HUGO_VERSION` (see [AGENTS.md](AGENTS.md)).
+- Icons come from **Font Awesome 6** (loaded from a CDN by default; see *Icons* below).
+
+---
+
+## Quick start
+
+### 1. Add the theme
+
+**As a Hugo Module** (recommended, versioned updates):
+
+```bash
+hugo mod init github.com/<you>/<your-site>
+```
+
+```toml
+# hugo.toml
+[[module.imports]]
+  path = "github.com/Mariatta/hugo-theme-popular"
+```
+
+Update to the latest release with `hugo mod get -u`.
+
+**As a Git submodule:**
+
+```bash
+git submodule add https://github.com/Mariatta/hugo-theme-popular.git themes/popular
+```
+
+…or copy the `hugo-theme-popular/` folder into your site as `themes/popular`.
+
+### 2. Start from the example
+
+The fastest way to learn the structure is to copy the example site's config and content:
+
+```bash
+cp themes/popular/exampleSite/hugo.toml .
+cp -r themes/popular/exampleSite/content .
+cp -r themes/popular/exampleSite/static .
+hugo server
+```
+
+Then open <http://localhost:1313>. Edit `hugo.toml` and the files under `content/` to make it yours.
+
+---
+
+## Making it your own
+
+### Colours & fonts (no CSS needed)
+
+Everything visual is a **design token**. Override the ones you want under `[params.brand]` in
+`hugo.toml`:
+
+```toml
+[params.brand]
+  primary       = "#fa023c"   # buttons, links, accents
+  primaryHover  = "#d4023a"
+  primaryActive = "#c8102e"
+  secondary     = "#c8102e"
+  accent        = "#2e2f93"
+  ink           = "#142a36"   # headings / dark text
+  surfaceWash   = "#fad3e2"   # hero / section wash
+  surfaceInk    = "#142a36"   # footer / dark bands
+  fontSans      = "Inter, system-ui, sans-serif"
+  fontDisplay   = "Quantico, Inter, sans-serif"
+  # radiusCard   = "1rem"
+  # containerMax = "1140px"
+```
+
+Change `primary` and the theme derives coherent tints for soft badges, tags and hovers
+automatically. For a deeper re-palette (the full colour ramps), edit
+`themes/popular/assets/css/tokens/colors.css`. The other token files
+(`typography.css`, `spacing.css`, `elevation.css`) are yours to tune too.
+
+If you use custom web fonts, add them via `[params.brand].fontSans` / `fontDisplay` and load the
+font files with `params.customCSS` (a list of extra stylesheet URLs) or by editing
+`assets/css/tokens/fonts.css`.
+
+### Header, footer, socials, CTA
+
+All configured in `hugo.toml` under `[params]`:
+
+- `logo`, `brandName`, `brandSub`, `tagline`, `landAcknowledgement`
+- `[params.cta]`: the header button (`label`, `url`, `icon`)
+- `[[params.social]]`: footer & organizer icons (`label`, `icon`, `url`)
+- `[params.footer]`: `tagline` + `[[params.footer.columns]]` link columns
+- `[params.support]`: the support box shown at the end of each blog post
+
+The top navigation is a normal Hugo menu, edit the `[[menu.main]]` entries.
+
+### Icons
+
+Components accept **Font Awesome 6** class strings (e.g. `fa-solid fa-calendar`,
+`fa-brands fa-github`). By default the theme loads Font Awesome from a CDN. To self-host or pin a
+different version, set `params.fontAwesome` to your stylesheet URL.
+
+---
+
+## Content model
+
+| Path | What it is | Layout |
+|---|---|---|
+| `content/_index.md` | Home page composition (hero/stats/features/CTA in front matter) | `index.html` |
+| `content/about.md`, `content/code-of-conduct.md`, `content/get-involved.md` | Standalone pages | `_default/single` |
+| `content/blog/` | Blog posts (section) | `blog/list`, `blog/single` |
+| `content/events/` | Events (section): upcoming vs past by `date` | `events/list`, `events/single` |
+| `content/organizers/` | Team members (section), ordered by `weight` | `organizers/list` |
+| `content/speakers/` | Speaker profiles, referenced from events via `speakers = ["slug"]` | `speakers/list`, `speakers/single` |
+| `content/venues/` | Venue pages (address, arrival notes), referenced via `venueRef` | `venues/list`, `venues/single` |
+| `content/handbook.md`, `content/runbooks.md` | Docs pages (`type = "docs"`) with TOC, sidebar ordered by `weight` (set it on every docs page) | `docs/single` |
+
+Create new content with the bundled archetypes:
+
+```bash
+hugo new blog/my-recap.md
+hugo new events/august-meetup.md
+hugo new organizers/jordan.md
+hugo new speakers/rowan.md
+hugo new venues/community-hall.md
+```
+
+### Home page
+
+The home sections live in `content/_index.md` front matter: `[hero]`, `[[stats]]`,
+`[featuresHead]` + `[[features]]`, `[testimonialsHead]` + `[[testimonials]]` (member quotes:
+`quote`, `name`, optional `role` and `photo`), and `[getInvolved]`. Beyond those, the page **auto-populates**
+the next upcoming event, the latest three posts, and your organizers from your content, no extra
+config. A stat with `value = "@pastEventCount"` renders the live number of past events
+(rounded to "70+" style once there are ten or more).
+
+### Events
+
+Each event is a page in `content/events/`. The event's `date` is its start time; anything in the
+future shows under **Upcoming**, anything past under **Past**. Useful front-matter fields:
+`time`, `rsvp`, `tags`, `venueWanted = true` to show a "Venue wanted" badge, and
+`planning = true` for an event that is on the calendar but not settled yet (a "Planning"
+badge, and no RSVP button until you drop the flag). Venues come
+from `venueRef = "slug"` (a `content/venues/` page whose address and arrival notes the event
+inherits) or the flat `venue` + `address` fields. Speakers come from `speakers = ["slug"]`
+(`content/speakers/` profiles rendered as bio cards) or the plain `speaker` string. `checkin`
+and `venueNotes` render in a "Before you arrive" box ("Bring your registration email and photo
+ID", "Buzz 204 at the side door"). A `meetupUrl` field is accepted as metadata by convention
+(e.g. a Meetup.com listing); the theme deliberately renders no external links on event rows.
+
+### Organizers
+
+Each organizer is a page in `content/organizers/` with `role`, `photo`, a short `description`
+(the card bio), `weight` (ordering) and optional `[[social]]` links.
+
+---
+
+## Shortcodes
+
+Use these inside any Markdown page:
+
+```markdown
+{{</* button url="https://example.com/rsvp" label="RSVP" variant="primary" icon="fa-solid fa-calendar" */>}}
+
+{{%/* badge tone="success" soft="true" */%}}Confirmed{{%/* /badge */%}}
+
+{{%/* callout tone="tip" title="Two-deep rule" */%}}
+Aim for **two** organizers at every event.
+{{%/* /callout */%}}
+
+{{%/* persona name="Jordan Rivera" title="Example Co." photo="images/jordan.jpg" */%}}
+Short bio goes here.
+{{%/* /persona */%}}
+
+{{%/* checklist key="rb-venue" */%}}
+Shortlist 2–3 venues
+Confirm step-free access
+Send a written confirmation
+{{%/* /checklist */%}}
+```
+
+- **button**: `variant`: `primary` · `secondary` · `outline` · `ghost` · `dark`; `size`: `sm` · `lg`.
+- **callout**: `tone`: `info` · `tip` · `warn`. Use the `{{%/* %*/%}}` form so the body renders as Markdown.
+- **checklist**: one item per line. `key` must be **unique across the site**, it namespaces the
+  saved progress in the visitor's browser.
+
+---
+
+## Project structure
+
+```
+popular/
+├── assets/css/        tokens/ + base.css + components.css  (plain CSS)
+├── assets/js/         checklist, toc, blog-filter, nav
+├── layouts/
+│   ├── _default/      baseof, single, list, term
+│   ├── partials/      head, header, footer, brand-vars, cards…
+│   ├── blog/ events/ organizers/ docs/
+│   ├── index.html     home
+│   └── shortcodes/
+├── archetypes/
+├── exampleSite/       neutral starter skeleton, copy to bootstrap your site
+├── demos/             four full Hugo demo sites (aquarium, foodie, kdrama, superfan)
+└── site/              the theme's own product/docs site (dogfooded)
+```
+
+---
+
+## Helper scripts
+
+- `scripts/sessionize-import.py`: populate `content/events/` and `content/speakers/` from a
+  [Sessionize](https://sessionize.com) event's public "API / Embeds" endpoint (`view/All`).
+  One command imports every session and speaker; existing files are never overwritten, so
+  edit freely after importing:
+
+  ```bash
+  python3 scripts/sessionize-import.py --url https://sessionize.com/api/v2/<embed-id>/view/All --site .
+  ```
+
+- `scripts/spreadsheet-import.py`: the same import from **one spreadsheet** with tabs for
+  Speakers, Venues, Sponsors, Organizers and Events, for communities that plan in a sheet
+  instead of Sessionize. Dependency-free (.xlsx or per-tab CSVs); the Events tab
+  cross-references the others by name. Generate a starter workbook with:
+
+  ```bash
+  python3 scripts/spreadsheet-import.py --make-sample community.xlsx   # starter workbook
+  python3 scripts/spreadsheet-import.py --xlsx community.xlsx --site .  # the import itself
+  ```
+
+  (A ready-made workbook ships at `scripts/sample-community.xlsx`.)
+
+- `scripts/serve-all.sh`: run the project site, all four demos and the exampleSite at once.
+- `scripts/update-sponsors.py`: regenerate the project site's sponsors section from GitHub Sponsors.
+- `scripts/sync-shared.sh --check`: verify the Hugo ⇄ Astro shared files haven't drifted.
+
+The helper scripts have a dependency-free test suite: `python3 -m unittest discover -s scripts/tests` (also run in CI).
+
+## Deploying
+
+Popular is a static site, deploy the `public/` folder anywhere (Netlify, GitHub Pages, Cloudflare
+Pages, etc.). Set `baseURL` in `hugo.toml` and build with `hugo --minify`.
+
+**Serving from a subpath** (a GitHub project page lives at `user.github.io/repo/`)
+is supported: put the full path in `baseURL`, for example
+`baseURL = "https://you.github.io/my-community/"`, and every link, image and feed
+URL picks it up. No other change is needed, in config or in content.
+
+---
+
+## Support the theme
+
+Popular is free and MIT licensed. If it made your community site easier, there are three
+ways to support the work:
+
+- **Star the repo** so other organizers can find it
+- **Tell others about it**: share it with another meetup, club or community, or use it
+  yourself for your next community site
+- **[Sponsor on GitHub](https://github.com/sponsors/Mariatta)**
+
+---
+
+## Credits & license
+
+- Typography: **Inter** and **Quantico** (Google Fonts).
+- Icons: **Font Awesome 6**.
+- Released under the **MIT License**, see `LICENSE`. Fork it, adapt it, and share your community's
+  version.

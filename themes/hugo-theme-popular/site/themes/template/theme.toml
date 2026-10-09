@@ -1,0 +1,19 @@
+name = "Popular"
+license = "MIT"
+licenselink = "https://github.com/Mariatta/hugo-theme-popular/blob/main/LICENSE"
+description = "Built to make your community seen and famous. A warm, community-first Hugo theme for meetups, user groups and small events: blog, events, organizers, and a docs area for handbooks & runbooks. Fully re-themeable from config."
+homepage = "https://github.com/Mariatta/hugo-theme-popular"
+demosite = "https://popular.mariatta.ca/"
+tags = ["blog", "community", "meetup", "events", "docs", "responsive", "accessible"]
+features = ["blog", "events", "organizers", "docs", "checklists", "config-theming"]
+# Raising this floor? Four other places carry a Hugo version and none of
+# them updates itself: [module.hugoVersion] in hugo.toml (which is what
+# themes.gohugo.io actually reads), README "Requirements", the image-alt.yml
+# CI matrix, and HUGO_VERSION in the Netlify UI for the preview builds, which
+# must be at least this floor and is not in this repo at all (AGENTS.md,
+# "Settings that live outside this repo").
+min_version = "0.146.0"
+
+[author]
+  name = "Mariatta"
+  homepage = "https://mariatta.ca"

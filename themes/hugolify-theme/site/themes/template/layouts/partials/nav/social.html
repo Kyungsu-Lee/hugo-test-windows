@@ -1,0 +1,13 @@
+{{- $menu := hugo.Data.menu.social -}}
+{{- with index $menu (partial "func/GetLanguage.html").name -}}
+  {{- $menu = . -}}
+{{- end -}}
+{{- with $menu }}
+  <ul class="nav nav-social">
+    {{- range .links }}
+      <li class="{{ lower (safeHTML .title) }}">
+        {{- partial "nav/link-with-icon.html" . -}}
+      </li>
+    {{- end }}
+  </ul>
+{{ end -}}

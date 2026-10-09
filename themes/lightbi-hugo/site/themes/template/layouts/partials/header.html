@@ -1,0 +1,70 @@
+{{ if .IsHome }}
+{{ else }}
+
+{{ $.Scratch.Set "title" .Title }}
+{{ if .Params.subtitle }}{{ $.Scratch.Set "subtitle" .Params.subtitle }}{{ end }}
+{{ if .Params.bigimg }}{{ $.Scratch.Set "bigimg" .Params.bigimg }}{{ end }}
+
+{{ $bigimg   := $.Scratch.Get "bigimg" }}
+{{ $subtitle := $.Scratch.Get "subtitle" }}
+
+<header class="header-section {{ if $bigimg }}has-img{{ end }}">
+  <div class="intro-header no-img mt-10 pb-2">
+    <div class="container">
+      <div class="row">
+
+        {{- if .Page.IsPage }}
+        {{- /* Individual post/note/page — left-aligned with breadcrumb + meta */}}
+        {{- $showToc := false }}
+        {{- if and (ne .Site.Params.toc false) (ne .Params.toc false) .TableOfContents }}
+          {{- $showToc = true }}
+        {{- end }}
+        <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 {{ if $showToc }}offset-lg-1{{ else }}offset-lg-2{{ end }}">
+
+          {{- if or (eq .Section "posts") (eq .Section "notes") (eq .Section "blog") }}
+          <div class="post-breadcrumb text-muted mb-2">
+            <a href="{{ (print "/" .Section "/") | relLangURL }}">&larr; {{ .Section }}</a>
+          </div>
+          {{- end }}
+
+          <div class="content-heading">
+            <h1 class="fw-medium lh-1">{{ .Title }}</h1>
+          </div>
+
+          {{ if $subtitle }}
+          <p class="content-subheading text-muted mt-1 mb-0">{{ $subtitle }}</p>
+          {{ end }}
+
+          {{- if or (eq .Section "posts") (eq .Section "notes") (eq .Section "blog") }}
+          {{ partial "post_meta.html" . }}
+          {{- end }}
+
+        </div>
+
+        {{- else }}
+        {{- /* Section list, taxonomy, or other non-page — centered */}}
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+
+          {{ if .Data.Singular }}
+          <div class="{{ .Type }}-heading">
+            <h1 class="fw-medium lh-1">#{{ .Title }}</h1>
+            <h4 class="tags-subheading fw-light mb-4">{{ .Site.Params.tagSubtitle }}</h4>
+          </div>
+          {{ else }}
+          <div class="{{ .Type }}-heading">
+            <h1 class="fw-medium lh-1">{{ .Title }}</h1>
+          </div>
+          {{ if $subtitle }}
+          <h4 class="{{ .Type }}-subheading fw-light mb-4">{{ $subtitle }}</h4>
+          {{ end }}
+          {{ end }}
+
+        </div>
+        {{- end }}
+
+      </div>
+    </div>
+  </div>
+</header>
+
+{{ end }}

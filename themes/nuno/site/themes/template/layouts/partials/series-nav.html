@@ -1,0 +1,45 @@
+{{- /* Series navigation: where this post sits in its series, and every other
+       part, linked. Ordering comes from partials/series-parts.html.
+
+       A post in more than one series gets a block per series. That is unusual
+       but not wrong, and silently showing only the first would be.
+
+       Renders nothing when the post is in no series, or in a series of one:
+       "Part 1 of 1" is noise.
+
+       On a wide screen partials/series-panel.html says the same thing in the
+       aside, so the CSS hides this block there and keeps it as the narrow-screen
+       fallback — the aside is display:none under 1000px, and a reader on a
+       phone should not lose the series entirely.
+
+       Takes the page as its argument. */ -}}
+
+{{- $page := . -}}
+{{- range $page.GetTerms "series" }}
+  {{- $parts := partial "series-parts.html" . -}}
+
+  {{- if gt (len $parts) 1 }}
+    {{- $index := 0 -}}
+    {{- range $i, $p := $parts }}
+      {{- if eq $p.RelPermalink $page.RelPermalink }}{{ $index = add $i 1 }}{{ end -}}
+    {{- end }}
+
+    <nav class="series" aria-label="{{ i18n "seriesLabel" }}: {{ .LinkTitle }}">
+      <div class="series__head">
+        <span class="kicker">{{ i18n "seriesLabel" }} · <a class="series__title" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></span>
+        {{- with $index }}
+          <span class="series__count">{{ i18n "seriesPart" (dict "n" . "total" (len $parts)) }}</span>
+        {{- end }}
+      </div>
+      <ol class="series__list">
+        {{- range $parts }}
+          {{- if eq .RelPermalink $page.RelPermalink }}
+            <li class="series__item is-current"><span aria-current="page">{{ .LinkTitle }}</span></li>
+          {{- else }}
+            <li class="series__item"><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+          {{- end }}
+        {{- end }}
+      </ol>
+    </nav>
+  {{- end }}
+{{- end }}

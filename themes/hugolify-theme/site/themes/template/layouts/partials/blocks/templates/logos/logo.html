@@ -1,0 +1,31 @@
+{{/* Image sizes come from the caller — grid.html or carousel.html — which is the one that knows
+     how many logos sit across: the grid's columns, or the carousel's perPage. */}}
+{{- $lazy := .lazy | default true -}}
+{{- $title := .title | default "" -}}
+{{- $desktop := .desktop | default false -}}
+{{- $mobile := .mobile | default false -}}
+
+{{- with .url }}
+  {{- $i18n_title := i18n "link.blank_aria" (dict "Title" $title) -}}
+  <a href="{{ . }}" target="_blank" title="{{ $i18n_title }}">
+{{ end -}}
+
+{{- with .src }}
+  {{- partial "commons/image.html" (dict
+    "src" .
+    "alt" $title
+    "desktop" $desktop
+    "mobile" $mobile
+    "lazy" $lazy
+    "hint" "icon"
+    "filter" "Linear"
+  ) }}
+{{ else }}
+  {{- with .title }}
+    <span>{{ . }}</span>
+  {{ end -}}
+{{ end -}}
+
+{{- with .url }}
+  </a>
+{{ end -}}

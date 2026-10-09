@@ -1,0 +1,22 @@
+<div class="content" {{- partial "func/SetSearchIgnore.html" . }}>
+  
+  {{- $pages := where site.Sections ".Params.isPage" "!=" true -}}
+  {{- range $pages.ByTitle }}
+    {{- if and (ne .Type "admin") (ne .Type "sitemap") }}
+      <div class="sitemap-{{ .Type }}">
+        <h2 id="{{ .Type }}">
+          <a href="{{ .Permalink }}">{{ partial "func/PrepareHTML.html" .Title }}</a>
+        </h2>
+        {{ partial "sitemap/items-recursive.html" .Pages }}
+      </div>
+    {{- end }}
+  {{- end }}
+
+  {{- $pages := where site.Sections ".Params.isPage" true -}}
+  {{- with $pages }}
+    <div class="sitemap-pages">
+      <h2 id="pages">{{ i18n "pages.title" (. | len) }}</h2>
+      {{ partial "sitemap/items-recursive.html" . }}
+    </div>
+  {{- end }}
+</div>

@@ -1,0 +1,298 @@
+# AGENTS.md: working in hugo-theme-popular
+
+Instructions for AI agents (and new contributors) working in this repository.
+
+## Report instructions that don't work
+
+These instructions, the [quick start](https://popular.mariatta.ca/docs/quick-start/?fw=hugo),
+and `scripts/setup.py` are meant to be followed literally. When any of them is
+wrong, out of date, ambiguous, or fails when you run it, treat that as a bug in
+the docs, not as something to route around silently:
+
+- **Tell the user as you hit it**, in the moment: the step, the command you ran,
+  what you expected, what actually happened.
+- **Offer to report it upstream**, so it gets fixed for everyone: an issue at
+  https://github.com/Mariatta/hugo-theme-popular/issues (or a pull request
+  fixing the wording, if the fix is obvious). File it only with the user's
+  go-ahead, and if the problem is in a shared doc, mention that the sibling repo
+  `astro-theme-popular` likely needs the same fix.
+- **Do not paper over it.** A workaround that lives only in your session leaves
+  the next reader to hit the same wall. If you must work around a step to keep
+  going, say so explicitly and still surface the report.
+
+This applies whether you are setting up a site for a user or modifying the theme
+itself.
+
+## What this repo is
+
+**Popular** is a community/meetup theme that ships as two parallel implementations:
+this repo (Hugo) and the sibling repo `astro-theme-popular` (Astro). Both implement the
+same design, content model, and demos. A written contract (`PARITY.md`) plus
+`scripts/sync-shared.sh --check` keep them from drifting. If the sibling repo is
+checked out next to this one, many changes here must be mirrored there (see
+"Parity rules" below).
+
+## Setting up a new site for a user
+
+When a user asks you to set up a **new community site** with this theme (as
+opposed to modifying the theme itself), the write path is the setup wizard, not
+your editor. Your job is the conversation; `scripts/setup.py` is the
+deterministic, tested writer.
+
+1. **Read the schema** `data/setup-questions.json`. It is the single source of
+   truth, and also drives the "Before you build" worksheet page. Interview the
+   user **conversationally, grouped by topic** (identity, then governance, then
+   links), one topic per exchange, never as a flat form dump.
+2. **For `decision`-layer questions, advise, don't just collect.** Use the
+   question's `help` text, surface its `handbook_url`, and bring relevant
+   context ("you mentioned you're a PyLadies chapter, the PSF Code of Conduct is
+   the conventional choice there"). "Not decided yet" is a valid answer: record
+   it and move on.
+3. **Write the answers to `answers.json`** and run
+   `python3 scripts/setup.py --answers answers.json --dry-run`. Show the user
+   the diff. On approval, run it **without** `--dry-run`. On a fresh site the
+   wizard adopts the unedited starter config and CoC page automatically (no
+   `--force` needed); it only refuses, and asks for `--force`, once the user has
+   hand-edited those files, so their work is never silently overwritten.
+4. **Never hand-edit `hugo.toml` or the seed pages to apply the answers.** The
+   script owns that write path; hand-edits drift from the schema and skip the
+   `DECISIONS.md` audit trail.
+5. **After writing, build the site** (see "How to build and serve") and confirm
+   it succeeds. Point the user at `DECISIONS.md` for what was decided and the
+   "Still open" list for what to come back to.
+
+The wizard also writes `.github/workflows/deploy.yml` (GitHub Pages,
+parameterless: the URL lives in `hugo.toml`), unless the site already has
+workflows of its own. `scripts/starter-content.py --format hugo` brings the
+sample content across for a site being created from nothing. Tell the user to set Settings -> Pages -> Source: GitHub
+Actions once. A project-page URL in `base_url` is all a subpath install needs.
+
+Same invariant as the wizard: sugar, never a gate. A user who wants to skip the
+interview entirely still gets a clean starter config.
+
+## Repo layout
+
+| Path | What it is |
+|---|---|
+| `layouts/`, `assets/`, `archetypes/`, `theme.toml` | The theme itself |
+| `site/` | The canonical docs/project site (popular's own website) |
+| `exampleSite/` | Neutral starter site adopters copy ("Your Community") |
+| `demos/rocky-cove-aquarium/`, `demos/lucky-town-foodie/`, `demos/kdrama-fan-club/`, `demos/truly-madly-riley/` | Four complete fictional Hugo demo sites (three communities + one personal site) |
+| `scripts/sync-shared.sh` | Parity checker/syncer against astro-theme-popular |
+| `PARITY.md` | The Hugo-Astro parity contract (file mappings, content model) |
+
+Any `public/` directory is generated build output. Never hand-edit it; it may
+also contain stale orphans from older builds.
+
+## How to build and serve
+
+Run all commands from the repo root. The `--themesDir` trick lets the sites use
+the theme from this same repo:
+
+```bash
+# Canonical docs site
+hugo server --source site --themesDir ../.. --theme hugo-theme-popular
+
+# Neutral starter
+hugo server --source exampleSite --themesDir ../.. --theme hugo-theme-popular
+
+# A demo (note the extra ../)
+hugo server --source demos/rocky-cove-aquarium --themesDir ../../.. --theme hugo-theme-popular
+```
+
+Use `hugo` instead of `hugo server` for a one-off build. After changing theme
+templates or content, build all four sites to make sure nothing broke.
+
+**`site/content/changelog.md` is generated** from the canonical `CHANGELOG.md`
+by `scripts/build-sites.sh`, which is what production runs, so the published
+page is always current. `hugo server --source site` does not regenerate it, so
+the dev server shows whatever was last committed. Commit the regenerated page
+alongside a changelog edit, or the local site claims the newest release does not
+exist. Never hand-edit it: it is overwritten on every deploy.
+
+To bulk-populate events and speakers from a Sessionize event, run
+`python3 scripts/sessionize-import.py --url <sessionize view/All endpoint> --site <site dir>`
+(or `scripts/spreadsheet-import.py --xlsx <workbook>` for spreadsheet-based
+planning; both share the same conventions) instead of writing the files by hand; it maps sessions/speakers onto the
+theme's content model and never overwrites existing files.
+
+## Parity rules (important)
+
+- `assets/css/**` and `assets/js/**` must stay **byte-identical** with
+  `astro-theme-popular/src/styles/**` and `astro-theme-popular/public/scripts/**`.
+  After editing any of these, copy the file to the sibling repo and run
+  `bash scripts/sync-shared.sh --check` (image drift is known and tolerated).
+- New shared JS files must be registered in three places: the bundle in
+  `layouts/_default/baseof.html`, a `<script>` tag in astro-theme-popular's
+  `src/layouts/BaseLayout.astro`, and the file table in both `PARITY.md`s.
+- Template changes (layouts/partials/shortcodes) usually need an equivalent
+  change in the mapped Astro component; the mapping table is in `PARITY.md`.
+- The content model (front matter fields) is part of the contract; if you add a
+  field, update both `PARITY.md`s and astro-theme-popular's `src/content.config.ts`.
+- Lockstep changes (e.g. adding a Tier-1 shared file to both repos) must use
+  the **same branch name** in both repos: CI's parity check pairs same-named
+  branches, and falls back to the sibling's main otherwise.
+
+## Adding content
+
+Front matter is TOML (`+++`). Key content types (full schema in `PARITY.md`):
+
+- **Blog post** (`content/blog/*.md`): `title`, `date`, `authors = ["slug"]`
+  (matching `content/authors/<slug>.md`), `description`, `image`, `tags`.
+- **Event** (`content/events/*.md`): `title`, `date`, `image`, plus venue fields.
+- **Organizer** (`content/organizers/*.md`): `title`, `weight`, `role`, `photo`,
+  `description`, `[[social]]` entries (`label`, `icon`, `url`).
+
+Body images: use theme-relative paths like `images/post-1.png` (no leading
+slash). A render hook (`layouts/_default/_markup/render-image.html`) passes them
+through `relURL` so they work when demos deploy under subpaths. Put an italic
+line right after an image for a caption.
+
+Shortcodes: `button` (standalone: `url`, `label`, `variant`, `icon`), `callout`,
+`checklist`, `persona`, `badge`. The docs site additionally has `fw`/`fwswitch`
+(framework switcher) and `example` (live rendered preview below a code sample;
+use it for every renderable component snippet) in `site/layouts/shortcodes/`.
+
+## Configuration knobs
+
+- Menus: standard `[[menu.main]]`; one level of nesting is supported via
+  `parent = "<parent name>"` and renders as a dropdown.
+- Branding: `[params.brand]` in a site's `hugo.toml`; `brand-vars.html` emits an
+  `html:root` override block. Design tokens live in `assets/css/tokens/`.
+- Footer: `[params.footer]` with `tagline`, optional `[params.footer.credit]`
+  (`label`, `url`), and `[[params.footer.columns]]`.
+- TOML ordering gotcha: keys like `tagline` must come **before** any sub-table
+  header like `[params.footer.credit]`, or they get captured by the sub-table.
+
+## Subpath deployments (URL rules)
+
+A site can be served from a path (`baseURL = "https://x.dev/repo/"`, which is
+what a GitHub project page needs), so **never write a bare URL into a
+template**. Hugo's `relURL`/`relLangURL`/`absURL` drop the subpath when the
+value starts with a slash, and front matter written the Astro way does start
+with one (the two repos share the content model).
+
+- Hrefs: `{{ partial "rel-href.html" .url }}`
+- Images and other assets: `{{ partial "rel-src.html" .Params.photo }}`
+- Absolute URLs (canonical, `og:image`, JSON-LD, feeds): `{{ partial "abs-url.html" "/" }}`
+
+All three pass external URLs, `mailto:`, `tel:` and `#fragment` through
+untouched, so reaching for one is never wrong. Markdown bodies are covered by
+`_markup/render-link.html` and `_markup/render-image.html`. `image-alt.yml`
+builds a `/sub` site and fails on any internal `href`/`src` left at the root;
+the Astro twin has `withBase()`/`absoluteUrl()` for the same job (PARITY.md,
+"Subpath deployments").
+
+## Naming conventions
+
+- Front-matter keys, config params, and template variables must be descriptive
+  words, never single letters or cryptic abbreviations. A reader should
+  understand a key without opening the template that consumes it. Example: the
+  home page `[[stats]]` entries use `value` and `label` (renamed from the old
+  `n` and `l`; do not reintroduce short forms like these).
+- The same applies to i18n keys, CSS custom properties, and JS `data-*` hooks:
+  name for meaning, and keep the names identical across both repos since the
+  key names are part of the parity contract.
+
+## Known gotchas
+
+- `params.previewMode` renders the preview banner (`partials/preview-bar.html`),
+  for tools that build a site on someone's behalf. Never set it in
+  `exampleSite/`, a demo, or anything the wizard writes: a real site showing
+  "this is a preview" is the failure this design prevents (see PARITY.md).
+- Sites using the events section must set `buildFuture = true` in `hugo.toml`
+  (exampleSite and all demos do). Hugo falls back to `date` as the publish
+  date, so upcoming events (future `date`) are otherwise silently dropped
+  from the build and the "Upcoming events" list renders empty.
+- Never use `{{% fw %}}` (or any shortcode that emits a block `<div>`) inline
+  inside a sentence, list item, or table cell. Browsers re-parse the misnested
+  HTML and the stray `</div>` closes the docs layout's content column, pushing
+  the rest of the page into the sidebar. Always use such shortcodes as
+  standalone blocks separated by blank lines.
+- Go template comments (`{{/* ... */}}`) must not contain a literal `*/`
+  anywhere inside, including in usage examples.
+- A shortcode template that references `.Inner` becomes paired: every call must
+  then be closed or self-closed. Keep standalone shortcodes free of `.Inner`.
+- The brand override must keep the `html:root` selector (higher specificity
+  than the token files' `:root`) so it wins regardless of stylesheet order.
+
+## Internationalization (UI strings)
+
+- Never hardcode user-facing text in templates. Add a key to `i18n/en.toml`
+  and use `{{ i18n "key" }}`; add the same key to `STRINGS` in astro-theme-popular's
+  `config.ts` (the key sets must match, see PARITY.md).
+- Dates: use `{{ .Date | time.Format "..." }}` (localized), never `.Date.Format`;
+  prefer the predefined `:date_full` / `:date_medium` layouts for whole dates
+  (natural word order per language). Localization keys off the site's
+  `defaultContentLanguage`, not `languageCode`.
+- Shared JS must stay language-free; pass text via `data-*` attributes on
+  `<body>` (see `data-copy-label` / `data-checklist-done`).
+- Site owners translate by creating `i18n/<lang>.toml` in their site root and
+  setting `defaultContentLanguage` in `hugo.toml` (top level, above any
+  `[section]`). Don't add `languageCode`: it's unused by the theme and emits a
+  deprecation warning on Hugo ≥ 0.158.
+
+## Settings that live outside this repo
+
+Two things this project depends on are configured in a web UI and are therefore
+invisible to `grep`. When either drifts, the failure looks like a mystery.
+
+**Netlify (pull request previews only; production is GitHub Pages).** The docs
+site gets a Deploy Preview per pull request. The whole configuration is in the
+Netlify UI, deliberately: no `netlify.toml`, no workflow, nothing an adopter who
+copies this repo would inherit.
+
+| Setting | Value |
+|---|---|
+| Build command | `bash scripts/build-sites.sh "$DEPLOY_PRIME_URL" public` |
+| Publish directory | `public` |
+| `HUGO_VERSION` | a specific recent version, at least the `theme.toml` floor |
+| Custom domain | none: `popular.mariatta.ca` stays on GitHub Pages |
+| Sensitive variable policy | fork pull requests build without sensitive variables |
+
+**`HUGO_VERSION` is not optional.** Netlify's build image ships no Hugo at all;
+it installs the version that variable names, so an unset one fails the build with
+`hugo: command not found` (exit 127) rather than falling back to a default.
+
+**Keep it moving.** Netlify has no "latest", but production (`deploy-demo.yml`)
+builds with `latest`, so a pinned preview drifts behind the site it previews.
+Bump it when you raise the floor in `theme.toml`, and otherwise whenever you
+update Hugo locally: previews should be built by roughly what production uses,
+and never by less than the floor. Nothing in this repo can check that for you,
+which is the whole reason this section exists.
+Netlify UI: Project configuration -> Environment variables.
+
+`scripts/build-sites.sh` is what production runs too, deliberately: it builds
+the project site at the root plus every demo at its subpath. A preview that
+builds only `site/` looks right until you click a demo and get a 404, because
+the demo bar's links resolve against the base and expect `/aquarium/`,
+`/foodie/`, `/kdrama/` and `/superfan/` to exist. The script derives the theme
+name from the checkout directory rather than hardcoding it, because Netlify
+checks the repo out into a directory called `repo` and `--theme
+hugo-theme-popular` would not resolve there.
+
+**GitHub Pages** publishes production from `deploy-demo.yml` (Settings -> Pages
+-> Source: GitHub Actions). Nothing else should publish to that domain.
+
+## CI checks
+
+- `.github/workflows/image-alt.yml` builds every site and fails if any `<img>`
+  lacks a non-empty `alt` attribute, or any markdown image is written as
+  `![](...)`. Always give images meaningful alt text (image captions go in an
+  italic line after the image, not in `alt`).
+- `.github/workflows/parity-reminder.yml` watches contract-covered files.
+- `.github/workflows/helper-tests.yml` runs the Python helper-script tests
+  (`python3 -m unittest discover -s scripts/tests`); run them after touching
+  anything in `scripts/`.
+
+## Writing style for content and docs
+
+- No em dashes anywhere; use a comma or a colon instead.
+- Demo copy must identify the framework: "a Hugo demo site", never just
+  "a demo site". (The Astro repo says "an Astro demo site".)
+- All demo/example content is fictional; every outbound link in demo content
+  points to `example.com`. Do not add real organizations or people. Exception:
+  license attribution must keep its real links (the Code of Conduct credits
+  the Django CoC and Geek Feminism template, as CC-BY requires).
+- The theme credit is "Popular. A Hugo theme by Mariatta." linking to the
+  project site https://popular.mariatta.ca/ (set per site via `[params.footer.credit]`).

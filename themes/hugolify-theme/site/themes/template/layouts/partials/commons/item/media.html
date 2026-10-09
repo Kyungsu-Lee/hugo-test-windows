@@ -1,0 +1,74 @@
+
+{{- with . -}}
+  {{- $noop := .Content -}}{{/* https://gohugo.io/troubleshooting/faq/#why-is-my-page-scratch-or-store-missing-a-value */}}
+
+  {{/*  Get default thumbnail  */}}
+  {{- $desktop := site.Params.thumbnail.desktop | default false -}}
+  {{- $mobile := site.Params.thumbnail.mobile | default false -}}
+  {{- $sizes := site.Params.thumbnail.sizes | default false -}}
+
+  {{/*  Specific by Type */}}
+  {{- if .Type -}}
+    {{- $desktop = (index site.Params .Type).thumbnail.desktop | default $desktop -}}
+    {{- $mobile = (index site.Params .Type).thumbnail.mobile | default $mobile -}}
+    {{- if .Scratch.Get "scrollsnap" -}}
+      {{- $mobile = (index site.Params .Type).thumbnail.scrollsnap | default site.Params.thumbnail.scrollsnap -}}
+    {{- end -}}
+    {{- if .Scratch.Get "large" -}}
+      {{- $desktop = (index site.Params .Type).thumbnail.desktop_large | default site.Params.thumbnail.desktop_large -}}
+    {{- end -}}
+    {{- $sizes = (index site.Params .Type).thumbnail.sizes | default $sizes -}}
+  {{- end -}}
+
+  {{/*  Add ratio from media. `--media-ratio` feeds CSS `aspect-ratio`: a <ratio> written
+        width / height, never a percentage. A size without height keeps the natural ratio,
+        so nothing is written and `.media` falls back to `--item-media-ratio`. */}}
+  {{- $style := "" -}}
+  {{- with $desktop -}}
+    {{- $size := split . "x" -}}
+    {{- $w := index $size 0 -}}
+    {{- $h := "" -}}
+    {{- if ge (len $size) 2 -}}{{- $h = index $size 1 -}}{{- end -}}
+    {{- if and $w $h -}}
+      {{- $style = printf "style='--media-ratio: %s / %s;'" $w $h -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/*  Crop: a type holding logos rather than photographs opts out with `<type>.image.crop: false`.
+        The ratio box above is kept — so the grid stays aligned — but the image is resized to the
+        configured width only (height dropped, never filled) and `.media-logo` contains and centres
+        it inside the box, leaving bleed around instead of cutting into the artwork. */}}
+  {{- $class := "media" -}}
+  {{- $crop := partial "func/GetImageCrop.html" .Type -}}
+  {{- if not $crop.enabled -}}
+    {{- $class = "media media-logo" -}}
+    {{- with $desktop -}}{{- $desktop = printf "%sx" (index (split . "x") 0) -}}{{- end -}}
+    {{- with $mobile -}}{{- $mobile = printf "%sx" (index (split . "x") 0) -}}{{- end -}}
+  {{- end -}}
+
+  {{/*  Lazy  */}}
+  {{- $lazy := .Scratch.Get "lazy" | default true -}}
+
+  {{/*  Image  */}}
+  <div class="{{ $class }}" {{ safeHTMLAttr $style }}>
+    {{- with .Params.image }}
+      {{- if .src }}
+      {{/*  sizes precedence: a per-image front-matter `sizes` always wins; otherwise lazy images
+            get "auto" (resolved in image.html) and only non-lazy ones fall back to the config default. */}}
+      {{- $args := merge . (dict
+        "lazy" $lazy
+        "desktop" $desktop
+        "mobile" $mobile
+        "sizes" (.sizes | default (cond $lazy false $sizes))
+        "crop" (.crop | default $crop.anchor)
+      ) }}
+      {{- partial "commons/image.html" $args -}}
+      {{ end -}}
+    {{ end -}}
+  </div>
+
+  {{/*  Reset scratch variables  */}}
+  {{- .Scratch.Delete "lazy" -}}
+  {{- .Scratch.Delete "scrollsnap" -}}
+  {{- .Scratch.Delete "large" -}}
+{{ end -}}

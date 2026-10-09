@@ -1,0 +1,187 @@
+<head>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1a1a" />
+  <meta name="author" content="{{ .Site.Params.author.name }}" />
+  <meta property="og:url" content="{{ .Permalink }}" />
+  <link rel="canonical" href="{{ .Permalink }}" />
+
+  {{- if .Site.Params.favicon -}}
+  <link rel="apple-touch-icon" href="{{ .Site.Params.favicon }}" />
+  <link rel="icon" href="{{ .Site.Params.favicon }}" />
+  {{- end -}}
+  {{ with .Site.Home.OutputFormats.Get "rss" -}}
+  <link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ $.Site.Title }}" />
+  {{- end }}
+
+  {{ partial "seo" . }}
+  
+  {{- if .IsHome -}}
+  <title>{{ .Site.Title }}</title>
+  <meta property="og:title" content="{{ .Site.Title }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:description" content="{{ .Site.Params.description }}" />
+  <meta name="description" content="{{ .Site.Params.description }}" />
+  {{- else -}}
+  <title>{{ .Title }} · {{ .Site.Title }}</title>
+  <meta property="og:title" content="{{ .Title }}" />
+  <meta property="og:type" content="{{ if and .IsPage (in .Site.Params.mainSections .Type) }}article{{ else }}website{{ end }}" />
+  {{- $desc := default .Summary .Description | plainify | htmlUnescape | replaceRE `\s+` " " | truncate 160 }}
+  {{- if not $desc }}
+    {{- $n := len (where .Pages "Type" "in" .Site.Params.mainSections) }}
+    {{- $desc = cond (gt $n 0) (printf "%s · %s 下的 %d 篇文章" .Site.Title .Title $n) .Site.Params.description }}
+  {{- end }}
+  <meta property="og:description" content="{{ $desc }}" />
+  <meta name="description" content="{{ $desc }}" />
+  {{- end }}
+  <meta property="og:locale" content="{{ replace .Site.Language.Locale "-" "_" }}" />
+  <meta property="og:site_name" content="{{ .Site.Title }}" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  {{- if and .IsPage (in .Site.Params.mainSections .Type) }}
+  <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" />
+  <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}" />
+  <meta property="article:author" content="{{ .Site.Params.author.homepage }}" />
+  {{- range .Params.categories }}
+  <meta property="article:section" content="{{ . }}" />
+  {{- end }}
+  {{- range .Params.tags }}
+  <meta property="article:tag" content="{{ . }}" />
+  {{- end }}
+  {{- end }}
+  {{- $ogImage := "" -}}
+  {{- with .Params.album }}{{ $ogImage = . }}{{ end -}}
+  {{- if and (not $ogImage) (not .IsHome) -}}
+    {{- with findRESubmatch `<img[^>]+src="([^"]+)"` .Content 1 }}{{ $ogImage = index (index . 0) 1 }}{{ end -}}
+  {{- end -}}
+  {{- if and (not $ogImage) .Params.gallery -}}
+    {{- with resources.Get (strings.TrimPrefix "/" (index .Params.gallery 0).url) }}{{ $ogImage = (.Resize "1200x webp q85").RelPermalink }}{{ end -}}
+  {{- end -}}
+  {{- if not $ogImage }}{{ $ogImage = .Site.Params.favicon }}{{ end }}
+  <meta property="og:image" content="{{ $ogImage | absURL }}" />
+  {{- if .Site.Params.TwitterCards }}
+  <meta name="twitter:card" content="{{ if eq $ogImage .Site.Params.favicon }}summary{{ else }}summary_large_image{{ end }}" />
+  <meta name="twitter:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+  <meta name="twitter:description" content="{{ if .IsHome }}{{ .Site.Params.description }}{{ else }}{{ default .Summary .Description | plainify | htmlUnescape | replaceRE `\s+` " " | truncate 160 }}{{ end }}" />
+  <meta name="twitter:image" content="{{ $ogImage | absURL }}" />
+  {{- end }}
+  {{ with resources.Get "css/index.css" | minify }}
+  <style>{{ .Content|safeCSS }}</style>
+  {{ end }}
+  {{ with resources.Get "css/flexboxgrid-6.3.1.min.css" | minify }}
+  <style>{{ .Content|safeCSS }}</style>
+  {{ end }}
+  {{ range .Site.Params.extraCSSFiles -}}
+  <link rel="stylesheet" href="{{ . | relURL }}" />
+  {{- end }}
+  {{- if and (not .IsHome) (strings.Contains (string .Content) `class="chroma"`) }}
+  {{ with resources.Get "css/chroma.css" | minify }}
+  <style>{{ .Content|safeCSS }}</style>
+  {{ end }}
+  {{- end }}
+  <!-- fonts (self-hosted) -->
+  <link rel="preload" href="{{ "fonts/BreeSerif-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="{{ "fonts/BungeeShade-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin />
+  <!-- quicklink require -->
+  <!-- <script>
+    /* Disable minification (remove `.min` from URL path) for more info 
+    https://polyfill.io/v2/polyfill.min.js?features=IntersectionObserver
+    */
+    (function (undefined) { }).call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
+  </script> -->
+
+  <!-- Prevent theme flash by setting theme before page render -->
+  <script data-cfasync="false">
+    (function() {
+      const themeKey = 'theme';
+      const themes = { light: 'light', dark: 'dark', system: 'system' };
+
+      function getSystemTheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      function getStoredTheme() {
+        return localStorage.getItem(themeKey);
+      }
+      function getCurrentTheme() {
+        const stored = getStoredTheme();
+        if (stored && stored !== themes.system) {
+          return stored;
+        }
+        return getSystemTheme();
+      }
+      function setTheme(theme) {
+        const root = document.documentElement;
+        if (theme === themes.system) {
+          theme = getSystemTheme();
+        }
+        if (theme === themes.dark) {
+          root.setAttribute('data-theme', 'dark');
+        } else {
+          root.removeAttribute('data-theme');
+        }
+        updateToggleButton(theme);
+      }
+      function updateToggleButton(theme) {
+        const button = document.getElementById('theme-toggle');
+        if (button) {
+          button.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+      }
+      function ensureButtonUpdated() {
+        updateToggleButton(getCurrentTheme());
+      }
+      function initTheme() {
+        const stored = getStoredTheme();
+        let theme;
+        if (stored) {
+          theme = stored === themes.system ? getSystemTheme() : stored;
+          setTheme(stored);
+        } else {
+          // Default to system
+          theme = getSystemTheme();
+          setTheme(themes.system);
+        }
+      }
+      function toggleTheme() { // button onClick function
+        const current = getStoredTheme() || themes.system;
+        let next;
+        if (current === themes.system) {
+          next = getSystemTheme() === 'dark' ? themes.light : themes.dark;
+        } else if (current === themes.dark) {
+          next = themes.light;
+        } else {
+          next = themes.dark;
+        }
+        localStorage.setItem(themeKey, next);
+        setTheme(next);
+      }
+
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        const stored = getStoredTheme();
+        if (!stored || stored === themes.system) {
+          setTheme(themes.system);
+        }
+      });
+
+      // Listen for dom loaded
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', ensureButtonUpdated);
+      } else {
+        // DOM already loaded, update button immediately
+        ensureButtonUpdated();
+      }
+
+      // Expose toggle function globally
+      window.toggleTheme = toggleTheme;
+
+      // Initialize when DOM is ready
+      initTheme();
+    })();
+  </script>
+  {{ template "_internal/google_analytics.html" . }}
+  {{- /* set params.extraHeadProductionOnly = true to skip extraHead in `hugo server` */ -}}
+  {{ if or (not .Site.Params.extraHeadProductionOnly) hugo.IsProduction }}{{ .Site.Params.extraHead | safeHTML }}{{ end }}
+</head>

@@ -1,0 +1,50 @@
+/* Geist - Regular & All Weights (100-900) */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('/fonts/Geist/Geist-VariableFont_wght.ttf') format('truetype-variations'),
+       url('/fonts/Geist/Geist-VariableFont_wght.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* Geist - Italic & All Weights (100-900) */
+@font-face {
+  font-family: 'Geist';
+  font-style: italic;
+  font-weight: 100 900;
+  src: url('/fonts/Geist/Geist-Italic-VariableFont_wght.ttf') format('truetype-variations'),
+       url('/fonts/Geist/Geist-Italic-VariableFont_wght.ttf') format('truetype');
+  font-display: swap;
+}
+
+/* Geist Mono - Regular & All Weights (100-900) */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('/fonts/Geist/GeistMono-VariableFont_wght.ttf') format('truetype-variations'),
+       url('/fonts/Geist/GeistMono-Italic-VariableFont_wght.ttf') format('truetype');
+  font-display: swap;
+}
+
+
+/* Libre Baskerville - Regular, Medium, Bold (400-700) */
+@font-face {
+  font-family: 'Libre Baskerville';
+  font-style: normal;
+  font-weight: 400 700;
+  src: url('/fonts/LibreBaskerville/libre-baskerville-latin-wght-normal.woff2') format('woff2-variations'),
+       url('/fonts/LibreBaskerville/libre-baskerville-latin-wght-normal.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* Libre Baskerville - Italic, Medium Italic, Bold Italic (400-700) */
+@font-face {
+  font-family: 'Libre Baskerville';
+  font-style: italic;
+  font-weight: 400 700;
+  src: url('/fonts/LibreBaskerville/libre-baskerville-latin-ext-wght-italic.woff2') format('woff2-variations'),
+       url('/fonts/LibreBaskerville/libre-baskerville-latin-ext-wght-italic.woff2') format('woff2');
+  font-display: swap;
+}

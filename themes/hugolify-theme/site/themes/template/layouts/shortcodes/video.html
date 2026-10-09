@@ -1,0 +1,38 @@
+{{/*
+
+  @context
+    autoplay (bool) optional
+    controls (bool) optional
+    loop (bool) optional
+    mp4 (string)
+    webm (string)
+    legend (string) optional
+    credit (markdown) optional
+    screenshot (bool) optional
+
+  @example - Shortcode
+    {{< video autoplay="true" controls="true" loop="true" mp4="some-video.mp4" webm="some-video.webm" legend="Some legend" credit="Some credit" screenshot="true" >}}
+
+*/}}
+
+{{- /* Get arguments. */}}
+{{- $autoplay := .Get "autoplay" | default false -}}
+{{- $controls := .Get "controls" | default false -}}
+{{- $loop := .Get "loop" | default false -}}
+{{- $mp4 := .Get "mp4" | default false -}}
+{{- $webm := .Get "webm" | default false -}}
+{{- $legend := .Get "legend" | default false -}}
+{{- $credit := .Get "credit" | default false -}}
+{{- $screenshot := .Get "screenshot" | default false -}}
+
+{{- /* Render. */}}
+{{- partial "commons/figure-video.html" (dict
+  "autoplay" $autoplay 
+  "controls" $controls 
+  "loop" $loop 
+  "mp4" $mp4
+  "webm" $webm
+  "legend" $legend 
+  "credit" $credit
+  "screenshot" $screenshot
+  ) -}}

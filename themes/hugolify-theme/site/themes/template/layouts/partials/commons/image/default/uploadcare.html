@@ -1,0 +1,95 @@
+{{/*  Get params  */}}
+{{- $file := .file -}}
+{{- $file_mobile := .file_mobile -}}
+{{- $desktop_size := .desktop_size -}}
+{{- $mobile_size := .mobile_size -}}
+{{- $mobile_size_2x := .mobile_size_2x -}}
+{{- $mobile_size_3x := .mobile_size_3x -}}
+{{- $crop := lower .crop -}}
+{{- $quality := site.Params.image.quality | default "normal" -}}
+
+{{/*  Strip filename from Uploadcare URL if present (e.g., /UUID/filename.ext -> /UUID/)  */}}
+{{- $stripFilenamePattern := `(/[a-f0-9-]+)/[^/]+\.[a-zA-Z]+/?$` -}}
+{{- $file = replaceRE $stripFilenamePattern "$1/" $file -}}
+{{- if $file_mobile -}}
+  {{- $file_mobile = replaceRE $stripFilenamePattern "$1/" $file_mobile -}}
+{{- end -}}
+
+{{/*  Return params  */}}
+{{- $image_desktop := $file -}}
+{{- $image_mobile := false -}}
+{{- $image_mobile_2x := false -}}
+{{- $image_mobile_3x := false -}}
+{{- $image_width := false -}}
+{{- $image_height := false -}}
+
+{{/*  Get image dataset  */}}
+{{- $url := printf "%s-/json/" $file }}
+{{- with try (resources.GetRemote $url) -}}
+  {{- with .Err -}}
+    {{ errorf "%s" . }}
+  {{- else with .Value -}}
+    {{- $data := . | transform.Unmarshal -}}
+    {{- with $data -}}
+      {{- $image_width = index . "width" -}}
+      {{- $image_height = index . "height" -}}
+    {{- end -}}
+  {{- else -}}
+    {{ errorf "Unable to get remote resource: %s" $url }}
+  {{- end -}}
+{{- end -}}
+
+{{/*  Process if not a SVG image  */}}
+{{- if not (strings.HasSuffix $file "svg") }}
+
+  {{- $quality := printf "-/quality/%s/" $quality -}}
+
+  {{/*  Return desktop image  */}}
+  {{- with $desktop_size -}}
+    {{- $params :=  printf "-/resize/%s/%s" . $quality -}}
+    {{- if partial "func/isCrop" . -}}
+      {{- $params =  printf "-/scale_crop/%s/%s/%s" . $crop $quality -}}
+    {{- end -}}
+    {{- $image_desktop = printf "%s%s" $file $params -}}
+    {{/*  Get modificated image dataset  */}}
+    {{- $url = printf "%s-/resize/%s/-/json/" $file . }}
+    {{- with try (resources.GetRemote $url) -}}
+      {{- with .Err -}}
+        {{- errorf "Error, GetRemote: %s" . -}}
+      {{- else with .Value -}}
+        {{- $data := . | transform.Unmarshal -}}
+        {{- with $data -}}
+          {{- $image_width = index . "width" -}}
+          {{- $image_height = index . "height" -}}
+        {{- end -}}
+      {{- else -}}
+        {{- errorf "Error, unable to retrieve remote resource for: %s" $file -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{/*  Return mobile image  */}}
+  {{- if $mobile_size -}}
+    {{- $params :=  printf "-/resize/%s/%s" $mobile_size $quality -}}
+    {{- $params_2x :=  printf "-/resize/%s/%s" $mobile_size_2x $quality -}}
+    {{- $params_3x :=  printf "-/resize/%s/%s" $mobile_size_3x $quality -}}
+    {{- if partial "func/isCrop" $mobile_size -}}
+      {{- $params =  printf "-/scale_crop/%s/%s/%s" $mobile_size $crop $quality -}}
+      {{- $params_2x =  printf "-/scale_crop/%s/%s/%s" $mobile_size_2x $crop $quality -}}
+      {{- $params_3x =  printf "-/scale_crop/%s/%s/%s" $mobile_size_3x $crop $quality -}}
+    {{- end -}}
+    {{- $image_mobile = printf "%s%s" $file_mobile $params -}}
+    {{- $image_mobile_2x = printf "%s%s" $file_mobile $params_2x -}}
+    {{- $image_mobile_3x = printf "%s%s" $file_mobile $params_3x -}}
+  {{- end -}}
+
+{{- end -}}
+
+{{- return dict
+  "image_desktop" $image_desktop
+  "image_mobile" $image_mobile
+  "image_mobile_2x" $image_mobile_2x
+  "image_mobile_3x" $image_mobile_3x
+  "image_width" $image_width
+  "image_height" $image_height
+  -}}

@@ -1,0 +1,252 @@
+module:
+  mounts:
+    - source: archetypes
+      target: archetypes
+    - source: i18n
+      target: i18n
+    - source: layouts
+      target: layouts
+    - source: static
+      target: static
+
+  # Librairies
+  imports:
+
+    # Import Lightbox (Tobii)
+    - path: github.com/midzer/tobii
+      ignoreConfig: true
+      mounts:
+        - source: dist/tobii.min.css
+          target: static/assets/css/tobii.min.css
+        - source: dist/tobii.min.js
+          target: static/assets/js/tobii.min.js
+
+    # Import GDPR complian (Cookie consent)
+    - path: github.com/orestbida/cookieconsent
+      ignoreConfig: true
+      mounts:
+        - source: dist/cookieconsent.css
+          target: static/assets/css/cookieconsent.css
+        - source: dist/cookieconsent.umd.js
+          target: static/assets/js/cookieconsent.umd.js
+
+    # Import Carousel (Splide)
+    - path: github.com/Splidejs/splide
+      ignoreConfig: true
+      mounts:
+        - source: dist/css/splide.min.css
+          target: static/assets/css/splide.min.css
+        - source: dist/js/splide.min.js
+          target: static/assets/js/splide.min.js
+
+    # Import Parallax (Rellax)
+    - path: github.com/dixonandmoe/rellax
+      ignoreConfig: true
+      mounts:
+        - source: rellax.min.js
+          target: assets/js/vendors/rellax.min.js # import in javascript core pipe (only if parallax enabled in params)
+
+# vCard, built by commons/contact/vcard/build.html
+mediaTypes:
+  text/vcard:
+    suffixes:
+      - vcf
+
+# Params
+params:
+
+  # Website
+  cookie_banner:
+    enable: false # Enable Cookie banner
+    cookieconsent:
+      enable: false # Use CookieConsent
+      analytics: false
+      functionality: false
+      marketing: false
+      disablePageInteraction: false
+  css:
+    darkmode: false # default: false (only light mode)
+    preload: false
+    print: false
+  header:
+    # Breakpoint at which the menu stops being a panel and becomes the inline
+    # nav of the header. Drives both the .panel-inline-* class in the markup
+    # and the --header-expand custom media in css/main.css, so the two cannot
+    # disagree. One of: sm | md | lg | xl | none
+    expand: md
+    layout: drawer # modal also available
+    drawer:
+      position: end
+    modal:
+      centered: true
+      size: fullscreen
+  form:
+    ajax: false # Set true to enable ajax form
+    netlify: true # Set false to disable Netlify Forms
+    action: false # Replace by action URL from https://fabform.io/, https://formspree.io/, https://kwesforms.com/ …
+  logo:
+    header: '/assets/images/logo.svg'
+    footer: '/assets/images/logo.svg'
+  # Breakpoint at which these panels stop being overlays and become regions of
+  # the page. Same contract as header.expand — sm | md | lg | xl | none.
+  filters:
+    expand: all
+    drawer:
+      position: end # start | end | top | bottom
+    more:
+      enable: false # Set true to fold the terms past limit behind a "show more", needs hugolify-theme-design-system
+      limit: 5 # Terms shown per taxonomy before the fold
+    search:
+      enable: false # Set true to add a field narrowing the terms, needs hugolify-theme-design-system
+  sidebarmenu:
+    expand: md
+    drawer:
+      position: start # start | end | top | bottom
+  toc:
+    expand: md
+    drawer:
+      position: start # start | end | top | bottom
+    # Side of the body headings the block headings take in the TOC: before |
+    # after. A page overrides it with `toc.blocks` in its front matter, a whole
+    # section through a cascade, for a layout rendering its blocks first.
+    blocks: after
+  # Grids of items that scroll sideways with snap points instead of wrapping.
+  #   breakpoint — the width at which the carousel STOPS and the grid comes
+  #     back: sm | md | lg | xl | all | none, so md means mobile and tablet
+  #   nav — prev/next buttons, and pagination — dots reporting and driving the
+  #     position. Both take false | pointer (only where there is a mouse, a
+  #     trackpad or a stylus) | true (touch screens included). They hide
+  #     themselves while the row does not overflow, so they only ever show
+  #     within the carousel's own range: controls on desktop mean a breakpoint
+  #     that reaches it — all, lg or xl.
+  # `scrollsnap: md` is a shorthand for the breakpoint alone.
+  # Each key is read on its own ladder, so a block overrides one without
+  # repeating the other:
+  #   blocks.datas.scrollsnap.nav → blocks.scrollsnap.nav → scrollsnap.nav
+  # and a single block overrides them all with ui.scrollsnap in its front
+  # matter, map or shorthand alike.
+  scrollsnap:
+    breakpoint: md
+    nav: false
+    pagination: false
+  search:
+    enable: false # if true add search page to /content/search/_index.md or add a search block
+    layout: raw # drawer and modal also available
+    filter: false
+    sort: false
+
+  # Images
+  hero:
+    cover:
+      desktop: '1600x400'
+      mobile: '360x400'
+    desktop: '416x'
+    mobile: '300x'
+    sizes: calc(100vw - 3.5rem), calc(50vw - 3.5rem)
+    back:
+      enable: false # Set true to enable back button
+  image:
+    xlarge: '1600x'
+    xsmall: '50x50'
+    desktop: '856x'
+    mobile: '300x'
+    mobile_full: '360x'
+    scrollsnap: '240x'
+    # Responsive mode (srcset width descriptors + sizes). Retina is handled by the browser via DPR,
+    # so we never emit explicit 2x/3x files: the ladder just needs to reach ~2x the largest render width.
+    # Dense ladder for on-the-fly CDNs (Cloudinary/Uploadcare) — variants are free, no build cost.
+    srcset_widths: [320, 375, 480, 640, 768, 960, 1024, 1280, 1440, 1600, 1920, 2560]
+    # Denser-than-lean ladder for Hugo — every width is a file generated at build time (cache
+    # resources/ in CI to keep cold builds down). Variants larger than the source are skipped
+    # automatically (no upscaling). Steps tightened at common render sizes to cut over-download.
+    srcset_widths_hugo: [320, 480, 640, 800, 1024, 1280, 1440, 1600, 1920]
+    sizes_default: '100vw'
+    # Below this requested width, lazy images stay in the fixed-size + 2x retina mode (avatars, icons,
+    # small thumbnails) instead of generating a responsive srcset ladder.
+    responsive_min_width: 320
+    # Max-width breakpoints (px) between tiers for a shorthand `sizes` CSV. "100vw, 50vw, 25vw" →
+    # mobile (≤576) 100vw, tablet (≤1024) 50vw, desktop 25vw.
+    sizes_breakpoints: [576, 1024]
+  # Social card built for og:image / twitter:image. 1200x630 (1.91:1) is the frame both
+  # Open Graph and Twitter summary_large_image crop to; crop is the fill anchor (Hugo
+  # anchor, Cloudinary gravity or Uploadcare offset depending on the provider).
+  seo:
+    image:
+      size: '1200x630'
+      crop: smart
+  # Generic images
+  thumbnail:
+    desktop: '414x177'
+    mobile: '300x129'
+    scrollsnap: '240x103'
+    sizes: 100vw, 50vw, 25vw
+  navigation:
+    desktop: '414x200'
+    mobile: '300x150'
+  # Pages specific
+  pages:
+    thumbnail:
+      desktop: '416x179'
+      desktop_large: '636x273'
+      mobile: '300x129'
+      scrollsnap: '240x103'
+    image:
+      desktop: '856x'
+      mobile: '360x'
+  # Blocks configuration
+  #
+  # `ui` sets the look a block starts with, every key GetBlockUI resolves is
+  # accepted (align, carousel, column, direction, grid, layout, offset, ratio,
+  # theme). A block of the content overrides it, and drops one by writing the
+  # key under its own `ui`, even empty:
+  #
+  #   latest:
+  #     ui:
+  #       align: center
+  #       grid: large
+  #       layout: grid
+  #
+  # Nothing is written to the content, so a change here reaches the blocks
+  # already written.
+  #
+  # `scrollsnap` goes under `ui` too, like in the front matter of a block:
+  #
+  #   latest:
+  #     ui:
+  #       grid: large
+  #       scrollsnap: all
+  #
+  # It is read by SetScrollsnap rather than GetBlockUI, because it does not
+  # become a `block-*` class: it puts a utility class on the row of items, and
+  # falls back to the wider `blocks.scrollsnap` then `scrollsnap`. Written at
+  # the block level itself instead of under `ui` it is still read, which is
+  # the form the params used before.
+  blocks:
+    gallery:
+      column:
+        mobile: 2
+      image:
+        ratio: 1
+    informations:
+      image:
+        ratio: 1.75
+
+# Privacy
+privacy:
+  instagram:
+    simple: false
+  vimeo:
+    enableDNT: true
+    simple: false
+  x:
+    enableDNT: true
+    simple: false
+  youtube:
+    privacyEnhanced: true
+
+# Services
+services:
+  instagram:
+    disableInlineCSS: false
+  x:
+    disableInlineCSS: false

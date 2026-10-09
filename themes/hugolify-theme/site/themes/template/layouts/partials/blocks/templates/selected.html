@@ -1,0 +1,21 @@
+{{/* UI */}}
+{{- $ui := partial "func/GetBlockUI" (merge (dict "type" "selected") .) -}}
+
+{{/* Class */}}
+{{- $blockClass := partial "func/GetBlockClasses" (dict "type" "selected" "variant" .section "ui" $ui) -}}
+
+{{/* Items */}}
+{{- $items := partial "blocks/templates/selected/GetItems.html" . -}}
+
+{{/* Context */}}
+{{- $context := merge . (dict "items" $items "ui" $ui) -}}
+
+{{- if $items }}
+<section class="{{ $blockClass }}" {{- partial "func/SetSearchIgnore.html" . }} {{- partial "func/SetAnim.html" (dict "element" "block") }}>
+{{- partial "func/SetContainerRowColStart.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+  {{- partial "blocks/templates/selected/header.html" . -}}
+  {{- partial "blocks/templates/selected/body.html" $context -}}
+  {{- partial "blocks/templates/selected/footer.html" (merge . (dict "type" "selected")) -}}
+{{- partial "func/SetContainerRowColEnd.html" (dict "grid" $ui.grid "class" $ui.rowClass) -}}
+</section>
+{{ end -}}

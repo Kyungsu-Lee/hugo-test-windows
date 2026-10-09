@@ -1,0 +1,25 @@
+{{- $id := printf "gallery-%s" (.index | string) -}}
+{{- $isFirst := .first -}}
+
+{{- $column := int .ui.column | default 3 -}}
+{{- $grid := .ui.grid | default "container" -}}
+{{- $layout := .ui.layout | default "grid" -}}
+{{- $defaultRatio := site.Params.blocks.gallery.image.ratio | default 1 -}}
+{{- $ratio := cond .ui.ratio .ui.ratio $defaultRatio -}}
+
+{{- $context := merge . (dict
+  "column" $column
+  "gallery" $id
+  "grid" $grid
+  "images" .gallery
+  "isFirst" $isFirst
+  "ratio" $ratio
+)}}
+
+{{- with .gallery }}
+  {{- if eq $layout "carousel" }}
+    {{ partial "blocks/templates/gallery/carousel.html" $context }}
+  {{- else }}
+    {{ partial "blocks/templates/gallery/grid.html" $context }}
+  {{- end }}
+{{ end -}}

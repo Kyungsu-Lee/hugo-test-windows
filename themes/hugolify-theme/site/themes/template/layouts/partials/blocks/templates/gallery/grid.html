@@ -1,0 +1,12 @@
+{{/* One item spans the block's grid width (full, container, small…) divided by the gallery columns,
+     so image widths stay correct whatever the block's grid size. */}}
+
+{{- $columnMobile  := site.Params.blocks.gallery.column.mobile | default 2 }}
+{{- $size := partial "func/GetBlockImageSize.html" (dict
+  "columnDesktop" .column
+  "columnMobile" $columnMobile
+  "ratio" .ratio
+  "grid" .grid
+  ) -}}
+
+{{ partial "commons/gallery.html" (merge . (dict "desktop" $size.desktop "mobile" $size.mobile "type" "block.gallery")) }}

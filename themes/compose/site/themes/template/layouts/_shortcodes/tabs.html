@@ -1,0 +1,10 @@
+{{- $id := .Get 0 | default "id" -}}
+{{- $align := .Get "align" | default "left" -}}
+{{- $group := .Page.Store.Get "tabGroupIndex" | default 0 -}}
+{{- .Page.Store.Set "tabElementIndex" 0 -}}
+
+<div class="tabs tabs-{{ $align }}">
+  {{ .Inner }}
+</div>
+
+{{- .Page.Store.Set "tabGroupIndex" (add 1 $group) -}}

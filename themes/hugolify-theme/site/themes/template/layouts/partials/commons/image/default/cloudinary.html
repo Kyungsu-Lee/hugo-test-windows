@@ -1,0 +1,150 @@
+{{/*  Get params  */}}
+{{- $is_desktop_retina := site.Params.image.retina.desktop | default true -}}
+{{- $file := .file -}}
+{{- $file_mobile := .file_mobile -}}
+{{- $desktop_size := .desktop_size -}}
+{{- $mobile_size := .mobile_size -}}
+{{/*  crop: Check if a real cloundinary param */}}
+{{- $crop := cond (hasPrefix (lower .crop) "g_") (lower .crop) "g_auto" -}}
+{{- $quality := site.Params.image.quality | default "auto:eco" -}}
+
+{{/*  Return params  */}}
+{{- $image_desktop := .file -}}
+{{- $image_desktop_2x := false -}}
+{{- $image_mobile := false -}}
+{{- $image_mobile_2x := false -}}
+{{- $image_mobile_3x := false -}}
+{{- $image_width := false -}}
+{{- $image_height := false -}}
+
+{{/*  Cloudinary path  */}}
+{{- $path := split $file "/upload/" -}}
+{{- $pathFile := print (index $path 0) "/upload/" -}}
+{{- $imageFile := index $path 1 -}}
+
+{{/*  Get image dataset  */}}
+{{- $data := false -}}
+{{- $url := print $pathFile "fl_getinfo/" $imageFile -}}
+{{- if strings.HasSuffix $file "svg" }}
+  {{- $url = print $pathFile "fl_getinfo/f_png/" $imageFile -}}
+{{- end -}}
+{{- with try (resources.GetRemote ($url)) -}}
+  {{- with .Err -}}
+    {{- errorf "Error, GetRemote: %s" . -}}
+  {{- else with .Value -}}
+    {{- $data = . | transform.Unmarshal -}}
+    {{- with $data.input -}}
+      {{- $image_width = index . "width" -}}
+      {{- $image_height = index . "height" -}}
+    {{- end -}}
+  {{- else -}}
+    {{- warnf "Error, unable to retrieve remote resource for: %s" $file -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*  Process if not a SVG image  */}}
+{{- if not (strings.HasSuffix $file "svg") }}
+
+  {{- with $quality }}
+    {{- $quality = printf "q_%s" $quality -}}
+  {{- end -}}
+
+  {{/*  Return desktop image  */}}
+  {{- with $desktop_size -}}
+    {{/*  f_auto: Cloudinary negotiates AVIF/WebP/original per browser via the Accept header. */}}
+    {{- $params := slice "f_auto" -}}
+
+    {{- with $quality }}
+      {{ $params = $params | append . }}
+    {{ end }}
+
+    {{- $desktop_size_array := split $desktop_size "x" -}}
+    {{- $desktop_size_width := index $desktop_size_array 0 | default false -}}
+    {{- $desktop_size_height := index $desktop_size_array 1 | default false -}}
+    {{- with $desktop_size_width }}
+      {{- $params = $params | append (printf "w_%s" .) -}}
+    {{ end }}
+    {{ with $desktop_size_height }}
+      {{- $params = $params | append (printf "h_%s" .) -}}
+    {{ end }}
+
+    {{- if partial "func/isCrop" . -}}
+      {{- $params =  $params | append "c_fill" -}}
+      {{- with $crop -}}
+        {{- $params =  $params | append . -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $image_desktop = printf "%s%s/%s" $pathFile (delimit $params ",") $imageFile -}}
+
+    {{/*  Desktop retina: a dpr_2.0 variant; the format stays negotiated by f_auto.  */}}
+    {{- if $is_desktop_retina -}}
+      {{- $image_desktop_2x = printf "%s%s/%s" $pathFile (print "dpr_2.0," (delimit $params ",")) $imageFile -}}
+    {{- end -}}
+
+    {{/*  Get modificated image dataset  */}}
+    {{- $url = print $pathFile (delimit $params ",") ",fl_getinfo/" $imageFile -}}
+    {{- if strings.HasSuffix $file "svg" }}
+      {{- $url = print $pathFile (delimit $params ",") "fl_getinfo/f_png/" $imageFile -}}
+    {{- end -}}
+    {{- with try (resources.GetRemote $url) -}}
+      {{- with .Err -}}
+        {{- errorf "Error, GetRemote: %s" . -}}
+      {{- else with .Value -}}
+        {{- $data = . | transform.Unmarshal -}}
+        {{- with $data.output -}}
+          {{- $image_width = index . "width" -}}
+          {{- $image_height = index . "height" -}}
+        {{- end -}}
+      {{- else -}}
+        {{- warnf "Error, unable to retrieve remote resource for: %s" $file -}}
+      {{- end -}}
+    {{- end -}}
+
+  {{- end -}}
+
+  {{/*  Return mobile image  */}}
+  {{- with $mobile_size -}}
+    {{/*  f_auto: format negotiated by the CDN; the dpr variants below carry it through. */}}
+    {{- $params := slice "f_auto" -}}
+    {{- $params_1x := slice -}}
+
+    {{- with $quality }}
+      {{ $params = $params | append . }}
+    {{ end }}
+
+    {{- if partial "func/isCrop" . -}}
+      {{- $params =  $params | append "c_fill" -}}
+      {{- with $crop -}}
+        {{- $params =  $params | append . -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $params_1x = $params -}}
+    {{- $mobile_size_array := split . "x" -}}
+    {{- $mobile_size_width := index $mobile_size_array 0 | default false -}}
+    {{- $mobile_size_height := index $mobile_size_array 1 | default false -}}
+    {{- with $mobile_size_width }}
+      {{- $params_1x = $params_1x | append (printf "w_%s" .) -}}
+    {{ end }}
+    {{ with $mobile_size_height }}
+      {{- $params_1x = $params_1x | append (printf "h_%s" .) -}}
+    {{ end }}
+
+    {{- $image_mobile = printf "%s%s/%s" $pathFile (delimit $params_1x ",") $imageFile -}}
+    {{- $image_mobile_2x = printf "%s%s/%s" $pathFile (print "dpr_2.0," (delimit $params_1x ",")) $imageFile -}}
+    {{- $image_mobile_3x = printf "%s%s/%s" $pathFile (print "dpr_3.0," (delimit $params_1x ",")) $imageFile -}}
+  {{- end -}}
+
+{{- end -}}
+
+{{- return dict
+  "image_desktop" $image_desktop
+  "image_desktop_2x" $image_desktop_2x
+  "image_mobile" $image_mobile
+  "image_mobile_2x" $image_mobile_2x
+  "image_mobile_3x" $image_mobile_3x
+  "image_width" $image_width
+  "image_height" $image_height
+  -}}
+

@@ -1,0 +1,32 @@
+{{ $type := .Type }}
+{{ with .Params.image}}
+  {{- $desktop := site.Params.image.desktop | default false -}}
+  {{- $mobile := site.Params.image.mobile_full | default false -}}
+  {{- $sizes := site.Params.image.sizes | default false -}}
+
+  {{/*  Specific by Type */}}
+  {{- with $type -}}
+    {{- $desktop = (index site.Params .).image.desktop | default $desktop -}}
+    {{- $mobile = (index site.Params .).image.mobile | default $mobile -}}
+    {{- $sizes = (index site.Params .).image.sizes | default $sizes -}}
+  {{- end -}}
+
+  {{/*  `<type>.image.crop: false` (logos, brand marks): keep the width but drop the height so the
+        image is resized to its own proportions instead of being filled into a fixed box. */}}
+  {{- $crop := partial "func/GetImageCrop.html" $type -}}
+  {{- if not $crop.enabled -}}
+    {{- with $desktop -}}{{- $desktop = printf "%sx" (index (split . "x") 0) -}}{{- end -}}
+    {{- with $mobile -}}{{- $mobile = printf "%sx" (index (split . "x") 0) -}}{{- end -}}
+  {{- end -}}
+
+  {{/*  merge: rightmost wins, so let a per-image front-matter `sizes` and `crop` override the
+        config defaults. */}}
+  {{- $args := merge . (dict
+    "lazy" false
+    "figure_class" "featured-image"
+    "desktop" $desktop
+    "mobile" $mobile
+    "sizes" (.sizes | default $sizes)
+    "crop" (.crop | default $crop.anchor)) }}
+  {{- partial "commons/figure.html" $args -}}
+{{ end }}

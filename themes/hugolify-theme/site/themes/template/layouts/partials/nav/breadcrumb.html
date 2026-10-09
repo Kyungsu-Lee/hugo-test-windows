@@ -1,0 +1,27 @@
+{{- /* The trail comes from func/GetBreadcrumb.html, which
+       func/GetSchemaBreadcrumb.html reads as well: search engines get it as
+       JSON-LD, within the WebPage of the page, see func/GetSchemaWebPage.html. */ -}}
+{{- with partialCached "func/GetBreadcrumb.html" . .Permalink -}}
+  <div class="breadcrumb-wrapper">
+    <nav class="container" aria-label="{{ i18n "breadcrumb" }}">
+      <ol>
+        {{- range . -}}
+          {{- $title := .page.Params.breadcrumb_title -}}
+          {{- if not $title -}}
+            {{ $title = partial "func/GetRealTitle" .page }}
+          {{- end -}}
+          {{- $title = chomp $title }}
+          <li{{ if .active }} aria-current="page"{{ end }}>
+            {{ if not .active -}}
+              <a href="{{ .page.Permalink }}">
+            {{- end }}
+              <span>{{ partial "func/PrepareHTML.html" $title }}</span>
+            {{ if not .active -}}
+              </a>
+            {{- end }}
+          </li>
+        {{- end }}
+      </ol>
+    </nav>
+  </div>
+{{- end -}}

@@ -1,0 +1,13 @@
+[build.environment]
+GO_VERSION = "1.26.5"
+HUGO_VERSION = "0.165.0"
+NODE_VERSION = "24.19.0"
+TZ = "Europe/Oslo"
+URL = "https://rooms.netlify.app/"
+
+[build]
+publish = "public"
+command = """\
+  git config --global core.quotepath false && \
+  hugo build --gc --minify --baseURL "${URL}"
+  """

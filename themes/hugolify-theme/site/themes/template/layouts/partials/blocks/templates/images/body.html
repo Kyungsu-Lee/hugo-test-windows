@@ -1,0 +1,6 @@
+{{- $first := .first | default false -}}
+{{- with .images }}
+  {{ partial "commons/images" (dict
+    "images" .
+    "first" $first) }}
+{{ end -}}

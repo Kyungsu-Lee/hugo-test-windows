@@ -1,0 +1,41 @@
+{{/* GetLanguage
+     Normalize a language object into a stable dict, hiding the property names
+     Hugo settled on in v0.158.0 (Name, Locale, Direction, Label) and applying
+     defaults for the ones a site may leave unset.
+
+     Params: a language object (site.Language, an item of site.Languages, or
+             .Page.Language). Defaults to site.Language when no context is given.
+
+     Do not use partialCached here: its cache key ignores the context, so a
+     cached call inside a range over site.Languages returns the same language
+     for every item.
+
+     Returns: dict
+       name      (string) language tag, e.g. "en"
+       locale    (string) locale for the html lang attribute, e.g. "en-US",
+                          falling back to name when unset
+       direction (string) text direction, defaults to "ltr"
+       label     (string) human readable language name, e.g. "English"
+*/}}
+{{- $language := site.Language -}}
+{{- with . -}}
+  {{- $language = . -}}
+{{- end -}}
+
+{{- $name := "" -}}
+{{- $locale := "" -}}
+{{- $direction := "" -}}
+{{- $label := "" -}}
+{{- with $language -}}
+  {{- $name = .Name -}}
+  {{- $locale = .Locale -}}
+  {{- $direction = .Direction -}}
+  {{- $label = .Label -}}
+{{- end -}}
+
+{{- return (dict
+  "name" $name
+  "locale" (or $locale $name)
+  "direction" (or $direction "ltr")
+  "label" $label
+) -}}

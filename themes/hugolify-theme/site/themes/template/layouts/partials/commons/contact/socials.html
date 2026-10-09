@@ -1,0 +1,22 @@
+{{- /*
+  Renders the social links of a contact object as a nav-social list, one
+  <li class="{platform}"> per link.
+
+  @context {map} . The contact object, whose `socials` lists `platform` and `url`.
+*/ -}}
+{{- $links := slice }}
+{{- range .socials }}
+  {{- if and .platform .url }}
+    {{- $links = $links | append (dict "title" .platform "url" .url "blank" true) }}
+  {{- end }}
+{{- end }}
+
+{{- with $links }}
+  <ul class="nav nav-social">
+    {{- range . }}
+      <li class="{{ lower .title }}">
+        {{- partial "nav/link-with-icon.html" . -}}
+      </li>
+    {{- end }}
+  </ul>
+{{- end }}

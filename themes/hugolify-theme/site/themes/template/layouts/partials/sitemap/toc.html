@@ -1,0 +1,11 @@
+<div class="toc" {{- partial "func/SetSearchIgnore.html" . }}>
+  <div>
+    <p>{{ i18n "toc" }}</p>
+    {{ partial "commons/dialog.html" (dict
+      "id" "toc"
+      "labelledby" "tocLabel"
+      "button" (partial "commons/toc/button.html" .)
+      "params" site.Params.toc
+      "content" (print (partial "commons/toc/header" .) (partial "sitemap/toc/content" .) | safeHTML)) }}
+  </div>
+</div>

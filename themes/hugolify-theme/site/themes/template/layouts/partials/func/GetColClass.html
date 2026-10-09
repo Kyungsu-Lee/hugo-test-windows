@@ -1,0 +1,10 @@
+{{/* GetColClass
+     Deprecated: use func/GetColOffsetClass with (dict "grid" … "offset" …).
+
+     Kept as a shim because project-level layouts still call it with a bare grid string.
+     It always centred the column, so that behaviour is preserved here.
+
+     Params: (string) grid size.
+     Returns: string such as "col-medium offset-center", or false.
+*/}}
+{{- return partial "func/GetColOffsetClass" (dict "grid" . "offset" "center") -}}

@@ -1,0 +1,13 @@
+{{- $atf := cond .first true false -}}
+{{- $section := .section -}}
+{{- $layout := .ui.layout | default "grid" -}}
+{{- $scrollsnap := .ui.scrollsnap | default true -}}
+{{- $items := partial "blocks/templates/latest/GetItems.html" . -}}
+
+{{- if $items }}
+  {{- if eq $layout "list" }}
+    {{ partial "blocks/templates/latest/list.html" $items }}
+  {{- else }}
+    {{ partial "blocks/templates/latest/grid.html" (dict "section" $section "items" $items "atf" $atf "type" .type "scrollsnap" $scrollsnap) }}
+  {{- end }}
+{{ end -}}

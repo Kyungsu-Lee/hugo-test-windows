@@ -1,0 +1,16 @@
+
+{{- $layout := .ui.layout | default "grid" -}}
+{{- $column := int .ui.column | default 1 -}}
+{{- $tag := "h2" -}}
+{{- with .heading }}
+  {{- if .title }}
+    {{- $tag = "h3" -}}
+  {{- end }}
+{{- end }}
+{{- $scrollsnap := partial "func/SetScrollsnap.html" (dict "scrollsnap" .ui.scrollsnap "context" (printf "blocks.%s" .type)) -}}
+{{- $params := index (slice (dict "tag" $tag "column" $column "scrollsnapclass" $scrollsnap)) 0 -}}
+{{- if eq $layout "carousel" }}
+  {{ partial "blocks/templates/pushes/carousel.html" (dict "context" . "params" $params) }}
+{{- else -}}
+  {{ partial "blocks/templates/pushes/grid.html" (dict "context" . "params" $params) }}
+{{ end -}}

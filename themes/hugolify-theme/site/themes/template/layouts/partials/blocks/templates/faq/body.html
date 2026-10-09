@@ -1,0 +1,7 @@
+{{- with .items }}
+  <div class="faq">
+    {{ range . }}
+      {{ partial "commons/details.html" . }}
+    {{ end }}
+  </div>
+{{- end }}

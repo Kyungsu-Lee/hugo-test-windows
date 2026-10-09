@@ -1,0 +1,11 @@
+{{ if site.Params.search.enable }}
+  {{- if ne (site.Params.search.layout | default "drawer") "raw" }}
+    <button type="button"
+        class="btn btn-search js-dialog-toggle"
+        id="search"
+        data-target="#mainSearch"
+        aria-controls="mainSearch">
+      <span>{{ i18n "search.title" }}</span>
+    </button>
+  {{- end }}
+{{- end }}

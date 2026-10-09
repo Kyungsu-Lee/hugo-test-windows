@@ -1,0 +1,3 @@
+{{/* Returns the title of the page a taxonomy term stands for, ready to print. */}}
+{{- $page := partial "func/GetRealContext.html" . -}}
+{{- return partial "func/PrepareHTML.html" $page.Title -}}
