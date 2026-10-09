@@ -1,0 +1,89 @@
+name: Publish bounded Windows QA group
+on:
+  workflow_dispatch:
+    inputs:
+      source_run:
+        required: true
+        type: string
+      source_commit:
+        required: true
+        type: string
+      slugs:
+        required: true
+        type: string
+      group:
+        required: true
+        type: string
+      group_count:
+        required: true
+        type: string
+      recovery_run:
+        required: true
+        type: string
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: windows-hugo-bounded-publication
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.source_run }}
+          pattern: qa-public-*
+          merge-multiple: true
+          path: public
+      - uses: actions/download-artifact@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.recovery_run }}
+          name: qa-public-1-tar
+          path: recovered
+      - name: Restore unchanged colon paths from TAR
+        run: |
+          python - <<'PY'
+          import tarfile
+          with tarfile.open('recovered/qa-public-1.tar') as t: t.extractall('public',filter='data')
+          PY
+      - name: Select unmodified sites and verify publication size
+        env:
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+          SOURCE_RUN: ${{ inputs.source_run }}
+          RECOVERY_RUN: ${{ inputs.recovery_run }}
+          DEPLOY_RUN: ${{ github.run_id }}
+          SLUGS: ${{ inputs.slugs }}
+          GROUP: ${{ inputs.group }}
+          GROUP_COUNT: ${{ inputs.group_count }}
+        run: |
+          python - <<'PY'
+          import os,json,re,shutil,html
+          from pathlib import Path
+          p=Path('public')
+          selected=set(os.environ['SLUGS'].split(','))
+          assert all(re.fullmatch(r'[a-z0-9_.-]+',x) for x in selected)
+          assert all((p/x/'index.html').is_file() for x in selected)
+          for x in p.iterdir():
+              if x.is_dir() and x.name not in selected: shutil.rmtree(x)
+          size=sum(x.stat().st_size for x in p.rglob('*') if x.is_file())
+          assert size<900_000_000,('Publication exceeds bounded group size',size)
+          identity={'commit':os.environ['SOURCE_COMMIT'],'run_id':os.environ['SOURCE_RUN'],'recovery_run_id':os.environ['RECOVERY_RUN'],'deployment_run_id':os.environ['DEPLOY_RUN'],'group':int(os.environ['GROUP']),'group_count':int(os.environ['GROUP_COUNT']),'site_bytes':size}
+          (p/'qa-run.json').write_text(json.dumps(identity))
+          links=''.join('<li><a href="'+html.escape(x)+'/">'+html.escape(x)+'</a></li>' for x in sorted(selected))
+          (p/'index.html').write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>Windows Hugo QA</title><h1>Windows Hugo QA</h1><p>Publication group '+os.environ['GROUP']+' of '+os.environ['GROUP_COUNT']+'. Earlier groups were tested separately to stay within Pages size limits.</p><p>Build commit '+identity['commit']+'; build run '+identity['run_id']+'; deploy run '+identity['deployment_run_id']+'</p><ul>'+links+'</ul></html>')
+          (p/'.nojekyll').touch()
+          print('PUBLISHED GROUP',len(selected),'SITES',size,'BYTES')
+          PY
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+      - uses: actions/deploy-pages@v5
+        id: deployment
