@@ -1,0 +1,77 @@
+{{ define "main" }}
+<div class="content">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+
+  {{ if eq .Section "projects" }}
+  <!-- Projects Grid Layout -->
+  <div class="featured-grid">
+    {{ range .Pages }}
+    <article class="featured-card">
+      {{ $projectUrl := .RelPermalink }}
+      {{ $isExternal := false }}
+      {{ if .Params.project_url }}
+      {{ $projectUrl = .Params.project_url }}
+      {{ $isExternal = true }}
+      {{ end }}
+      <a href="{{ $projectUrl }}"{{ partial "external-link-attrs.html" (dict "external" $isExternal) | safeHTMLAttr }}>
+        {{ if .Params.main_image }}
+        <div class="featured-image" style="background-image: url('{{ .Params.main_image }}');">
+          <div class="featured-overlay">
+            <h3 class="featured-card-title">
+              {{ .Title }}
+              {{ if $isExternal }}<span class="external-link-icon">↗</span>{{ end }}
+            </h3>
+          </div>
+        </div>
+        {{ else }}
+        <div class="featured-image featured-no-image">
+          <div class="featured-overlay">
+            <h3 class="featured-card-title">
+              {{ .Title }}
+              {{ if $isExternal }}<span class="external-link-icon">↗</span>{{ end }}
+            </h3>
+          </div>
+        </div>
+        {{ end }}
+        {{ if .Params.summary }}
+        <p class="featured-summary">{{ .Params.summary }}</p>
+        {{ end }}
+      </a>
+    </article>
+    {{ end }}
+  </div>
+  {{ else }}
+  <!-- Regular List Layout for Posts -->
+  <ul class="home-list">
+    {{ range .Pages }}
+    <li class="home-list-div">
+      <a href="{{ .RelPermalink }}" class="home-list-link">
+        <span class="home-list-date">{{ .Date | time.Format ":date_medium" }}</span>
+        {{ if .Params.main_image }}
+        <div class="home-list-image" style="background-image: url('{{ .Params.main_image }}');"></div>
+        {{ end }}
+        <div class="home-list-content">
+          <div class="home-list-meta">
+            <span class="home-list-duration">{{ .ReadingTime }} min read</span>
+          </div>
+          <h3 class="home-list-title">{{ .LinkTitle }}</h3>
+          {{ if .Summary }}
+          <p class="home-list-summary">{{ .Summary }}</p>
+          {{ end }}
+          {{ with .GetTerms "categories" }}
+          <div class="home-list-tags">
+            {{ range . }}
+            <span class="home-list-tag">{{ .LinkTitle }}</span>
+            {{ end }}
+          </div>
+          {{ end }}
+        </div>
+      </a>
+    </li>
+    {{ end }}
+  </ul>
+  {{ end }}
+
+</div>
+{{ end }}

@@ -1,0 +1,8 @@
+{{- $model := partial "content-model.html" . -}}
+{{- with $model.Editorial.Propositions -}}
+<div class="nf-article__propositions">
+    {{- range . -}}
+        {{- partial "proposition.html" (dict "id" .) -}}
+    {{- end -}}
+</div>
+{{- end -}}

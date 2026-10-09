@@ -1,0 +1,138 @@
+.btn
+	+flex(inline-flex, center, center, nowrap)
+	height: 54px
+	min-width: 200px
+	max-width: 300px
+	padding: 8px 16px
+	border-radius: 16pc
+	+theme(main)
+	text-align: center
+	text-transform: uppercase
+	+ft(20, 20, 800)
+	transition: $trs
+	b
+		position: relative	
+		overflow: hidden
+		font-weight: inherit
+		span
+			display: block
+			transition: all .25s linear
+			&:last-child
+				position: absolute
+				top: 100%
+	&::after
+		display: none
+	&:hover, &:active, &:focus
+		background-color: darken($main, 10%)
+		color: $white
+		span
+			&:first-child
+				transform: translateY(-165%)
+			&:last-child
+				transform: translate(0)
+				top: 0
+
+	&s
+		+flex(inline-flex, center, center, nowrap)
+		gap: $gap2
+	&_top
+		+ps(fixed, (r, 16px), (b, 16px))
+		z-index: 1000
+		+sz(46px, 46px)
+		+theme(main)
+		border-radius: $brs
+		border: none
+
+	&-bd
+		@extend .btn
+		min-width: 150px
+		height: 50px
+		border: 2px solid $main
+		color: $main
+		background-color: transparent
+		
+		&:hover, &:active, &:focus
+			color: $main
+			background-color: transparent
+			
+
+	&-circle
+		position: relative
+		+flex(inline-flex, center, center, nowrap)
+		+sz(50px, 50px)
+		border-radius: 50%
+		+theme(main)
+		border: none
+		transition: $trs
+		overflow: hidden
+		
+		svg
+			transition: all .25s linear
+			&:last-child
+				position: absolute
+				top: 44px
+				left: 44px
+		&:hover, &:active, &:focus
+			background-color: darken($main, 10%)
+			// svg
+			// 	&:first-child
+			// 		transform: translate(-25px, -25px)
+			// 	&:last-child
+			// 		transform: translate(-50%, -50%)
+			// 		top: 50%
+			// 		left: 50%
+
+.form
+	&__wrap
+		padding: 32px
+		border-radius: 15px
+		+theme(white)
+		box-shadow: $bxsd
+		text-align: center
+		max-width: 600px
+		width: 100%
+		margin-left: auto
+		margin-right: auto
+
+	&__caption
+		color: $main
+		text-transform: uppercase
+		+ft(25, 25, 800)
+		margin-bottom: $gap3
+	
+	label
+		display: block
+		text-align: left
+		+ft(14, 14, 300)
+		margin-bottom: 4px
+
+	input
+		width: 100%
+		padding: 8px 16px
+		border-radius: 10px
+		background-color: rgba($white, 0.3)
+		border: 1px solid $main
+
+	button
+		@extend .btn
+		width: 100%
+		margin-top: 12px
+
+	&-error
+		color: $red
+		text-transform: uppercase
+		text-align: left
+		+ft(13, 13, 500)
+		margin-top: 4px
+
+	&__row
+		margin-top: 12px
+		margin-bottom: 12px
+		&--inline
+			display: grid
+			grid-template-columns: 1fr 1fr
+			gap: 12px
+	+maw($xs)
+		&__row
+			&--inline
+				grid-template-columns: 1fr

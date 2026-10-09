@@ -1,0 +1,66 @@
+{{/* ---------------------------------------------
+     List configuration
+---------------------------------------------- */}}
+
+{{- $list := .Params.list -}}
+
+{{- $recursive := true -}}
+{{- with $list -}}
+  {{- with .recursive -}}
+    {{- $recursive = . -}}
+  {{- end -}}
+{{- end -}}
+
+
+{{- $sections := $list.sections -}}
+{{- $mode := $list.mode | default "" -}}
+
+{{- $sortBy := lower ($list.sort_by | default "date") -}}
+{{- $sortOrder := lower ($list.sort_order | default "desc") -}}
+
+{{/* ---------------------------------------------
+     Determine pages
+---------------------------------------------- */}}
+
+{{- $pages := slice -}}
+
+{{- if $sections -}}
+  {{- $pages = where .Site.RegularPages "Section" "in" $sections -}}
+
+{{- else if or (eq $mode "main_sections") (and (eq $mode "") (ne .Kind "section")) -}}
+  {{- $mainSections := .Site.MainSections | default (slice "posts") -}}
+  {{- $pages = where .Site.RegularPages "Section" "in" $mainSections -}}
+
+{{- else -}}
+  {{- if $recursive -}}
+    {{- $pages = .RegularPagesRecursive -}}
+  {{- else -}}
+    {{- $pages = .RegularPages -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* ---------------------------------------------
+     Sorting
+---------------------------------------------- */}}
+
+{{- if eq $sortBy "weight" -}}
+  {{- $pages = $pages.ByWeight -}}
+{{- else if eq $sortBy "title" -}}
+  {{- $pages = $pages.ByTitle -}}
+{{- else -}}
+  {{- $pages = $pages.ByDate -}}
+{{- end -}}
+
+{{- if eq $sortOrder "desc" -}}
+  {{- $pages = $pages.Reverse -}}
+{{- end -}}
+
+{{/* ---------------------------------------------
+     Pagination + render
+---------------------------------------------- */}}
+
+{{- $paginator := .Paginate $pages -}}
+{{- range $paginator.Pages -}}
+  {{ .Render "summary" }}
+{{- end -}}
+{{- partial "paginator.html" (dict "Paginator" $paginator "Page" .) -}}

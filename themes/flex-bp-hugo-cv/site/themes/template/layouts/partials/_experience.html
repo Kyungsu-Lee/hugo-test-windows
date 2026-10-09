@@ -1,0 +1,30 @@
+{{- $cv := partial "cv_data.html" . -}}
+{{ $data := $cv.Experience }}
+{{ with $data }}
+<section id="section-{{ .Title | urlize }}">
+    <h2>{{ partial "icon.html" .Icon }}{{ .Title }}</h2>
+    {{ range $data.Sections }}
+        <article class="innerContainer">
+            <p class="innerLeft when">{{ .StartDate }} – {{ .EndDate }}</p>
+            <div class="innerRight">
+                <h3>{{ .Name }}</h3>
+                <p class="org">{{ with .Website }}<a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ end }}{{ .Empolyer | default .Employer }}{{ with .Website }}</a>{{ end }}</p>
+                {{ with .Details }}
+                <ul class="details">
+                    {{ range . }}
+                        <li>{{ . }}</li>
+                    {{ end }}
+                </ul>
+                {{ end }}
+                {{ with .Skills }}
+                <p class="tags">
+                    {{ range . }}
+                        <span class="tag">{{ . }}</span>
+                    {{ end }}
+                </p>
+                {{ end }}
+            </div>
+        </article>
+    {{ end }}
+</section>
+{{ end }}

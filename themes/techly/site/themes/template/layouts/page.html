@@ -1,0 +1,30 @@
+{{ define "main" }}
+  <article class="blog-article page-article">
+    <header class="article-header">
+      <div class="container">
+        <div class="article-header-content">
+          <h1 class="article-title">{{ .Title }}</h1>
+          {{- with .Params.description }}
+            <p class="article-lead">{{ . }}</p>
+          {{- end }}
+        </div>
+      </div>
+    </header>
+
+    <div class="article-body">
+      <div class="container">
+        {{ partial "breadcrumb.html" (dict "page" .) }}
+
+        <div class="article-layout">
+          <div class="article-content">
+            {{ .Content }}
+          </div>
+
+          {{- if .Params.toc }}
+            {{ partial "toc.html" . }}
+          {{- end }}
+        </div>
+      </div>
+    </div>
+  </article>
+{{ end }}

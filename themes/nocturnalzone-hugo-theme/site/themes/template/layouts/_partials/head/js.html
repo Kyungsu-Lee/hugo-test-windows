@@ -1,0 +1,19 @@
+{{- with resources.Get "js/main.js" }}
+  {{- $js := . }}
+  {{- if not hugo.IsDevelopment }}
+    {{- $js = $js | minify }}
+  {{- end }}
+  {{- with $js }}
+    {{- if hugo.IsDevelopment }}
+      <script src="{{ .RelPermalink }}"></script>
+    {{- else }}
+      {{- with . | fingerprint }}
+        <script
+          src="{{ .RelPermalink }}"
+          integrity="{{ .Data.Integrity }}"
+          crossorigin="anonymous"
+        ></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

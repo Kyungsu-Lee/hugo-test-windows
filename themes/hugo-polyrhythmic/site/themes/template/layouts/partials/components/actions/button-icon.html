@@ -1,0 +1,48 @@
+{{ if .href }}
+  <a
+    class="component button icon {{ .type }} {{ .size }} {{ .shape }} {{ .width }}"
+    {{ .disabled }}
+    href="{{ .href }}"
+  >
+    {{ if .toggle }}
+      <input type="checkbox" id="{{ .id }}" />
+
+      <label class="component button icon" for="{{ .id }}">
+        {{ with .icon }}
+          <i class="icon">
+            {{ . }}
+          </i>
+        {{ end }}
+      </label>
+    {{ else }}
+      {{ with .icon }}
+        <i class="icon">
+          {{ . }}
+        </i>
+      {{ end }}
+    {{ end }}
+  </a>
+{{ else }}
+  <button
+    class="component button icon {{ .type }} {{ .size }} {{ .shape }} {{ .width }}"
+    {{ .disabled }}
+  >
+    {{ if .toggle }}
+      <input type="checkbox" id="{{ .id }}" />
+
+      <label class="component button icon" for="{{ .id }}">
+        {{ with .icon }}
+          <i class="icon">
+            {{ . }}
+          </i>
+        {{ end }}
+      </label>
+    {{ else }}
+      {{ with .icon }}
+        <i class="icon">
+          {{ . }}
+        </i>
+      {{ end }}
+    {{ end }}
+  </button>
+{{ end }}

@@ -1,0 +1,108 @@
+############################
+## Author
+############################
+
+author:
+  name: 'L1nkr'
+  image: author.png
+  greeting: 'A simple LinkTree theme for Hugo :evergreen_tree:'
+  icon: ':wave:'
+
+############################
+## Links
+############################
+
+links:
+  - github: https://github.com/chrede88/L1nkr
+  - gitlab: https://github.com/chrede88/L1nkr
+  - facebook: https://github.com/chrede88/L1nkr
+  - x-twitter: https://github.com/chrede88/L1nkr
+  - mastodon: https://github.com/chrede88/L1nkr
+  - linkedin: https://github.com/chrede88/L1nkr
+  - instagram: https://github.com/chrede88/L1nkr
+  - reddit: https://github.com/chrede88/L1nkr
+  - telegram: https://github.com/chrede88/L1nkr
+  - whatsapp: https://github.com/chrede88/L1nkr
+  - signal: https://github.com/chrede88/L1nkr
+  - codepen: https://github.com/chrede88/L1nkr
+  - dev: https://github.com/chrede88/L1nkr
+  - email: https://github.com/chrede88/L1nkr
+  - website: https://github.com/chrede88/L1nkr
+  # - link: https://github.com/chrede88/L1nkr
+  - discord: https://github.com/chrede88/L1nkr
+  # - orcid: https://github.com/chrede88/L1nkr
+  - slack: https://github.com/chrede88/L1nkr
+  - stack-overflow: https://github.com/chrede88/L1nkr
+  - twitch: https://github.com/chrede88/L1nkr
+  # - patreon: https://github.com/chrede88/L1nkr
+  - soundcloud: https://github.com/chrede88/L1nkr
+  - dribbble: https://github.com/chrede88/L1nkr
+  # - stack-exchange: https://github.com/chrede88/
+  # - tiktok: https://github.com/chrede88/
+  # - youtube: https://github.com/chrede88/
+  # - keybase: https://github.com/chrede88/
+  # - flickr: https://github.com/chrede88/
+  # - tumblr: https://github.com/chrede88/
+  # - kickstarter: https://github.com/chrede88/
+  # - snapchat: https://github.com/chrede88/
+  # - bluesky: https://bsky.app
+  # - bitbucket: https://github.com/chrede88/
+  # - bandcamp: https://github.com/chrede88/
+  # - etsy: https://github.com/chrede88/
+  # - spotify: https://github.com/chrede88/L1nkr
+  # - pinterest: https://github.com/chrede88/
+  - strava: https://github.com/chrede88/L1nkr
+  - untappd: https://github.com/chrede88/
+  # - skype: https://github.com/chrede88/
+  # - medium: https://github.com/chrede88/
+  # - foursquare: https://github.com/chrede88/
+  # - apple: https://github.com/chrede88/
+  # - amazon: https://github.com/chrede88/
+  - google: https://github.com/chrede88/L1nkr
+  # - paypal: https://github.com/chrede88/
+  # - windows: https://github.com/chrede88/
+  # - PGP-Key: https://github.com/chrede88/L1nkr
+  # - SSH-Key: https://github.com/chrede88/L1nkr
+  # - certifications: https://github.com/chrede88/L1nkr
+  # - codeberg: https://github.com/chrede88/L1nkr
+  # - newsletter: https://github.com/chrede88/L1nkr
+  # - pixelfed: https://github.com/chrede88/L1nkr
+  # - substack: https://github.com/chrede88/L1nkr
+
+##############################
+## Monochromatic color scheme
+##############################
+
+# all links will be slate-700 (or slate-50 in dark mode)
+# https://tailwindcss.com/docs/customizing-colors
+monochrome: true
+
+###########################
+## Icon text
+###########################
+
+# add the icon name to each icon
+icontext: true
+
+###########################
+## Tooltip
+###########################
+
+# add tooltips to the links
+tooltip: false
+
+############################
+## Colunms of Links
+############################
+
+# between 2 & 6 columns are supported (both incl)
+columns: 6
+
+###############################
+## OpenGraph & Twitter Cards
+###############################
+
+title: 'L1nkr'
+description: 'Demo site build with L1nkr & Hugo'
+images:
+  - thumbnail.png

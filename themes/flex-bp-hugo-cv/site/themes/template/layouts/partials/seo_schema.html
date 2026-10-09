@@ -1,0 +1,108 @@
+{{- /*
+  Structured data (JSON-LD).
+  Start page: ProfilePage with the person of the CV as mainEntity, filled from the CV data
+  (data/<language>/content.yaml), params.author and params.social, plus WebSite.
+  Address, phone, email and birthday are left out on purpose: they stay readable on the page,
+  but are not handed to crawlers in a machine readable form.
+  Other pages: WebSite.
+*/ -}}
+{{- $website := dict
+    "@context" "https://schema.org"
+    "@type" "WebSite"
+    "name" .Site.Title
+    "url" .Site.BaseURL
+    "description" .Site.Params.description
+    "inLanguage" .Lang
+-}}
+{{- if .IsHome -}}
+{{- $cv := partial "cv_data.html" . -}}
+{{- $name := "" -}}
+{{- with $cv.PersonalData }}{{ $name = .Name }}{{ end -}}
+{{- $name = $name | default .Site.Params.author.name | default .Site.Params.Author -}}
+{{- $person := dict "@type" "Person" "name" $name "url" .Site.BaseURL -}}
+{{- with .Site.Params.description }}{{ $person = merge $person (dict "description" .) }}{{ end -}}
+
+{{- /* Photo: assets/photo.jpg (as in the sidebar), else params.authorImage */ -}}
+{{- with partial "cv_photo.html" . -}}
+    {{- $person = merge $person (dict "image" .Permalink) -}}
+{{- else -}}
+    {{- with $.Site.Params.authorImage }}{{ $person = merge $person (dict "image" (. | absURL)) }}{{ end -}}
+{{- end -}}
+
+{{- /* Current position: the first experience entry without an end date (EndDate "Today", "Heute", ...) */ -}}
+{{- $jobTitle := .Site.Params.author.jobTitle -}}
+{{- with $cv.Experience }}{{ with .Sections }}{{ with index . 0 -}}
+    {{- if not (findRE `^\d{1,2}/\d{4}$` (string .EndDate)) -}}
+        {{- $jobTitle = $jobTitle | default .Name -}}
+        {{- $website := .Website -}}
+        {{- with .Empolyer | default .Employer -}}
+            {{- $org := dict "@type" "Organization" "name" . -}}
+            {{- with $website }}{{ $org = merge $org (dict "url" .) }}{{ end -}}
+            {{- $person = merge $person (dict "worksFor" $org) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end }}{{ end }}{{ end -}}
+{{- with $jobTitle }}{{ $person = merge $person (dict "jobTitle" .) }}{{ end -}}
+
+{{- /* Education: schools and universities (alumniOf), qualifications and diplomas (hasCredential).
+       A section with "Credential: false" (e.g. studies without degree) adds no credential. */ -}}
+{{- $alumniOf := slice -}}
+{{- $orgNames := slice -}}
+{{- $credentials := slice -}}
+{{- range slice $cv.AcademicEducation $cv.ProfessionalTraining $cv.SchoolEducation $cv.FurtherEducation -}}
+    {{- with . }}{{ range (.Sections | default slice) -}}
+        {{- $org := dict "@type" "EducationalOrganization" "name" .Organisation -}}
+        {{- with .Website }}{{ $org = merge $org (dict "url" .) }}{{ end -}}
+        {{- if and .Organisation (not (in $orgNames .Organisation)) -}}
+            {{- $alumniOf = $alumniOf | append $org -}}
+            {{- $orgNames = $orgNames | append .Organisation -}}
+        {{- end -}}
+        {{- if ne .Credential false }}{{ with .Qualification -}}
+            {{- $credentials = $credentials | append (dict "@type" "EducationalOccupationalCredential" "name" . "recognizedBy" $org) -}}
+        {{- end }}{{ end -}}
+    {{- end }}{{ end -}}
+{{- end -}}
+{{- with $cv.Diplomas -}}
+    {{- range (.Items | default slice) -}}
+        {{- $credentials = $credentials | append (dict "@type" "EducationalOccupationalCredential" "name" (replaceRE `^\d{1,2}/\d{4}\s+` "" .)) -}}
+    {{- end -}}
+{{- end -}}
+{{- with $alumniOf }}{{ $person = merge $person (dict "alumniOf" .) }}{{ end -}}
+{{- with $credentials }}{{ $person = merge $person (dict "hasCredential" .) }}{{ end -}}
+
+{{- /* Skills: params.author.knowsAbout, else the skills list and the skills of the experience entries */ -}}
+{{- $knowsAbout := .Site.Params.author.knowsAbout -}}
+{{- if not $knowsAbout -}}
+    {{- $knowsAbout = slice -}}
+    {{- with $cv.Skills }}{{ range (.Items | default slice) }}{{ $knowsAbout = $knowsAbout | append . }}{{ end }}{{ end -}}
+    {{- with $cv.Experience }}{{ range (.Sections | default slice) }}{{ range (.Skills | default slice) }}{{ $knowsAbout = $knowsAbout | append . }}{{ end }}{{ end }}{{ end -}}
+    {{- $unique := slice -}}
+    {{- $seen := slice -}}
+    {{- range $knowsAbout }}{{ if not (in $seen (lower .)) }}{{ $unique = $unique | append . }}{{ $seen = $seen | append (lower .) }}{{ end }}{{ end -}}
+    {{- $knowsAbout = $unique -}}
+{{- end -}}
+{{- with $knowsAbout }}{{ $person = merge $person (dict "knowsAbout" .) }}{{ end -}}
+
+{{- /* Languages without the level in brackets: "English (CEFR Level B2)" -> "English" */ -}}
+{{- $languages := slice -}}
+{{- with $cv.Languages }}{{ range (.Items | default slice) }}{{ $languages = $languages | append (replaceRE `\s*\(.*\)\s*$` "" .) }}{{ end }}{{ end -}}
+{{- with $languages }}{{ $person = merge $person (dict "knowsLanguage" .) }}{{ end -}}
+
+{{- $sameAs := slice -}}
+{{- range partial "social_links.html" . }}{{ if .profile }}{{ $sameAs = $sameAs | append .url }}{{ end }}{{ end -}}
+{{- with $sameAs }}{{ $person = merge $person (dict "sameAs" .) }}{{ end -}}
+
+{{- $profile := dict
+    "@context" "https://schema.org"
+    "@type" "ProfilePage"
+    "url" .Permalink
+    "name" .Site.Title
+    "inLanguage" .Lang
+    "mainEntity" $person
+-}}
+{{- with .Site.Params.description }}{{ $profile = merge $profile (dict "description" .) }}{{ end -}}
+{{- if not .Lastmod.IsZero }}{{ $profile = merge $profile (dict "dateModified" (.Lastmod.UTC.Format "2006-01-02T15:04:05Z")) }}{{ end -}}
+<script type="application/ld+json">{{ slice $profile $website | jsonify | safeJS }}</script>
+{{- else -}}
+<script type="application/ld+json">{{ $website | jsonify | safeJS }}</script>
+{{- end -}}

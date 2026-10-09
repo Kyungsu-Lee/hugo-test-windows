@@ -1,0 +1,85 @@
+{{- define "main" }}
+{{- $recordConfig := .Params.record | default dict -}}
+{{- if $recordConfig.data_driven -}}
+    {{- partial "structured-record/page.html" . -}}
+{{- else -}}
+{{- $model := partial "content-model.html" . -}}
+{{- $mode := $model.Visual.Mode -}}
+{{- $listing := .Params.listing | default dict -}}
+{{- $pages := (union .RegularPages .Sections).ByDate.Reverse -}}
+{{- if $listing.featured_first | default false -}}
+    {{- $featured := where $pages "Params.editorial.featured" true -}}
+    {{- $ordinary := where $pages "Params.editorial.featured" "ne" true -}}
+    {{- $pages = union $featured $ordinary -}}
+{{- end -}}
+{{- $definitions := partial "section/filter-definitions.html" (dict
+    "section" . "pages" $pages "fields" ($listing.filter_fields | default slice)
+) -}}
+<div class="nf-list{{ if eq $mode "record" }} nf-record{{ end }}" data-page-mode="{{ $mode }}">
+<header class="page-header">
+    {{- partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <p class="post-description">{{ . | markdownify }}</p>
+    {{- end }}
+    {{- with .OutputFormats.Get "rss" }}
+    <p><a href="{{ .RelPermalink }}">{{ i18n "nf_rss_feed" | default "RSS feed" }}</a></p>
+    {{- end }}
+</header>
+
+{{- with .Content }}
+<div class="post-content md-content nf-prose nf-section-introduction">{{ . }}</div>
+{{- end }}
+
+{{- partial "section/filters.html" (dict
+    "section" .
+    "links" ($listing.links | default slice)
+    "definitions" $definitions
+) -}}
+
+{{- with $listing.featured }}
+    {{- with site.GetPage . }}
+    <section class="nf-section-featured" aria-labelledby="nf-section-featured-heading">
+        <h2 id="nf-section-featured-heading">{{ $listing.featured_label | default (i18n "nf_featured" | default "Featured") }}</h2>
+        {{- partial "record/selected.html" . }}
+    </section>
+    {{- else }}
+        {{- if and (site.Params.noFate.validateContentModel | default true) hugo.IsProduction -}}
+            {{- errorf "No Fate section: listing.featured references missing or unpublished path %q on %s" . $.RelPermalink -}}
+        {{- end -}}
+    {{- end }}
+{{- end }}
+
+{{- $paginator := .Paginate $pages -}}
+{{- with $paginator.Pages }}
+<section class="nf-section-index" aria-labelledby="nf-section-index-heading">
+    <h2 id="nf-section-index-heading">{{ $listing.index_label | default (i18n "nf_chronological_index" | default "Chronological index") }}</h2>
+    <div class="nf-entry-list">
+        {{- range $index, $page := . }}
+            {{- $density := "standard" -}}
+            {{- if eq $page.Params.content.format "note" }}{{ $density = "compact" }}{{ end -}}
+            {{- if and (eq $paginator.PageNumber 1) (eq $index 0) }}{{ $density = "lead" }}{{ end -}}
+            {{- partial "record/entry.html" (dict
+                "page" $page
+                "density" $density
+                "headingLevel" 3
+                "filters" $definitions
+            ) -}}
+        {{- end }}
+    </div>
+</section>
+{{- end }}
+
+{{- if gt $paginator.TotalPages 1 }}
+<nav class="pagination" aria-label="{{ i18n "nf_pagination" | default "Pagination" }}">
+    {{- with $paginator.Prev }}
+    <a class="prev" href="{{ .URL }}">{{ i18n "prev_page" | default "Previous" }}</a>
+    {{- end }}
+    {{- with $paginator.Next }}
+    <a class="next" href="{{ .URL }}">{{ i18n "next_page" | default "Next" }}</a>
+    {{- end }}
+</nav>
+{{- end }}
+</div>
+{{- end }}
+{{- end }}

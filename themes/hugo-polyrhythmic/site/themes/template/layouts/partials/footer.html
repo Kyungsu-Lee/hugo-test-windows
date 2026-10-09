@@ -1,0 +1,70 @@
+<section class="footer-links">
+  {{ $menus := site.Menus }}
+  {{ range $name, $menu := $menus }}
+    {{ if ne $name "main" }}
+      <div class="footer-links-list">
+        <span class="title-medium on-surface-variant">
+          {{ $name | humanize }}
+        </span>
+        {{ range $menu }}
+          {{ if .PageRef }}
+            <a href="{{ .URL | safeHTMLAttr }}">
+              {{ .Name }}
+            </a>
+          {{ else if .URL }}
+            <a
+              href="{{ .URL | safeHTMLAttr }}"
+              target="_blank"
+              rel="external noopener noreferrer me"
+            >
+              {{ .Name }}
+            </a>
+          {{ else }}
+            <p>{{ .Name | safeHTML }}</p>
+          {{ end }}
+        {{ end }}
+      </div>
+    {{ end }}
+  {{ end }}
+</section>
+
+{{/* Copyright */}}
+<section class="footer-lower">
+  <div class="copyright">
+    {{ with site.Copyright }}
+      <p>
+        {{ . | markdownify }}
+      </p>
+    {{ end }}
+    <a id="copyright-button" href="{{ "" | absLangURL }}">
+      ©
+      {{ now.Year }}
+      {{ site.Title }}
+    </a>
+  </div>
+
+  {{ with site.Params.footerButtons }}
+    <div class="footer-buttons">
+      <div class="footer-buttons-set">
+        {{ range . }}
+          {{ partial "components/actions/button-icon.html" (dict
+            "type" "tonal"
+            "icon" .icon
+            "label" ""
+            "href" .url)
+          }}
+        {{ end }}
+      </div>
+
+      {{ with site.Params.footerButtonsText }}
+        <span class="footer-buttons-text">
+          {{ . | markdownify }}
+        </span>
+      {{ end }}
+    </div>
+  {{ end }}
+
+  {{ with site.Params.assets.footerImage }}
+    <img id="footer-image" src="{{ . | absURL }}" alt="Footer image" />
+  {{ end }}
+</section>

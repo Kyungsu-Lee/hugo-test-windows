@@ -1,0 +1,130 @@
+body {
+  background-color: $body-color;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: $black;
+  color: $white;
+}
+
+body::-webkit-scrollbar {
+  width: .5rem;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: $black;
+  outline: 2px solid #fff;
+}
+
+
+/* preloader */
+
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ol,
+ul {
+  margin: 0px;
+}
+
+img {
+  vertical-align: middle;
+  border: 0;
+}
+
+a,
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+a:not(.btn):hover {
+  text-decoration: underline;
+}
+
+a,
+button,
+select {
+  cursor: pointer;
+  transition: .2s ease;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+a:hover {
+  color: $primary-color;
+}
+
+.section {
+  padding-top: 70px;
+  padding-bottom: 70px;
+}
+
+.card {
+  border-radius: 0;
+}
+
+.shadow{
+  box-shadow: 0 12px 24px -6px rgba(45,67,121,.10) !important;
+}
+
+// form control
+
+.form-control {
+  &:focus {
+    outline: 0;
+    border-color: $primary-color;
+    box-shadow: none;
+  }
+
+  &::placeholder {
+    color: $text-color;
+  }
+}
+
+textarea.form-control {
+  height: 100px !important;
+}
+
+.list-unstyled{
+  li{
+    margin-bottom: 10px;
+  }
+}
+
+.check-mark{
+  position: relative;
+  padding-left: 0px;
+  &::before{
+    position: absolute;
+    content: "\e64c";
+    font-family: $icon-font;
+    color: $white;
+    height: 25px;
+    width: 25px;
+    line-height: 25px;
+    background-color: $black;
+    border-radius: 50%;
+    font-size: 15px;
+    text-align: center;
+    left: -30px;
+    top: 3px;
+  }
+}

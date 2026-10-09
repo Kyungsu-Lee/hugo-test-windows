@@ -1,0 +1,238 @@
+{{ define "main" }}
+  {{ $ui := site.Params.ui }}
+  {{ $tocStartRaw := int ($ui.tocStartLevel | default 2) }}
+  {{ $tocEndRaw := int ($ui.tocEndLevel | default 4) }}
+  {{ $tocStart := $tocStartRaw }}
+  {{ $tocEnd := $tocEndRaw }}
+  {{ if lt $tocStart 1 }}{{ $tocStart = 1 }}{{ end }}
+  {{ if gt $tocStart 6 }}{{ $tocStart = 6 }}{{ end }}
+  {{ if lt $tocEnd 1 }}{{ $tocEnd = 1 }}{{ end }}
+  {{ if gt $tocEnd 6 }}{{ $tocEnd = 6 }}{{ end }}
+  {{ if gt $tocStart $tocEnd }}
+    {{ $tocStart = $tocEnd }}
+  {{ end }}
+  {{ $tocOrdered := eq (printf "%v" ($ui.tocOrdered | default false)) "true" }}
+  {{ $tocHTML := .Fragments.ToHTML $tocStart $tocEnd $tocOrdered }}
+  {{ $showTOC := and (.Params.toc) (or (in $tocHTML "<ul") (in $tocHTML "<ol")) }}
+  {{ $authors := slice }}
+  {{ with .Params.authors }}
+    {{ if reflect.IsSlice . }}
+      {{ $authors = . }}
+    {{ else }}
+      {{ $authors = slice (printf "%v" .) }}
+    {{ end }}
+  {{ end }}
+  {{ if and (eq (len $authors) 0) .Params.author }}
+    {{ if reflect.IsSlice .Params.author }}
+      {{ $authors = .Params.author }}
+    {{ else }}
+      {{ $authors = slice (printf "%v" .Params.author) }}
+    {{ end }}
+  {{ end }}
+  {{ $byline := "" }}
+  {{ if gt (len $authors) 0 }}
+    {{ $byline = delimit $authors ", " }}
+  {{ end }}
+  {{ $authorTerms := .GetTerms "authors" }}
+  {{ $indexTerms := slice .Title }}
+  {{ with .Params.subtitle }}
+    {{ $indexTerms = $indexTerms | append (printf "%v" .) }}
+  {{ end }}
+  {{ with .Params.description }}
+    {{ $indexTerms = $indexTerms | append (printf "%v" .) }}
+  {{ end }}
+  {{ with .Params.categories }}
+    {{ range . }}
+      {{ $indexTerms = $indexTerms | append (printf "%v" .) }}
+    {{ end }}
+  {{ end }}
+  {{ with .Params.tags }}
+    {{ range . }}
+      {{ $indexTerms = $indexTerms | append (printf "%v" .) }}
+    {{ end }}
+  {{ end }}
+  {{ if gt (len $authors) 0 }}
+    {{ $indexTerms = $indexTerms | append (delimit $authors " ") }}
+  {{ end }}
+
+  {{ $authorPosts := slice }}
+  {{ $isAuthorProfilePage := and (eq .Kind "page") (eq .Section "authors") }}
+  {{ if $isAuthorProfilePage }}
+    {{ $authorName := lower (strings.TrimSpace .Title) }}
+    {{ $authorSlug := .RelPermalink | replaceRE "^/authors/" "" | replaceRE "/$" "" | lower }}
+    {{ range site.RegularPages.ByDate.Reverse }}
+      {{ if ne .RelPermalink $.RelPermalink }}
+        {{ $matched := false }}
+        {{ with .Params.authors }}
+          {{ if reflect.IsSlice . }}
+            {{ range . }}
+              {{ $candidate := lower (strings.TrimSpace (printf "%v" .)) }}
+              {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $authorSlug) }}
+                {{ $matched = true }}
+              {{ end }}
+            {{ end }}
+          {{ else }}
+            {{ $candidate := lower (strings.TrimSpace (printf "%v" .)) }}
+            {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $authorSlug) }}
+              {{ $matched = true }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        {{ if and (not $matched) .Params.author }}
+          {{ if reflect.IsSlice .Params.author }}
+            {{ range .Params.author }}
+              {{ $candidate := lower (strings.TrimSpace (printf "%v" .)) }}
+              {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $authorSlug) }}
+                {{ $matched = true }}
+              {{ end }}
+            {{ end }}
+          {{ else }}
+            {{ $candidate := lower (strings.TrimSpace (printf "%v" .Params.author)) }}
+            {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $authorSlug) }}
+              {{ $matched = true }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        {{ if $matched }}
+          {{ $authorPosts = $authorPosts | append . }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ $showUpdated := ne (.Date | time.Format "2006-01-02") (.Lastmod | time.Format "2006-01-02") }}
+  {{ $isStandalonePage := or (eq .Type "page") (eq .Section "pages") }}
+  {{ $showShareBar := true }}
+  {{ if isset .Params "share" }}
+    {{ $showShareBar = ne (lower (printf "%v" .Params.share)) "false" }}
+  {{ end }}
+  {{ $pageTitle := strings.TrimSpace .Title }}
+  {{ $pageDek := "" }}
+  {{ with .Params.subtitle }}
+    {{ $pageDek = printf "%v" . }}
+  {{ else }}
+    {{ with .Params.description }}
+      {{ $pageDek = printf "%v" . }}
+    {{ end }}
+  {{ end }}
+  {{ $showPageHeader := or (not $isStandalonePage) (ne $pageTitle "") (ne (strings.TrimSpace $pageDek) "") }}
+  {{ $coverCaption := "" }}
+  {{ $coverCaptionDisplay := true }}
+  {{ if reflect.IsMap .Params.cover }}
+    {{ with index .Params.cover "caption" }}
+      {{ $coverCaption = printf "%v" . }}
+    {{ end }}
+    {{ with index .Params.cover "captionDisplay" }}
+      {{ if not . }}
+        {{ $coverCaptionDisplay = false }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  <article class="article-page{{ if $showTOC }} article-page--with-toc{{ end }}">
+    {{ if $showPageHeader }}
+      <header class="article-page__header article-page__header--news">
+        {{ if not $isStandalonePage }}
+          <p class="eyebrow">{{ if .Type }}{{ .Type | singularize | humanize }}{{ else }}{{ $ui.articleFallbackType | default "Article" }}{{ end }}</p>
+        {{ end }}
+        {{ if ne $pageTitle "" }}
+          <h1>{{ $pageTitle }}</h1>
+        {{ end }}
+
+        {{ if ne (strings.TrimSpace $pageDek) "" }}
+          <p class="article-page__dek">{{ $pageDek }}</p>
+        {{ end }}
+
+        {{ if not $isStandalonePage }}
+          <div class="article-page__byline-row">
+            {{ if gt (len $authorTerms) 0 }}
+              <p class="article-page__byline">
+                {{ $ui.articleByLabel | default "By" }}
+                <span>
+                  {{- range $index, $author := $authorTerms -}}
+                    {{- if gt $index 0 }}, {{ end -}}
+                    <a class="article-page__byline-link" href="{{ $author.RelPermalink }}">{{ $author.LinkTitle }}</a>
+                  {{- end -}}
+                </span>
+              </p>
+            {{ else }}
+              {{ with $byline }}
+                <p class="article-page__byline">{{ $ui.articleByLabel | default "By" }} <span>{{ . }}</span></p>
+              {{ end }}
+            {{ end }}
+          <p class="article-page__dateline">
+            <time datetime="{{ $.Date | time.Format "2006-01-02" }}">{{ $ui.articlePublishedLabel | default "Published" }} {{ $.Date | time.Format ":date_long" }}</time>
+            {{ if $showUpdated }}
+              <span>{{ $ui.articleUpdatedLabel | default "Updated" }} {{ $.Lastmod | time.Format ":date_long" }}</span>
+            {{ end }}
+            <span>{{ $ui.articleReadingTimeLabel | default "Reading time" }} {{ .ReadingTime }} {{ $ui.articleMinReadLabel | default "min read" }}</span>
+          </p>
+        </div>
+      {{ end }}
+
+        {{ if and $coverCaptionDisplay (ne (strings.TrimSpace $coverCaption) "") }}
+          <p class="article-page__cover-caption">{{ $coverCaption }}</p>
+        {{ end }}
+      </header>
+    {{ end }}
+
+    <div class="article-page__layout">
+      {{ if $showTOC }}
+        {{ partial "toc.html" (dict "tocHTML" $tocHTML) }}
+      {{ end }}
+      <div class="article-page__body{{ if $showTOC }} article-page__body--with-toc{{ else }} article-page__body--wide-media{{ end }}" data-pagefind-body>
+        <p class="pagefind-index-meta">{{ delimit $indexTerms " " }}</p>
+        {{ .Content }}
+        {{ partial "shortcodes/footnotes-fallback.html" . }}
+
+        {{ if gt (len $authorPosts) 0 }}
+          <section class="article-page__author-posts">
+            <h2>{{ $ui.authorPostsHeading | default "Articles by this author" }}</h2>
+            <div class="story-grid">
+              {{ range $authorPosts }}
+                {{ partial "article-card.html" (dict "page" .) }}
+              {{ end }}
+            </div>
+          </section>
+        {{ end }}
+      </div>
+    </div>
+
+    {{ if and (not $isStandalonePage) $showShareBar }}
+      {{ partial "article-share.html" . }}
+    {{ end }}
+
+    {{ if not $isStandalonePage }}
+      {{ partial "terms.html" (dict "taxonomy" "categories" "page" .) }}
+      {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+      {{ partial "related-posts.html" . }}
+      {{ partial "article-comments.html" . }}
+    {{ end }}
+
+    {{ if not $isStandalonePage }}
+      {{ $prevPost := .PrevInSection }}
+      {{ $nextPost := .NextInSection }}
+      {{ if or $prevPost $nextPost }}
+        <nav class="article-pager" aria-label="{{ $ui.articlePostNavAriaLabel | default "Post navigation" }}">
+          {{ if $prevPost }}
+            <a class="article-pager__link article-pager__link--prev" href="{{ $prevPost.RelPermalink }}">
+              <span>{{ $ui.articlePrevLabel | default "Previous" }}</span>
+              <strong>{{ $prevPost.LinkTitle }}</strong>
+            </a>
+          {{ else }}
+            <span class="article-pager__spacer"></span>
+          {{ end }}
+          {{ if $nextPost }}
+            <a class="article-pager__link article-pager__link--next" href="{{ $nextPost.RelPermalink }}">
+              <span>{{ $ui.articleNextLabel | default "Next" }}</span>
+              <strong>{{ $nextPost.LinkTitle }}</strong>
+            </a>
+          {{ else }}
+            <span class="article-pager__spacer"></span>
+          {{ end }}
+        </nav>
+      {{ end }}
+    {{ end }}
+  </article>
+{{ end }}
+
+

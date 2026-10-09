@@ -1,0 +1,30 @@
+{{ define "main" }}
+  {{ $ui := site.Params.ui }}
+  {{ $features := site.Params.features }}
+  {{ $paginationEnabled := ne $features.enablePagination false }}
+  {{ $pageSize := site.Params.paginationSize | default 6 }}
+  {{ $pages := .Pages.ByDate.Reverse }}
+  {{ $pager := false }}
+  {{ if $paginationEnabled }}
+    {{ $pager = .Paginate $pages $pageSize }}
+    {{ $pages = $pager.Pages }}
+  {{ end }}
+  <section class="section-page">
+    <header class="section-page__header">
+      <p class="eyebrow">{{ $ui.sectionEyebrow | default "Collection" }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Content }}
+        <div class="section-page__intro">{{ . }}</div>
+      {{ end }}
+    </header>
+
+    <div class="story-grid">
+      {{ range $pages }}
+        {{ partial "article-card.html" (dict "page" .) }}
+      {{ end }}
+    </div>
+  </section>
+  {{ if $paginationEnabled }}
+    {{ partial "pagination.html" (dict "pager" $pager) }}
+  {{ end }}
+{{ end }}

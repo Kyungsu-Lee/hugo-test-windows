@@ -1,0 +1,64 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{{- partial "meta.html" . -}}
+
+{{- /* The 404 page should never be indexed, and self-canonicalizing it invites
+       exactly that on hosts that serve /404.html with a 200. */ -}}
+{{- if eq .Kind "404" -}}
+<meta name="robots" content="noindex, follow">
+{{- else -}}
+<link rel="canonical" href="{{ partial "canonical-url.html" . }}">
+{{- end }}
+
+<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+
+{{- /* Preload the configured font */ -}}
+{{- $fontFamily := site.Params.scanlines.typography.fontFamily | default "glass" -}}
+{{- if eq $fontFamily "fira" -}}
+<link rel="preload" href="{{ "fonts/FiraCode-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- else -}}
+<link rel="preload" href="{{ "fonts/Glass_TTY_VT220.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- end -}}
+
+{{- /* Process SCSS with Hugo Pipes */ -}}
+{{- $options := dict "targetPath" "css/main.css" "outputStyle" "compressed" -}}
+{{- $style := resources.Get "scss/main.scss" | toCSS $options -}}
+{{- if hugo.IsProduction -}}
+  {{- $style = $style | minify | fingerprint -}}
+{{- end -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">
+
+{{- /* User custom CSS hook */ -}}
+{{- $customCSS := resources.Get "css/custom.css" -}}
+{{- if $customCSS -}}
+  {{- if hugo.IsProduction -}}
+    {{- $customCSS = $customCSS | minify | fingerprint -}}
+  {{- end -}}
+  <link rel="stylesheet" href="{{ $customCSS.RelPermalink }}">
+{{- else -}}
+  {{- /* Check static folder fallback */ -}}
+  {{- if (fileExists "static/css/custom.css") -}}
+    <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+  {{- end -}}
+{{- end -}}
+
+{{- /* RSS Feed. Written as a literal tag (not printf|safeHTML) so Hugo escapes
+       the title — a quote or ampersand in the site title used to emit broken
+       markup. Section feeds get a distinct label so subscribers can tell the
+       section feed apart from the site feed. */ -}}
+{{- range .AlternativeOutputFormats }}
+<link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ if $.IsHome }}{{ $.Site.Title }}{{ else }}{{ printf "%s | %s" $.Title $.Site.Title }}{{ end }}">
+{{- end }}
+
+{{- /* Favicon */ -}}
+{{- $favicon := site.Params.scanlines.favicon | default "/favicon.ico" -}}
+{{- /* Strip a leading slash so the path resolves under a subdirectory baseURL
+       (relURL leaves leading-slash input at the host root). */ -}}
+<link rel="icon" type="image/x-icon" href="{{ strings.TrimPrefix "/" $favicon | relURL }}">
+
+{{- /* Structured data (JSON-LD) */ -}}
+{{- partial "schema.html" . -}}
+
+{{- /* User extensibility hook */ -}}
+{{- partial "custom_head.html" . -}}

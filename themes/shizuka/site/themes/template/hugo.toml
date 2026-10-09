@@ -1,0 +1,72 @@
+baseURL = ""
+locale = "en"
+title = "Shizuka"
+enableRobotsTXT = true
+enableGitInfo = false
+paginate = 5
+
+[module]
+  [module.hugoVersion]
+    min = "0.100.0"
+
+[author]
+  name = "Shizuka"
+  email = "hello@example.com"
+
+[params]
+  description = "A minimal Hugo blog theme."
+  keywords = ["blog"]
+  ogImage = "/images/og-default.png"
+  rssLimit = 20
+  dateFormat = "January 2, 2006"
+  github = ""
+  website = ""
+  tagline = ""
+  googleAnalyticsID = ""  # Google Analytics 4 Measurement ID (e.g. "G-XXXXXXXXXX")
+  enableCookieConsent = true  # Show cookie consent banner when GA is enabled
+  privacyPolicyURL = ""  # Link to privacy policy (optional, e.g. "/privacy/")
+  cusdisAppId = ""  # Cusdis App ID to enable comments (https://cusdis.com)
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    lineNos = false
+    style = "monokailight"
+    noClasses = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+    ordered = false
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = "series"
+
+[menu]
+  [[menu.main]]
+    name = "Blog"
+    url = "/posts/"
+    weight = 1
+  [[menu.main]]
+    name = "Archive"
+    url = "/archive/"
+    weight = 2
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 3
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5

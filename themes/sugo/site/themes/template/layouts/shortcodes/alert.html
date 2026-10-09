@@ -1,0 +1,8 @@
+{{- $message := .Inner | markdownify | plainify | jsonify -}}
+<script>
+(function() {
+  window.setTimeout(function() {
+    alert({{ $message }});
+  }, 0);
+})();
+</script>

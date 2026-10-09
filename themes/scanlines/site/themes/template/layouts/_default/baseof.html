@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{{- $colorScheme := site.Params.scanlines.colorScheme | default "amber" -}}
+{{- $effects := site.Params.scanlines.effects -}}
+{{- $typography := site.Params.scanlines.typography -}}
+{{- $layout := site.Params.scanlines.layout -}}
+{{- $syntax := site.Params.scanlines.syntax -}}
+{{- $header := site.Params.scanlines.header -}}
+<html lang="{{ partial "site-language.html" . | default "en" }}" data-color-scheme="{{ $colorScheme }}">
+<head>
+  {{- partial "head.html" . -}}
+
+  {{- /* Custom color overrides — values validated as hex to prevent CSS context injection */ -}}
+  {{- $colors := site.Params.scanlines.colors -}}
+  {{- /* Only real CSS hex lengths (3/4/6/8). A bare {3,8} also accepted 5- and
+         7-digit typos, which pass through as invalid colors and break every
+         var() that reads them instead of falling back to the scheme. */ -}}
+  {{- $hexRE := `^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$` -}}
+  {{- /* Collect the declarations first, so a config block of empty strings (the
+         shipped exampleSite shape) doesn't emit an empty <style>:root{}</style>
+         on every page. */ -}}
+  {{- $decls := slice -}}
+  {{- with $colors -}}
+    {{- with .foreground }}{{ if findRE $hexRE . 1 }}{{ $decls = $decls | append (printf "--color-fg: %s; --color-fg-bright: %s;" . .) }}{{ end }}{{ end -}}
+    {{- with .background }}{{ if findRE $hexRE . 1 }}{{ $decls = $decls | append (printf "--color-bg: %s;" .) }}{{ end }}{{ end -}}
+    {{- with .backgroundSecondary }}{{ if findRE $hexRE . 1 }}{{ $decls = $decls | append (printf "--color-bg-secondary: %s;" .) }}{{ end }}{{ end -}}
+    {{- with .accent }}{{ if findRE $hexRE . 1 }}{{ $decls = $decls | append (printf "--color-accent: %s;" .) }}{{ end }}{{ end -}}
+    {{- with .link }}{{ if findRE $hexRE . 1 }}{{ $decls = $decls | append (printf "--color-link: %s;" .) }}{{ end }}{{ end -}}
+    {{- with .linkHover }}{{ if findRE $hexRE . 1 }}{{ $decls = $decls | append (printf "--color-link-hover: %s;" .) }}{{ end }}{{ end -}}
+  {{- end -}}
+  {{- with $decls }}
+  <style>:root { {{ delimit . " " | safeCSS }} }</style>
+  {{- end -}}
+
+  {{- /* Layout and typography CSS variables (Issues 9, 13) */ -}}
+  {{- if or $layout.containerWidth $layout.contentWidth $typography.baseFontSize $effects.glowIntensity $effects.flickerIntensity $header.asciiScale -}}
+  <style>
+    :root {
+      {{- with $layout.containerWidth }}--container-max: {{ . }};{{ end }}
+      {{- with $layout.contentWidth }}--content-max: {{ . }};{{ end }}
+      {{- with $typography.baseFontSize }}--base-font-size: {{ . }};{{ end }}
+      {{- with $effects.glowIntensity }}--glow-intensity: {{ . }};{{ end }}
+      {{- /* Validate numeric and clamp to <=1 — caps the flash amplitude well
+             under the WCAG 2.3.1 luminance threshold even if mis-configured. */ -}}
+      {{- with $effects.flickerIntensity }}{{ if findRE `^[0-9]*\.?[0-9]+$` (printf "%v" .) }}--flicker-intensity: {{ math.Min (float .) 1 }};{{ end }}{{ end }}
+      {{- /* Validate numeric before float() so a typo (e.g. "large") can't abort the build — mirrors the hex validation above */ -}}
+      {{- with $header.asciiScale }}{{ if findRE `^[0-9]*\.?[0-9]+$` (printf "%v" .) }}--ascii-scale: {{ float . }};{{ end }}{{ end }}
+    }
+  </style>
+  {{- end -}}
+</head>
+<body class="scanlines-body
+  {{- if ne $effects.enabled false }} crt-enabled{{ end -}}
+  {{- if ne $effects.glow false }} crt-glow{{ end -}}
+  {{- if and (ne $effects.enabled false) (ne $effects.vignette false) }} crt-vignette-enabled{{ end -}}
+  {{- if site.Params.scanlines.accessibility.disableEffects }} effects-disabled{{ end -}}
+  {{- if site.Params.scanlines.accessibility.reduceMotion }} reduce-motion{{ end -}}
+  {{- if site.Params.scanlines.accessibility.highContrast }} high-contrast{{ end -}}
+  {{- if $syntax.colored }} syntax-colored{{ end -}}
+  {{- if eq $typography.fontFamily "fira" }} font-fira{{ end -}}
+">
+  <a class="skip-link" href="#main-content">{{ or (i18n "skipToContent") "Skip to content" }}</a>
+
+  {{- partial "crt-overlay.html" . -}}
+
+  <div class="site-wrapper{{- if ne (site.Params.scanlines.statusLine.enabled) false }} status-line-active{{ end -}}">
+    {{- partial "header.html" . -}}
+
+    <main class="main-content" id="main-content">
+      {{- block "main" . }}{{- end }}
+    </main>
+
+    {{- partial "footer.html" . -}}
+  </div>
+
+  {{- partial "status-line.html" . -}}
+
+  {{- partial "custom_footer.html" . -}}
+</body>
+</html>

@@ -1,0 +1,76 @@
+{{ define "main" }}
+  {{ $ui := site.Params.ui }}
+  {{ $features := site.Params.features }}
+  {{ $paginationEnabled := ne $features.enablePagination false }}
+  {{ $pageSize := site.Params.paginationSize | default 6 }}
+  {{ $stories := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+  {{ if eq (len $stories) 0 }}
+    {{ $stories = site.RegularPages.ByDate.Reverse }}
+  {{ end }}
+  {{ $featuredCandidates := slice }}
+  {{ range $stories }}
+    {{ if eq (lower (printf "%v" (.Params.featured | default false))) "true" }}
+      {{ $featuredCandidates = $featuredCandidates | append . }}
+    {{ end }}
+  {{ end }}
+  {{ $featured := false }}
+  {{ if gt (len $featuredCandidates) 0 }}
+    {{ $featured = index $featuredCandidates 0 }}
+  {{ else if gt (len $stories) 0 }}
+    {{ $featured = index $stories 0 }}
+  {{ end }}
+  {{ $hasFeatured := ne $featured false }}
+  {{ $paginatedStories := $stories }}
+  {{ if $hasFeatured }}
+    {{ $paginatedStories = where $stories "RelPermalink" "ne" $featured.RelPermalink }}
+  {{ end }}
+  {{ $listPages := $paginatedStories }}
+  {{ $showFeatured := $hasFeatured }}
+  {{ $pager := false }}
+  {{ if $paginationEnabled }}
+    {{ $pager = .Paginate $paginatedStories $pageSize }}
+    {{ $listPages = $pager.Pages }}
+    {{ $showFeatured = and $hasFeatured (eq $pager.PageNumber 1) }}
+  {{ end }}
+
+  {{ with .Content }}
+    {{if $ui.homeEditorHeading }}
+    <section class="editor-note">
+      <h2>{{ $ui.homeEditorHeading | default "From the Editor" }}</h2>
+      <div class="editor-note__body">{{ . }}</div>
+    </section>
+    {{end}}
+  {{ end }}
+
+  {{ if $showFeatured }}
+    <section class="home-featured">
+      <p class="eyebrow">{{ $ui.homeFeaturedEyebrow | default "Featured Story" }}</p>
+      {{ partial "post-cover.html" (dict "page" $featured "link" $featured.RelPermalink "class" "home-featured__cover") }}
+      <h2 class="home-featured__title"><a href="{{ $featured.RelPermalink }}">{{ $featured.LinkTitle }}</a></h2>
+      {{ with $featured.Params.subtitle }}
+        <p class="home-featured__subtitle">{{ . }}</p>
+      {{ end }}
+      <p class="home-featured__summary">{{ partial "summary-text.html" (dict "page" $featured "length" 260) }}</p>
+      <a class="home-featured__cta" href="{{ $featured.RelPermalink }}">{{ $ui.homeFeaturedCta | default "Read featured story" }}</a>
+    </section>
+  {{ end }}
+
+  {{ if gt (len $listPages) 0 }}
+    <section class="home-latest">
+      <div class="section-head">
+        <p class="eyebrow">{{ $ui.homeLatestEyebrow | default "Latest Writing" }}</p>
+        <h2>{{ $ui.homeLatestHeading | default "Recent Articles" }}</h2>
+      </div>
+      <div class="story-grid">
+        {{ range $listPages }}
+          {{ partial "article-card.html" (dict "page" .) }}
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  {{ if $paginationEnabled }}
+    {{ partial "pagination.html" (dict "pager" $pager) }}
+  {{ end }}
+{{ end }}
+

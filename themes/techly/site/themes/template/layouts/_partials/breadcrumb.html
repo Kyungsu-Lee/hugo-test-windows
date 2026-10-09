@@ -1,0 +1,16 @@
+{{- $page := .page -}}
+{{- $ancestors := .ancestors | default slice -}}
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    <li>
+      <a href="{{ site.Home.RelPermalink }}">Home</a>
+    </li>
+    {{- range $ancestors }}
+      <li>
+        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+      </li>
+    {{- end }}
+    <li aria-current="page">{{ $page.LinkTitle }}</li>
+  </ol>
+</nav>

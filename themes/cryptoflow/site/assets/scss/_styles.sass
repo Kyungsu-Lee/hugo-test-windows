@@ -1,0 +1,341 @@
+body
+	background-color: $light
+	color: $color_2
+	background-repeat: no-repeat
+	background-size: cover
+	background-position: top left
+	font-family: $ffText, $ffBack
+
+
+a
+	font-family: inherit
+	&:hover, &:focus, &:active, &:focus-visible
+		color: inherit
+		outline: none
+		appearance: none
+		box-shadow: none
+
+.page
+	&__wrapper
+		overflow: hidden
+	&__single
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		h1
+			+ft(40, 40, 700)
+		h2, h3, h4, h5, h5
+			+ft(20, 20*1.2, 700)
+			margin-top: $gap4
+			margin-bottom: $gap2
+		.hero__single
+			margin-bottom: $gap4
+	&__content
+		margin-top: $gap4
+		margin-bottom: $gap4
+	&__container
+		max-width: 800px
+		margin-left: auto
+		margin-right: auto
+
+.container
+	max-width: 1215px
+	width: 100%
+	margin-left: auto
+	margin-right: auto
+	padding-left: $gap3
+	padding-right: $gap3
+
+.section
+	position: relative
+	margin-top: var(--gapSection)
+	margin-bottom: var(--gapSection)
+	//background: url('../images/bg2.svg') no-repeat 50%/cover
+	z-index: 1
+	&_hero
+		margin: 0
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+	&_str
+		+theme(dark)
+		margin: 0
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background-repeat: no-repeat
+		background-size: cover
+		background-position: center
+		background-image: url('../images/bg/bg3.svg'), url('../images/bg/bg4.svg')
+
+.row
+	&_1
+		display: grid
+		grid-template-columns: 1fr 1fr
+		align-items: center
+		gap: $gap6
+		row-gap: $gap4
+	+maw($md)
+		&_1
+			grid-template-columns: 1fr
+			gap: 0
+	+maw($sm)
+		&_1
+			text-align: center
+
+.box
+	+theme(dark)
+	border-radius: $brs
+	padding: $gap8
+	text-align: center
+	&_cta
+		background-image: url('../images/bg/bg2.svg')
+		background-repeat: no-repeat
+		background-size: 80%
+		background-position: center bottom
+	&__content
+		max-width: 80%
+		margin-left: auto
+		margin-right: auto
+	+maw($sm)
+		&__content
+			max-width: 100%
+	+maw($xs)
+		padding: $gap4
+		margin-left: -$gap3
+		margin-right: -$gap3
+		border-radius: 0
+		
+
+.swiper
+	&__nav	
+		position: relative
+		+flex(flex, center, center, nowrap)
+		justify-self: center
+		gap: $gap2
+		margin-left: auto
+		margin-right: auto
+		margin-top: $gap3
+		margin-bottom: $gap4
+		display: none
+	&-pagination
+		position: relative !important
+		width: auto !important
+		bottom: 0 !important
+		&-bullet
+			width: 10px !important
+			height: 10px !important
+			&-active
+				background: $main !important
+	&-btns
+		+flex(flex, center, space-between, nowrap)
+		gap: $gap2
+	&-btn
+		&-prev, &-next
+			+sz(40px, 40px)
+			border-radius: 50%
+			border: 2px solid $main
+			color: $main
+			+flex(inline-flex, center, center, nowrap)
+			&:hover, &:focus, &:active
+				background-color: $main
+				color: $white
+	+miw($md)
+		&__nav
+			display: none
+		
+.comment
+	text-align: left
+	+theme(white)
+	border-radius: $brs
+	padding: $gap4
+	display: flex
+	flex-direction: column
+	justify-content: space-between
+	&s
+		margin-top: $gap4
+		margin-bottom: $gap4
+
+	&__header
+		+flex(flex,center, space-between, nowrap)
+		gap: $gap2
+		margin-bottom: $gap2
+		padding-bottom: $gap2
+		border-bottom: 2px solid $main
+	&__footer
+		+flex(flex,center, flex-start, nowrap)
+		gap: $gap2
+		margin-top: $gap2
+		text-align: left
+		p
+			margin: 0
+	&__label
+		+flex(flex,center, center, nowrap)
+		gap: $gap1
+		padding: $gap1 $gap2
+		border: 1px solid $main
+		border-radius: 16pc
+		background: $grad
+		color: $white
+		+ft(12, 12, 400)
+
+.feature
+	&:last-child
+		.feature__content
+			margin-right: 0
+	&__content
+		margin-right: $gap6
+	&__title
+		+ft(18, 18, 700)
+		margin-top: $gap2
+		margin-bottom: $gap2
+	&__divider
+		border: 1px solid $main
+		opacity: 1
+		margin: $gap2 0
+	&s
+		display: grid
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+		margin-top: $gap4
+	+maw($lg)
+		&s
+			grid-template-columns:  1fr 1fr
+	+maw($sm)
+		&s
+			grid-template-columns: 1fr
+			gap: $gap4
+			text-align: center
+		&__content
+			margin-right: 0
+
+.stat
+	&__divider
+		+sz(30px, 30px)
+		min-width: 30px
+		margin-left: auto
+		margin-right: auto
+		border-radius: 50%
+		background-color: $primary
+	&__val
+		+ft(90, 90, 900)
+		color: $main
+		margin-bottom: $gap2
+	&s
+		display: grid
+		grid-template-columns: 1fr 30px 1fr 30px 1fr
+		gap: $gap4
+		align-items: center
+		margin-bottom: $gap4
+	+maw($md)
+		&s
+			grid-template-columns: 1fr
+			justify-content: center	
+	+maw($xs)
+		&__val
+			font-size: 3em
+
+
+.card
+	+theme($white)
+	border-radius: $brs
+	padding: $gap4
+	height: auto !important
+	display: flex
+	flex-direction: column
+	justify-content: space-between
+	&s
+		margin-bottom: $gap4
+		.swiper-wrapper
+			align-items: stretch
+	&__footer
+		margin-top: $gap2
+
+.step
+	display: grid
+	grid-template-columns: auto 2fr
+	align-items: center
+	margin: $gap2 0
+	width: auto
+	&:first-child
+		grid-column: 1/-3
+	&:nth-last-child(2)
+		grid-column: 1/-2
+		margin-left: auto
+	&:nth-child(3)
+		grid-column: 1/-1
+		margin-left: auto
+	&s
+		display: grid
+		grid-template-columns: 0.5fr 1fr
+		gap: $gap4
+		&__title
+			display: grid
+			grid-template-columns: 0.15fr 1fr
+			align-items: center
+			gap: $gap2
+			align-self: flex-end
+			h2
+				margin: 0
+		&__items
+			display: grid
+			grid-template-columns: auto auto auto
+
+	&__title
+		text-transform: uppercase
+		+ft(20, 20, 700)
+	&__content
+		+theme(white)
+		border-radius: $brs
+		padding: $gap4
+		margin-left: -1em
+		width: 100%
+	&__header
+		width: 100%
+		padding: $gap2 $gap4
+		border-radius: 4px
+		+theme(main)
+		text-transform: uppercase
+		+ft(18, 18, 700)
+		transform: rotate(-90deg)
+		+flex(flex, center, space-between, nowrap)
+	+maw($md)
+		&s
+			grid-template-columns: 1fr
+	+maw(568)
+		gap: $gap2
+		display: flex
+		flex-direction: column
+		&:nth-child(n)
+			grid-column: 1/-1
+			margin: $gap2 auto
+			width: 100%
+		&__content
+			margin: 0 auto
+			svg
+				max-width: 100%
+		&__header
+			transform: none
+
+
+.badge
+	+flex(flex, center, center, nowrap)
+	+sz(75px, 75px)
+	border-radius: 50%
+	+theme(main)
+	+maw($md)
+		transform: rotate(90deg)
+
+
+.news
+	&:last-of-type
+		.news__divider
+			display: none
+	&__title
+		+ft(20, 20, 700)
+		text-transform: uppercase
+		margin-bottom: $gap2
+	&__divider
+		border-width: 0
+		border-top: 2px solid $main
+		opacity: 1
+		margin: $gap4 0
+	&__wrap
+		display: grid
+		gap: $gap4

@@ -1,0 +1,23 @@
+{{- $path := partial "home/value.html" (dict "page" . "key" "featured_argument" "default" "") -}}
+{{- $pages := slice -}}
+{{- with $path -}}
+    {{- with partial "home/selected-page.html" (dict "path" . "context" "featured_argument") -}}
+        {{- $pages = $pages | append . -}}
+    {{- end -}}
+{{- else -}}
+    {{- $candidates := where site.RegularPages "Params.editorial.featured" true -}}
+    {{- with site.Params.noFate.home.featuredProposition -}}
+        {{- $candidates = where site.RegularPages "Params.editorial.proposition" "intersect" (slice .) -}}
+    {{- end -}}
+    {{- $pages = first 1 $candidates.ByDate.Reverse -}}
+{{- end -}}
+{{- with $pages }}
+<section class="nf-home-module nf-home-module--argument" aria-labelledby="nf-featured-heading">
+    <div class="nf-home-module__heading">
+        <h2 id="nf-featured-heading">{{ i18n "nf_current_argument" | default "Current argument" }}</h2>
+    </div>
+    <div class="nf-home-module__items">
+        {{- range . }}{{ partial "record/selected.html" . }}{{ end }}
+    </div>
+</section>
+{{- end }}

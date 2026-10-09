@@ -1,0 +1,153 @@
+// ============================================================
+// Fraktur Theme — v1.2
+// Strictly Black & White · prefers-color-scheme aware
+// 0kb JS · Self-hosted fonts · Ultra-minimalist
+// ============================================================
+
+// ── Light mode (default & explicit data-theme="light") ───────
+:root,
+[data-theme="light"] {
+  --bg:                    #ffffff;
+  --text:                  #111111;
+  --text-muted:            #555555;
+  --border:                #d4d4d4;
+  --code-bg:               #f5f5f5;
+  --link:                  #111111;
+  --link-decoration-color: #111111;
+
+  // Legacy aliases (keep compatibility with component partials)
+  --primary:               #000000;
+  --on-primary:            #ffffff;
+  --surface:               #ffffff;
+  --on-surface:            #111111;
+  --on-surface-variant:    #555555;
+  --outline:               #cccccc;
+  --outline-variant:       #e0e0e0;
+  --surface-container:     #f5f5f5;
+  --surface-container-low: #fafafa;
+  --highlight-color:       #000000;
+  --base-color:            #ffffff;
+
+  // Typography
+  --font-family-heading:   'UnifrakturCook', serif;
+  --font-family-paragraph: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-family-monospace: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  // Spacing / radius
+  --border-radius:         8px;
+  --border-radius-large:   12px;
+  --border-radius-small:   4px;
+}
+
+// ── Dark mode (explicit data-theme="dark") ───────────────────
+[data-theme="dark"] {
+  --bg:                    #0f0f0f;
+  --text:                  #eeeeee;
+  --text-muted:            #999999;
+  --border:                #333333;
+  --code-bg:               #1a1a1a;
+  --link:                  #eeeeee;
+  --link-decoration-color: #eeeeee;
+
+  // Legacy aliases
+  --primary:               #ffffff;
+  --on-primary:            #000000;
+  --surface:               #0f0f0f;
+  --on-surface:            #eeeeee;
+  --on-surface-variant:    #999999;
+  --outline:               #444444;
+  --outline-variant:       #2a2a2a;
+  --surface-container:     #1a1a1a;
+  --surface-container-low: #141414;
+  --highlight-color:       #ffffff;
+  --base-color:            #000000;
+}
+
+// ── System Dark mode (fallback if no manual choice) ──────────
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:                    #0f0f0f;
+    --text:                  #eeeeee;
+    --text-muted:            #999999;
+    --border:                #333333;
+    --code-bg:               #1a1a1a;
+    --link:                  #eeeeee;
+    --link-decoration-color: #eeeeee;
+
+    // Legacy aliases
+    --primary:               #ffffff;
+    --on-primary:            #000000;
+    --surface:               #0f0f0f;
+    --on-surface:            #eeeeee;
+    --on-surface-variant:    #999999;
+    --outline:               #444444;
+    --outline-variant:       #2a2a2a;
+    --surface-container:     #1a1a1a;
+    --surface-container-low: #141414;
+    --highlight-color:       #ffffff;
+    --base-color:            #000000;
+  }
+}
+
+// ── Elevation (neutral shadows only) ────────────────────────
+.elevation-0 { box-shadow: none; }
+.elevation-1 { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08); }
+.elevation-2 { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.10); }
+.elevation-3 { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.10); }
+.elevation-4 { box-shadow: 0 6px 12px rgba(0, 0, 0, 0.14), 0 3px 8px rgba(0, 0, 0, 0.10); }
+.elevation-5 { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16), 0 4px 10px rgba(0, 0, 0, 0.12); }
+
+// ── Breakpoints map ─────────────────────────────────────────
+$breakpoints: (
+  'small':  767px,
+  'medium': 992px,
+  'large':  1200px,
+);
+
+// ── Partials ─────────────────────────────────────────────────
+@import 'fonts';
+@import 'normalize';
+@import 'breakpoints';
+@import 'header';
+@import 'footer';
+@import 'content';
+@import 'intro';
+@import 'summary';
+@import 'main-menu';
+@import 'main-menu-mobile';
+@import 'contact';
+@import 'pygments/github';
+
+// ── Base ─────────────────────────────────────────────────────
+html,
+body {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  font-family: var(--font-family-paragraph);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color: var(--text);
+  margin: 0;
+  padding: 16px;
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  @include breakpoint('small') {
+    padding: 24px;
+  }
+
+  &.frame {
+    min-height: 100vh;
+    border: 18px solid var(--text);
+  }
+}
+
+.wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}

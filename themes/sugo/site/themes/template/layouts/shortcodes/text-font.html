@@ -1,0 +1,3 @@
+<div class="lit-text-font" style="{{- if .Get "family" -}}font-family: {{ .Get "family" }};{{- end -}}{{- if .Get "size" -}}font-size: {{ .Get "size" }};{{- end -}}">
+  {{ partial "shortcodes/render-inner.html" (dict "ctx" . "content" .Inner "display" "block" "trim" true) }}
+</div>

@@ -1,0 +1,25 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_note }}
+{{ with $data.homepage.section_note }}
+<section class="section section_note">
+    <div class="container">
+        <div class="row_3">
+            <div><h2>{{ .title | markdownify }}</h2></div>
+            <div class="text-1">
+                {{ range .items }}
+                    <div class="text-1__item">
+                        <div class="text-1__title">
+                            {{ .title }}
+                        </div>
+                        <div class="text-1__desc">
+                            {{ .desc }}
+                        </div>
+                    </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</section>
+{{ end }}
+{{ end }}

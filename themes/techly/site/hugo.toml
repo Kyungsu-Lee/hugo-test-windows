@@ -1,0 +1,35 @@
+# Default configuration merged into sites using this theme as a Hugo module.
+
+[markup]
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[params]
+  mainSections = ["posts"]
+  showPinnedIndicator = false
+  indexHome = true
+
+  [params.footer]
+    showSocial = true
+
+  [params.related]
+    limit = 3
+    heading = "More articles"
+    enabled = true
+    moreLink = "best"
+    moreLabel = "More in %s"
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = "series"
+
+# Hugo does not merge [taxonomies] from theme modules when the site defines its own.
+# Add `series = "series"` to your site's hugo.toml if it is not picked up automatically.
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]

@@ -1,0 +1,24 @@
+name = "Financemastery Theme"
+license = "MIT"
+licenselink = "https://github.com/anastasiiaxfr/financemastery/blob/main/LICENSE"
+description = "A Hugo theme for finance and crypto projects"
+
+# The home page of the theme, where the source can be found.
+homepage = "https://github.com/anastasiiaxfr/financemastery"
+
+# If you have a running demo of the theme.
+demosite = "https://lp-08-08-241.netlify.app/"
+
+tags = ["crypto", "blockchain", "finance", "company"]
+features = ["fast", "blog", "responsive", "seo"]
+
+# If the theme has a single author
+[author]
+    name = "Anastasiia Berest"
+    homepage = "https://ab-portfolio-pearl.vercel.app/"
+
+# If porting an existing theme
+[original]
+    author = "Anastasiia Berest"
+    homepage = "https://ab-portfolio-pearl.vercel.app/"
+    repo = "https://github.com/anastasiiaxfr/financemastery.git"

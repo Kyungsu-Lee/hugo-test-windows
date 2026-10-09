@@ -1,0 +1,78 @@
+{{ define "main" }}
+  {{ $p := .Site.Params }}
+  <section class="hero" data-reveal>
+    <div class="hero-text">
+      {{ with $p.hero_kicker }}<div class="kicker">{{ . }}</div>{{ end }}
+      <h1 class="hero-title">{{ if $p.hero_title }}{{ $p.hero_title }}{{ else }}{{ .Site.Title }}{{ end }}</h1>
+      {{ with $p.hero_intro }}<p class="lead">{{ . }}</p>{{ else }}<p class="lead">{{ $p.tagline }}</p>{{ end }}
+      <div class="cta-row">
+        {{ with $p.cta_primary }}
+          <a class="btn primary" href="{{ .url | relURL }}">{{ .text }}</a>
+        {{ end }}
+        {{ with $p.cta_secondary }}
+          <a class="btn ghost" href="{{ .url | relURL }}">{{ .text }}</a>
+        {{ end }}
+      </div>
+      {{ with $p.highlights }}
+        <div class="highlight-grid">
+          {{ range . }}
+            <div class="highlight-card">
+              <div class="highlight-value">{{ .value }}</div>
+              <div class="muted">{{ .label }}</div>
+            </div>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+    <div class="hero-visual">
+      {{ if $p.hero_image }}
+        <img src="{{ $p.hero_image }}" alt="Hero image">
+      {{ else if $p.profile_image }}
+        <img src="{{ $p.profile_image }}" alt="Profile">
+      {{ else }}
+        <img src="/images/profile-placeholder.jpg" alt="Profile">
+      {{ end }}
+      <div class="hero-orbit"></div>
+    </div>
+  </section>
+
+  {{ with $p.feature_cards }}
+    <section class="section" data-reveal>
+      <div class="section-head">
+        <div>
+          <h2>{{ if $p.feature_title }}{{ $p.feature_title }}{{ else }}Built for sharing stories{{ end }}</h2>
+          {{ with $p.feature_intro }}<p class="muted">{{ . }}</p>{{ end }}
+        </div>
+      </div>
+      <div class="grid">
+        {{ range . }}
+          <article class="card">
+            <h3>{{ .title }}</h3>
+            <p>{{ .text }}</p>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  <section class="section" data-reveal>
+    <div class="section-head">
+      <div>
+        <h2>{{ if $p.posts_title }}{{ $p.posts_title }}{{ else }}Latest Posts{{ end }}</h2>
+        {{ with $p.posts_intro }}<p class="muted">{{ . }}</p>{{ end }}
+      </div>
+      <a class="link-arrow" href="{{ "/posts/" | relURL }}">See all</a>
+    </div>
+    <div class="grid">
+      {{ range first 6 (where .Site.RegularPages "Section" "posts") }}
+        <article class="card">
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{ if not .Date.IsZero }}
+            <div class="muted">{{ .Date.Format "Jan 02, 2006" }}</div>
+          {{ end }}
+          <p>{{ .Summary }}</p>
+        </article>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

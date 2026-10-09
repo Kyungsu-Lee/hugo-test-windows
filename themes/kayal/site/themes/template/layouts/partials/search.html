@@ -1,0 +1,5 @@
+{{ if .Site.Params.enableSearch | default false }}
+<button id="search-open" class="menu-btn" aria-label="Search button">
+  {{ partial "icon.html" "search" }}
+</button>
+{{ end }}

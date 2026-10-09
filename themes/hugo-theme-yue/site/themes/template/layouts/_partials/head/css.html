@@ -1,0 +1,20 @@
+{{/*
+Styles are mobile-first. Desktop styles are wrapped in media queries.
+Naming convention: BEM (Block, Element, Modifier). When it's difficult to add classes, I will use tag names.
+*/}}
+{{- with resources.Get "css/main.css" }}
+  {{- $opts := dict
+    "minify" (cond hugo.IsDevelopment false true)
+    "sourceMap" (cond hugo.IsDevelopment "linked" "none")
+    "targetPath" "css/styles.css"
+  }}
+  {{- with . | css.Build $opts }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else }}
+      {{- with . | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,30 @@
+{{- if site.Params.theme.subfooter.enabled -}}
+  {{- $subfooterItems := site.GetPage "/sections/subfooter" -}}
+  {{- if $subfooterItems -}}
+
+    {{- $bgColor := site.Params.theme.subfooter.background_color -}}
+    {{- $bgClass := site.Params.theme.subfooter.background_class -}}
+    {{- $fgColor := site.Params.theme.subfooter.font_color -}}
+    {{- $lnColor := site.Params.theme.subfooter.link_color -}}
+
+    <div class="subfooter-container{{ if and (not $bgColor) $bgClass }} {{ $bgClass }}{{ end }}"
+         {{- if or $bgColor $fgColor $lnColor -}}
+         style="
+           {{- if $bgColor -}}--felmdrav-subfooter-bg: {{ $bgColor }};{{- end -}}
+           {{- if $fgColor -}}--felmdrav-subfooter-fg: {{ $fgColor }};{{- end -}}
+           {{- if $lnColor -}}--felmdrav-subfooter-link: {{ $lnColor }};{{- end -}}
+         "
+         {{- end -}}>
+      <div class="container py-3">
+        <div class="row">
+          <div class="col-12">
+            {{- range sort (sort $subfooterItems.Resources "Name") "Weight" -}}
+              {{- partial "subfooter_item.html" . -}}
+            {{- end -}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {{- end -}}
+{{- end -}}

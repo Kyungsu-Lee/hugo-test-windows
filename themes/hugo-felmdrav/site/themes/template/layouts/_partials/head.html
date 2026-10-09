@@ -1,0 +1,260 @@
+<head>
+  <meta charset="utf-8" />
+  <title>
+    {{ if .Page.Title }}{{ .Page.Title }}{{ end }}
+    {{ if and (.Page.Title) (.Site.Params.append_site_title) }} | {{ end }}
+    {{ if .Site.Params.append_site_title }}{{ .Site.Title }}{{ end }}
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {{ range $metaName, $metaValue := .Site.Params.meta }}
+    <meta name="{{ $metaName }}" content="{{ htmlUnescape $metaValue }}">
+  {{ end }}
+
+  {{ if .Site.Params.favicon }}
+    <link rel="icon" type="image/x-icon" href="{{ .Site.BaseURL }}{{ .Site.Params.favicon }}" />
+  {{ end }}
+
+  {{/* ------------------------------------------------------------------
+       Bootstrap / Bootswatch + felmdrav.css (Hugo Pipes)
+     ------------------------------------------------------------------ */}}
+
+  {{- $bootstrapPath := "css/bootstrap.min.css" -}}
+  {{- with .Site.Params.theme.bootstrap_theme -}}
+    {{- if ne . "" -}}
+      {{- $bootstrapPath = printf "css/bootswatch/%s/bootstrap.min.css" . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $bootstrap := resources.Get $bootstrapPath -}}
+  {{- if not $bootstrap -}}
+    {{- $bootstrap = resources.Get "css/bootstrap.min.css" -}}
+  {{- end -}}
+
+  {{- $felmdrav := resources.Get "css/felmdrav.css" -}}
+
+  {{- $styles := slice $bootstrap $felmdrav
+      | resources.Concat "css/felmdrav-bundle.css"
+      | resources.Minify
+      | resources.Fingerprint
+  -}}
+
+  <link rel="stylesheet"
+        href="{{ $styles.RelPermalink }}"
+        integrity="{{ $styles.Data.Integrity }}">
+
+  <link rel="stylesheet" href="{{ "css/bootstrap-icons.min.css" | relURL }}">
+
+  {{- partial "javascript_header.html" . -}}
+
+  {{/* ------------------------------------------------------------------
+       Layout basics
+     ------------------------------------------------------------------ */}}
+
+  {{- $navbarStyle := default "fixed-top" site.Params.navbar.style -}}
+  {{- with .Params.navbar.style -}}
+    {{- $navbarStyle = . -}}
+  {{- end -}}
+
+  {{/* ------------------------------------------------------------------
+       Header / Hero tokens (NEW, Bootstrap-first)
+     ------------------------------------------------------------------ */}}
+
+  {{- $h  := site.Params.theme.header -}}
+  {{- $ht := $h.type -}}
+  {{- $hc := $h.colors -}}
+
+  {{/* Base text color for hero-related effects */}}
+  {{- $baseTextColor := default "#000000" $hc.title -}}
+
+  {{- $heroPad  := default "1rem"  $h.overlay_padding -}}
+  {{- $titleMin := default "1.15rem" $ht.title_min -}}
+  {{- $titleMax := default "3rem"    $ht.title_max -}}
+  {{- $subMin   := default "0.9rem"  $ht.subtitle_min -}}
+  {{- $subMax   := default "1.55rem" $ht.subtitle_max -}}
+  {{- $textMaxW := default "68ch"    $ht.text_max_width -}}
+
+  {{- $titleW := default 800 $ht.title_weight -}}
+  {{- $subW   := default 450 $ht.subtitle_weight -}}
+
+  {{- $nowrap := default true $ht.title_nowrap -}}
+
+{{/* Text shadow style (optional) */}}
+{{- $ts := $h.text_shadow -}}
+{{- $tsEnabled := default false $ts.enabled -}}
+
+{{/* - $tsColorFallback := "#000000" - */}}
+{{- $tsOpacity := 0.35 -}}
+
+{{- with $ts.opacity -}}
+  {{- $tsOpacity = float . -}}
+{{- end -}}
+{{- if lt $tsOpacity 0.0 -}}{{- $tsOpacity = 0.0 -}}{{- end -}}
+{{- if gt $tsOpacity 1.0 -}}{{- $tsOpacity = 1.0 -}}{{- end -}}
+
+{{/*- $tsColorHex := trim (default $tsColorFallback $ts.color) "#" - */}}
+{{- $tsColorHex := trim (default $baseTextColor $ts.color) "#" -}}
+
+{{- $tsRR := int (printf "0x%s" (substr $tsColorHex 0 2)) -}}
+{{- $tsGG := int (printf "0x%s" (substr $tsColorHex 2 2)) -}}
+{{- $tsBB := int (printf "0x%s" (substr $tsColorHex 4 2)) -}}
+{{- $tsAlpha := printf "%0.2f" $tsOpacity -}}
+{{- $tsRGBA := printf "rgba(%d,%d,%d,%s)" $tsRR $tsGG $tsBB $tsAlpha -}}
+
+
+{{/* Text backdrop (optional) */}}
+  {{- $bd := $h.backdrop -}}
+  {{- $bdEnabled := default false $bd.enabled -}}
+  {{/*- $bdColorFallback := "#000000" -*/}}
+  {{- $bdOpacity := 0.55 -}}
+  {{- $bdRadius := default "0.5rem" $bd.radius -}}
+  {{- $bdPad := default "0.75rem 1rem" $bd.padding -}}
+
+  {{- if $bd.opacity -}}
+    {{- $bdOpacity = float $bd.opacity -}}
+  {{- end -}}
+  {{- if lt $bdOpacity 0.0 -}}{{- $bdOpacity = 0.0 -}}{{- end -}}
+  {{- if gt $bdOpacity 1.0 -}}{{- $bdOpacity = 1.0 -}}{{- end -}}
+
+  {{/*- $bdColorHex := trim (default $bdColorFallback $bd.color) "#" -*/}}
+  {{- $bdColorHex := trim (default $baseTextColor $bd.color) "#" -}}
+  {{- $rr := int (printf "0x%s" (substr $bdColorHex 0 2)) -}}
+  {{- $gg := int (printf "0x%s" (substr $bdColorHex 2 2)) -}}
+  {{- $bb := int (printf "0x%s" (substr $bdColorHex 4 2)) -}}
+  {{- $bdAlpha := printf "%0.2f" $bdOpacity -}}
+  {{- $bdRGBA := printf "rgba(%d,%d,%d,%s)" $rr $gg $bb $bdAlpha -}}
+
+  <style>
+    :root{
+      --hero-pad: {{ $heroPad }};
+      --hero-title-min: {{ $titleMin }};
+      --hero-title-max: {{ $titleMax }};
+      --hero-sub-min: {{ $subMin }};
+      --hero-sub-max: {{ $subMax }};
+      --hero-text-maxw: {{ $textMaxW }};
+      --hero-title-weight: {{ $titleW }};
+      --hero-sub-weight: {{ $subW }};
+
+    {{- if $bdEnabled }}
+      --hero-backdrop-bg: {{ safeCSS $bdRGBA }};
+      --hero-backdrop-radius: {{ safeCSS $bdRadius }};
+      --hero-backdrop-pad: {{ safeCSS $bdPad }};
+    {{- end }}
+
+
+    }
+
+
+
+    body{
+      {{- if eq $navbarStyle "fixed-top" -}}
+        {{- $paddingTop := 60 -}}
+        {{- if site.Params.navbar.adjust_header -}}
+          {{- $paddingTop = add 60 site.Params.navbar.adjust_header -}}
+        {{- end -}}
+        padding-top: {{ $paddingTop }}px;
+      {{- end -}}
+
+      {{- if site.Params.theme.background_color -}}
+        background-color: {{ site.Params.theme.background_color }};
+      {{- end -}}
+
+      {{- if site.Params.theme.background_image -}}
+        background-image: url("{{ site.BaseURL }}{{ site.Params.theme.background_image }}");
+        background-repeat: {{ site.Params.theme.background_image_repeat | default "repeat" }};
+      {{- end -}}
+    }
+
+    /* Hero header glue (Bootstrap handles colors) */
+    .hero-overlay{ padding: var(--hero-pad); }
+
+    .hero-text{
+      max-width: min(var(--hero-text-maxw), 100%);
+
+      {{- if $tsEnabled -}}
+      text-shadow: 0 1px 12px {{ safeCSS $tsRGBA }};
+      {{- end -}}
+    }
+
+
+
+    /* Backdrop box (optional, OFF by default) */
+    .hero-text.is-backdrop{
+      background: var(--hero-backdrop-bg);
+      border-radius: var(--hero-backdrop-radius);
+      padding: var(--hero-backdrop-pad);
+    }
+
+
+    .hero-title{
+      font-weight: var(--hero-title-weight);
+      font-size: clamp(var(--hero-title-min), 2.2vw + 0.65rem, var(--hero-title-max));
+      line-height: 1.05;
+      white-space: {{ if $nowrap }}nowrap{{ else }}normal{{ end }};
+    }
+
+    .hero-subtitle{
+      font-weight: var(--hero-sub-weight);
+      font-size: clamp(var(--hero-sub-min), 1.1vw + 0.5rem, var(--hero-sub-max));
+      line-height: 1.2;
+      text-wrap: pretty;
+    }
+
+    {{- if $nowrap -}}
+    @media (max-width: 360px){
+      .hero-title{ white-space: normal; }
+    }
+    {{- end -}}
+
+    /* Colors only if explicitly configured */
+    {{- if $hc.title }}
+      .hero-title{ color: {{ $hc.title }}; }
+    {{- end }}
+    {{- if $hc.subtitle }}
+      .hero-subtitle{ color: {{ $hc.subtitle }}; }
+    {{- end }}
+  </style>
+
+  {{/* ------------------------------------------------------------------
+       Fonts (new selectors for hero)
+     ------------------------------------------------------------------ */}}
+
+  {{/* Header Title Font */}}
+  {{- if and site.Params.fonts.header_title_googlefont site.Params.fonts.header_title -}}
+    {{- safeHTML (printf
+      "<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?%s\">"
+      (querify "family"
+        (printf "%s:%s"
+          (trim site.Params.fonts.header_title "\"")
+          (site.Params.fonts.header_title_variant | default "800")
+        )
+      )
+    ) -}}
+  {{- end }}
+  <style>
+    {{- if site.Params.fonts.header_title -}}
+      .hero-title{ font-family: {{ safeCSS site.Params.fonts.header_title }}; }
+    {{- end -}}
+  </style>
+
+  {{/* Header Subtitle Font */}}
+  {{- if and site.Params.fonts.header_subtitle_googlefont site.Params.fonts.header_subtitle -}}
+    {{- safeHTML (printf
+      "<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?%s\">"
+      (querify "family"
+        (printf "%s:%s"
+          (trim site.Params.fonts.header_subtitle "\"")
+          (site.Params.fonts.header_subtitle_variant | default "450")
+        )
+      )
+    ) -}}
+  {{- end }}
+  <style>
+    {{- if site.Params.fonts.header_subtitle -}}
+      .hero-subtitle{ font-family: {{ safeCSS site.Params.fonts.header_subtitle }}; }
+    {{- end -}}
+  </style>
+
+  {{- partial "head_includes.html" . -}}
+</head>

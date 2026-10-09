@@ -1,0 +1,45 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_benefits }}
+{{ with $data.homepage.section_benefits }}
+<section class="section section_benefits">
+    <div class="container">
+        <h3>{{ .title }}</h3>
+
+        <div class="benefits swiper-container">
+            <div class="swiper-wrapper">
+                {{ range .items }}
+                    <figure class="benefit swiper-slide">
+                        
+                        <div class="benefit__icon">
+                            <img src="{{ .img | relURL }}" alt="ALT" width="180" height="180">
+                        </div>
+                        <div class="benefit__content">
+                            <div class="benefit__title">{{ .title }}</div>
+                            <div class="benefit__desc">
+                                {{ .desc }}
+                            </div>
+                        </div>
+                    </figure>
+                    {{ end }}
+                </div>
+                <div class="swiper-nav">
+                    <button class="swiper-nav-prev">
+                        <svg class="icon" width="24" height="16">
+                            <use xlink:href="#arr-rt"></use>
+                          </svg>
+                    </button>
+                    <button class="swiper-nav-next">
+                        <svg class="icon" width="24" height="16">
+                            <use xlink:href="#arr-lt"></use>
+                          </svg>
+                    </button>
+                </div>
+            </div>
+           
+        </div>
+
+    </div>
+</section>
+{{ end }}
+{{ end }}

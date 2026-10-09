@@ -1,0 +1,22 @@
+<!--
+This shortcut can be used to embed an image from the post/page, /images or /assets folder (s. "partials/getScaledImage.html" for further infos).
+
+Example:
+{ {< img "images/picture.jpg" "Some caption" >}}
+-->
+
+{{ $imageName := (index .Params 0) }}
+{{ $subtitle := (index .Params 1) }}
+
+{{ $imageDict := partial "getScaledImage.html" (dict "imageName" $imageName) }}
+
+{{ $image := $imageDict.originalImage }}
+
+<figure class="image-figure">
+	<a href={{ $image.Permalink }} target="_blank">
+		<img class="embedded-image" alt="{{ $subtitle | .Page.RenderString }}" src={{ $image.Permalink }}>
+	</a>
+	<figcaption>
+		<span>{{ $subtitle }}</span>
+	</figcaption>
+</figure>

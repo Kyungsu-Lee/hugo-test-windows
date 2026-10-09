@@ -1,0 +1,115 @@
+{{- $h := .Site.Params.theme.header -}}
+{{- $p := . -}}
+{{- $ph := $p.Params.header | default dict -}}
+
+{{- $showHeaderText := $ph.show | default true -}}
+
+{{- $title := .Site.Title -}}
+{{- with $ph -}}
+  {{- with index . "title" -}}
+    {{- $title = . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $subtitle := .Site.Params.subtitle -}}
+{{- with $ph -}}
+  {{- with index . "subtitle" -}}
+    {{- $subtitle = . -}}
+  {{- end -}}
+{{- end -}}
+
+
+
+
+
+{{- $img := $h.image -}}
+{{- $showText := $h.show_text | default true -}}
+{{- $textOnImage := $h.text_on_image | default true -}}
+{{- $align := $h.overlay_alignment | default "lb" -}}
+{{- $bd := $h.backdrop -}}
+{{- $bdEnabled := $bd.enabled | default false -}}
+
+{{- $pos := "justify-content-start align-items-start text-start" -}}
+{{- if eq $align "mt" -}}{{ $pos = "justify-content-center align-items-start text-center" -}}
+{{- else if eq $align "rt" -}}{{ $pos = "justify-content-end align-items-start text-end" -}}
+{{- else if eq $align "lb" -}}{{ $pos = "justify-content-start align-items-end text-start" -}}
+{{- else if eq $align "mb" -}}{{ $pos = "justify-content-center align-items-end text-center" -}}
+{{- else if eq $align "rb" -}}{{ $pos = "justify-content-end align-items-end text-end" -}}
+{{- end -}}
+
+<div id="header" role="banner" {{ with .Site.Params.theme.header.colors.background_color }} style="background-color: {{ . }};"
+  {{ end }}>
+  <div class="container">
+    <header class="masthead">
+
+      {{ if $img }}
+      <a href="{{ .Site.BaseURL }}" rel="home" class="hero d-block position-relative overflow-hidden">
+        <img src="{{ .Site.BaseURL }}{{ $img }}" class="hero-img w-100" alt="{{ $h.alt_text | default "" }}">
+
+        {{ if and $showText $textOnImage $showHeaderText }}
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex {{ $pos }}">
+          <div class="hero-overlay container">
+            <div class="hero-text{{ if $bdEnabled }} is-backdrop{{ end }}">
+              <div class="hero-title" {{ with $h.colors.title }}style="color: {{ . }};" {{ end }}>
+                {{ $title }}
+              </div>
+
+              {{ with $subtitle }}
+              <div class="hero-subtitle" {{ with $h.colors.subtitle }}style="color: {{ . }};" {{ end }}>
+                {{ . }}
+              </div>
+              {{ end }}
+            </div>
+          </div>
+        </div>
+        {{ end }}
+      </a>
+      {{ end }}
+
+      {{/* Fallback: show title/subtitle above nav (no image OR no overlay) */}}
+      {{ if and $showText $showHeaderText (or (not $img) (not $textOnImage)) }}
+      <div class="py-3">
+        <div class="hero-text{{ if $bdEnabled }} is-backdrop{{ end }}">
+          <div class="hero-title" {{ with $h.colors.title }}style="color: {{ . }};" {{ end }}>
+            <a href="{{ .Site.BaseURL }}" class="header-url hero-link">{{ .Site.Title }}</a>
+          </div>
+
+          {{ with .Site.Params.subtitle }}
+          <div class="hero-subtitle opacity-75" {{ with $h.colors.subtitle }}style="color: {{ . }};" {{ end }}>
+            {{ . }}
+          </div>
+          {{ end }}
+        </div>
+      </div>
+      {{ end }}
+
+
+
+      {{ if .Site.Menus.main }}
+      <nav id="navbarMain"
+        class="navbar navbar-expand-sm mb-3 {{ .Site.Params.navbar.color_scheme }} {{ .Site.Params.navbar.bg_scheme }}"
+        {{ if .Site.Params.navbar.background_color
+        }}style="background-color: {{ .Site.Params.navbar.background_color }};" {{ end }}>
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="navbar-collapse collapse {{ .Site.Params.navbar.text_alignment }}" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+              {{- partial "navbar_items.html" . -}}
+            </ul>
+
+            <div class="d-flex align-items-center ms-auto">
+              {{- partial "navbar_right.html" . -}}
+            </div>
+          </div>
+        </div>
+      </nav>
+      {{ end }}
+
+    </header>
+  </div>
+</div>

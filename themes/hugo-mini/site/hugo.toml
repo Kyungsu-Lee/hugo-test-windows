@@ -1,0 +1,132 @@
+baseURL = "https://example.com/"
+title   = "Mini Blog"
+
+
+defaultContentLanguage              = "en"
+defaultContentLanguageInSubdirectory = false
+
+enableRobotsTXT = true
+disableKinds    = ["taxonomy", "term"]
+ignoreErrors    = ["error-disable-taxonomy"]
+
+# JSON Feed (/index.json) and llms.txt for AI crawlers. Both are rendered by
+# the theme (layouts/home.json, layouts/home.llms.txt) but only emitted if the
+# home page declares the output formats, so they are opted into here.
+[mediaTypes."text/plain"]
+  suffixes = ["txt"]
+
+[outputFormats.LLMS]
+  mediaType      = "text/plain"
+  baseName       = "llms"
+  isPlainText    = true
+  notAlternative = true
+
+[outputs]
+  home = ["HTML", "RSS", "JSON", "LLMS"]
+
+[params]
+  favicon    = "images/favicon.png"
+  # favicon192     = "images/favicon-192.png"
+  # appleTouchIcon = "images/apple-touch-icon.png"
+  authorName = "Jane Doe"
+  authorURL  = "https://example.com/"
+
+  # Appearance
+  avatar      = "images/avatar.svg"
+  avatarHover = "images/avatar-hover.svg"
+
+  # Footer
+  copyrightYear = 2024   # start year: renders as "© 2024–CURRENT"
+
+  # Content
+  newPostDays          = 30   # days before "New" badge disappears
+  recentSidebarCount   = 8    # posts in the recent sidebar / mobile bottom block
+  aiTranslatedLang = "ru"   # show AI sparkle icon on this language in the switcher
+
+  # Telegram (remove to disable comments widget)
+  # telegramChannel = "your_channel"
+
+  # Features
+  # socialSharing = false   # uncomment to disable Likely sharing buttons
+  # consoleYoda   = true    # uncomment to print a built-in Yoda in the browser console
+
+  # Recent posts sidebar — last N posts shown on single posts (right gutter on
+  # desktop, static block at bottom on mobile). Count set via recentSidebarCount above.
+  # The old curated popularPosts block has been replaced by this automatic sidebar.
+
+  # Analytics (all optional — set only the ones you use)
+  # yandexMetrikaId   = 123456789
+  # googleAnalyticsId = "G-XXXXXXXXXX"
+  # plausibleDomain   = "example.com"
+  # plausibleSrc      = "https://plausible.io/js/script.js"   # override for self-hosted
+  # umamiWebsiteId    = "00000000-0000-0000-0000-000000000000"
+  # umamiSrc          = "https://cloud.umami.is/script.js"    # override for self-hosted
+
+  [params.author]
+    jobTitle = "Product Manager"
+
+  [params.social]
+    telegram  = "https://t.me/janedoe"
+    linkedin  = "https://linkedin.com/in/janedoe"
+    github    = "https://github.com/janedoe"
+    x         = "https://x.com/janedoe"
+    youtube   = "https://youtube.com/@janedoe"
+    facebook  = "https://facebook.com/janedoe"
+    instagram = "https://instagram.com/janedoe"
+    email     = "jane@example.com"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true   # required for shortcodes and HTML in content
+
+[languages]
+  [languages.en]
+    weight = 1
+    label = "EN"
+    contentDir = "content/en"
+    [languages.en.permalinks]
+      blog = "/:slug/"
+    [languages.en.menu]
+      [[languages.en.menu.main]]
+        identifier = "blog"
+        name       = "Articles"
+        url        = "/blog/"
+        weight     = 1
+      [[languages.en.menu.main]]
+        identifier = "about"
+        name       = "About"
+        url        = "/about/"
+        weight     = 2
+      [[languages.en.menu.main]]
+        identifier = "telegram"
+        name       = "Subscribe"
+        url        = "https://t.me/pmgen"
+        weight     = 3
+        [languages.en.menu.main.params]
+          icon = "telegram"
+
+  [languages.ru]
+    weight = 2
+    label = "RU"
+    contentDir = "content/ru"
+    [languages.ru.permalinks]
+      blog = "/:slug/"
+    [languages.ru.menu]
+      [[languages.ru.menu.main]]
+        identifier = "blog"
+        name       = "Статьи"
+        url        = "/ru/blog/"
+        weight     = 1
+      [[languages.ru.menu.main]]
+        identifier = "about"
+        name       = "О проекте"
+        url        = "/ru/about/"
+        weight     = 2
+      [[languages.ru.menu.main]]
+        identifier = "telegram"
+        name       = "Подписаться"
+        url        = "https://t.me/pmgen"
+        weight     = 3
+        [languages.ru.menu.main.params]
+          icon = "telegram"

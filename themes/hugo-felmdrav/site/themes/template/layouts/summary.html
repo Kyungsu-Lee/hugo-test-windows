@@ -1,0 +1,27 @@
+
+<article class="mb-5 post">
+  <header class="mb-2">
+
+    <h2 class="h4 mb-2">
+      <a class="link-body-emphasis text-decoration-none" href="{{ .RelPermalink }}">
+        {{ .Title }}
+      </a>
+    </h2>
+      {{ partial "helpers/post-meta.html" . }}
+
+  </header>
+
+  <div class="mb-3">
+    {{ .Summary }}
+  </div>
+
+  {{- if .Truncated -}}
+    <footer>
+      <a class="btn btn-outline-primary btn-sm" href="{{ .RelPermalink }}">
+        {{ i18n "readMore" . }}
+        <span class="visually-hidden">{{ i18n "readMoreOn" }} {{ .Title }}</span>
+        <span aria-hidden="true">»</span>
+      </a>
+    </footer>
+  {{- end -}}
+</article>

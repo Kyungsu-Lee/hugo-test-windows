@@ -1,0 +1,50 @@
+{{ define "main" }}
+{{- $dateFormat := site.Params.scanlines.dateFormat | default "2006-01-02" -}}
+<div class="container">
+  <div class="content-wrapper">
+    <header class="list-header">
+      <h1 class="list-title">{{ .Title }}</h1>
+      {{- with .Description }}
+      <p class="list-description">{{ . }}</p>
+      {{- end }}
+      {{- if .Pages }}
+      <p class="list-count">[ {{ i18n "entryCount" (len .Pages) }} ]</p>
+      {{- end }}
+    </header>
+
+    {{- if .Pages }}
+    {{- $paginator := .Paginate (.Pages.ByDate.Reverse) -}}
+    <ul class="post-list">
+      {{- range $paginator.Pages }}
+      <li class="post-list-item">
+        <article>
+          <h2 class="post-list-title">
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </h2>
+          <div class="post-list-meta">
+            {{- if not .Date.IsZero }}
+            <time class="post-list-date" datetime="{{ .Date.Format "2006-01-02" }}">
+              {{ .Date.Format $dateFormat }}
+            </time>
+            {{- end }}
+          </div>
+          {{- with .Description }}
+          <p class="post-list-excerpt">{{ . }}</p>
+          {{- else }}
+          {{- with partial "page-summary.html" . }}
+          <p class="post-list-excerpt">{{ . | truncate 200 }}</p>
+          {{- end }}
+          {{- end }}
+        </article>
+      </li>
+      {{- end }}
+    </ul>
+
+    {{- /* Pagination */ -}}
+    {{- partial "pagination.html" $paginator }}
+    {{- else }}
+    <p class="no-content">{{ or (i18n "noContent") "No content found." }}</p>
+    {{- end }}
+  </div>
+</div>
+{{ end }}

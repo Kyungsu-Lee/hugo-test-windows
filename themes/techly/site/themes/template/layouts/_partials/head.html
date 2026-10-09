@@ -1,0 +1,25 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+{{ partialCached "head/icons.html" . }}
+{{- with .Description }}
+  <meta name="description" content="{{ . }}">
+{{- else }}
+  {{- with site.Params.description }}
+    <meta name="description" content="{{ . }}">
+  {{- end }}
+{{- end }}
+{{- if .Params.robots }}
+  <meta name="robots" content="{{ .Params.robots }}">
+{{- else if or .Params.index (and .IsHome (default true site.Params.indexHome)) }}
+  <meta name="robots" content="index">
+{{- else }}
+  <meta name="robots" content="noindex">
+{{- end }}
+{{ partialCached "head/css.html" . }}
+{{- $searchPage := partial "search-page.html" . -}}
+{{- if $searchPage -}}
+  {{- with site.Home.OutputFormats.Get "JSON" -}}
+    <link rel="preload" href="{{ .RelPermalink }}" as="fetch" crossorigin="anonymous">
+  {{- end -}}
+{{- end -}}

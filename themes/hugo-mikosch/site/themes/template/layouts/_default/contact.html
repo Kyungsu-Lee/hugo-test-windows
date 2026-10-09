@@ -1,0 +1,39 @@
+{{ define "main" }}
+  <section class="page-layout">
+    <article class="page-main content">
+      <header class="page-hero" data-reveal>
+        <div class="kicker">Contact</div>
+        <h1>{{ .Title }}</h1>
+      </header>
+      {{ with .Params.image }}
+        <div class="page-media" data-reveal>
+          <img src="{{ . }}" alt="{{ $.Title }}">
+        </div>
+      {{ end }}
+      <div class="content-body">
+        {{ .Content }}
+      </div>
+
+      <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="contact-form" data-reveal>
+        <input type="hidden" name="form-name" value="contact">
+        <p class="form-hidden">
+          <label>Don't fill this out if you're human: <input name="bot-field"></label>
+        </p>
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" required>
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required>
+        </label>
+        <label>
+          <span>Message</span>
+          <textarea name="message" rows="6" required></textarea>
+        </label>
+        <button type="submit" class="btn primary">Send message</button>
+      </form>
+    </article>
+    {{ partial "profile-card.html" . }}
+  </section>
+{{ end }}

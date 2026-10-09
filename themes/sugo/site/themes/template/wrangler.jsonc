@@ -1,0 +1,8 @@
+{
+  "name": "my-hugo-site",
+  "compatibility_date": "2026-02-22",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+}
+}

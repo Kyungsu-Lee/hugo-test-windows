@@ -1,0 +1,91 @@
+languageCode = "en"
+title = "Jughead"
+copyright = "John Doe"
+enableGitInfo = true
+
+# theme as module
+[module]
+replacements = "github.com/ananthb/jughead -> ../.."
+[module.hugoVersion]
+min = "0.120.0"
+extended = true
+[[module.imports]]
+path = "github.com/ananthb/jughead"
+
+# Code highlighting
+pygmentsstyle = "monokai"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+
+# Site parameters
+[params]
+# Add a logo to your site by placing an image in the assets directory
+# and setting the path here. Preferably a square png image.
+logo = "logo.svg"
+
+# Theme: "ink" (newspaper/OLED) or "earth" (rust/slate)
+
+# Theme mode: "auto" (follows system), "light", or "dark"
+themeMode = "auto"
+
+# Enable a service worker for offline access.
+#
+# Set to true to cache pages as they are visited.
+# serviceWorker = true
+# Set to "precache" to cache all pages on first load.
+# serviceWorker = "precache"
+
+subtitle = "Blog theme for Hugo."
+description = "Demo site for Jughead, a blog theme for Hugo."
+
+mainSections = ["articles", "links"]
+
+# Display a link to the commit that built this site in your footer.
+# Requires enableGitInfo = true, and for your website to be public on GitHub.
+siteRepo = "ananthb/jughead"  # Site GitHub repository
+
+# Configure the Giscus comment system.
+[params.giscus]
+repo = "ananthb/jughead"
+repoId = "R_kgDOKs2pMQ"
+category = "Comments"
+categoryId = 'DIC_kwDOKs2pMc4Cl_sd'
+mapping = "og:title"
+strict = "1"
+loading = "lazy"
+
+# Follow setup instructions at https://utteranc.es.
+# Name of the GitHub repository that will store comments
+# in `owner/name` format.
+utterancesRepo = "ananthb/jughead"
+
+# Social Tags
+[[params.social]]
+name = "GitHub"
+icon = "github"
+url = "https://github.com"
+[[params.social]]
+name = "X"
+icon = "x"
+url = "https://x.com"
+[[params.social]]
+name = "LinkedIn"
+icon = "linkedin"
+url = "https://www.linkedin.com"
+[[params.social]]
+name = "Telegram"
+icon = "telegram"
+url = "https://telegram.org"
+[[params.social]]
+name = "Discord"
+icon = "discord"
+url = "https://discord.com"
+[[params.social]]
+name = "Matrix"
+icon = "matrix"
+url = "https://matrix.org"
+
+[[menu.main]]
+name = "Articles"
+url = "/articles"
+weight = 1

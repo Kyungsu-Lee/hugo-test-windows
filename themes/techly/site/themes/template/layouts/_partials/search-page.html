@@ -1,0 +1,14 @@
+{{- /* Resolves the search page. Override with params.searchPagePath in site config. */ -}}
+{{- $paths := slice "/search" "/page/search" -}}
+{{- with site.Params.searchPagePath -}}
+  {{- $paths = slice . -}}
+{{- end -}}
+{{- $searchPage := false -}}
+{{- range $paths -}}
+  {{- if not $searchPage -}}
+    {{- with site.GetPage . -}}
+      {{- $searchPage = . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $searchPage -}}

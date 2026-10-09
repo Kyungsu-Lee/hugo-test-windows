@@ -1,0 +1,384 @@
+---
+title: "Components"
+hideMeta: true
+navbar:
+  style: "fixed-top"
+---
+
+<div class="container py-4">
+
+<p>This page provides a visual reference for <strong>Bootstrap components and Bootswatch theme settings</strong> as used by the Felmdrav theme.
+</p>
+<p>
+It is intended to help you evaluate typography, colors, form elements, buttons, and other UI components across different Bootstrap and Bootswatch themes.
+</p>
+<p><strong>Note:</strong> For demonstration purposes, this page intentionally uses the <strong>fixed-top navbar header variant</strong> instead of the hero header.</p>
+<p>This makes it easier to focus on component styling without the visual influence of a hero image.</p>
+
+<p>All components shown here follow standard Bootstrap behavior.<br/>
+The theme does not introduce custom component styling beyond layout and spacing.
+</p>
+
+</div>
+
+
+
+<div class="container py-4">
+
+  <h2>Typography</h2>
+
+  <p class="lead">
+    Lead paragraph showing emphasis and spacing.
+  </p>
+
+  <p>
+    Regular text with <a href="#">a link</a>,
+    <strong>strong</strong>, <em>emphasis</em>,
+    <code>inline code</code> and <kbd>KBD</kbd>.
+  </p>
+
+  <h1>Heading 1</h1>
+  <h2>Heading 2</h2>
+  <h3>Heading 3</h3>
+  <h4>Heading 4</h4>
+
+  <blockquote class="blockquote">
+    <p>Blockquote example text.</p>
+    <footer class="blockquote-footer">Someone famous</footer>
+  </blockquote>
+
+  <hr>
+
+  <h2>Buttons</h2>
+
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button class="btn btn-primary">Primary</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-success">Success</button>
+    <button class="btn btn-danger">Danger</button>
+    <button class="btn btn-warning">Warning</button>
+    <button class="btn btn-info">Info</button>
+    <button class="btn btn-light">Light</button>
+    <button class="btn btn-dark">Dark</button>
+    <button class="btn btn-outline-primary">Outline</button>
+    <button class="btn btn-primary" disabled>Disabled</button>
+  </div>
+
+  <div class="btn-group mb-3" role="group">
+    <button class="btn btn-outline-secondary">Left</button>
+    <button class="btn btn-outline-secondary">Middle</button>
+    <button class="btn btn-outline-secondary">Right</button>
+  </div>
+
+  <hr>
+
+  <h2>Alerts</h2>
+
+  <div class="alert alert-primary">Primary alert</div>
+  <div class="alert alert-success">Success alert</div>
+  <div class="alert alert-warning">Warning alert</div>
+  <div class="alert alert-danger">Danger alert</div>
+
+  <hr>
+
+  <h2>Badges</h2>
+
+  <span class="badge text-bg-primary">Primary</span>
+  <span class="badge text-bg-success">Success</span>
+  <span class="badge text-bg-warning">Warning</span>
+  <span class="badge text-bg-danger">Danger</span>
+
+  <hr>
+
+  <h2>Forms</h2>
+
+  <form class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" placeholder="name@example.com">
+      <div class="form-text">Helper text example</div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Select</label>
+      <select class="form-select">
+        <option selected>Choose…</option>
+        <option>Option A</option>
+        <option>Option B</option>
+      </select>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Textarea</label>
+      <textarea class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="check1">
+        <label class="form-check-label" for="check1">Checkbox</label>
+      </div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="switch1" checked>
+        <label class="form-check-label" for="switch1">Switch</label>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Range</label>
+      <input type="range" class="form-range" min="0" max="100">
+    </div>
+
+    <div class="col-12">
+      <button type="button" class="btn btn-primary">Submit (demo)</button>
+
+    </div>
+  </form>
+
+  <hr>
+
+  <h2> Modal</h2>
+
+  <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#demoModal">
+    Open Modal
+  </button>
+
+  <div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Demo Modal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Modal content to test Bootstrap JS styling.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-primary">Action</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2> Tables</h2>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th class="text-end">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Invoice #1001</td>
+          <td><span class="badge text-bg-success">Paid</span></td>
+          <td class="text-end">€120.00</td>
+        </tr>
+        <tr>
+          <td>Invoice #1002</td>
+          <td><span class="badge text-bg-warning">Open</span></td>
+          <td class="text-end">€89.50</td>
+        </tr>
+        <tr>
+          <td>Invoice #1003</td>
+          <td><span class="badge text-bg-danger">Overdue</span></td>
+          <td class="text-end">€42.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <h2>Navigation</h2>
+
+  <ul class="nav nav-pills mb-3">
+    <li class="nav-item"><a class="nav-link active" href="#">Active</a></li>
+    <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+    <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+    <li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a></li>
+  </ul>
+
+  <nav aria-label="Pagination">
+    <ul class="pagination">
+      <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
+      <li class="page-item active"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+  </nav>
+
+  <hr>
+
+  <h2>Cards & Grid</h2>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Simple card</h5>
+          <p class="card-text">Spacing, borders and text colors.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Card with list</h5>
+          <ul>
+            <li>Item one</li>
+            <li>Item two</li>
+            <li>Item three</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<hr>
+
+<h2>Dropdowns</h2>
+
+<div class="dropdown mb-3">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    Dropdown button
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="#">Action</a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+    <li><a class="dropdown-item" href="#">Something else here</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="#">Separated link</a></li>
+  </ul>
+</div>
+
+<hr>
+
+<h2>List groups</h2>
+
+<ul class="list-group mb-3">
+  <li class="list-group-item active">Active item</li>
+  <li class="list-group-item">Regular item</li>
+  <li class="list-group-item disabled">Disabled item</li>
+</ul>
+
+<div class="list-group mb-3">
+  <a href="#" class="list-group-item list-group-item-action active">
+    Linked active item
+  </a>
+  <a href="#" class="list-group-item list-group-item-action">
+    Linked item
+  </a>
+  <a href="#" class="list-group-item list-group-item-action">
+    Another linked item
+  </a>
+</div>
+
+<hr>
+
+<h2>Progress</h2>
+
+<div class="progress mb-2">
+  <div class="progress-bar" style="width: 25%"></div>
+</div>
+
+<div class="progress mb-2">
+  <div class="progress-bar bg-success" style="width: 50%">50%</div>
+</div>
+
+<div class="progress mb-3">
+  <div class="progress-bar bg-warning" style="width: 75%">75%</div>
+</div>
+
+<hr>
+
+<h2>Accordion</h2>
+
+<div class="accordion mb-3" id="demoAccordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accOne">
+        Accordion Item #1
+      </button>
+    </h2>
+    <div id="accOne" class="accordion-collapse collapse show">
+      <div class="accordion-body">
+        Content for the first accordion panel.
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accTwo">
+        Accordion Item #2
+      </button>
+    </h2>
+    <div id="accTwo" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        Content for the second accordion panel.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $(function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+  });
+</script>
+
+<hr>
+
+<h2>Tooltips</h2>
+
+<button class="btn btn-secondary me-2" data-bs-toggle="tooltip" title="Tooltip on top">
+  Hover me
+</button>
+
+<button class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Another tooltip">
+  Hover me too
+</button>
+
+<hr>
+
+<h2>Toast</h2>
+
+<button class="btn btn-outline-secondary mb-2" id="showToast">
+  Show toast
+</button>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="demoToast" class="toast">
+    <div class="toast-header">
+      <strong class="me-auto">Toast</strong>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body">
+      This is a demo toast message.
+    </div>
+  </div>
+</div>
+
+<script>
+  // English comments only:
+  $(function () {
+    $("#showToast").on("click", function () {
+      new bootstrap.Toast(document.getElementById("demoToast")).show();
+    });
+  });
+</script>
+
+
+</div>

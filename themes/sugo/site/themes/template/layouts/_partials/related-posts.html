@@ -1,0 +1,50 @@
+{{- $page := . -}}
+{{- $features := site.Params.features -}}
+{{- $ui := site.Params.ui -}}
+{{- $relatedConfig := site.Params.related -}}
+{{- if and (ne $features.enableRelatedPosts false) $page.IsPage -}}
+  {{- $limit := int ($relatedConfig.count | default 3) -}}
+  {{- if lt $limit 1 -}}
+    {{- $limit = 3 -}}
+  {{- end -}}
+  {{- $sameSectionOnly := ne ($relatedConfig.sameSectionOnly | default true) false -}}
+  {{- $summaryLength := int ($relatedConfig.summaryLength | default 145) -}}
+  {{- $showSummary := ne ($relatedConfig.showSummary | default true) false -}}
+
+  {{- $relatedPages := slice -}}
+  {{- range site.RegularPages.Related $page -}}
+    {{- if and (ne .RelPermalink $page.RelPermalink) (or (not $sameSectionOnly) (eq .Section $page.Section)) -}}
+      {{- $relatedPages = $relatedPages | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if eq (len $relatedPages) 0 -}}
+    {{- range (where site.RegularPages "Section" $page.Section).ByDate.Reverse -}}
+      {{- if ne .RelPermalink $page.RelPermalink -}}
+        {{- $relatedPages = $relatedPages | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if gt (len $relatedPages) 0 -}}
+    {{- $finalCount := cond (lt (len $relatedPages) $limit) (len $relatedPages) $limit -}}
+    {{- $finalPages := first $finalCount $relatedPages -}}
+    <section class="article-related" aria-label="{{ $ui.relatedHeading | default "Related writing" }}" data-pagefind-ignore>
+      <h2 class="article-related__heading">{{ $ui.relatedHeading | default "Related writing" }}</h2>
+      <div class="article-related__grid">
+        {{- range $finalPages -}}
+          <article class="article-related__item">
+            <h3><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h3>
+            {{- with .Params.subtitle -}}
+              <p class="article-related__subtitle">{{ . }}</p>
+            {{- end -}}
+            {{- if $showSummary -}}
+              <p class="article-related__summary">{{ partial "summary-text.html" (dict "page" . "length" $summaryLength) }}</p>
+            {{- end -}}
+            <a class="article-related__cta" href="{{ .RelPermalink }}">{{ $ui.relatedCta | default "Read article" }}</a>
+          </article>
+        {{- end -}}
+      </div>
+    </section>
+  {{- end -}}
+{{- end -}}

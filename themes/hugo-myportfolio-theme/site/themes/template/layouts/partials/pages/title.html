@@ -1,0 +1,37 @@
+<hgroup class="title-block">
+    {{/* Title */}}
+    <h1>{{ .Title }}</h1>
+
+    {{/* Subtitle */}}
+    {{ with .Params.subtitle }}
+        <h2>{{ . }}</h2>
+    {{ end }}
+    {{ with .Params.subtitle2 }}
+        <h3>{{ . }}</h3>
+    {{ end }}
+
+    {{/* Period */}}
+    {{ if .Params.startDate }}
+    <h3>
+        {{ partial "time-period.html" (dict "startDate" .Params.startDate "endDate" .Params.endDate) }}
+
+        {{/* Duration */}}
+        {{ $end := now }}
+        {{ if .Params.endDate }}
+            {{ $end = (time .Params.endDate) }}
+        {{ end }}
+        {{ $duration := $end.Sub (time .Params.startDate) }}
+        {{ $months := div (int (div $duration.Hours 24)) 30.4167 }}
+        {{ $months_int := int $months }}
+        {{ if ge (sub $months $months_int) 0.5 }}
+            {{ $months = add $months_int 1 }}
+        {{ else }}
+            {{ $months = $months_int }}
+        {{ end }}
+        {{ $years := int (div $months 12) }}
+        {{ $months := sub $months (mul $years 12) }}
+        {{/* TODO: REWRITE! */}}
+        | {{ if gt $years 0 }}{{ $years }} year{{ if gt $years 1 }}s{{ end }}{{ end }}{{ if and (gt $years 0) (gt $months 0) }}, {{ end }}{{ if gt $months 0 }}{{ $months }} month{{ if gt $months 1 }}s{{ end }}{{ end }}
+    </h3>
+    {{ end }}
+</hgroup>

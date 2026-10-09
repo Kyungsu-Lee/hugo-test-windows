@@ -1,0 +1,11 @@
+{{- $tocHeading := site.Params.ui.tocHeading | default "Table of Contents" -}}
+{{- $tocHTML := .tocHTML | default "" -}}
+<aside class="article-toc" data-toc>
+  <button class="article-toc__toggle" type="button" data-toc-toggle aria-expanded="true">
+    <span>{{ $tocHeading }}</span>
+    <span class="article-toc__icon" aria-hidden="true">&#9662;</span>
+  </button>
+  <div class="article-toc__panel" data-toc-panel>
+    {{ $tocHTML | safeHTML }}
+  </div>
+</aside>

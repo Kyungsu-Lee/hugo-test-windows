@@ -1,0 +1,35 @@
+{{- /*
+Returns cover image data for listing cards and single posts.
+
+Sources (opt-in only):
+  - params.featuredImage — path to an image
+  - bundle resource matching featured.*
+
+Set params.showImage = false to hide the cover for a single post.
+Set params.showPostImages = false in site config to disable covers globally.
+*/ -}}
+
+{{- $page := . -}}
+{{- $src := "" -}}
+{{- $alt := $page.Params.imageAlt | default $page.Title -}}
+{{- $enabled := site.Params.showPostImages | default true -}}
+
+{{- if isset $page.Params "showImage" -}}
+  {{- $enabled = $page.Params.showImage -}}
+{{- end -}}
+
+{{- if $enabled -}}
+  {{- with $page.Params.featuredImage -}}
+    {{- with $page.Resources.Get . -}}
+      {{- $src = .RelPermalink -}}
+    {{- else -}}
+      {{- $src = . | relURL -}}
+    {{- end -}}
+  {{- else -}}
+    {{- with $page.Resources.GetMatch "featured.*" -}}
+      {{- $src = .RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return (dict "src" $src "alt" $alt "has" (ne $src "")) -}}

@@ -1,0 +1,37 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_stat }}
+{{ with $data.homepage.section_stat }}
+
+<section class="section section_stat">
+    <div class="container">
+       
+        <div class="box">
+            <div class="stats">
+                {{ if .items }}  <!-- Check if .items is not nil -->
+                {{ $len := len .items }}  <!-- Store the length of .items -->
+                {{ range $index, $item := .items }}
+                    <div class="stat">
+                        <div class="stat__val">
+                            {{ $item.val }}
+                        </div>
+                        <div class="stat__desc">
+                            {{ $item.desc }}
+                        </div>
+                    </div>
+                    {{ if lt $index (sub $len 1) }}  <!-- Check if it's not the last item -->
+                        <b class="stat__divider"></b>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+            </div>
+            <a class="btn-bd" href="#form-main">
+                <b><span>{{ .btn.label }}</span><span>{{ .btn.label }}</span></b>
+            </a>
+        </div>
+        
+    </div>
+</section>
+
+{{ end }}
+{{ end }}

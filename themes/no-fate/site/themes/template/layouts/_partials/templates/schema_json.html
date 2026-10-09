@@ -1,0 +1,94 @@
+{{- $context := "https://schema.org" -}}
+{{- $publisherType := site.Params.schema.publisherType | default "Organization" | title -}}
+
+{{- if .IsHome -}}
+    {{- $sameAs := slice -}}
+    {{- with site.Params.schema.sameAs -}}
+        {{- range . }}{{ $sameAs = $sameAs | append (strings.TrimSpace .) }}{{ end -}}
+    {{- else -}}
+        {{- range site.Params.SocialIcons }}{{ $sameAs = $sameAs | append (strings.TrimSpace .url) }}{{ end -}}
+    {{- end -}}
+    {{- $identity := dict
+        "@context" $context
+        "@type" $publisherType
+        "name" site.Title
+        "url" site.Home.Permalink
+        "description" (site.Params.description | plainify | truncate 180)
+        "sameAs" $sameAs
+    -}}
+    {{- with site.Params.assets.favicon -}}
+        {{- if eq $publisherType "Person" -}}
+            {{- $identity = collections.Merge $identity (dict "image" (. | absURL)) -}}
+        {{- else -}}
+            {{- $identity = collections.Merge $identity (dict "logo" (. | absURL)) -}}
+        {{- end -}}
+    {{- end }}
+<script type="application/ld+json">{{ $identity | jsonify | safeJS }}</script>
+
+{{- else if or .IsPage .IsSection -}}
+    {{- $crumbs := slice -}}
+    {{- range $position, $ancestor := .Ancestors.Reverse -}}
+        {{- $crumbs = $crumbs | append (dict
+            "@type" "ListItem"
+            "position" (add $position 1)
+            "name" $ancestor.LinkTitle
+            "item" $ancestor.Permalink
+        ) -}}
+    {{- end -}}
+    {{- $crumbs = $crumbs | append (dict
+        "@type" "ListItem"
+        "position" (add (len $crumbs) 1)
+        "name" .LinkTitle
+        "item" .Permalink
+    ) -}}
+    {{- $breadcrumbs := dict
+        "@context" $context
+        "@type" "BreadcrumbList"
+        "itemListElement" $crumbs
+    -}}
+<script type="application/ld+json">{{ $breadcrumbs | jsonify | safeJS }}</script>
+
+    {{- if .IsPage -}}
+        {{- $model := partial "content-model.html" . -}}
+        {{- $authors := slice -}}
+        {{- with (.Params.author | default site.Params.author) -}}
+            {{- if reflect.IsSlice . -}}
+                {{- range . }}{{ $authors = $authors | append (dict "@type" "Person" "name" .) }}{{ end -}}
+            {{- else -}}
+                {{- $authors = $authors | append (dict "@type" "Person" "name" .) -}}
+            {{- end -}}
+        {{- end -}}
+        {{- $keywords := union (.Params.keywords | default slice) (.Params.tags | default slice) -}}
+        {{- $keywords = union $keywords (.Params.topics | default slice) -}}
+        {{- $images := slice -}}
+        {{- with partial "templates/_funcs/get-page-images.html" . -}}
+            {{- range first 1 . }}{{ $images = $images | append .Permalink }}{{ end -}}
+        {{- end -}}
+        {{- $publisher := dict "@type" $publisherType "name" site.Title -}}
+        {{- with site.Params.assets.favicon -}}
+            {{- $publisher = collections.Merge $publisher (dict "logo" (dict
+                "@type" "ImageObject"
+                "url" (. | absURL)
+            )) -}}
+        {{- end -}}
+        {{- $article := dict
+            "@context" $context
+            "@type" "BlogPosting"
+            "headline" (.Title | plainify)
+            "name" (.Title | plainify)
+            "description" (or $model.SEO.Description .Description .Summary | plainify)
+            "keywords" $keywords
+            "articleBody" .Plain
+            "wordCount" .WordCount
+            "inLanguage" (.Language.Locale | default .Language.Lang)
+            "datePublished" (.PublishDate.Format "2006-01-02T15:04:05-07:00")
+            "dateModified" (.Lastmod.Format "2006-01-02T15:04:05-07:00")
+            "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+            "publisher" $publisher
+        -}}
+        {{- with .Section }}{{ $article = collections.Merge $article (dict "articleSection" .) }}{{ end -}}
+        {{- with $authors }}{{ $article = collections.Merge $article (dict "author" .) }}{{ end -}}
+        {{- with $images }}{{ $article = collections.Merge $article (dict "image" .) }}{{ end -}}
+<script type="application/ld+json">{{ $article | jsonify | safeJS }}</script>
+    {{- end -}}
+{{- end -}}

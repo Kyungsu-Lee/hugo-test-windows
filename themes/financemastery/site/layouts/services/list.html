@@ -1,0 +1,31 @@
+{{ define "main" }}
+{{ $lang := .Page.Lang }}
+{{ $data := index $.Site.Data }}
+
+
+<article class="hero__wrap">
+  {{- partial "header.html" . -}}
+</article>
+<article class="page__content pb-0">
+  <section class="container">
+    <h1>{{ .Title }}</h1>
+  </section>
+  <!-- BEGIN section -->
+  {{- partial "_benefits.html" . -}}
+  <!-- END section -->
+
+  <!-- BEGIN section -->
+  {{- partial "_benefits-students.html" . -}}
+  <!-- END section -->
+
+   <!-- BEGIN section -->
+    <section class="section section_form my-0">
+      <div class="container">
+        {{- partial "_form.html" . -}}
+      </div>
+    </section>
+   <!-- END section -->
+ 
+</article>
+{{ end }}
+

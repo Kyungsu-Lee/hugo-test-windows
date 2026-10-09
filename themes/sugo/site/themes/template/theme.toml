@@ -1,0 +1,16 @@
+name = "sugo"
+license = "MIT"
+licenselink = "https://github.com/psugam/sugo/blob/master/LICENSE"
+description = "A magazine-like theme for Hugo."
+
+homepage = "https://github.com/psugam/sugo/"
+demosite = "https://sugo-docs.pokharelsugam19.workers.dev/"
+
+tags = ["blog", "magazine", "responsive", "dark mode", "dark", "light", "personal"]
+features = ["syntax highlighting", "dark mode", "search"]
+min_version="0.146.0"
+
+[author]
+  name = "Sugam Pokharel"
+  homepage = "https://sugam-pokharel.com.np/"
+

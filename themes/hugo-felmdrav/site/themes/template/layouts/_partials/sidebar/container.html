@@ -1,0 +1,19 @@
+{{- /* Render sidebar items from a sidebar section by ID. */ -}}
+
+{{- $sidebarID := .id | default "" -}}
+{{- $class := .class | default "felmdrav-sidebar" -}}
+
+{{- if not $sidebarID -}}
+  {{- return -}}
+{{- end -}}
+
+{{- $sidebarPage := site.GetPage (printf "/sections/sidebar-%s" $sidebarID) -}}
+{{- if not $sidebarPage -}}
+  {{- return -}}
+{{- end -}}
+
+<aside class="{{ $class }}">
+  {{- range sort (sort $sidebarPage.Resources "Name") "Weight" -}}
+    {{- partial "sidebar/item.html" . -}}
+  {{- end -}}
+</aside>

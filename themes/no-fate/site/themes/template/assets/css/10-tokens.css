@@ -1,0 +1,160 @@
+:root {
+    /* Colour roles */
+    --nf-ink: #151410;
+    --nf-paper: #f3f0e8;
+    --nf-paper-deep: #ded8cc;
+    --nf-surface: #fffdf7;
+    --nf-muted: #69655e;
+    --nf-rule-colour: rgba(21, 20, 16, 0.34);
+    --nf-soft-rule-colour: rgba(21, 20, 16, 0.16);
+    --nf-signal: #b02518;
+    --nf-alert: #a91f17;
+    --nf-focus: #075dcc;
+    --nf-inverse-ink: #f3f0e8;
+    --nf-inverse-paper: #171612;
+    --nf-code-paper: #201f1b;
+    --nf-code-ink: #f3f0e8;
+    --nf-print-ink: #000;
+    --nf-print-muted: #222;
+    --nf-print-paper: #fff;
+
+    /* Type roles: system stacks only; downstream sites may replace them locally. */
+    --nf-font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --nf-font-display: "Arial Narrow", "Roboto Condensed", Arial, ui-sans-serif, system-ui, sans-serif;
+    --nf-font-meta: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --nf-body-size: clamp(1rem, 0.35vw + 0.94rem, 1.16rem);
+    --nf-body-leading: 1.62;
+    --nf-display-leading: 0.96;
+    --nf-meta-size: 0.78rem;
+
+    /* Measures */
+    --nf-reading: 68ch;
+    --nf-page: 86rem;
+    --nf-wide: 100rem;
+    --nf-gutter: clamp(1rem, 3vw, 2.5rem);
+    --nf-title-measure: 18ch;
+
+    /* Spacing */
+    --nf-space-0: 0.25rem;
+    --nf-space-1: 0.5rem;
+    --nf-space-2: 0.75rem;
+    --nf-space-3: 1rem;
+    --nf-space-4: 1.5rem;
+    --nf-space-5: 2rem;
+    --nf-space-6: 3rem;
+    --nf-space-7: 5rem;
+    --nf-space-8: 8rem;
+
+    /* Geometry */
+    --nf-radius: 0;
+    --nf-border: 1px solid var(--nf-rule-colour);
+    --nf-border-strong: 2px solid var(--nf-ink);
+    --nf-header-height: 4.5rem;
+
+    /* Motion */
+    --nf-fast: 140ms;
+    --nf-medium: 240ms;
+    --nf-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Page-mode defaults */
+    --nf-title-size: clamp(2.8rem, 6vw, 5.5rem);
+    --nf-opening-gap: clamp(3rem, 7vw, 6rem);
+    --nf-section-gap: clamp(3rem, 6vw, 5rem);
+
+    /* Compatibility aliases retained while downstream PaperMod overrides migrate. */
+    --nf-colour-paper: var(--nf-paper);
+    --nf-colour-surface: var(--nf-surface);
+    --nf-colour-ink: var(--nf-ink);
+    --nf-colour-muted: var(--nf-muted);
+    --nf-colour-rule: var(--nf-rule-colour);
+    --nf-colour-soft-rule: var(--nf-soft-rule-colour);
+    --nf-colour-signal: var(--nf-signal);
+    --nf-colour-focus: var(--nf-focus);
+    --nf-colour-code: var(--nf-code-paper);
+    --nf-colour-code-ink: var(--nf-code-ink);
+    --nf-shell-width: var(--nf-page);
+    --nf-reading-measure: var(--nf-reading);
+    --nf-rule: var(--nf-border);
+    --nf-rule-strong: var(--nf-border-strong);
+    --nf-transition: var(--nf-fast) var(--nf-ease);
+
+    --gap: var(--nf-space-4);
+    --content-gap: var(--nf-space-4);
+    --nav-width: var(--nf-page);
+    --main-width: 80rem;
+    --header-height: var(--nf-header-height);
+    --footer-height: auto;
+    --radius: var(--nf-radius);
+    --theme: var(--nf-paper);
+    --entry: var(--nf-surface);
+    --primary: var(--nf-ink);
+    --secondary: var(--nf-muted);
+    --tertiary: var(--nf-rule-colour);
+    --content: var(--nf-ink);
+    --code-block-bg: var(--nf-code-paper);
+    --code-bg: var(--nf-surface);
+    --border: var(--nf-soft-rule-colour);
+    color-scheme: light;
+}
+
+[data-page-mode="poster"] {
+    --nf-title-size: clamp(3.6rem, 10vw, 9rem);
+    --nf-opening-gap: clamp(4rem, 10vw, 9rem);
+    --nf-section-gap: clamp(4.5rem, 9vw, 8rem);
+}
+
+[data-page-mode="editorial"] {
+    --nf-title-size: clamp(2.8rem, 6vw, 5.5rem);
+    --nf-opening-gap: clamp(3rem, 7vw, 6rem);
+    --nf-section-gap: clamp(3rem, 6vw, 5rem);
+}
+
+[data-page-mode="record"] {
+    --nf-title-size: clamp(2.2rem, 4vw, 3.8rem);
+    --nf-opening-gap: 2.5rem;
+    --nf-section-gap: 2.5rem;
+}
+
+[data-page-mode="archive"] {
+    --nf-title-size: clamp(2.8rem, 6vw, 5.5rem);
+    --nf-opening-gap: clamp(3rem, 7vw, 6rem);
+    --nf-section-gap: clamp(3.5rem, 7vw, 6rem);
+}
+
+:root[data-theme="dark"] {
+    --nf-ink: #ede8dc;
+    --nf-paper: #191713;
+    --nf-paper-deep: #24211c;
+    --nf-surface: #211e19;
+    --nf-muted: #c1b9aa;
+    --nf-rule-colour: rgba(237, 232, 220, 0.48);
+    --nf-soft-rule-colour: rgba(237, 232, 220, 0.22);
+    --nf-signal: #ff725c;
+    --nf-alert: #ff8a78;
+    --nf-focus: #8fc1ff;
+    --nf-inverse-ink: #191713;
+    --nf-inverse-paper: #ede8dc;
+    --nf-code-paper: #0f0e0c;
+    --nf-code-ink: #ede8dc;
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[data-theme="auto"] {
+        --nf-ink: #ede8dc;
+        --nf-paper: #191713;
+        --nf-paper-deep: #24211c;
+        --nf-surface: #211e19;
+        --nf-muted: #c1b9aa;
+        --nf-rule-colour: rgba(237, 232, 220, 0.48);
+        --nf-soft-rule-colour: rgba(237, 232, 220, 0.22);
+        --nf-signal: #ff725c;
+        --nf-alert: #ff8a78;
+        --nf-focus: #8fc1ff;
+        --nf-inverse-ink: #191713;
+        --nf-inverse-paper: #ede8dc;
+        --nf-code-paper: #0f0e0c;
+        --nf-code-ink: #ede8dc;
+        color-scheme: dark;
+    }
+}

@@ -1,0 +1,32 @@
+{{- $pager := .pager -}}
+{{- $ui := site.Params.ui -}}
+{{- $features := site.Params.features -}}
+{{- $prevLabel := $ui.paginationPrevLabel | default "Previous" -}}
+{{- $nextLabel := $ui.paginationNextLabel | default "Next" -}}
+{{- if and (ne $features.enablePagination false) $pager (gt $pager.TotalPages 1) -}}
+  <nav class="site-pagination" aria-label="{{ $ui.paginationAriaLabel | default "Pagination" }}">
+    {{- if $pager.HasPrev -}}
+      <a class="site-pagination__edge" href="{{ $pager.Prev.URL }}">{{ $prevLabel }}</a>
+    {{- else -}}
+      <span class="site-pagination__edge is-disabled">{{ $prevLabel }}</span>
+    {{- end -}}
+
+    <ul class="site-pagination__list">
+      {{- range $pager.Pagers -}}
+        <li>
+          {{- if eq .PageNumber $pager.PageNumber -}}
+            <span class="site-pagination__link is-current" aria-current="page">{{ .PageNumber }}</span>
+          {{- else -}}
+            <a class="site-pagination__link" href="{{ .URL }}">{{ .PageNumber }}</a>
+          {{- end -}}
+        </li>
+      {{- end -}}
+    </ul>
+
+    {{- if $pager.HasNext -}}
+      <a class="site-pagination__edge" href="{{ $pager.Next.URL }}">{{ $nextLabel }}</a>
+    {{- else -}}
+      <span class="site-pagination__edge is-disabled">{{ $nextLabel }}</span>
+    {{- end -}}
+  </nav>
+{{- end -}}

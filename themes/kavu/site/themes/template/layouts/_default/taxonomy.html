@@ -1,0 +1,34 @@
+{{ define "main" }}
+<div class="container">
+    
+    <!-- Back Link -->
+    <a href="{{ "/notes/" | relURL }}" class="back-link">← Notes</a>
+    
+    <!-- Title -->
+    <h1>{{ .Title }}</h1>
+    
+    <!-- Metadata -->
+    <div class="metadata">
+        {{ .Data.Plural | humanize }}: {{ len .Pages }} notes
+    </div>
+
+    <!-- Notes List -->
+    <ul class="recent-list">
+        {{ range .Pages }}
+        <li>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            <div class="recent-meta">
+                {{ .Date.Format "2006-01-02" }}
+                {{ with .Params.status }}
+                · <span class="status status-{{ . }}">
+                    {{ if eq . "evergreen" }}🌳{{ else if eq . "growing" }}🌿{{ else }}🌱{{ end }}
+                    {{ . }}
+                </span>
+                {{ end }}
+            </div>
+        </li>
+        {{ end }}
+    </ul>
+
+</div>
+{{ end }}

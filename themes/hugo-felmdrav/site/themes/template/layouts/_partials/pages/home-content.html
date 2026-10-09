@@ -1,0 +1,26 @@
+<div class="_py-5">
+
+  {{- $sections := .Params.home.sections | default (slice) -}}
+  {{- range $i, $sec := $sections -}}
+    {{- $type := $sec.type | default "" -}}
+    {{- if not $type -}}{{- continue -}}{{- end -}}
+
+    {{- $contentPath := $sec.content | default "" -}}
+    {{- $payload := dict "root" $ "section" $sec -}}
+
+    {{- if $contentPath -}}
+      {{- $p := site.GetPage $contentPath -}}
+      {{- if $p -}}
+        {{- $payload = merge $payload (dict "block" $p) -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $partialPath := printf "elements/%s.html" $type -}}
+    {{- partial $partialPath $payload -}}
+  {{- end -}}
+
+</div>
+<div class="col-12">
+    {{ .Content }}
+</div>
+  {{ partial "hooks/home-content-bottom.html" . }}

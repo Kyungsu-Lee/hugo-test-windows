@@ -1,0 +1,29 @@
+{{- $page := .Page | default . -}}
+{{- $toc := site.Params.scanlines.toc -}}
+{{- if and (ne $toc.enabled false) $page.TableOfContents (gt (len ($page.TableOfContents | plainify)) 0) -}}
+  {{- $title := $toc.title | default "CONTENTS" -}}
+  {{- $collapsible := ne $toc.collapsible false -}}
+  {{- $id := printf "toc-%s" (anchorize $page.RelPermalink) -}}
+
+  {{- if $collapsible }}
+  {{- /* Native <details> is keyboard-operable and announces expanded/collapsed
+         state — no checkbox hack, no JavaScript. */ -}}
+  <details class="toc toc-collapsible" id="{{ $id }}">
+    <summary class="toc-toggle">
+      <span class="toc-title">{{ $title }}</span>
+      <span class="toc-icon" aria-hidden="true">[+]</span>
+    </summary>
+    <nav class="toc-nav" aria-label="{{ $title }}">
+      {{ $page.TableOfContents }}
+    </nav>
+  </details>
+  {{- else }}
+  <aside class="toc" aria-label="{{ or (i18n "tableOfContents") "Table of contents" }}">
+    <h2 class="toc-title">{{ $title }}</h2>
+    <nav class="toc-nav">
+      {{ $page.TableOfContents }}
+    </nav>
+  </aside>
+  {{- end }}
+
+{{- end -}}

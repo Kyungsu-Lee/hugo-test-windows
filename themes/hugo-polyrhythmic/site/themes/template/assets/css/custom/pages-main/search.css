@@ -1,0 +1,61 @@
+#searchbox {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+
+  &:has(#searchResults:not(:empty)) {    
+    .search.bar {
+      &::before {
+        border-bottom: 1px solid var(--color-outline-variant);
+        border-radius: var(--shape-corner-xl-top);
+        box-shadow: var(--elevation0);
+      }
+    }
+  }
+
+  #searchResults {
+    position: absolute;
+    inset: 100% 0 auto;
+    
+    display: flex;
+    flex-flow: column nowrap;
+    background: var(--color-surface-container-high);
+    border-radius: var(--shape-corner-xl-bottom);
+
+    & li {
+      margin-left: unset;
+      position: relative;
+      min-width: fit-content;
+      color: var(--color-on-surface);
+      padding: var(--size-4);
+
+      &:active {
+        background: var(--color-primary-container);
+      }
+
+      &::before {
+        display: none;
+      }
+    }
+
+    & a {
+      position: absolute;
+      inset: 0; 
+    }
+
+    .focus,
+    & li:hover {
+      color: var(--color-on-tertiary-container);
+      background: var(--color-tertiary-container);
+    }
+  }
+}
+
+/* Compact to Medium sizes doesn't show header search box */
+@media screen and (0px <= width < 839px) {
+  #searchbox {
+    &.header-searchbox {
+      display: none;
+    }
+  }
+}

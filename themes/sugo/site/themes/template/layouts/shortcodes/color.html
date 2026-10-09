@@ -1,0 +1,3 @@
+{{- $light := .Get "light" | default "inherit" -}}
+{{- $dark := .Get "dark" | default $light -}}
+<div class="lit-color-text" data-light="{{ $light }}" data-dark="{{ $dark }}" style="color: {{ $light }};">{{ partial "shortcodes/render-inner.html" (dict "ctx" . "content" .Inner "display" "block" "trim" true) }}</div>

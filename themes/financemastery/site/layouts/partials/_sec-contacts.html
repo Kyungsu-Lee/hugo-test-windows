@@ -1,0 +1,19 @@
+
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_contacts }}
+{{ with $data.homepage.section_contacts }}
+<section class="section section_contacts">
+    <div class="container">
+        <h2>{{ .title }}</h2>
+
+        <div class="row_1">
+            <div><img src="{{ .img | relURL }}" alt="Map" width="600" height="300" class="img"></div>
+            <div>
+                {{- partial "_form.html" . -}}
+            </div>
+        </div>
+    </div>
+</section>
+{{ end }}
+{{ end }}

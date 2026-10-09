@@ -1,0 +1,64 @@
+{{- $slideWidth := .Get "slidewidth" | default "100%" -}}
+{{- $mainCaption := .Get "caption" -}}
+{{- $ui := site.Params.ui -}}
+{{- $slideshowId := .Get "id" -}}
+{{- if not $slideshowId -}}
+  {{- $slideshowId = printf "lit-slideshow-%d" .Ordinal -}}
+{{- end -}}
+{{- $maxSize := .Site.Params.slideshow.maxSize | default 20 -}}
+
+<div class="lit-slideshow" data-lit-slideshow="{{ $slideshowId }}" style="--lit-slideshow-width: {{ $slideWidth }};">
+  <div class="lit-slideshow__viewport">
+    {{- range $index := seq 1 (int $maxSize) -}}
+      {{- $imageParam := print "image" $index -}}
+      {{- $captionParam := print "caption" $index -}}
+      {{- $imagePath := $.Get $imageParam -}}
+
+      {{- if $imagePath -}}
+        {{- $finalPath := "" -}}
+        {{- $isRemote := or (hasPrefix $imagePath "http://") (hasPrefix $imagePath "https://") (hasPrefix $imagePath "//") -}}
+
+        {{- if $isRemote -}}
+          {{- $finalPath = $imagePath -}}
+        {{- else -}}
+          {{- $clean := strings.TrimPrefix "/" $imagePath -}}
+          {{- $clean = strings.TrimPrefix "\\" $clean -}}
+          {{- $pageImg := $.Page.Resources.GetMatch $clean -}}
+
+          {{- if $pageImg -}}
+            {{- $finalPath = $pageImg.RelPermalink -}}
+          {{- else -}}
+            {{- if (strings.HasPrefix $clean "images/") -}}
+              {{- $assetImage := resources.Get (printf "images/%s" (strings.TrimPrefix "images/" $clean)) -}}
+              {{- if $assetImage -}}
+                {{- $finalPath = $assetImage.RelPermalink -}}
+              {{- else -}}
+                {{- $finalPath = printf "/%s" $clean -}}
+              {{- end -}}
+            {{- else -}}
+              {{- if not (hasPrefix $imagePath "/") -}}
+                {{- $finalPath = printf "/%s" $imagePath -}}
+              {{- else -}}
+                {{- $finalPath = $imagePath -}}
+              {{- end -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+
+        <figure class="lit-slideshow__slide" data-lit-slide-index="{{ $index }}"{{ if ne $index 1 }} hidden{{ end }}>
+          <img src="{{ if $isRemote }}{{ $finalPath | safeURL }}{{ else }}{{ $finalPath | relURL }}{{ end }}" alt="Slideshow image {{ $index }}">
+          {{- with $.Get $captionParam -}}
+            <figcaption>{{ . }}</figcaption>
+          {{- end -}}
+        </figure>
+      {{- end -}}
+    {{- end -}}
+
+    <button type="button" class="lit-slideshow__nav lit-slideshow__nav--prev" data-lit-slide-prev aria-label="{{ $ui.shortcodeSlideshowPrevLabel | default "Previous slide" }}">&#10094;</button>
+    <button type="button" class="lit-slideshow__nav lit-slideshow__nav--next" data-lit-slide-next aria-label="{{ $ui.shortcodeSlideshowNextLabel | default "Next slide" }}">&#10095;</button>
+  </div>
+
+  {{- with $mainCaption -}}
+    <p class="lit-shortcode-caption">{{ . }}</p>
+  {{- end -}}
+</div>

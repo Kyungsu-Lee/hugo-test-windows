@@ -1,0 +1,18 @@
+{{ "<!-- TAIL.HTML -->" | safeHTML }}
+<script src="{{ "plugins/jquery/jquery.min.js" | relURL }}"></script>
+{{- if ($.Scratch.Get "photoswipeloaded") }}
+    {{ "<!-- Load PhotoSwipe js if the load-photoswipe shortcode has been used -->" | safeHTML }}
+    <script src="{{ "js/load-photoswipe.js" | relURL }}"></script>
+    <script src="{{ "plugins/photoswipe/js/photoswipe.min.js" | relURL }}"></script>
+    <script src="{{ "plugins/photoswipe/js/photoswipe-ui-default.min.js" | relURL }}"></script>
+{{- end }}
+<script src="{{ "plugins/bootstrap/js/bootstrap.min.js" | relURL }}"></script>
+<script src="{{ "plugins/jquery/jquery.easing.min.js" | relURL }}"></script>
+<script src="{{ "plugins/jquery/jquery.fittext.js" | relURL }}"></script>
+<script src="{{ "js/theme.js" | relURL }}"></script>
+<script src="{{ "js/anim.js" | relURL }}"></script>
+{{- if .IsHome }}
+    {{ with .Site.Data.home.background_hidden -}}
+        <script src="{{ "js/hidden-background.js" | relURL }}"></script>
+    {{- end -}}
+{{- end }}

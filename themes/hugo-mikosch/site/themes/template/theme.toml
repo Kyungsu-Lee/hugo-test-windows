@@ -1,0 +1,12 @@
+name = "mikosch"
+license = "MIT"
+licenselink = "https://opensource.org/licenses/MIT"
+description = "Warm, editorial Hugo theme with bold serif headlines, soft gradients, and spacious cards."
+homepage = "https://github.com/ncrnkr/hugo-mikosch"
+tags = ["portfolio", "blog", "studio", "storytelling", "clean"]
+features = ["responsive", "blog", "portfolio", "light"]
+min_version = "0.80.0"
+
+[author]
+  name = "Mikosch"
+  homepage = "https://github.com/ncrnkr"

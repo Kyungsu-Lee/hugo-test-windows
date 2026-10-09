@@ -1,0 +1,91 @@
+{{ "<!-- SIDEBAR-BOTTOM.HTML -->" | safeHTML }}
+{{/* "bottom sidebar" for mobile */}}
+<div class="sidebar-bottom">
+    <div class="sidebar sticky">
+        {{ "<!-- Navigation Tree -->" | safeHTML }}
+        <div class="sidebar-tree">
+            {{ $parent := .Parent }}
+            {{ if eq .Kind "term" }}
+                {{/* TODO: check if ok on published site! */}}
+                {{ $parent = site.GetPage "/" }}
+            {{ end }}
+            {{ if $parent }}
+                {{ with $parent }}
+                    <a class="parent-link" href="{{ .Permalink }}">
+                        {{ if not .IsHome }}
+                            <span class="inline-icon" style="mask-image: url(/icons/chevron-circle-left-solid.svg);"></span>
+                            {{ .Title }}
+                        {{ else }}
+                            <span class="inline-icon" style="mask-image: url(/icons/house-solid.svg);"></span>
+                            HOME
+                        {{ end }}
+                    </a>
+                {{ end }}
+            {{ else }}
+                {{/* JavaScript should be moved to common/external JS file */}}
+                <a href="javascript:void(0)" class="parent-link" onclick="javascript:window.history.back()">
+                    <span class="inline-icon" style="mask-image: url(/icons/chevron-circle-left-solid.svg);"></span>
+                    BACK
+                </a>
+            {{ end }}
+
+            {{ if (or (not (isset .Params "showbrothers")) (.Params.showbrothers)) }}
+                {{ if $parent }}
+{{/*
+                    {{ if eq .Kind "section" }}
+                        {{ partial "utils/ordered-list.html" (dict "list" $parent.Sections "params" $parent.Params "scratch" .Scratch) }}
+                    {{ else }}
+                        {{ partial "utils/ordered-list.html" (dict "list" $parent.Pages "params" $parent.Params "scratch" .Scratch) }}
+                    {{ end }}
+*/}}
+{{/* TODO: want to keep possibility to have only 'sections'? could add param in config... */}}
+{{ partial "utils/ordered-list.html" (dict "list" (union $parent.Sections $parent.Pages) "params" $parent.Params "scratch" .Scratch) }}
+
+                    {{ $current := . }}
+                    <ul>
+                        {{ range (.Scratch.Get "list") }}
+                            {{ if eq $current . }}
+                            <li class="active">
+                            {{ else }}
+                            <li>
+                            {{ end }}
+                                <a href="{{ .Permalink }}">{{ .Title }}</a>
+                            </li>
+                        {{ end }}
+                    </ul>
+
+                    {{ .Scratch.Delete "list" }}
+                {{ end }}
+            {{ end }}
+        </div>
+
+        {{ if .Parent }}
+            {{/* not displaying 'categories' in 'tags' page */}}
+            {{ if not (and (eq .Kind "taxonomy") (eq .Name "Categories")) }}
+             <br>
+            {{ "<!-- Categories -->" | safeHTML }}
+            <div>
+                {{ $label := or $.Site.Data.skills.categories_label "CATEGORIES" }}
+                <div class="tag-title">{{ $label }}</div>
+                <div class="tags">
+                    {{/* List categories without duplicates */}}
+                    {{ partial "utils/list-keywords.html" (dict "type" "categories" "context" . "scratch" .Scratch "removeDuplicates" true) }}
+                </div>
+            </div>
+            {{end}}
+            {{/* not displaying 'tags' in 'categories' page */}}
+            {{ if not (and (eq .Kind "taxonomy") (eq .Name "Tags")) }}
+            <br>
+            {{ "<!-- Tags -->" | safeHTML }}
+            <div>
+                {{ $label := or $.Site.Data.skills.tags_label "TAGS" }}
+                <div class="tag-title">{{ $label }}</div>
+                <div class="tags">
+                    {{/* List tags without duplicates */}}
+                    {{ partial "utils/list-keywords.html" (dict "type" "tags" "context" . "scratch" .Scratch "removeDuplicates" true) }}
+                </div>
+            </div>
+            {{end}}
+        {{ end }}
+    </div>
+</div>

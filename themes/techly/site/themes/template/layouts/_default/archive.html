@@ -1,0 +1,39 @@
+{{ define "main" }}
+  {{- $sections := site.Params.mainSections | default (slice "posts") -}}
+  {{- $posts := where site.RegularPages "Section" "in" $sections -}}
+  {{- $posts = $posts.ByDate.Reverse -}}
+  {{- $grouped := $posts.GroupByDate "2006" -}}
+
+  <header class="blog-header-section">
+    <div class="container">
+      <h1 class="section-title">{{ .Title }}</h1>
+      {{- with .Params.description }}
+        <p class="section-subtitle">{{ . }}</p>
+      {{- end }}
+    </div>
+  </header>
+
+  <section class="archives-section" aria-label="Post archives">
+    <div class="container">
+      <div class="archives-main">
+        {{- if gt (len $posts) 0 }}
+          {{- range $grouped }}
+            <section class="archives-year">
+              <h2 class="archives-year-title">{{ .Key }}</h2>
+              <ul class="archives-list">
+                {{- range .Pages }}
+                  <li class="archives-item">
+                    <time class="archives-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2" }}</time>
+                    <a class="archives-link" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+                  </li>
+                {{- end }}
+              </ul>
+            </section>
+          {{- end }}
+        {{- else }}
+          <p>No articles yet.</p>
+        {{- end }}
+      </div>
+    </div>
+  </section>
+{{ end }}

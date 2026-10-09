@@ -1,0 +1,25 @@
+<!--
+This shortcut can be used to embed an image from the post/page, /images or /assets folder (s. "partials/getScaledImage.html" for further infos).
+The third argument specified a size and rotation of the image seen in the text.
+
+Example:
+{ {< imgScale "images/picture.jpg" "Some caption" "500px r90" >}}
+-->
+
+{{ $imageName := (index .Params 0)}}
+{{ $subtitle := (index .Params 1)}}
+{{ $newSize := (index .Params 2) }}
+
+{{ $imageDict := partial "getScaledImage.html" (dict "imageName" $imageName "newSize" $newSize) }}
+
+{{ $originalImage := $imageDict.originalImage }}
+{{ $scaledImage := $imageDict.scaledImage }}
+
+<figure class="image-figure">
+	<a href={{ $originalImage.Permalink }} target="_blank">
+		<img class="embedded-image" alt="{{ $subtitle | .Page.RenderString }}" src={{ $scaledImage.Permalink }}>
+	</a>
+	<figcaption style="max-width: {{$scaledImage.Width}}px">
+		<span>{{ $subtitle | .Page.RenderString }}</span>
+	</figcaption>
+</figure>

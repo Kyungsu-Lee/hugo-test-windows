@@ -1,0 +1,276 @@
+- id: prev_page
+  translation: "Prev"
+
+- id: next_page
+  translation: "Next"
+
+- id: read_time
+  translation:
+    one : "1 min"
+    other: "{{ .Count }} min"
+
+- id: words
+  translation:
+    one : "word"
+    other: "{{ .Count }} words"
+
+- id: toc
+  translation: "Table of Contents"
+
+- id: translations
+  translation: "Translations"
+
+- id: home
+  translation: "Home"
+
+- id: edit_post
+  translation: "Edit"
+
+- id: code_copy
+  translation: "copy"
+
+- id: code_copied
+  translation: "copied!"
+
+- id: nf_skip_to_content
+  translation: "Skip to content"
+
+- id: nf_primary_navigation
+  translation: "Primary navigation"
+
+- id: nf_home_access_key
+  translation: "Alt + H"
+
+- id: nf_toggle_theme
+  translation: "Toggle colour theme"
+
+- id: nf_theme
+  translation: "Theme"
+
+- id: nf_external_link
+  translation: "External link"
+
+- id: nf_powered_by
+  translation: "Built with"
+
+- id: nf_back_to_top
+  translation: "Back to top"
+
+- id: nf_tags
+  translation: "Tags"
+
+- id: nf_proposition
+  translation: "Proposition"
+
+- id: nf_propositions
+  translation: "Editorial propositions"
+
+- id: nf_related_by_proposition
+  translation: "Related by proposition"
+
+- id: nf_featured
+  translation: "Featured"
+
+- id: nf_questions
+  translation: "Questions"
+
+- id: nf_from_archive
+  translation: "From the archive"
+
+- id: nf_recent_notes
+  translation: "Recent notes"
+
+- id: nf_current_work
+  translation: "Current work"
+
+- id: nf_formal_record
+  translation: "Formal record"
+
+- id: nf_draft
+  translation: "Draft"
+
+- id: nf_record_filters
+  translation: "Record filters"
+
+- id: nf_record_entry
+  translation: "record entry"
+
+- id: nf_record_entries
+  translation: "record entries"
+
+- id: nf_selected_record
+  translation: "Selected record"
+
+- id: nf_complete_record
+  translation: "Complete chronological record"
+
+- id: nf_record_links
+  translation: "Record links"
+
+- id: nf_creators
+  translation: "Creators"
+
+- id: nf_topics
+  translation: "Topics"
+
+- id: nf_catalogue
+  translation: "Catalogue"
+
+- id: nf_canonical
+  translation: "Canonical"
+
+- id: nf_canonical_url
+  translation: "Canonical URL"
+
+- id: nf_download
+  translation: "Download"
+
+- id: nf_other
+  translation: "Other"
+
+- id: nf_rss_feed
+  translation: "RSS feed"
+
+- id: nf_pagination
+  translation: "Pagination"
+
+- id: nf_heading_link
+  translation: "Link to section: %s"
+
+- id: nf_poster
+  translation: "Poster"
+
+- id: nf_question
+  translation: "Question"
+
+- id: nf_artefact
+  translation: "Artefact"
+
+- id: nf_search
+  translation: "Search"
+
+- id: nf_search_placeholder
+  translation: "Search this site"
+
+- id: nf_search_results
+  translation: "Search results"
+
+- id: nf_search_result_count
+  translation: "%d results"
+
+- id: nf_search_one_result
+  translation: "1 result"
+
+- id: nf_search_no_results
+  translation: "No results"
+
+- id: nf_search_ready
+  translation: "Search is ready"
+
+- id: nf_search_unavailable
+  translation: "Search is temporarily unavailable"
+
+- id: nf_search_requires_js
+  translation: "Search requires JavaScript; the rest of the site does not."
+
+- id: nf_not_found
+  translation: "Page not found"
+
+- id: nf_return_home
+  translation: "Return home"
+
+- id: nf_current_argument
+  translation: "Current argument"
+
+- id: nf_questions_worth_asking
+  translation: "Questions worth asking"
+
+- id: nf_selected_writing
+  translation: "Selected writing"
+
+- id: nf_current_activity
+  translation: "Current activity"
+
+- id: nf_figure
+  translation: "Figure"
+
+- id: nf_credit
+  translation: "Credit"
+
+- id: nf_source
+  translation: "Source"
+
+- id: nf_date
+  translation: "Date"
+
+- id: nf_location
+  translation: "Location"
+
+- id: nf_creator
+  translation: "Creator"
+
+- id: nf_author
+  translation: "Author"
+
+- id: nf_rights
+  translation: "Rights"
+
+- id: nf_licence
+  translation: "Licence"
+
+- id: nf_significance
+  translation: "Significance"
+
+- id: nf_transcription
+  translation: "Transcription"
+
+- id: nf_timeline
+  translation: "Timeline"
+
+- id: nf_download_original
+  translation: "Download original"
+
+- id: nf_video
+  translation: "Video"
+
+- id: nf_audio
+  translation: "Audio"
+
+- id: nf_download_video
+  translation: "Download video"
+
+- id: nf_download_audio
+  translation: "Download audio"
+
+- id: nf_scrollable_table
+  translation: "Scrollable table"
+
+- id: nf_sort_by
+  translation: "Sort by"
+
+- id: nf_browse_writing
+  translation: "Browse writing"
+
+- id: nf_all
+  translation: "All"
+
+- id: nf_clear_filters
+  translation: "Clear filters"
+
+- id: nf_item
+  translation: "item"
+
+- id: nf_items
+  translation: "items"
+
+- id: nf_type
+  translation: "Type"
+
+- id: nf_period
+  translation: "Period"
+
+- id: nf_status
+  translation: "Status"
+
+- id: nf_chronological_index
+  translation: "Chronological index"

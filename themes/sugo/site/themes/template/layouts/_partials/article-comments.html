@@ -1,0 +1,63 @@
+{{- $ui := site.Params.ui -}}
+{{- $truthy := slice "true" "1" "yes" "on" -}}
+{{- $siteEnabled := in $truthy (lower (printf "%v" (site.Params.comments.enabled | default false))) -}}
+{{- $commentsEnabled := $siteEnabled -}}
+{{- if isset .Params "comments" -}}
+  {{- $commentsEnabled = in $truthy (lower (printf "%v" .Params.comments)) -}}
+{{- end -}}
+
+{{- if $commentsEnabled -}}
+  {{- $provider := lower (strings.TrimSpace (printf "%v" (site.Params.comments.provider | default ""))) -}}
+  {{- $giscus := site.Params.comments.giscus -}}
+  {{- $disqus := site.Params.comments.disqus -}}
+  {{- $disqusShortname := strings.TrimSpace (printf "%v" ($disqus.shortname | default "")) -}}
+  {{- $disqusReady := ne $disqusShortname "" -}}
+  {{- $giscusReady := and
+      (ne (strings.TrimSpace (printf "%v" ($giscus.repo | default ""))) "")
+      (ne (strings.TrimSpace (printf "%v" ($giscus.repoId | default ""))) "")
+      (ne (strings.TrimSpace (printf "%v" ($giscus.category | default ""))) "")
+      (ne (strings.TrimSpace (printf "%v" ($giscus.categoryId | default ""))) "") -}}
+
+  {{- if and (eq $provider "giscus") $giscusReady -}}
+    <section class="article-comments" aria-label="{{ $ui.articleCommentsAriaLabel | default "Comments" }}">
+      <h2 class="article-comments__heading">{{ $ui.articleCommentsHeading | default "Comments" }}</h2>
+      <script src="https://giscus.app/client.js"
+        data-repo="{{ $giscus.repo }}"
+        data-repo-id="{{ $giscus.repoId }}"
+        data-category="{{ $giscus.category }}"
+        data-category-id="{{ $giscus.categoryId }}"
+        data-mapping="{{ $giscus.mapping | default "pathname" }}"
+        data-strict="{{ $giscus.strict | default "0" }}"
+        data-reactions-enabled="{{ $giscus.reactionsEnabled | default "1" }}"
+        data-emit-metadata="{{ $giscus.emitMetadata | default "0" }}"
+        data-input-position="{{ $giscus.inputPosition | default "bottom" }}"
+        data-theme="{{ $giscus.theme | default "preferred_color_scheme" }}"
+        data-lang="{{ $giscus.lang | default "en" }}"
+        data-loading="{{ $giscus.loading | default "lazy" }}"
+        crossorigin="anonymous"
+        async>
+      </script>
+    </section>
+  {{- else if and (eq $provider "disqus") $disqusReady -}}
+    {{- $identifier := .File.Path | default .RelPermalink -}}
+    <section class="article-comments" aria-label="{{ $ui.articleCommentsAriaLabel | default "Comments" }}">
+      <h2 class="article-comments__heading">{{ $ui.articleCommentsHeading | default "Comments" }}</h2>
+      <div id="disqus_thread"></div>
+      <script>
+        var disqus_config = function () {
+          this.page.url = {{ .Permalink | jsonify }};
+          this.page.identifier = {{ $identifier | jsonify }};
+          this.page.title = {{ .Title | jsonify }};
+        };
+        (function () {
+          var d = document;
+          var s = d.createElement("script");
+          s.src = "https://{{ $disqusShortname }}.disqus.com/embed.js";
+          s.setAttribute("data-timestamp", +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+      <noscript>{{ $ui.articleCommentsEnableJsLabel | default "Please enable JavaScript to view the comments." }}</noscript>
+    </section>
+  {{- end -}}
+{{- end -}}

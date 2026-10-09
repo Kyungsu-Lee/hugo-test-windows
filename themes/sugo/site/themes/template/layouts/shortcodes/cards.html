@@ -1,0 +1,33 @@
+{{- $defaultCardTitle := site.Params.ui.shortcodeCardsDefaultTitle | default "Card" -}}
+<div class="lit-cards">
+  {{- $cards := split (strings.TrimSpace .Inner) "<!--card-->" -}}
+  {{- range $index, $card := $cards -}}
+    {{- $lines := split (strings.TrimSpace $card) "\n" -}}
+    {{- $title := "" -}}
+    {{- $contentLines := slice -}}
+    {{- $capture := false -}}
+    {{- range $lines -}}
+      {{- if hasPrefix . "title:" -}}
+        {{- $title = strings.TrimSpace (replace . "title:" "") -}}
+      {{- else if hasPrefix . "content:" -}}
+        {{- $capture = true -}}
+        {{- $line := strings.TrimSpace (replace . "content:" "") -}}
+        {{- if $line -}}
+          {{- $contentLines = $contentLines | append $line -}}
+        {{- end -}}
+      {{- else if $capture -}}
+        {{- $contentLines = $contentLines | append . -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $content := delimit $contentLines "\n" -}}
+    <article class="lit-card">
+    {{- if $title -}}
+        <h3 class="lit-card__title">{{ $title }}</h3>
+      {{- else -}}
+        <h3 class="lit-card__title">{{ printf "%s %d" $defaultCardTitle (add $index 1) }}</h3>
+      {{- end -}}
+      <div class="lit-card__content">{{ partial "shortcodes/render-inner.html" (dict "ctx" $ "content" $content "display" "block" "trim" true) }}</div>
+    </article>
+  {{- end -}}
+</div>

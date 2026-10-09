@@ -1,0 +1,392 @@
+body
+	+theme(white)
+	background-color: $color_1
+	background-repeat: no-repeat
+	background-size: cover
+	background-position: top left
+	font-family: $ffText, $ffBack
+
+
+a
+	font-family: inherit
+	&:hover, &:focus, &:active, &:focus-visible
+		outline: none
+		appearance: none
+		box-shadow: none
+
+
+.page
+	&__wrapper
+		overflow: hidden
+	&__content
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+	&__single
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background: url('../images/bg/bg5.svg') no-repeat 100% 100% / contain
+		h1
+			+ft(55, 55*1.3, 800)
+		h2, h3, h4, h5, h6
+			margin-top: var(--gap4)
+			margin-bottom: var(--gap2)
+			text-transform: uppercase
+			+ft(22, 22*1.3, 800)
+		a
+			color: $main
+			text-decoration: underline
+			transition: $trs
+			&:hover
+				text-decoration: none
+		+maw($sm)
+			h1
+				+ft(27, 27*1.3, 800)
+			
+
+.container
+	p
+		&:last-child
+			margin-bottom: 0
+
+	+maw($sm)
+		padding-left: $gap3
+		padding-right: $gap3
+
+.section
+	position: relative
+	margin-top: var(--gapSection)
+	margin-bottom: var(--gapSection)
+	//background: url('../images/bg2.svg') no-repeat 50%/cover
+	z-index: 1
+
+	&_contacts
+		background-image: url('../images/bg/bg1.svg'), url('../images/bg/bg2.svg')
+		background-repeat: no-repeat
+		background-position: center center
+		background-size: cover, contain
+	&_benefits
+		background-image: url('../images/bg/bg12.svg') 
+		background-repeat: no-repeat
+		background-position: center 
+		background-size: contain
+	&_benefits2
+		margin-bottom: 0
+	&_form
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background-image: url('../images/bg/bg12.svg') 
+		background-repeat: no-repeat
+		background-position: center 
+		background-size: contain
+
+
+.row
+	&_1
+		display: grid
+		grid-template-columns: 1fr 1fr
+		gap: var(--gap6)
+		margin-top: var(--gap6)
+	&_2
+		display: grid
+		grid-template-columns: 1fr 1fr
+		gap: var(--gap6)
+	&_3
+		display: grid
+		grid-template-columns: 0.75fr 1fr
+		gap: var(--gap6)
+		align-items: center
+	+maw(1200)
+		&_3
+			grid-template-columns: 1fr 1fr
+			gap: $gap4
+	+maw($md)
+		&_3
+			grid-template-columns: 1fr
+			gap: 0
+		&_1, &_2
+			grid-template-columns: 1fr 
+
+.img
+	display: block
+	max-width: 100%
+	width: 100%
+	margin-left: auto
+	margin-right: auto
+	object-fit: cover
+	border-radius: 15px
+	&--contain
+		@extend .img
+		width: auto
+		object-fit: contain
+
+.card
+	+theme(white)
+	border-radius: 15px
+	padding: $gap3
+	border: none
+	&s
+		// display: grid
+		// gap: var(--gap4)
+		// grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
+		margin-top: var(--gap4)
+	&__header
+		+flex(flex, center, flex-start, nowrap)
+		gap: $gap2
+		svg
+			margin-left: auto
+			margin-right: 0
+		span
+			+ft(18, 18, 300, $ffHeading)
+	&__img
+		img
+			display: block
+			border-radius: 50%
+			object-fit: cover
+	&__content
+		+ft(18, 27, 300)
+		padding-top: $gap2
+
+	+maw($xs)
+		&s
+			grid-template-columns: 1fr
+		&__content
+			+ft(14, 14*1.4, 300)
+
+.box
+	padding: var(--gap6)
+	border-radius: 15px
+	+theme(dark)
+	background-image: url('../images/bg/bg4.svg')
+	background-repeat: no-repeat
+	background-size: contain
+	background-position: 0 0
+	&__text
+		+ft(18,27,300)
+		p
+			margin-bottom: var(--gap6)
+			&:last-child
+				margin-bottom: 0
+	+maw($xs)
+		background-size: 150%
+		&__text
+			+ft(16, 16*1.4, 300)
+
+
+.box1
+	position: relative
+	padding: var(--gap6)
+	padding-bottom: 0
+	&::after
+		content: ''
+		position: absolute
+		z-index: -1
+		inset: 0
+		top: auto
+		margin: auto
+		+sz(100%, 90%)
+		border-radius: 15px
+		+theme(dark)
+	+maw($lg)
+		&::after
+			display: none
+	+maw($sm)
+		padding: 0
+
+.feature
+	position: relative
+	padding: $gap4
+	padding-bottom: $gap4 + 27px
+	border-radius: 15px
+	+theme(white)
+	//background: url('../images/form2.svg') no-repeat 50% / 25em
+	text-align: center
+	margin-top: 125px !important
+	margin-bottom: calc(125px /2)
+	max-width: 600px
+	margin-left: auto
+	margin-right: auto
+	&s
+		// display: grid
+		// gap: var(--gap6)
+		// grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+		align-items: center
+		justify-content: center
+	&__img
+		+sz(250px, 250px)
+		margin: 0 auto -141px
+		transform: translateY(-125px - 32px)
+	&__title
+		text-transform: uppercase
+		color: $main
+		+ft(28, 28, 800, $ffHeading)
+		margin-bottom: $gap2
+	&__subtitle
+		+ft(16, 16*1.4, 300)
+		color: $color_2
+	&__info
+		padding: $gap3
+		border-radius: 15px
+		margin-top: $gap2
+		margin-bottom: $gap2
+		background-color: rgba($main, 0.1)
+		+ft(14, 14*1.4, 300)
+		b
+			display: block
+			text-transform: uppercase
+			margin-bottom: $gap2
+			font-weight: bold
+	&__price
+		display: block
+		color: $main
+		+ft(31, 31, 800, $ffHeading)
+		margin-top: $gap3
+	.btn
+		position: absolute
+		inset: 0
+		top: auto
+		bottom: -27px
+		margin-left: auto
+		margin-right: auto
+		box-shadow: 0 0 0 8px $black
+	+maw(1200)
+		&__info
+			min-height: 255px
+	+maw($lg)
+		&s
+			grid-template-columns: 1fr	
+	
+		&, &:nth-child(2)
+			.btn
+				box-shadow: none
+	// +maw($md)
+	// 	margin-bottom: 0
+	+maw(360)
+		&__img
+			transform: translateY(-125px - 32px) scale(0.8)
+
+
+	
+.benefit
+	position: relative
+	padding: $gap3
+	margin-top: 90px !important
+	+theme(white)
+	border-radius: 15px
+	height: auto !important
+	align-self: stretch
+	&s
+		//display: grid
+		//gap: var(--gap4)
+		//grid-template-columns: repeat(auto-fit, minmax(400px, 1fr))
+		margin-top: calc(45px + 24px)
+	&__icon
+		position: relative
+		transform: translateY(-90px - 24px)
+		margin-bottom: calc(-90px - 24px)
+		img
+			display: block
+			object-fit: contain
+			margin-left: auto
+			margin-right: auto
+			+sz(180px, 180px)
+	&__title
+		text-transform: uppercase
+		+ft(22, 27, 800, $ffHeading)
+		margin-bottom: $gap2
+	&__content
+		+ft(18, 27, 300)
+	+maw($sm)
+		&s
+			grid-template-columns: 1fr
+		&__desc
+			+ft(15, 15*1.4, 300)
+
+.benefit2
+	grid-row: 1
+	padding: var(--gap3)
+	margin: 0
+	background-color: rgba($white, 0.1)
+	backdrop-filter: blur(10px)
+	border-radius: 15px
+
+	&:nth-child(2)
+		grid-column: 1
+		grid-row: 2
+	&:nth-child(3)
+		grid-column: 1
+		grid-row: 3
+	&:nth-child(4)
+		grid-row: 1
+		grid-column: 3
+	&:nth-child(5)
+		grid-row: 2
+		grid-column: 3
+	&:nth-child(6)
+		grid-row: 3
+		grid-column: 3
+
+	&__title
+		text-transform: uppercase
+		+ft(22, 27, 800, $ffHeading)
+		margin-bottom: $gap2
+
+	&__content
+		+ft(18, 27, 300)
+
+	&__container
+		display: grid
+		gap: var(--gap4)
+		grid-template-columns: 1fr 200px 1fr 
+	&__wrap
+		padding: var(--gap6)
+		+theme(dark)
+		border-radius: 15px
+		background-image: url('../images/bg/bg21.png'), url('../images/bg/bg20.svg') 
+		background-repeat: no-repeat
+		background-position: center 
+		background-size: 600px, contain
+
+	+maw(1200)
+		&__container
+			grid-template-columns: 1fr 2em 1fr 
+		&__content
+			+ft(14, 14*1.4, 300)
+	+maw(992)
+		&__container
+			grid-template-columns: 1fr 1fr 
+		&:nth-child(4), &:nth-child(5), &:nth-child(6)
+			grid-column: 2
+	+maw(768)
+		&__container
+			display: flex
+			flex-direction: column
+		&:nth-child(4)
+			margin-top: 200px
+		&__wrap
+			background-size: 400px
+	+maw($sm)
+		&__title
+			+ft(17, 17*1.4, 800, $ffHeading)
+		
+
+.swiper
+	&-nav
+		display: flex
+		gap: $gap3
+		align-items: center
+		justify-content: center
+		margin-top: $gap2
+
+		button
+			background: transparent
+			border: none
+			padding: 8px 16px
+			border-radius: 16pc
+			border: 1px solid $main
+			color: $main
+			display: flex
+			align-items: center
+			justify-content: center
+
+		+miw(1300)
+			display: none

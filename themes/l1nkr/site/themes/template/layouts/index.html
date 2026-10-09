@@ -1,0 +1,66 @@
+{{- define "main" -}}
+  {{ $numCols := math.Floor .Site.Params.columns | default 2 }}
+  {{ $icontext := .Site.Params.icontext | default false }}
+  {{ $tooltip := .Site.Params.tooltip | default false }}
+  {{ $monochrome := .Site.Params.monochrome | default false }}
+
+  {{ if ge $numCols 7 }}
+    {{ $numCols = 6 }}
+  {{ end }}
+
+  {{/* Select CSS classes based on monochrome setting */}}
+  {{ $mainclass := "" }}
+  {{ $svgclass := "" }}
+  {{ $textclass := "" }}
+  {{ $gridclass := "" }}
+  {{ $mdgridclass := printf "grid-cols-md-center%.0f" $numCols }}
+  {{ if $monochrome }}
+    {{ $mainclass = "link-mono" }}
+    {{ $svgclass = "link_svg-mono" }}
+    {{ $textclass = "text_svg-mono" }}
+    {{ $gridclass = "grid-cols-center2-mono" }}
+    {{ $mdgridclass = print $mdgridclass "-mono" }}
+  {{ else }}
+    {{ $mainclass = "link" }}
+    {{ $svgclass = "link_svg" }}
+    {{ $textclass = "text_svg" }}
+    {{ $gridclass = "grid-cols-center2" }}
+  {{ end }}
+
+
+  <div class="{{ $gridclass }} {{ $mdgridclass }} mb-auto mt-8 grid justify-center gap-4">
+    {{ range $links := .Site.Params.Links }}
+      {{ range $type, $data := $links }}
+        {{ $href := $data }}
+        {{ $icon := $type }}
+        {{ $iconPath := resources.Get (print "icons/" $icon ".svg") }}
+        {{ with $iconPath }}
+          <a class="{{ $mainclass }} {{ if not $monochrome }}link-{{ $icon }}{{ end }} group" href="{{ $href }}" target="_blank" rel="me noopener noreferrer" aria-label="{{ $icon }}">
+            <span class="{{ $svgclass }}">
+              {{ $iconPath.Content | safeHTML }}
+            </span>
+            {{ if $icontext }}
+              <span class="{{ $textclass }}">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <path id="arc" d="M 200, 200 m -140, 0 a 140,140 0 1,1 280,0" />
+                  </defs>
+                  <text font-size="40">
+                    <textPath href="#arc" text-anchor="middle" startOffset="221">
+                      {{ strings.FirstUpper $icon }}
+                    </textPath>
+                  </text>
+                </svg>
+              </span>
+            {{ end }}
+            {{ if $tooltip }}
+              <span class="tooltip">
+                {{ strings.FirstUpper $icon }}
+              </span>
+            {{ end }}
+          </a>
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  </div>
+{{- end -}}

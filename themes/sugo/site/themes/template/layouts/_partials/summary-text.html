@@ -1,0 +1,69 @@
+{{- $page := .page -}}
+{{- $length := .length | default (site.Params.summaryLength | default 180) -}}
+{{- $text := "" -}}
+
+{{- with $page.Params.summary -}}
+  {{- $text = . | plainify -}}
+{{- else -}}
+  {{- $text = $page.RawContent -}}
+
+  {{/* Strip fenced code blocks first, so shortcode examples inside code are ignored. */}}
+  {{- $text = replaceRE "(?s)```[\\s\\S]*?```" " " $text -}}
+  {{- $text = replaceRE "(?s)~~~[\\s\\S]*?~~~" " " $text -}}
+
+  {{/* Drop shortcode blocks and standalone shortcode calls from summary candidates. */}}
+  {{- $shortcodes := slice
+    "accordion"
+    "admonition"
+    "alert"
+    "author-quote"
+    "button"
+    "cards"
+    "centered"
+    "codeblock"
+    "collapse"
+    "color"
+    "columns"
+    "figure"
+    "highlight"
+    "mermaid"
+    "poet"
+    "right"
+    "slideshow"
+    "table"
+    "tabs"
+    "text-font"
+  -}}
+  {{- range $shortcodes -}}
+    {{- $paired := printf `(?s)\{\{[<%%]\s*%s(?:\s+[^}]*)?\s*[>%%]\}\}[\s\S]*?\{\{[<%%]\s*/\s*%s\s*[>%%]\}\}` . . -}}
+    {{- $single := printf `\{\{[<%%]\s*%s(?:\s+[^}]*)?\s*[>%%]\}\}` . -}}
+    {{- $text = replaceRE $paired " " $text -}}
+    {{- $text = replaceRE $single " " $text -}}
+  {{- end -}}
+
+  {{/* Remove headings and non-body-like markdown structures. */}}
+  {{- $text = replaceRE `(?m)^\s{0,3}#{1,6}\s+.*$` " " $text -}}
+  {{- $text = replaceRE `(?m)^\s{0,3}(=+|-+)\s*$` " " $text -}}
+  {{- $text = replaceRE `(?m)^\s*\|.*\|\s*$` " " $text -}}
+  {{- $text = replaceRE `(?m)^\s*:?-{3,}:?(?:\s*\|\s*:?-{3,}:?)*\s*$` " " $text -}}
+  {{- $text = replaceRE `(?s)<!--[\s\S]*?-->` " " $text -}}
+
+  {{/* Remove footnote references and definitions. */}}
+  {{- $text = replaceRE `(?m)^\s*\[\^[^\]]+\]:.*$` " " $text -}}
+  {{- $text = replaceRE `\[\^[^\]]+\]` " " $text -}}
+
+  {{/* Flatten markdown links/images and inline code to plain text. */}}
+  {{- $text = replaceRE `!\[([^\]]*)\]\([^)]+\)` "$1" $text -}}
+  {{- $text = replaceRE `\[(.*?)\]\([^)]+\)` "$1" $text -}}
+  {{- $text = replaceRE "`([^`]*)`" "$1" $text -}}
+
+  {{/* Convert remaining markdown to plain text. */}}
+  {{- $text = $text | markdownify | plainify -}}
+{{- end -}}
+
+{{- $text = replaceRE `\s+` " " $text | strings.TrimSpace -}}
+{{- if eq $text "" -}}
+  {{- $text = $page.Plain | plainify | replaceRE `\s+` " " | strings.TrimSpace -}}
+{{- end -}}
+
+{{- $text | truncate $length "..." -}}

@@ -1,0 +1,52 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_join }}
+{{ with $data.homepage.section_join }}
+<section class="section section_join">
+    <div class="container">
+        <h2>{{ .title }}</h2>
+
+        <div class="cards swiper-container">
+            <div class="swiper-wrapper">
+            {{ range .items }}
+                <div class="card swiper-slide">
+                    <div class="card__header">
+                        
+                        <div class="card__img">
+                            <img src="{{ .img | relURL }}" alt="{{ .name }}" width="50" height="50">
+                        </div>
+                        <span>{{ .name }}</span>
+
+                        <svg class="icon" height="16" width="98">
+                            <use xlink:href="#stars"></use>
+                          </svg>
+                    </div>
+                    <div class="card__content">
+                        {{ .text }}
+                    </div>
+
+                </div>
+            {{ end }}
+            </div>
+            <div class="swiper-nav">
+                <button class="swiper-nav-prev">
+                    <svg class="icon" width="24" height="16">
+                        <use xlink:href="#arr-rt"></use>
+                    </svg>
+                </button>
+                <button class="swiper-nav-next">
+                    <svg class="icon" width="24" height="16">
+                        <use xlink:href="#arr-lt"></use>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <center class="mt-lg-5 mt-4">
+            <a href="#" class="btn">
+                <b><span>SEE ALL</span><span>SEE ALL</span></b>
+            </a>
+        </center>
+    </div>
+</section>
+{{ end }}
+{{ end }}

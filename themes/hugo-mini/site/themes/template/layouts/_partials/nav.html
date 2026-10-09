@@ -1,0 +1,41 @@
+{{- /*
+  Main menu.
+
+  Menu icons: set `[menu.main.params] icon = "telegram"` and the theme inlines
+  assets/icons/telegram.svg. Icons are resolved as resources, so a site can add
+  its own by dropping assets/icons/<name>.svg into its own project — the
+  previous version kept a hardcoded dict of SVG paths here, which meant new
+  icons required editing the theme.
+
+  Desktop shows the icon before the label, mobile after; that is CSS `order`
+  on a single element rather than two copies of the same SVG in the markup.
+*/ -}}
+{{- $currentPath := strings.TrimSuffix "/" .RelPermalink -}}
+{{ range .Site.Menus.main }}
+  {{- $isExternal := or (hasPrefix .URL "http://") (hasPrefix .URL "https://") -}}
+  {{- $isActive := false -}}
+  {{- if not $isExternal -}}
+    {{- $linkPath := strings.TrimSuffix "/" .URL -}}
+    {{- with $linkPath -}}
+      {{- if or (eq $currentPath .) (hasPrefix $currentPath (printf "%s/" .)) -}}
+        {{- $isActive = true -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $icon := "" -}}
+  {{- with .Params.icon -}}
+    {{- with resources.Get (printf "icons/%s.svg" .) -}}
+      {{- /* Inject the class the stylesheet targets, without requiring every
+             icon file to remember it. */ -}}
+      {{- $icon = .Content | replaceRE `^<svg` `<svg class="nav-icon"` | safeHTML -}}
+    {{- else -}}
+      {{- warnf "hugo-mini: menu icon %q not found — expected assets/icons/%s.svg" . . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $class := "" -}}
+  {{- if $isActive -}}{{- $class = ` class="link-selected" aria-current="page"` -}}{{- end -}}
+  {{- if $isExternal -}}{{- $class = ` target="_blank" rel="noopener noreferrer"` -}}{{- end -}}
+  <a href="{{ .URL }}"{{ $class | safeHTMLAttr }}>{{ $icon }}<span class="nav-label">{{ .Name }}</span></a>
+{{- end }}

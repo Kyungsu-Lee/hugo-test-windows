@@ -1,0 +1,24 @@
+{{- $page := .page -}}
+{{- $extraClass := .class | default "" -}}
+{{- $cardCta := site.Params.ui.articleCardCta | default "Read article" -}}
+{{- $dateMachine := $page.Date | time.Format "2006-01-02" -}}
+{{- $dateHuman := $page.Date | time.Format ":date_long" -}}
+{{- $coverMarkup := partial "post-cover.html" (dict "page" $page "link" $page.RelPermalink "class" "story-card__cover") -}}
+{{- $hasCover := ne (strings.TrimSpace $coverMarkup) "" -}}
+{{- $summaryLength := int (site.Params.summaryLength | default 180) -}}
+
+<article class="story-card {{ if not $hasCover }}story-card--no-cover {{ end }}{{ $extraClass }}">
+  {{- $coverMarkup | safeHTML -}}
+  <p class="story-card__meta">
+    <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+    {{- with $page.Params.author }}
+      <span>By {{ . }}</span>
+    {{- end }}
+  </p>
+  <h2 class="story-card__title"><a href="{{ $page.RelPermalink }}">{{ $page.LinkTitle }}</a></h2>
+  {{- with $page.Params.subtitle }}
+    <p class="story-card__subtitle">{{ . }}</p>
+  {{- end }}
+  <p class="story-card__summary">{{ partial "summary-text.html" (dict "page" $page "length" $summaryLength) }}</p>
+  <a class="story-card__cta" href="{{ $page.RelPermalink }}">{{ $cardCta }}</a>
+</article>

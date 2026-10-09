@@ -1,0 +1,21 @@
+{{- $data := partial "cv_data.html" . -}}
+{{- with partial "cv_photo.html" . }}
+<img class="sidebar-photo" src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ with $data.PersonalData }}{{ .Name }}{{ else }}Photo{{ end }}">
+{{- end }}
+
+{{- with $data.PersonalData }}
+<div class="sidebar-who">
+    <b>{{ .Name }}</b>
+    {{- with .CurrentWorkplace }}<span>{{ . }}</span>{{ end }}
+</div>
+{{- end }}
+
+<nav aria-label="Sections">
+    <ul>
+        {{- range partial "sections.html" . }}
+            {{- with index $data . }}
+        <li><a href="#section-{{ .Title | urlize }}">{{ partial "icon.html" .Icon }}<span>{{ .Title }}</span></a></li>
+            {{- end }}
+        {{- end }}
+    </ul>
+</nav>

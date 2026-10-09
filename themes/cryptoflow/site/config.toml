@@ -1,0 +1,118 @@
+baseURL = "/"
+# canonifyURLs = true
+defaultContentLanguage = "en"
+disableLanguages = ["ru"]
+paginate = "6"
+relativeURLs = true
+summaryLength = "50"
+title = "CryptoFlow"
+# [Languages.en]
+# contentDir = "content/en"
+# home = "Home"
+# languageCode = "en-us"
+# languageName = "En"
+# weight = 3
+[Languages.ru]
+contentDir = "content/ru"
+home = "Главная"
+languageCode = "ru"
+languageName = "Ру"
+weight = 2
+
+[Languages.en]
+contentDir = "content/en"
+home = "Home"
+languageCode = "en"
+languageName = "ENG"
+weight = 1
+
+
+
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+[sitemap]
+ChangeFreq = "daily"
+Priority = 0.6
+Weight = [["main", "1"], ["sub2", "0.8"], ["sub3", "0.6"]]
+enableRobotsTXT = true
+
+[params]
+CIO_site_id = "XXX"
+GTM = "GTM-WHBQ3BV"
+
+
+logo = "./images/logo.svg"
+logo_dark = "./images/logo-w.svg"
+logo_description = "CryptoFlow"
+
+site_name = "CryptoFlow"
+site_url = "#"
+
+description = "Is a simple ecnosystem of interconnected crypto products designed for the mass adoption of cryptocurrencies."
+
+# search
+search = true
+
+# soc
+
+[[params.plugins.js]]
+link = "plugins/js/jquery.min.js"
+
+
+
+[params.preloader]
+enable = true
+preloader = ""
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+
+
+############################# socials #################################
+[[params.soc]]
+icon = "fb"
+link = "#"
+[[params.soc]]
+icon = "im"
+link = "#"
+[[params.soc]]
+icon = "tm"
+link = "#"
+[[params.soc]]
+icon = "ytb"
+link = "#"
+[[params.soc]]
+icon = "email"
+link = "#"
+
+############################# footer #################################
+[params.footer]
+    copyright = "&copy; 2024 CRYPTOFLOW"
+
+
+[[menu.footer]]
+weight = 1
+name = "blog"
+URL = "/blog"
+[[menu.footer]]
+weight = 2
+name = "Terms of Service"
+URL = "/terms"
+[[menu.footer]]
+weight = 3
+name = "Privacy Policy"
+URL = "/policy"
+
+[[menu.header]]
+weight = 1
+name = "blog"
+URL = "/blog"
+[[menu.header]]
+weight = 2
+name = "Terms of Service"
+URL = "/terms"
+[[menu.header]]
+weight = 3
+name = "Privacy Policy"
+URL = "/policy"

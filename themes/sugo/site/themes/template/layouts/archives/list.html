@@ -1,0 +1,55 @@
+{{ define "main" }}
+  {{ $ui := site.Params.ui }}
+  {{ $archive := site.Params.archive }}
+  {{ $archiveSections := $archive.sections | default (slice "posts") }}
+  {{ if not (reflect.IsSlice $archiveSections) }}
+    {{ $archiveSections = slice (printf "%v" $archiveSections) }}
+  {{ end }}
+  {{ $entries := where site.RegularPages "Section" "in" $archiveSections }}
+  {{ if eq (len $entries) 0 }}
+    {{ $entries = site.RegularPages }}
+  {{ end }}
+  {{ $entries = $entries.ByDate.Reverse }}
+  {{ $groupBy := $archive.groupBy | default "2006" }}
+  {{ $showYearCount := ne ($archive.showYearCount | default true) false }}
+
+  <section class="archive-page">
+    <header class="archive-page__header">
+      <p class="eyebrow">{{ $ui.archiveEyebrow | default "Archive" }}</p>
+      <h1>{{ if ne (strings.TrimSpace .Title) "" }}{{ .Title }}{{ else }}{{ $ui.archiveHeading | default "All writing" }}{{ end }}</h1>
+      {{ with .Content }}
+        <div class="archive-page__intro">{{ . }}</div>
+      {{ end }}
+    </header>
+
+    {{ if gt (len $entries) 0 }}
+      <div class="archive-page__groups">
+        {{ range $entries.GroupByDate $groupBy }}
+          <section class="archive-group">
+            <h2>
+              {{ .Key }}
+              {{ if $showYearCount }}
+                <span>({{ len .Pages }} {{ $ui.archiveCountSuffix | default "articles" }})</span>
+              {{ end }}
+            </h2>
+            <ul class="archive-group__list">
+              {{ range .Pages }}
+                <li class="archive-group__item">
+                  <time datetime="{{ .Date | time.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+                  <div class="archive-group__content">
+                    <h3><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h3>
+                    {{ with .Params.subtitle }}
+                      <p class="archive-group__subtitle">{{ . }}</p>
+                    {{ end }}
+                  </div>
+                </li>
+              {{ end }}
+            </ul>
+          </section>
+        {{ end }}
+      </div>
+    {{ else }}
+      <p class="archive-page__empty">{{ $ui.archiveEmptyMessage | default "No entries available in the archive yet." }}</p>
+    {{ end }}
+  </section>
+{{ end }}

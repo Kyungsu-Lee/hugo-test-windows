@@ -1,0 +1,664 @@
+// =============================================================================
+// LAYOUT - Grid, Containers, and Page Structure
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Container
+// -----------------------------------------------------------------------------
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+
+  @media (min-width: $breakpoint-md) {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+.content-wrapper {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+// -----------------------------------------------------------------------------
+// Site Wrapper
+// -----------------------------------------------------------------------------
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  position: relative;
+  z-index: $z-content;
+}
+
+// -----------------------------------------------------------------------------
+// Main Content
+// -----------------------------------------------------------------------------
+.main-content {
+  flex: 1;
+  padding: var(--spacing-lg) 0;
+
+  @media (min-width: $breakpoint-md) {
+    padding: var(--spacing-xl) 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Site Header
+// -----------------------------------------------------------------------------
+.site-header {
+  padding: var(--spacing-md) 0;
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+
+  @media (min-width: $breakpoint-md) {
+    padding: var(--spacing-lg) 0;
+  }
+
+  // Profile homepage: hide nav, keep branding only
+  &.header-profile-home {
+    .nav-toggle,
+    .site-nav {
+      display: none;
+    }
+  }
+
+  // No-box style for clean ASCII art display (removes background/border)
+  &.header-no-box {
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    .header-inner {
+      padding-top: 0;
+      padding-bottom: 0;
+      background: transparent;
+      border: none;
+    }
+
+    .site-branding {
+      background: transparent;
+    }
+  }
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+
+  @media (min-width: $breakpoint-md) {
+    gap: var(--spacing-md);
+  }
+
+  .site-branding {
+    margin-bottom: var(--spacing-md);
+  }
+}
+
+.site-branding {
+  flex-shrink: 0;
+  // .header-inner is a column flex container with align-items:center, which
+  // sizes children to their max-content width in the cross axis. ASCII art
+  // wider than the viewport therefore widened this box, and with it the whole
+  // document — the header box and MENU toggle got dragged off-screen too, and
+  // .ascii-header's own overflow-x never engaged because the <pre> was handed
+  // all the width it asked for. Clamping to the container is what lets that
+  // overflow rule do its job.
+  max-width: 100%;
+  min-width: 0;
+}
+
+.site-title {
+  font-size: 1.5rem;
+  color: var(--color-fg-bright);
+  text-decoration: none;
+  letter-spacing: 0.1em;
+
+  &:hover,
+  &:focus {
+    color: var(--color-fg-bright);
+    text-decoration: none;
+  }
+
+  &::before {
+    content: "> ";
+    color: var(--color-fg-dim);
+  }
+
+  @media (min-width: $breakpoint-md) {
+    font-size: 2rem;
+  }
+}
+
+.ascii-header-link {
+  display: block;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+
+    .ascii-header {
+      color: var(--color-fg-bright);
+      filter: brightness(1.1);
+    }
+  }
+}
+
+.ascii-header {
+  font-family: var(--font-terminal);
+  // --ascii-scale multiplier is injected by baseof.html from
+  // params.scanlines.header.asciiScale (defaults to 1 if unset).
+  --ascii-base: calc(0.5rem * var(--ascii-scale, 1));
+  font-size: var(--ascii-base);
+  line-height: 1.1;
+  color: var(--color-fg-bright);
+  white-space: pre;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  @media (min-width: $breakpoint-md) {
+    --ascii-base: calc(0.65rem * var(--ascii-scale, 1));
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    --ascii-base: calc(0.75rem * var(--ascii-scale, 1));
+  }
+}
+
+// Shrink ASCII art that would otherwise overflow, instead of clipping it.
+//
+// header.html emits --ascii-fit: the exact font size at which the art's widest
+// line spans the header's content box. Both bundled faces are monospaced with
+// a known advance (Glass TTY VT220 is 0.5em, Fira Code 0.6154em), so the
+// fitting size is arithmetic, not a guess. Taking the smaller of the
+// configured size and the fitting size means wide art scales down on narrow
+// screens while art that already fits is left alone.
+//
+// The 4px floor stops pathologically wide art (roughly 140+ columns on a
+// 320px screen) from scaling to an unreadable smear; past that point the
+// overflow-x above lets it scroll instead. Deliberately px and not rem: the
+// floor is about the smallest legible glyph, which doesn't change when a site
+// sets a larger root size. As rem it tracked --font-size-base (20px here, so
+// 0.35rem was 7px) and clamped art that would otherwise have fitted.
+//
+// Gated on @supports so browsers without container queries keep the old
+// behaviour — which is now merely a scrollable <pre>, not a broken page,
+// because .site-branding is clamped above.
+@supports (container-type: inline-size) {
+  .header-inner {
+    // Safe to contain: .header-inner is width:100% from .container, so its
+    // inline size never depended on its contents, and no descendant is
+    // absolutely positioned against it.
+    container-type: inline-size;
+  }
+
+  .ascii-header {
+    // Interpolated so LibSass emits this verbatim. Bare min()/max() collide
+    // with Sass's own min()/max() functions, which reject var() arguments
+    // ("var(--ascii-base) is not a number for `min'") and fail the build.
+    font-size: #{"max(4px, min(var(--ascii-base), var(--ascii-fit, 100rem)))"};
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Navigation
+// -----------------------------------------------------------------------------
+
+// Checkbox drives the mobile toggle. It is visually hidden via .sr-only (set in
+// markup) so it stays keyboard-focusable; on desktop the nav is always visible,
+// so drop the checkbox from the tab order there.
+@media (min-width: $breakpoint-md) {
+  .nav-checkbox {
+    display: none;
+  }
+}
+
+.nav-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: var(--content-max);
+  min-height: 44px; // Minimum recommended touch target
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-fg);
+  font-family: var(--font-terminal);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+  cursor: pointer;
+  margin-bottom: var(--spacing-sm);
+
+  &:hover,
+  &:focus {
+    color: var(--color-fg-bright);
+    border-color: var(--color-fg);
+  }
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.nav-toggle-label {
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: var(--color-fg-dim);
+
+  &::before {
+    content: "[ ";
+  }
+
+  &::after {
+    content: " ]";
+  }
+}
+
+.nav-toggle-icon {
+  color: var(--color-fg-dim);
+}
+
+// Toggle [+]/[-] icon when checkbox is checked
+.nav-checkbox:checked ~ .nav-toggle .nav-toggle-icon {
+  visibility: hidden;
+  position: relative;
+
+  &::after {
+    content: '[-]';
+    visibility: visible;
+    position: absolute;
+    right: 0;
+  }
+}
+
+.site-nav {
+  width: 100%;
+  max-width: var(--content-max);
+  max-height: 0;
+  overflow: hidden;
+  // visibility:hidden keeps collapsed links out of the keyboard tab order
+  // (max-height:0 alone leaves them focusable). Delayed so the slide-out
+  // animation still plays before the menu is hidden.
+  visibility: hidden;
+  padding: 0 var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  margin-top: calc(-1 * var(--spacing-sm));
+  transition: max-height 0.25s ease, padding 0.25s ease, visibility 0.25s ease;
+
+  // Show nav when checkbox is checked (mobile)
+  .nav-checkbox:checked ~ & {
+    max-height: 500px; // Upper bound for nav items (supports ~12+ links)
+    padding: var(--spacing-md);
+    visibility: visible;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    max-height: none;
+    overflow: visible;
+    visibility: visible;
+    width: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    margin: 0;
+    transition: none;
+  }
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    gap: var(--spacing-md);
+  }
+}
+
+.nav-item {
+  margin: 0;
+
+  &::before {
+    display: none;
+  }
+}
+
+.nav-link {
+  display: block;
+  padding: var(--spacing-sm) 0;
+  color: var(--color-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+
+  &::before {
+    content: "[ ";
+    color: var(--color-fg-dim);
+  }
+
+  &::after {
+    content: " ]";
+    color: var(--color-fg-dim);
+  }
+
+  // Nav state is carried by a video attribute the VT220 actually had, never by a
+  // character. A glyph marker was historically the fallback for terminals that
+  // *couldn't* highlight (cf. ncurses menu_mark), so it would invert the logic here.
+  //
+  //   rest    normal intensity, dim brackets
+  //   hover   increased intensity   SGR 1
+  //   current increased intensity   SGR 1 — plus aria-current="page"
+  //   focus   reverse video         SGR 7, in _base.scss — the VT220 set-up
+  //                                 manual defines its field cursor as
+  //                                 "a highlighted field (reverse video)"
+  //
+  // On WCAG 1.4.1: increased intensity is a colour cue, and it is the only
+  // visual one the current item gets. That is acceptable here because the
+  // information is not conveyed by it alone — every page states which page it
+  // is, in its <title> and its <h1>, and the link carries aria-current="page"
+  // for assistive technology. The nav highlight is redundant emphasis, not the
+  // sole carrier. A non-colour marker was tried three ways ([* *], underline,
+  // reverse video) and each was worse to look at than the problem it solved.
+  &:hover:not(:focus-visible),
+  &.active {
+    color: var(--color-fg-bright);
+  }
+}
+
+
+
+// -----------------------------------------------------------------------------
+// Site Footer
+// -----------------------------------------------------------------------------
+.site-footer {
+  padding: var(--spacing-lg) 0;
+  margin-top: auto;
+  position: relative;
+}
+
+.footer-inner {
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.footer-meta {
+  color: var(--color-fg-dim);
+  font-size: 0.85rem;
+
+  p {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  a {
+    color: var(--color-fg);
+
+    &:hover {
+      color: var(--color-fg-bright);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Article Layout
+// -----------------------------------------------------------------------------
+.article {
+  margin-bottom: var(--spacing-xxl);
+}
+
+.article-header {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.article-title {
+  margin-bottom: var(--spacing-sm);
+
+  a {
+    color: inherit;
+
+    &:hover {
+      text-decoration: none;
+      color: var(--color-fg-bright);
+    }
+  }
+}
+
+.article-meta {
+  font-size: 0.85rem;
+  color: var(--color-fg-dim);
+
+  &::before {
+    content: "[ ";
+  }
+
+  &::after {
+    content: " ]";
+  }
+}
+
+.article-date {
+  &::before {
+    content: "DATE: ";
+  }
+}
+
+.article-author {
+  &::before {
+    content: " | AUTHOR: ";
+  }
+
+  // No leading separator when there's no date before it (dateless pages)
+  &:first-child::before {
+    content: "AUTHOR: ";
+  }
+}
+
+.article-reading-time {
+  &::before {
+    content: " | READ: ";
+  }
+
+  &:first-child::before {
+    content: "READ: ";
+  }
+}
+
+.article-content {
+  margin-bottom: var(--spacing-lg);
+
+  // Underline links in body text so they're visible against surrounding
+  // monochrome text — nav/listing links opt out via their own rules.
+  a {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    color: var(--color-link);
+  }
+
+  a:hover:not(:focus-visible),
+  a:focus:not(:focus-visible) {
+    color: var(--color-link-hover);
+  }
+}
+
+.article-footer {
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed var(--color-border);
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-fg);
+
+  &::before {
+    content: "#";
+    color: var(--color-fg-dim);
+  }
+
+  &:hover {
+    background: var(--color-border);
+    color: var(--color-fg-bright);
+    text-decoration: none;
+  }
+}
+
+// Categories — same chip as tags but a directory-style "/" marker
+.article-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Space between the categories nav and the tags nav when both are present
+.article-taxonomy + .article-taxonomy {
+  margin-top: var(--spacing-sm);
+}
+
+.category {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-fg);
+
+  &::before {
+    content: "/";
+    color: var(--color-fg-dim);
+  }
+
+  &:hover {
+    background: var(--color-border);
+    color: var(--color-fg-bright);
+    text-decoration: none;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Status Line (VT220 25th Line)
+// Fixed bar at the bottom of the viewport showing site title, current section,
+// and contextual info. Mimics the VT220's hardware status line.
+// -----------------------------------------------------------------------------
+.status-line {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.5rem;
+  z-index: $z-status-line;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--spacing-md);
+  font-family: var(--font-terminal);
+  font-size: 0.75rem;
+  color: var(--color-fg-dim);
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+
+  @media (min-width: $breakpoint-md) {
+    display: flex;
+  }
+}
+
+.status-line-left,
+.status-line-center,
+.status-line-right {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-line-center {
+  text-align: center;
+}
+
+.status-line-right {
+  text-align: right;
+}
+
+// Bottom spacing so footer content isn't hidden behind the fixed status line
+// Only needed on desktop where the status line is visible
+.site-wrapper.status-line-active {
+  @media (min-width: $breakpoint-md) {
+    padding-bottom: 1.5rem;
+  }
+}
+
+// Blinking cursor in status line — classic terminal idle indicator
+.status-cursor {
+  animation: status-cursor-blink 1s step-end infinite;
+  color: var(--color-fg);
+}
+
+@keyframes status-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.reduce-motion .status-cursor,
+.effects-disabled .status-cursor {
+  animation: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-cursor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+// Responsive: drop center section on mobile
+@media (max-width: $breakpoint-md) {
+  .status-line-center {
+    display: none;
+  }
+}
+

@@ -1,0 +1,123 @@
+{{ define "main"  }}
+<div class="panel panel-default">
+  <div class="panel-body">
+     <article id='post' >
+	<div class='title'> {{ .Title }} </div>
+	  {{ if in (slice "post" "posts") .Section }}
+	  <span class="text-muted"><ion-icon name="ios-calendar"></ion-icon>Posted by:&nbsp; <time tile="创建于" itemprop="dateCreated datePublished" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time> | 
+	  <ion-icon name="ios-podium"></ion-icon>Word Count: {{ .WordCount }}&nbsp;&nbsp; | 
+	  <ion-icon name="ios-time"></ion-icon> Reading Time: {{ .ReadingTime }} Minute&nbsp;&nbsp;</span>
+	  {{ end }}
+{{ if and (gt .WordCount 400 ) (.Params.toc) }}
+	  <aside id="toc">
+	    <h2>Table Of Contents</h2>
+	    {{ .TableOfContents }}
+	  </aside>
+	  {{ end }}
+	  {{ .Content }}
+
+	  {{ if in (slice "post" "posts") .Section }}
+	  	  <div class="tags">	
+
+	      {{ with partial "functions/as-list" .Params.categories }}
+	    <p class="categories">
+	      <ion-icon name="folder"></ion-icon>
+	      {{ range . }}
+{{ $namec := . }}
+{{ $special_word := dict "#" "%23" }}
+{{ range  $elem_key,$elem_val := $special_word }}
+{{ $namec = replace $namec $elem_key $elem_val }}
+{{ end }}
+ 
+	      <a class="btn btn-default btn-xs text-capitalize" href="/categories/{{ $namec }}/"> {{ . }}</a>
+	      {{ end }}
+	    </p>
+	    {{ end }}
+	    {{ partial "post/tag/list" . }}
+	    	  </div>
+	    {{ end }}
+		  {{ if .Site.Params.ShowNextAndPrePost }}
+<nav>
+  <ul class="pager">
+ {{if .NextPage}}
+    
+    <li class="previous"><a href="{{.NextPage.Permalink}}"><span aria-hidden="true">&larr;</span>{{.NextPage.Title}}</a></li>
+    {{ end }}
+
+    {{if .PrevPage}}
+    <li class="next">
+      <a href="{{.PrevPage.Permalink}}">{{.PrevPage.Title}}<span aria-hidden="true">&rarr;</span></a>
+    </li>
+    	{{end}}
+      </ul>
+</nav>
+{{ end }}
+<script data-ad-client="ca-pub-0395730697845563"  async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;margin-bottom: 20px;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-0395730697845563"
+     data-ad-slot="6342580713"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+{{ if .Site.Params.remarkHost }}
+<script>
+  var remark_config = {
+    host: "{{ .Site.Params.remarkHost }}", // hostname of remark server, same as REMARK_URL in backend config, e.g. "https://demo.remark42.com"
+    site_id: '{{ .Site.Params.remarkSiteId}}',
+    components: ['embed'], // optional param; which components to load. default to ["embed"]
+    url: '{{ .Title }}',
+    max_shown_comments: 10, // optional param; if it isn't defined default value (15) will be used
+    theme: 'light', // optional param; if it isn't defined default value ('light') will be used
+    page_title: 'Moving to Remark42', // optional param; if it isn't defined `document.title` will be used
+    locale: 'zh' // set up locale and language, if it isn't defined default value ('en') will be used
+  };
+
+  (function(c) {
+    for(var i = 0; i < c.length; i++){
+      var d = document, s = d.createElement('script');
+      s.src = remark_config.host + '/web/' +c[i] +'.js';
+      s.defer = true;
+      (d.head || d.body).appendChild(s);
+    }
+  })(remark_config.components || ['embed']);
+</script>
+<div id="remark42"></div>
+{{ end }}
+{{ if .Site.Config.Services.Disqus.Shortname }}
+{{ template "_internal/disqus.html" . }}
+{{ end }}
+
+{{ if .Site.Params.hasCommento }}
+ <div id="commento"></div>
+ <script src="https://cdn.commento.io/js/commento.js"></script>
+{{ end }}
+{{ if .Site.Params.graphcomment }}
+<div id="graphcomment"></div>
+<script type="text/javascript">
+
+  /* - - - CONFIGURATION VARIABLES - - - */
+
+  // make sure the id is yours
+  window.gc_params = {
+      graphcomment_id: {{ .Site.Params.graphcomment }},
+
+    // if your website has a fixed header, indicate it's height in pixels
+    fixed_header_height: 0,
+  };
+
+  /* - - - DON'T EDIT BELOW THIS LINE - - - */
+
+  (function() {
+    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
+    gc.src = 'https://graphcomment.com/js/integration.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
+  })();
+</script>
+{{ end }}
+     </div>
+      </div></article>
+{{ end }}

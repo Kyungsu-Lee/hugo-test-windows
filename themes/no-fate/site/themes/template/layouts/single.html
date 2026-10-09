@@ -1,0 +1,12 @@
+{{- define "main" }}
+{{- $model := partial "content-model.html" . -}}
+{{- $mode := $model.Visual.Mode -}}
+<article
+    class="nf-article post-single"
+    data-page-mode="{{ $mode }}"
+    data-accent="{{ $model.Visual.Accent }}">
+    {{- partial (printf "modes/%s/opening.html" $mode) . -}}
+    {{- partial (printf "modes/%s/body.html" $mode) . -}}
+    {{- partial "article-footer.html" . -}}
+</article>
+{{- end }}

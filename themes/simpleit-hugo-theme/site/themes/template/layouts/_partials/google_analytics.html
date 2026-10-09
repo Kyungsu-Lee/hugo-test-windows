@@ -1,0 +1,7 @@
+{{ if hugo.IsServer }}
+<!-- DEVELOPMENT -->
+{{"<!-- Googla analytics placeholder -->" | safeHTML}}
+{{ else }}
+<!-- PRODUCTION -->
+{{ partial "google_analytics_async.html" . }}
+{{ end }}

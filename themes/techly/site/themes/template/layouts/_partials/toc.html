@@ -1,0 +1,11 @@
+{{- $headings := .TableOfContents -}}
+{{- if gt (len $headings) 0 -}}
+  <aside class="article-sidebar">
+    <div class="sidebar-card">
+      <h2 class="sidebar-title">Contents</h2>
+      <nav class="table-of-contents" aria-label="Table of contents">
+        {{ $headings }}
+      </nav>
+    </div>
+  </aside>
+{{- end -}}

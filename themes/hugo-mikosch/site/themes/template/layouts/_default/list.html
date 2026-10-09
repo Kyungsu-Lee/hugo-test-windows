@@ -1,0 +1,46 @@
+{{ define "main" }}
+  <section class="page-layout">
+    <div class="page-main section" data-reveal>
+      <div class="section-head">
+        <div>
+          <h1>{{ .Title }}</h1>
+          {{ with .Params.description }}<p class="muted">{{ . }}</p>{{ end }}
+        </div>
+      </div>
+
+      {{ if eq .Section "posts" }}
+        <div class="post-list">
+          {{ range .Pages }}
+            <a class="post-item" href="{{ .RelPermalink }}">
+              {{ with .Params.image }}
+                <div class="post-thumb">
+                  <img src="{{ . }}" alt="{{ $.Title }}">
+                </div>
+              {{ end }}
+              <div class="post-body">
+                <div class="post-title">{{ .Title }}</div>
+                {{ if not .Date.IsZero }}
+                  <div class="muted">{{ .Date.Format "Jan 02, 2006" }}</div>
+                {{ end }}
+                <p class="muted">{{ .Summary }}</p>
+              </div>
+            </a>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div class="grid">
+          {{ range .Pages }}
+            <article class="card">
+              <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+              {{ if not .Date.IsZero }}
+                <div class="muted">{{ .Date.Format "Jan 02, 2006" }}</div>
+              {{ end }}
+              <p>{{ .Summary }}</p>
+            </article>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+    {{ partial "profile-card.html" . }}
+  </section>
+{{ end }}

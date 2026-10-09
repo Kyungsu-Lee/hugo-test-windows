@@ -1,0 +1,80 @@
+{{- $root := .root -}}
+{{- $sec := .section -}}
+{{- $block := .block -}}
+
+{{- if not $block -}}
+  {{- /* No content page -> render nothing (or keep a dev placeholder if you want) */ -}}
+  {{- return -}}
+{{- end -}}
+
+{{- $title := $block.Title | default "" -}}
+{{- $lead := $block.Params.lead | default "" -}}
+{{- $buttons := $block.Params.buttons | default (slice) -}}
+{{- $img := $block.Params.image -}}
+
+<section class="mb-5">
+  <div class="row align-items-center g-5 py-3">
+
+    <div class="col-lg-6">
+      {{- if $title -}}
+        <h1 class="display-5 fw-bold lh-1 mb-3">{{ $title }}</h1>
+      {{- end -}}
+
+      {{- if $lead -}}
+        <p class="lead">{{ $lead }}</p>
+      {{- end -}}
+
+      {{- if gt (len $buttons) 0 -}}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          {{- range $btn := $buttons -}}
+            {{- $text := $btn.text | default "" -}}
+            {{- $style := $btn.style | default "primary" -}}
+
+            {{- $href := "" -}}
+            {{- with $btn.ref -}}
+              {{- $href = relref $root . -}}
+            {{- else -}}
+              {{- with $btn.url -}}
+                {{- $href = . -}}
+              {{- end -}}
+            {{- end -}}
+
+            {{- if and $text $href -}}
+              <a class="btn btn-{{ $style }} btn-lg px-4{{ if eq $style "primary" }} me-md-2{{ end }}" href="{{ $href }}">
+                {{ $text }}
+              </a>
+            {{- end -}}
+          {{- end -}}
+        </div>
+      {{- end -}}
+    </div>
+
+    <div class="col-10 col-sm-8 col-lg-6">
+      {{- /* Image handling: prefer Page Resources if src looks like a filename */ -}}
+      {{- $src := "" -}}
+      {{- $alt := "" -}}
+      {{- if $img -}}
+        {{- $src = $img.src | default "" -}}
+        {{- $alt = $img.alt | default "" -}}
+      {{- end -}}
+
+      {{- if $src -}}
+        {{- $res := $block.Resources.GetMatch $src -}}
+        {{- if $res -}}
+          <img
+            src="{{ $res.RelPermalink }}"
+            class="d-block mx-lg-auto img-fluid"
+            alt="{{ $alt }}"
+            loading="lazy">
+        {{- else -}}
+          <img
+            src="{{ $src }}"
+            class="d-block mx-lg-auto img-fluid"
+            alt="{{ $alt }}"
+            loading="lazy">
+        {{- end -}}
+      {{- end -}}
+    </div>
+
+  </div>
+</section>

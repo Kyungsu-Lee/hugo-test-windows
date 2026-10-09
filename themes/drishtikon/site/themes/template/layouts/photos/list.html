@@ -1,0 +1,50 @@
+{{ define "main" }}
+<div class="photos-container">
+    <div class="photo-section">
+        <img id="photo" src="" alt="Photo" />
+    </div>
+
+    <div class="info-section">
+        <div class="info-content">
+            <div id="description">Photo description</div>
+            <div class="photo-controls">
+                <button class="nav-button" onclick="prevPhoto()">
+                    <img src="/icons/box-arrow-in-left.svg" alt="Prev"/>
+                </button>
+                <div id="counter">1/1</div>
+                <button class="nav-button" onclick="nextPhoto()">
+                    <img src="/icons/box-arrow-in-right.svg" alt="Next"/>
+                </button>
+            </div>
+            <ul id="albums">
+                {{ range .Sections }}
+                <li>
+                    <a href="javascript:void(0)" onclick="selectAlbum('{{ .Title | urlize }}')" data-album="{{ .Title | urlize }}" class="album-link">
+                        <img src="/icons/folder2-open.svg" alt="Album Icon" />
+                        {{ .Title }}
+                    </a>
+                </li>
+                {{ end }}
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<script>
+  const albums = {
+    {{- range .Sections }}
+      "{{ .Title | urlize }}": [
+        {{- range .Pages }}
+          {
+            src: "{{ .Site.BaseURL }}images{{ .Params.image | relURL }}",
+            description: "{{ .Params.description }}"
+          },
+        {{- end }}
+      ],
+    {{- end }}
+  };
+</script>
+<script src="/js/photos.js"></script>
+
+{{ end }}

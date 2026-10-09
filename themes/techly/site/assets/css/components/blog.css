@@ -1,0 +1,334 @@
+.blog-header-section {
+  padding: calc(var(--navbar-height) + 55px) 0 60px;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-primary);
+  text-align: center;
+}
+
+.blog-posts-section {
+  padding: 80px 0;
+  background-color: var(--bg-secondary);
+}
+
+.blog-main {
+  min-width: 0;
+}
+
+.featured-post {
+  margin-bottom: 60px;
+}
+
+.blog-post {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium), border-color var(--transition-medium);
+}
+
+.blog-post:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+  border-color: var(--accent-primary);
+}
+
+.post-link {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.post-image {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+}
+
+.featured-post .post-image {
+  height: 400px;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-medium);
+}
+
+.blog-post:has(.post-image):hover .post-image img {
+  transform: scale(1.05);
+}
+
+.post-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.post-pinned {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+
+.post-pinned svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.post-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.featured-post .post-title {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  margin-bottom: 16px;
+}
+
+.post-excerpt {
+  flex: 1 1 auto;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.post-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-primary);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.post-author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 0;
+  border: 1px solid var(--border-primary);
+  object-fit: cover;
+}
+
+.post-author-name {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.post-content > .read-more {
+  margin-top: auto;
+  align-self: flex-end;
+  padding-top: 20px;
+}
+
+.read-more {
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.post-footer .read-more {
+  margin-top: 0;
+  align-self: auto;
+  padding-top: 0;
+  flex-shrink: 0;
+}
+
+.read-more svg {
+  transition: transform var(--transition-fast);
+}
+
+.blog-post:hover .read-more svg {
+  transform: translateX(4px);
+}
+
+.blog-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: stretch;
+  gap: 32px;
+}
+
+.blog-main .pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  margin: 48px 0 0;
+  padding: 0;
+}
+
+.blog-main .page-item {
+  margin: 0;
+}
+
+.blog-main .page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.blog-main .page-link:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.blog-main .page-item.active .page-link {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--accent-contrast);
+  cursor: default;
+}
+
+.blog-main .page-item.disabled .page-link {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .blog-posts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .blog-header-section {
+    padding: calc(var(--navbar-height) + 24px) 0 40px;
+  }
+
+  .blog-posts-section {
+    padding: 48px 0;
+  }
+
+  .featured-post .post-image {
+    height: 240px;
+  }
+
+  .blog-posts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .archives-section {
+    padding: 48px 0;
+  }
+
+  .archives-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .archives-date {
+    width: auto;
+  }
+}
+
+.archives-section {
+  padding: 80px 0;
+  background-color: var(--bg-secondary);
+}
+
+.archives-main {
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+.archives-year {
+  margin-bottom: 48px;
+}
+
+.archives-year:last-child {
+  margin-bottom: 0;
+}
+
+.archives-year-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.archives-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archives-item {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.archives-item:last-child {
+  border-bottom: none;
+}
+
+.archives-date {
+  flex-shrink: 0;
+  width: 5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.archives-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.archives-link:hover {
+  color: var(--accent-primary);
+}

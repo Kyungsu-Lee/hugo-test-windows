@@ -1,0 +1,37 @@
+{{ $brand := .Site.Params.initials | default .Site.Title }}
+{{ $copyright := .Site.Copyright }}
+{{ if not $copyright }}{{ $copyright = .Site.Title }}{{ end }}
+<footer class="site-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a href="{{ .Site.BaseURL }}" class="footer-logo">{{ $brand }}</a>
+                <span class="footer-copyright">{{ $copyright }} {{ now.Format "2006" }}</span>
+            </div>
+            {{ with .Site.Params.social }}
+            <div class="footer-social">
+                {{ range . }}
+                <a href="{{ .link }}" target="_blank" rel="noopener" title="{{ .name }}" class="footer-social-link">
+                    {{ partial "social_icon.html" . }}
+                </a>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+        {{ with .Site.Params.footerLinks }}
+        <div class="footer-bottom">
+            <nav class="footer-nav">
+                {{ range $i, $link := . }}
+                {{ if $i }}<span class="footer-sep">/</span>{{ end }}
+                <a href="{{ $link.url }}">{{ $link.name }}</a>
+                {{ end }}
+            </nav>
+        </div>
+        {{ end }}
+        {{ if ne .Site.Params.hideThemeCredit true }}
+        <div class="footer-theme-credit">
+            Built with <a href="https://github.com/stultus/kavu" target="_blank" rel="noopener">Kavu</a> &mdash; a Hugo theme by <a href="https://stultus.in" target="_blank" rel="noopener">stultus</a>
+        </div>
+        {{ end }}
+    </div>
+</footer>

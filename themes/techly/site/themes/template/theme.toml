@@ -1,0 +1,13 @@
+name = "Techly"
+license = "GPL-3.0"
+licenselink = "https://github.com/m1rm/techly/blob/main/LICENSE"
+description = "A clean, accessible Hugo theme for tech blogs."
+homepage = "https://github.com/m1rm/techly"
+demosite = "https://m1rm.github.io/hugo-techly/"
+tags = ["blog", "tech", "developer", "accessible"]
+features = ["post series", "pinned posts", "search", "table of contents", "dark mode"]
+min_version = "0.146.0"
+
+[author]
+  name = "Miriam Müller"
+  homepage = "https://miriam-mueller.com"

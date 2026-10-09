@@ -1,0 +1,38 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_features }}
+{{ with $data.homepage.section_features }}
+
+<section class="section section_features">
+    <div class="container">
+       
+        <div class="row_1">
+            <div>
+                <h2>{{ .title | markdownify }}</h2>
+            </div>
+            <div>
+                {{ .desc }}
+            </div>
+        </div>
+
+        <div class="features">
+            {{ range .items }}
+                <div class="feature">
+                    <svg class="icon" width="48" height="48">
+                        <use xlink:href="#{{ .icon }}"></use>
+                      </svg>
+                    <div class="feature__title">
+                        {{ .title }}
+                    </div>
+                    <hr class="feature__divider">
+                    <div class="feature__content">
+                        {{ .desc }}
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+</section>
+
+{{ end }}
+{{ end }}

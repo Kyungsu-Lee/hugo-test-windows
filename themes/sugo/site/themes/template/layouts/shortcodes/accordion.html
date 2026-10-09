@@ -1,0 +1,51 @@
+{{- $caption := .Get "caption" -}}
+{{- $defaultSectionTitle := site.Params.ui.shortcodeAccordionDefaultTitle | default "Section" -}}
+{{- $accordionGroupId := .Get "id" -}}
+{{- if not $accordionGroupId -}}
+  {{- $accordionGroupId = printf "lit-accordion-%d" .Ordinal -}}
+{{- end -}}
+
+<div class="lit-accordion" data-lit-accordion="{{ $accordionGroupId }}">
+  {{- $accordions := split (strings.TrimSpace .Inner) "<!--accordion-->" -}}
+  {{- range $index, $accordion := $accordions -}}
+    {{- $lines := split (strings.TrimSpace $accordion) "\n" -}}
+    {{- $title := "" -}}
+    {{- $contentLines := slice -}}
+    {{- $capture := false -}}
+
+    {{- range $lines -}}
+      {{- if hasPrefix . "title:" -}}
+        {{- $title = strings.TrimSpace (replace . "title:" "") -}}
+      {{- else if hasPrefix . "content:" -}}
+        {{- $capture = true -}}
+        {{- $line := strings.TrimSpace (replace . "content:" "") -}}
+        {{- if $line -}}
+          {{- $contentLines = $contentLines | append $line -}}
+        {{- end -}}
+      {{- else if $capture -}}
+        {{- $contentLines = $contentLines | append . -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- $content := delimit $contentLines "\n" -}}
+    {{- $itemId := printf "%s-item-%d" $accordionGroupId $index -}}
+
+    <section class="lit-accordion__item">
+      <h3 class="lit-accordion__heading">
+        <button type="button" class="lit-accordion__button" data-lit-accordion-target="{{ $itemId }}" aria-expanded="false" aria-controls="{{ $itemId }}">
+          <span>{{ $title | default (printf "%s %d" $defaultSectionTitle (add $index 1)) }}</span>
+          <span class="lit-accordion__icon" aria-hidden="true">+</span>
+        </button>
+      </h3>
+      <div class="lit-accordion__panel" id="{{ $itemId }}" hidden>
+        <div class="lit-accordion__panel-inner">
+          {{ partial "shortcodes/render-inner.html" (dict "ctx" $ "content" $content "display" "block" "trim" true) }}
+        </div>
+      </div>
+    </section>
+  {{- end -}}
+
+  {{- if $caption -}}
+    <p class="lit-shortcode-caption">{{ $caption }}</p>
+  {{- end -}}
+</div>

@@ -1,0 +1,37 @@
+{
+  "name": "l1nkr",
+  "version": "2.0.0",
+  "description": "L1nkr theme for Hugo",
+  "main": "index.js",
+  "scripts": {
+    "build-tailwind": "npx @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/compiled/main.css",
+    "dev-tailwind": "npx @tailwindcss/cli -i ./assets/css/main.css -o ./assets/css/compiled/main.css --watch",
+    "example-site": "hugo server --source ./exampleSite --themesDir ../..",
+    "lighthouse": "export LIGHTHOUSE_BADGES_CONFIGURATION_PATH='./lighthouse-config.json' && npx lighthouse-badges --url https://chrede88.github.io/L1nkr/ --output-path ./lighthouse --badge-style plastic --save-report",
+    "lint-check": "npx prettier --check ./layouts/",
+    "lint": "npx prettier --write ./layouts/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrede88/l1nkr.git"
+  },
+  "homepage": "https://github.com/chrede88/l1nkr#readme",
+  "keywords": [
+    "Hugo",
+    "linktree",
+    "minimal",
+    "tailwind"
+  ],
+  "author": "Christian Olsen",
+  "license": "MIT",
+  "dependencies": {
+    "lighthouse-badges": "1.5.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "prettier": "3.9.9",
+    "prettier-plugin-go-template": "0.0.15",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "tailwindcss": "^4.3.0"
+  }
+}

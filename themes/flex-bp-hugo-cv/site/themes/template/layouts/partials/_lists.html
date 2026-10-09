@@ -1,0 +1,14 @@
+{{- $cv := partial "cv_data.html" . -}}
+{{ $s := slice $cv.Diplomas $cv.Languages $cv.Organizations $cv.Skills $cv.Interests }}
+{{ range $s }}
+    {{ with . }}
+    <section id="section-{{ .Title | urlize }}">
+        <h2>{{ partial "icon.html" .Icon }}{{ .Title }}</h2>
+        <ul class="listsimple">
+            {{ range .Items }}
+                <li>{{ . }}</li>
+            {{ end }}
+        </ul>
+    </section>
+    {{ end }}
+{{ end }}

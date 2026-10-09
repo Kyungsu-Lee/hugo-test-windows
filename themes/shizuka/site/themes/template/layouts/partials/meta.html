@@ -1,0 +1,6 @@
+<div class="article-meta">
+  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format .Site.Params.dateFormat }}</time>
+  {{- with .ReadingTime }}
+  <span>{{ . }} {{ i18n "reading_time" }}</span>
+  {{- end }}
+</div>

@@ -1,0 +1,11 @@
+{{- $authorName := site.Params.author.name | default site.Params.authorName -}}
+{{- $authorAvatar := site.Params.author.avatar | default site.Params.authorAvatar -}}
+{{- $author := .Params.author | default $authorName -}}
+{{- $avatar := .Params.authorAvatar | default $authorAvatar -}}
+
+<div class="post-author">
+  {{- with $avatar }}
+    <img src="{{ . | relURL }}" alt="" class="post-author-avatar" width="32" height="32" loading="lazy">
+  {{- end }}
+  <span class="post-author-name">{{ $author }}</span>
+</div>

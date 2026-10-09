@@ -1,0 +1,52 @@
+{{ with resources.Get "css/main.css" }}
+  {{ if hugo.IsDevelopment }}
+    <link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{ else }}
+    {{ with . | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{- $design := site.Params.design -}}
+{{- if $design }}
+  <style id="mytheme-custom-properties">
+    :root {
+      {{- with $design.fontDisplay }}--font-display: {{ . | safeCSS }};{{ end }}
+      {{- with $design.fontBody }}--font-body: {{ . | safeCSS }};{{ end }}
+      {{- with $design.fontUi }}--font-ui: {{ . | safeCSS }};{{ end }}
+      {{- with $design.radiusSm }}--radius-sm: {{ . | safeCSS }};{{ end }}
+      {{- with $design.radiusMd }}--radius-md: {{ . | safeCSS }};{{ end }}
+      {{- with $design.containerMax }}--container-max: {{ . | safeCSS }};{{ end }}
+      {{- with $design.contentMax }}--content-max: {{ . | safeCSS }};{{ end }}
+      {{- with $design.bodyOverlayOpacity }}--body-overlay-opacity: {{ . | safeCSS }};{{ end }}
+      {{- with $design.bodyOverlayLinear }}--body-overlay-linear: {{ . | safeCSS }};{{ end }}
+      {{- with $design.bodyOverlayRadial }}--body-overlay-radial: {{ . | safeCSS }};{{ end }}
+      {{- with $design.colorAdmonitionNote }}--color-admonition-note: {{ . | safeCSS }};{{ end }}
+      {{- with $design.colorAdmonitionTip }}--color-admonition-tip: {{ . | safeCSS }};{{ end }}
+      {{- with $design.colorAdmonitionInfo }}--color-admonition-info: {{ . | safeCSS }};{{ end }}
+      {{- with $design.colorAdmonitionWarning }}--color-admonition-warning: {{ . | safeCSS }};{{ end }}
+      {{- with $design.colorAdmonitionDanger }}--color-admonition-danger: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorBg }}--color-bg: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorSurface }}--color-surface: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorSurfaceStrong }}--color-surface-strong: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorText }}--color-text: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorMuted }}--color-muted: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorAccent }}--color-accent: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorAccentSoft }}--color-accent-soft: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.colorBorder }}--color-border: {{ . | safeCSS }};{{ end }}
+      {{- with $design.light.shadowSoft }}--shadow-soft: {{ . | safeCSS }};{{ end }}
+    }
+    html[data-theme="dark"] {
+      {{- with $design.dark.colorBg }}--color-bg: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorSurface }}--color-surface: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorSurfaceStrong }}--color-surface-strong: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorText }}--color-text: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorMuted }}--color-muted: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorAccent }}--color-accent: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorAccentSoft }}--color-accent-soft: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.colorBorder }}--color-border: {{ . | safeCSS }};{{ end }}
+      {{- with $design.dark.shadowSoft }}--shadow-soft: {{ . | safeCSS }};{{ end }}
+    }
+  </style>
+{{- end }}

@@ -1,0 +1,123 @@
+[skip_to_content]
+other = "Salta al contenuto"
+
+[back_to_posts]
+other = "← Tutti gli articoli"
+
+[back_to_blog]
+other = "← Torna al blog"
+
+[back_to_home]
+other = "← Torna alla home"
+
+[toc_title]
+other = "Indice"
+
+[previous]
+other = "← Precedente"
+
+[next]
+other = "Successivo →"
+
+[related_posts_aria]
+other = "Articoli correlati"
+
+[all_articles]
+other = "Tutti gli articoli"
+
+[pagination_aria]
+other = "Paginazione"
+
+[archive_description]
+other = "Tutti gli articoli, dal primo all'ultimo."
+
+[articles_written]
+one = "1 articolo scritto"
+other = "{{ . }} articoli scritti"
+
+[latest_posts]
+other = "Ultimi post"
+
+[view_all]
+other = "Visualizza tutti →"
+
+[reading_time]
+other = "min di lettura"
+
+[footer_pages]
+other = "Pagine"
+
+[footer_section_title]
+other = "Il blog"
+
+[all_rights_reserved]
+other = "tutti i diritti riservati"
+
+[footer_nav_aria]
+other = "Navigazione footer"
+
+[main_nav_aria]
+other = "Navigazione principale"
+
+[theme_toggle_dark]
+other = "Passa al tema scuro"
+
+[theme_toggle_light]
+other = "Passa al tema chiaro"
+
+[page_not_found]
+other = "Questa pagina non esiste."
+
+[page_not_found_message]
+other = "Forse è stata spostata, forse non è mai esistita.<br>Come certi pensieri — spariscono prima di essere scritti."
+
+[comments_title]
+other = "Commenti"
+
+[comments_loading]
+other = "Caricamento commenti…"
+
+[comments_empty]
+other = "Ancora nessun commento. Sii il primo a condividere i tuoi pensieri."
+
+[comments_load_error]
+other = "Impossibile caricare i commenti."
+
+[comments_form_title]
+other = "Lascia un commento"
+
+[comments_nickname]
+other = "Nickname"
+
+[comments_nickname_placeholder]
+other = "il_tuo_nick"
+
+[comments_email]
+other = "Email"
+
+[comments_email_hint]
+other = "Non verrà mai mostrata pubblicamente."
+
+[comments_firstname]
+other = "Nome"
+
+[comments_lastname]
+other = "Cognome"
+
+[comments_content]
+other = "Commento"
+
+[comments_content_placeholder]
+other = "Scrivi il tuo commento qui…"
+
+[comments_required_note]
+other = "* Campi obbligatori"
+
+[comments_submit]
+other = "Invia commento"
+
+[comments_submitted]
+other = "Il tuo commento è stato inviato ed è in attesa di moderazione. Grazie!"
+
+[comments_submit_error]
+other = "Impossibile inviare il commento. Riprova."

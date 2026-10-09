@@ -1,0 +1,23 @@
+{{ define "main" }}
+  <main class="container">
+    <h1>
+      {{- if isset .Data "Term" -}}
+        Entries tagged - "{{ .Data.Term }}"
+      {{ else }}
+        {{- with .Title -}}{{ . }}{{- else -}}{{ .Section | title }}{{- end -}}
+      {{- end -}}
+    </h1>
+
+    <section>
+      <ul class="post-list">
+        {{ $paginator := .Paginate .Data.Pages.ByDate.Reverse }}
+        {{ range $paginator.Pages }}
+          {{ partial "page-list-item.html" . }}
+        {{ end }}
+      </ul>
+    </section>
+    <section>
+      {{ partial "paginator.html" $paginator }}
+    </section>
+  </main>
+{{ end }}

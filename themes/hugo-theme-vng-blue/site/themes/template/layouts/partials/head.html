@@ -1,0 +1,86 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+
+{{- if .IsHome -}}
+{{- with .Site.Params.description }}
+<meta name="description" content="{{ . | plainify | htmlUnescape }}">
+{{- end -}}
+{{- else -}}
+{{- with .Description | default .Summary }}
+<meta name="description" content="{{ . | plainify | htmlUnescape | truncate 160 }}">
+{{- end -}}
+{{- end }}
+
+{{ with .Site.Params.custom_script_inline }}
+{{ . | safeHTML }}
+{{ end }}
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{ $fontsURL := "https://fonts.googleapis.com/css2?family=Geist+Mono:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" }}
+{{ $opts := dict "headers" (dict "User-Agent" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36") }}
+{{ with try (resources.GetRemote $fontsURL $opts) }}
+  {{ with .Err }}
+    {{ errorf "Failed to fetch Google Fonts CSS: %s" . }}
+  {{ else with .Value }}
+    <style>{{ .Content | safeCSS }}</style>
+  {{ else }}
+    {{ errorf "Unable to get remote resource %q" $fontsURL }}
+  {{ end }}
+{{ end }}
+
+{{- if eq .Kind "page" -}}
+{{- with .Resources.GetMatch "cover.png" -}}
+{{- $cover := .Resize "800x webp q82" }}
+<link rel="preload" as="image" href="{{ $cover.RelPermalink }}" type="image/webp" fetchpriority="high">
+{{- end -}}
+{{- end }}
+
+<!-- Favicon for all browsers -->
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+<link rel="icon" href="{{ "favicon.ico" | relURL }}">
+<link rel="icon" type="image/png" href="{{ "favicon-32x32.png" | relURL }}" sizes="32x32">
+<link rel="icon" type="image/png" href="{{ "favicon-64x64.png" | relURL }}" sizes="64x64">
+<link rel="icon" type="image/png" href="{{ "favicon-192x192.png" | relURL }}" sizes="192x192">
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" href="{{ "apple-touch-favicon.png" | relURL }}">
+
+<!-- Manifest for PWA -->
+<link rel="manifest" href="{{ "site.webmanifest" | relURL }}">
+
+<!-- Theme color for Chrome, Firefox OS and Opera -->
+<meta name="theme-color" id="vg-theme-color" content="#3073BB" />
+
+<script>
+(function() {
+  var t = 'auto';
+  try { t = localStorage.getItem('vg-theme') || 'auto'; } catch (e) {}
+  var d = document.documentElement;
+  var resolved = t === 'auto'
+    ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : t;
+  d.dataset.theme = t;
+  d.dataset.themeResolved = resolved;
+  d.classList.add('vg-no-transition');
+  var m = document.getElementById('vg-theme-color');
+  if (m) m.setAttribute('content', resolved === 'dark' ? '#14253D' : '#3073BB');
+})();
+</script>
+
+{{ partialCached "head/css.html" . }}
+{{ partialCached "head/js.html" . }}
+
+{{ template "_internal/opengraph.html" . }}
+
+{{ partial "head/jsonld.html" . }}
+
+{{ with .Site.GetPage "section" "posts" }}
+{{ with .OutputFormats.Get "rss" -}}
+{{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink site.Title | safeHTML }}
+{{ end }}
+{{ end }}
+
+{{ if in (slice "categories" "tags") .Section }}
+<meta name="robots" content="noindex, follow" />
+{{ end }}

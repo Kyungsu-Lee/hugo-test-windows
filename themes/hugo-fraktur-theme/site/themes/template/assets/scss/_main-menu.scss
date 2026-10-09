@@ -1,0 +1,46 @@
+// ── Desktop main menu ───────────────────────────────────────
+.menu-main {
+  display: none;
+  flex: 0;
+  font-family: var(--font-family-paragraph);
+
+  @include breakpoint('medium') {
+    display: block;
+  }
+
+  > ul {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    > li {
+      margin-right: 10px;
+
+      > a {
+        display: inline-block;
+        color: var(--text);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+        text-decoration-color: transparent;
+        transition:
+          text-underline-offset 0.2s ease,
+          text-decoration-color 0.2s ease;
+
+        &:hover {
+          text-underline-offset: 5px;
+          text-decoration-color: var(--link-decoration-color);
+        }
+      }
+
+      &.active > a {
+        font-weight: 600;
+        text-decoration-color: var(--border);
+      }
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+}

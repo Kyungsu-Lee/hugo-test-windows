@@ -1,0 +1,5 @@
+<div>
+  {{ $p := .Site.Params }}
+  <div>(c) {{ now.Year }} {{ if $p.author }}{{ $p.author.name }}{{ else if $p.Author }}{{ $p.Author.name }}{{ else }}{{ .Site.Title }}{{ end }}</div>
+  <div class="muted">Powered by Hugo - Theme: {{ if $p.theme_name }}{{ $p.theme_name }}{{ else }}Mikosch{{ end }}</div>
+</div>

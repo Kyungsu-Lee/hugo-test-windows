@@ -1,0 +1,6 @@
+{{ $regex := `(?s)<figure.*?>.*?</figure>` }}
+{{ $matches := findRE $regex .Content 1 }}
+
+{{ if $matches }}
+  {{ return index $matches 0 }}
+{{ end }}

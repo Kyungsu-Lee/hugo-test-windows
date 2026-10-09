@@ -1,0 +1,61 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_comments }}
+{{ with $data.homepage.section_comments }}
+
+<section class="section section_comments">
+    <div class="container">
+      <h2 data-aos="fade-up">{{ .title }}</h2>
+
+
+        <div class="comments swiper" id="slider2">
+            <div class="swiper-wrapper">
+            {{ range $i, $el := .comments }}
+                <div class="comment swiper-slide" data-aos="fade-up" data-aos-delay="{{ mul $i 100 }}">
+                   <div class="comment__header">
+                    <b>Rating:</b>
+                    <svg class="icon" height="26" width="153">
+                        <use xlink:href="#stars"></use>
+                    </svg>
+                   </div>
+                   <div class="comment__body">
+                    <div>
+                        {{ .desc }}
+                    </div>
+                   </div>
+                   <div class="comment__footer">
+                    <img src="{{ .ava | relURL }}" alt="{{ .name }}" class="comment__ava">
+                    <div class="comment__author">
+                        <p><b>{{ .name }}</b></p>
+                        <p><small>{{ .job }}</small></p>
+                    </div>
+                   </div>
+                </div>
+            {{ end }}
+        </div>
+        </div>
+
+        <div class="swiper__nav">
+            <div class="swiper-btn-prev">
+                <svg class="icon" width="24" height="24">
+                    <use xlink:href="#arr-lt"></use>
+                </svg>
+            </div>
+            <div class="swiper-pagination" id="slider2-pagination"></div>
+            <div class="swiper-btn-next">
+                <svg class="icon" width="24" height="24">
+                    <use xlink:href="#arr-rt"></use>
+                </svg>
+            </div>
+        </div>
+
+        <center>
+            <a class="btn" href="#form-main">
+                <b><span>{{ .btn.label }}</span><span>{{ .btn.label }}</span></b>
+            </a>
+        </center>
+    </div>
+</section>
+
+{{ end }}
+{{ end }}

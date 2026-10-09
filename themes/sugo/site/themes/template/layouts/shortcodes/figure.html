@@ -1,0 +1,85 @@
+{{- $src := .Get "src" | default "" -}}
+{{- $alt := .Get "alt" | default (.Get "caption") | default "" -}}
+{{- $caption := .Get "caption" -}}
+{{- $title := .Get "title" -}}
+{{- $class := .Get "class" | default "" -}}
+{{- $link := .Get "link" -}}
+{{- $target := .Get "target" -}}
+{{- $rel := .Get "rel" -}}
+{{- $attr := .Get "attr" -}}
+{{- $attrlink := .Get "attrlink" -}}
+{{- $loading := .Get "loading" | default "lazy" -}}
+{{- $decoding := .Get "decoding" | default "async" -}}
+
+{{- $width := "" -}}
+{{- with .Get "width" -}}
+  {{- $width = strings.TrimSpace (printf "%v" .) -}}
+{{- end -}}
+{{- if and (ne $width "") (gt (len (findRE `^[0-9]+(?:\.[0-9]+)?$` $width)) 0) -}}
+  {{- $width = printf "%spx" $width -}}
+{{- end -}}
+
+{{- $height := "" -}}
+{{- with .Get "height" -}}
+  {{- $height = strings.TrimSpace (printf "%v" .) -}}
+{{- end -}}
+{{- if and (ne $height "") (gt (len (findRE `^[0-9]+(?:\.[0-9]+)?$` $height)) 0) -}}
+  {{- $height = printf "%spx" $height -}}
+{{- end -}}
+
+{{- $imageStyles := slice -}}
+{{- if ne $width "" -}}
+  {{- $imageStyles = $imageStyles | append (printf "width: %s;" $width) -}}
+{{- end -}}
+{{- if ne $height "" -}}
+  {{- $imageStyles = $imageStyles | append (printf "height: %s;" $height) -}}
+{{- else -}}
+  {{- $imageStyles = $imageStyles | append "height: auto;" -}}
+{{- end -}}
+{{- $imageStyles = $imageStyles | append "max-width: 100%;" -}}
+{{- $imageStyle := delimit $imageStyles " " -}}
+{{- $hasExplicitSize := or (ne $width "") (ne $height "") -}}
+
+{{- if and (ne $src "") (not (or (hasPrefix $src "/") (hasPrefix $src "http://") (hasPrefix $src "https://") (hasPrefix $src "//"))) -}}
+  {{- $resource := .Page.Resources.GetMatch $src -}}
+  {{- if not $resource -}}
+    {{- $resource = .Page.Resources.GetMatch (printf "*%s" (path.Base $src)) -}}
+  {{- end -}}
+  {{- if $resource -}}
+    {{- $src = $resource.RelPermalink -}}
+  {{- else -}}
+    {{- $src = printf "%s%s" .Page.RelPermalink (strings.TrimPrefix "./" $src) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if ne $src "" -}}
+  <figure class="lit-figure{{ if ne (strings.TrimSpace $class) "" }} {{ $class }}{{ end }}">
+    {{- if $link -}}
+      <a class="lit-figure__media" href="{{ $link | safeURL }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
+        <img class="lit-figure__image" src="{{ $src | safeURL }}" alt="{{ $alt }}" loading="{{ $loading }}" decoding="{{ $decoding }}" style="{{ $imageStyle | safeCSS }}"{{ if $hasExplicitSize }} data-no-wide-media="true"{{ end }}>
+      </a>
+    {{- else -}}
+      <img class="lit-figure__image" src="{{ $src | safeURL }}" alt="{{ $alt }}" loading="{{ $loading }}" decoding="{{ $decoding }}" style="{{ $imageStyle | safeCSS }}"{{ if $hasExplicitSize }} data-no-wide-media="true"{{ end }}>
+    {{- end -}}
+
+    {{- if or $title $caption $attr -}}
+      <figcaption class="lit-figure__caption">
+        {{- with $title -}}
+          <strong>{{ . }}</strong>
+          {{- if or $caption $attr }} {{ end -}}
+        {{- end -}}
+        {{- with $caption -}}
+          {{ . }}
+          {{- if $attr }} {{ end -}}
+        {{- end -}}
+        {{- with $attr -}}
+          {{- if $attrlink -}}
+            <a href="{{ $attrlink | safeURL }}">{{ . }}</a>
+          {{- else -}}
+            {{ . }}
+          {{- end -}}
+        {{- end -}}
+      </figcaption>
+    {{- end -}}
+  </figure>
+{{- end -}}

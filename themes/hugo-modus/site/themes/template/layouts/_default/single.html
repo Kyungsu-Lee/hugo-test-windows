@@ -1,0 +1,7 @@
+{{ define "main" }}
+  {{ partial "article-post.html" . }}
+
+  {{ if .Section }}
+    {{ partial "pager.html" . }}
+  {{ end }}
+{{ end }}

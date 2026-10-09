@@ -1,0 +1,33 @@
+name = "Mini"
+license = "MIT"
+licenselink = "https://github.com/zavarovkv/hugo-mini/blob/main/LICENSE"
+description = "Writer-first Hugo blog theme with clean typography, dark mode, multilingual navigation, self-hosted assets, SEO, feeds, math, diagrams, and optional Telegram integration."
+homepage = "https://github.com/zavarovkv/hugo-mini"
+demosite = "https://zavarov.com/"
+# tags describe style and design direction; features list concrete capabilities.
+# Kept deliberately short and reusing vocabulary already common in the gallery —
+# see gohugoio/hugoThemesSiteBuilder#699 on tag/feature normalisation.
+tags = [
+    "blog",
+    "minimal",
+    "clean",
+    "personal",
+    "dark",
+]
+features = [
+    "responsive",
+    "multilingual",
+    "seo",
+    "dark-mode",
+    "comments",
+    "math",
+    "diagrams",
+    "og-images",
+    "rss",
+    "json-feed",
+    "social-sharing",
+]
+
+[author]
+name = "Konstantin Zavarov"
+homepage = "https://zavarov.com"

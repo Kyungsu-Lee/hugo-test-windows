@@ -1,0 +1,68 @@
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    {{- with .Content }}
+    <div class="columns is-centered">
+      <div class="column is-two-thirds">
+        <div class="content">
+          {{ . }}
+        </div>
+      </div>
+    </div>
+    {{- end }}
+    <div class="has-text-centered" style="margin-bottom: 1.5rem;">
+      <a href="/posts/" class="button is-primary">Browse All Recipes</a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column">
+        {{- partial "search.html" . -}}
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column">
+        <div style="margin-bottom: 1em;">
+          {{ range .Site.Taxonomies.tags }}
+          <a class="tag is-primary is-light" href="{{ .Page.Permalink }}">{{ .Page.Title }}</a>
+          {{ end }}
+        </div>
+      </div>
+{{ if and .Site.Params.repo .Site.Params.newpath }}
+      <div class="column is-narrow">
+        <a href="{{ .Site.Params.repo }}/{{ .Site.Params.newpath }}/{{ .Site.Params.contentDir | default "content" }}">
+          <button class="button">
+            <span class="icon is-small"><i class="fa fa-plus"></i></span>
+          </button>
+        </a>
+      </div>
+{{ end }}
+    </div>
+
+    {{- $paginator := .Paginate .Site.RegularPages }}
+    <div class="columns is-centered">
+      <div class="column">
+        {{ range $index, $page := $paginator.Pages }}
+          {{ if eq (mod $index 4) 0 }}{{ partial "box.html" $page }}{{ end }}
+        {{ end }}
+      </div>
+      <div class="column">
+        {{ range $index, $page := $paginator.Pages }}
+          {{ if eq (mod $index 4) 1 }}{{ partial "box.html" $page }}{{ end }}
+        {{ end }}
+      </div>
+      <div class="column">
+        {{ range $index, $page := $paginator.Pages }}
+          {{ if eq (mod $index 4) 2 }}{{ partial "box.html" $page }}{{ end }}
+        {{ end }}
+      </div>
+      <div class="column">
+        {{ range $index, $page := $paginator.Pages }}
+          {{ if eq (mod $index 4) 3 }}{{ partial "box.html" $page }}{{ end }}
+        {{ end }}
+      </div>
+    </div>
+    <div class="column is-centered">
+      {{ template "_internal/pagination.html" . }}
+    </div>
+  </div>
+</section>
+{{ end }}

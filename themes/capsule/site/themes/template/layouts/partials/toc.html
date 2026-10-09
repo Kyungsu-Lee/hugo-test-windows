@@ -1,0 +1,12 @@
+{{- if .Params.toc }}
+<aside class="menu">
+  <p class="menu-label">
+    {{- i18n "toc" -}}
+  </p>
+  <div class="menu-list">
+    {{ .TableOfContents }}
+  </div>
+</aside>
+
+<br>
+{{- end }}

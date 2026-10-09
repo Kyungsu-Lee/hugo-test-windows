@@ -1,0 +1,19 @@
+<li>
+  <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  <span class="post-meta">
+    <time datetime="{{ dateFormat "2006-01-02 15:04" .Date }}">
+      {{ dateFormat "Jan 2, 2006" .Date }}
+    </time>
+    {{ if in site.Params.mainSections .Section }}
+      &middot; {{ .ReadingTime }} min read
+    {{ end }}
+    {{ if .Draft }}
+      <mark>DRAFT</mark>
+    {{ end }}
+  </span>
+  {{ if in .Params.categories "featured" }}
+    <div class="post-summary">
+      {{ .Summary }}
+    </div>
+  {{ end }}
+</li>

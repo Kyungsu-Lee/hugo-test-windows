@@ -1,0 +1,9 @@
+{{- $searchPage := partial "search-page.html" . -}}
+{{- if $searchPage -}}
+  <div
+    id="search-config"
+    data-index-url="{{ (site.Home.OutputFormats.Get "JSON").RelPermalink }}"
+    data-search-url="{{ $searchPage.RelPermalink }}"
+    hidden
+  ></div>
+{{- end -}}

@@ -1,0 +1,49 @@
+<header class="container">
+  <nav id="site-nav">
+    <ul>
+      <li>
+        {{- $hasLogo := false }}
+        {{- with site.Params.headerLogo }}
+          {{- with resources.Get . }}
+            {{- $hasLogo = true }}
+            <a href="{{ absURL "" }}" id="site-logo">
+              <img src="{{ .RelPermalink }}" alt="{{ site.Title }}" />
+            </a>
+          {{- end }}
+        {{- end }}
+        {{- with site.Params.logo }}
+          {{- if not $hasLogo }}
+            {{- with resources.Get . }}
+              <a href="{{ absURL "" }}" id="site-logo">
+                <img src="{{ .RelPermalink }}" alt="{{ site.Title }}" />
+              </a>
+              {{- $hasLogo = true }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- if not (site.Params.hideTitle | default false) }}
+          <h1><a href="{{ absURL "" }}">{{ site.Title }}</a></h1>
+        {{- end }}
+      </li>
+    </ul>
+    <ul>
+      {{ range .Site.Menus.main }}
+        <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+      {{ end }}
+    </ul>
+  </nav>
+
+  {{ with .Site.Params.Social }}
+    <div id="site-header-social">
+      {{- range . -}}
+        <a href="{{ .url }}" rel="me" title="{{ .name }}">
+          {{ partial "feather.html" .icon }}
+        </a>
+      {{- end -}}
+    </div>
+  {{- end -}}
+
+  {{- with .Site.Params.Subtitle -}}
+    <p id="site-header-subtitle">{{ . | markdownify }}</p>
+  {{- end -}}
+</header>

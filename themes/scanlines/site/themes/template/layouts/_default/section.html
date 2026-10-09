@@ -1,0 +1,71 @@
+{{ define "main" }}
+{{- /* Rich list for content sections. Applies to ANY section so a renamed
+       contentSection (e.g. content/articles/) keeps reading time, tags, and the
+       POSTS heading instead of falling back to the bare _default/list.html. */ -}}
+{{- $dateFormat := site.Params.scanlines.dateFormat | default "2006-01-02" -}}
+{{- $showReadingTime := ne site.Params.scanlines.showReadingTime false -}}
+{{- $showTags := ne site.Params.scanlines.showTags false -}}
+{{- $isPostsSection := eq .Section (site.Params.scanlines.contentSection | default "posts") -}}
+<div class="container">
+  <div class="content-wrapper">
+    <header class="list-header">
+      <h1 class="list-title">{{ if $isPostsSection }}{{ or (i18n "postsTitle") "POSTS" }}{{ else }}{{ .Title }}{{ end }}</h1>
+      {{- with .Description }}
+      <p class="list-description">{{ . }}</p>
+      {{- end }}
+      {{- if .Pages }}
+      <p class="list-count">[ {{ if $isPostsSection }}{{ i18n "postCount" (len .Pages) }}{{ else }}{{ i18n "entryCount" (len .Pages) }}{{ end }} ]</p>
+      {{- end }}
+    </header>
+
+    {{- if .Pages }}
+    {{- $paginator := .Paginate (.Pages.ByDate.Reverse) -}}
+    <ul class="post-list">
+      {{- range $paginator.Pages }}
+      <li class="post-list-item">
+        <article>
+          <h2 class="post-list-title">
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </h2>
+          <div class="post-list-meta">
+            {{- if not .Date.IsZero }}
+            <time class="post-list-date" datetime="{{ .Date.Format "2006-01-02" }}">
+              {{ .Date.Format $dateFormat }}
+            </time>
+            {{- end }}
+            {{- if $showReadingTime }}
+            <span class="post-list-reading-time">{{ partial "reading-time.html" (dict "page" . "short" true) }}</span>
+            {{- end }}
+            {{- if $showTags }}
+            {{- with .GetTerms "tags" }}
+            <span class="post-list-tags">
+              {{- range first 3 . }}
+              <a href="{{ .RelPermalink }}" class="tag-inline">#{{ .LinkTitle | lower }}</a>
+              {{- end }}
+            </span>
+            {{- end }}
+            {{- end }}
+          </div>
+          {{- with .Params.summary }}
+          <p class="post-list-excerpt">{{ . }}</p>
+          {{- else }}
+          {{- with .Description }}
+          <p class="post-list-excerpt">{{ . }}</p>
+          {{- else }}
+          {{- with partial "page-summary.html" . }}
+          <p class="post-list-excerpt">{{ . | truncate 200 }}</p>
+          {{- end }}
+          {{- end }}
+          {{- end }}
+        </article>
+      </li>
+      {{- end }}
+    </ul>
+
+    {{- partial "pagination.html" $paginator }}
+    {{- else }}
+    <p class="no-posts">{{ or (i18n "noPosts") "No posts yet. Start writing!" }}</p>
+    {{- end }}
+  </div>
+</div>
+{{ end }}

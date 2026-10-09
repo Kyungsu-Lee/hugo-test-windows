@@ -1,0 +1,23 @@
+{{ define "main" }}
+  <main class="container">
+    <article>
+      <header>
+        <h1>{{ .Title }}</h1>
+        <section>
+          <time datetime="{{ dateFormat "2006-01-02 15:04" .Date }}">
+            {{ dateFormat "Jan 2, 2006" .Date }}
+          </time>
+          {{ if .Draft }}
+            <mark>DRAFT</mark>
+          {{ end }}
+        </section>
+      </header>
+
+      <main>{{ .Content }}</main>
+
+      <footer>
+        {{ partial "page-tags-categories.html" . }}
+      </footer>
+    </article>
+  </main>
+{{ end }}

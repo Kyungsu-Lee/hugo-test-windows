@@ -1,0 +1,27 @@
+demosite    = "https://sk3.jsiu.dev"
+description = "Full feature Hugo theme"
+features    = ["disqus", "google adsense", "google analytics"]
+homepage    = "https://github.com/J-Siu/hugo-theme-sk3"
+license     = "MIT"
+licenselink = "https://github.com/J-Siu/hugo-theme-sk3/blob/master/LICENSE"
+name        = "SK3"
+
+tags = [
+	"blog",
+	"clean",
+	"customizable",
+	"dark",
+	"dark mode",
+	"disqus",
+	"google adsense",
+	"google analytics",
+	"minimal",
+	"mobile",
+	"personal",
+	"responsive",
+	"simple",
+]
+
+[author]
+homepage = "https://johnsiu.com/"
+name     = "John, Sing Dao, Siu"

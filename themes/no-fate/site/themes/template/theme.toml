@@ -1,0 +1,57 @@
+name = "No Fate"
+license = "MIT"
+licenselink = "https://github.com/OliverObst/no-fate/blob/main/LICENSE"
+description = "A rigorous, reusable Hugo publishing theme with strong editorial and archival behaviour"
+homepage = "https://github.com/OliverObst/no-fate"
+tags = [
+  "responsive",
+  "editorial",
+  "publishing",
+  "archive",
+  "portfolio",
+  "light",
+  "dark",
+  "multilingual",
+  "search",
+  "seo",
+  "accessible"
+]
+features = [
+  "responsive",
+  "editorial-publishing",
+  "page-modes",
+  "cover-image",
+  "table-of-contents",
+  "opengraph",
+  "twitter-cards",
+  "favicon",
+  "archive",
+  "cover",
+  "multilingual",
+  "minified-assets",
+  "theme-toggle",
+  "menu-location-indicator",
+  "scroll-to-top",
+  "search",
+  "breadcrumbs",
+  "reading-time",
+  "word-count",
+  "code-copy",
+  "comments",
+  "edit-post",
+  "canonical-link",
+  "rss",
+  "multiple-authors",
+  "post-nav-links"
+]
+min_version = "0.158.0"
+
+[author]
+  name = "No Fate contributors"
+  homepage = "https://github.com/OliverObst/no-fate/graphs/contributors"
+
+[original]
+  name = "PaperMod"
+  author = "Aditya Telange and contributors"
+  homepage = "https://github.com/adityatelange"
+  repo = "https://github.com/adityatelange/hugo-PaperMod"

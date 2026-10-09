@@ -1,0 +1,24 @@
+############################
+## CHANGE THESE
+############################
+
+baseURL: 'https://chrede88.github.io/L1nkr'
+title: 'L1nkr'
+
+############################
+## MODULES
+############################
+
+module:
+  imports:
+    - path: github.com/chrede88/L1nkr
+
+############################
+## MISC
+############################
+
+enableEmoji: true
+disableKinds: ['taxonomy', 'term']
+locale: 'en-us'
+
+

@@ -1,0 +1,12 @@
+name = "Hestia Pure"
+license = "MIT"
+licenselink = "https://github.com/diwao/hestia-pure/blob/master/LICENSE.md"
+description = "A simple Hugo blog theme built with Pure.css."
+homepage = "https://github.com/diwao/hestia-pure"
+tags = ["blog", "responsive", "purecss"]
+features = ["responsive", "blog", "author profile"]
+min_version = "0.161.1"
+
+[author]
+  name = "diwao"
+  homepage = "https://diwao.com/"

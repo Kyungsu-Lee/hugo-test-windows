@@ -1,0 +1,92 @@
+{{- $page := .page -}}
+{{- $menuID := .menuID -}}
+{{- $primaryNavAriaLabel := site.Params.ui.primaryNavAriaLabel | default "Primary" -}}
+
+{{- with index site.Menus $menuID }}
+  <nav class="site-nav" id="primary-navigation" aria-label="{{ $primaryNavAriaLabel }}">
+    <ul class="menu-list">
+      {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" . "level" 0) }}
+    </ul>
+  </nav>
+{{- end }}
+
+{{- define "_partials/inline/menu/walk.html" -}}
+  {{- $page := .page -}}
+  {{- $level := .level | default 0 -}}
+  {{- range .menuEntries }}
+    {{- $isCurrent := $page.IsMenuCurrent .Menu . -}}
+    {{- $isAncestor := $page.HasMenuCurrent .Menu . -}}
+    {{- $linkClass := "menu-link" -}}
+    {{- $children := .Children -}}
+    {{- $hasChildren := gt (len $children) 0 -}}
+    {{- $itemClass := printf "menu-item menu-item--level-%d" $level -}}
+    {{- if $hasChildren -}}
+      {{- $itemClass = printf "%s menu-item--has-children" $itemClass -}}
+    {{- end -}}
+    {{- if $isCurrent -}}
+      {{- $linkClass = printf "%s active" $linkClass -}}
+    {{- else if $isAncestor -}}
+      {{- $linkClass = printf "%s ancestor" $linkClass -}}
+    {{- end -}}
+    {{- if and $hasChildren (or $isCurrent $isAncestor) -}}
+      {{- $itemClass = printf "%s menu-item--expanded" $itemClass -}}
+    {{- end -}}
+    {{- $name := .Name -}}
+    {{- with .Identifier }}
+      {{- with T . }}
+        {{- $name = . -}}
+      {{- end }}
+    {{- end }}
+    {{- $href := .URL -}}
+    {{- with .Page }}
+      {{- $href = .RelPermalink -}}
+    {{- else -}}
+      {{- $isExternalHref := or (hasPrefix $href "http://") (hasPrefix $href "https://") (hasPrefix $href "//") -}}
+      {{- $isExternalHref = or $isExternalHref (hasPrefix $href "mailto:") -}}
+      {{- $isExternalHref = or $isExternalHref (hasPrefix $href "tel:") -}}
+      {{- if and $href (not $isExternalHref) (not (hasPrefix $href "#")) -}}
+        {{- $href = $href | relLangURL -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $href "" -}}
+      {{- $href = "/" -}}
+    {{- end -}}
+    {{- $submenuID := "" -}}
+    {{- if $hasChildren -}}
+      {{- $submenuID = printf "submenu-%x" (md5 (printf "%d|%s|%s" $level $name $href)) -}}
+    {{- end -}}
+    {{- $target := "" -}}
+    {{- with .Params -}}
+      {{- with index . "target" -}}
+        {{- $target = printf "%v" . -}}
+      {{- end -}}
+      {{- if eq $target "" -}}
+        {{- with index . "target" -}}
+          {{- $target = printf "%v" . -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $rel := "" -}}
+    {{- if eq (lower $target) "_blank" -}}
+      {{- $rel = "noopener noreferrer" -}}
+    {{- end -}}
+    <li class="{{ $itemClass }}">
+      <a href="{{ $href }}" class="{{ $linkClass }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}{{ if $isCurrent }} aria-current="page"{{ else if $isAncestor }} aria-current="true"{{ end }}>{{ $name }}</a>
+      {{- if $hasChildren }}
+        <button
+          class="menu-submenu-toggle"
+          type="button"
+          data-submenu-toggle
+          aria-label="Toggle {{ $name }}"
+          aria-expanded="{{ if or $isCurrent $isAncestor }}true{{ else }}false{{ end }}"
+          aria-controls="{{ $submenuID }}"
+        >
+          <span class="menu-submenu-toggle__icon" aria-hidden="true"></span>
+        </button>
+        <ul class="submenu-list submenu-list--level-{{ add $level 1 }}" id="{{ $submenuID }}">
+          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" $children "level" (add $level 1)) }}
+        </ul>
+      {{- end -}}
+    </li>
+  {{- end }}
+{{- end }}

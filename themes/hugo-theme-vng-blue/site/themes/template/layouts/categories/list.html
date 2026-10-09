@@ -1,0 +1,25 @@
+{{ define "main" }}
+<div class="vg-categories">
+  <div class="vg-categories-list">
+    {{ range .Pages }}
+    <a href="{{ .RelPermalink }}" class="vg-categories-row" data-target="{{ .Name }}">
+      <div class="vg-categories-row__icon">
+        {{ with resources.GetMatch "icons/menu.svg" }}
+        {{ .Content | safeHTML }}
+        {{ end }}
+      </div>
+
+      <div class="vg-categories-row__title">{{ .Name }}</div>
+    </a>
+
+    <div class="vg-categories-posts-list">
+      {{ range .Pages }}
+      <div class="vg-categories-posts-list__item" data-target="{{ .Name }}">
+        <a href="{{ .RelPermalink }}" class="vg-categories-posts-list__text">{{ .Title }}</a>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

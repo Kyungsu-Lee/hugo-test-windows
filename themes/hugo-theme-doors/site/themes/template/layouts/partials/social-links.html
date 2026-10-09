@@ -1,0 +1,28 @@
+{{- $links := slice -}}
+{{- if isset . "links" -}}
+  {{- $links = .links -}}
+{{- else -}}
+  {{- with .x }}{{ $links = $links | append (dict "label" "X" "url" . "icon" "x") }}{{ end -}}
+  {{- with .twitter }}{{ $links = $links | append (dict "label" "Twitter" "url" . "icon" "twitter") }}{{ end -}}
+  {{- with .facebook }}{{ $links = $links | append (dict "label" "Facebook" "url" . "icon" "facebook") }}{{ end -}}
+  {{- with .instagram }}{{ $links = $links | append (dict "label" "Instagram" "url" . "icon" "instagram") }}{{ end -}}
+  {{- with .linkedin }}{{ $links = $links | append (dict "label" "LinkedIn" "url" . "icon" "linkedin") }}{{ end -}}
+  {{- with .github }}{{ $links = $links | append (dict "label" "GitHub" "url" . "icon" "github") }}{{ end -}}
+  {{- with .email }}{{ $links = $links | append (dict "label" "Email" "url" . "icon" "email") }}{{ end -}}
+{{- end -}}
+
+{{- with $links }}
+<ul class="social-links">
+  {{- range . }}
+    {{- $link := . -}}
+    {{- with $link.url }}
+      {{- $label := strings.TrimSpace (default "Link" $link.label) -}}
+      <li>
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $label }}">
+          {{- partial "social-icon.html" (dict "icon" $link.icon "label" $label) -}}
+        </a>
+      </li>
+    {{- end }}
+  {{- end }}
+</ul>
+{{- end }}

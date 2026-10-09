@@ -1,0 +1,81 @@
+	
+.faq
+	width: 100%
+	margin-top: var(--gap3)
+	&__wrap
+		padding: var(--gap6)
+		border-radius: 15px
+		+theme(dark)
+		background-image: url('../images/bg/bg3.svg')
+		background-repeat: no-repeat
+		background-size: contain
+		background-position: 100% 0
+
+	&__num
+		+ft(35, 35, 800)
+		width: 100px
+		//border-right: 1px solid rgba($main, 0.2)
+		text-align: center
+
+	&__cta
+		width: 100px
+		//border-left: 1px solid rgba($main, 0.2)
+		text-align: center
+
+		svg
+			margin: auto
+			&:last-child
+				display: none
+		
+	&__term
+		+ft(20, 20*1.3, 800, $ffHeading)
+		text-transform: uppercase
+		padding: var(--gap3) 0
+		user-select: none
+
+	&__row
+		border-top: 1px solid rgba($white, 0.2)
+		cursor: pointer
+		&:first-child
+			border-top: 0
+		&.active
+			.faq__cta
+				svg
+					&:first-child
+						display: none
+					&:last-child
+						display: block
+						
+			.faq__num
+				color: $main
+			.faq__term
+				color: $main
+			& + tr > .faq__body
+				display: block
+
+	tr:last-child
+			border-bottom: 1px solid rgba($black, 0.2)
+
+	&__body
+		+ft(20, 30, 300)
+		padding: 0 0 $gap3
+		display: none
+	
+	+maw($md)
+		&__term
+			+ft(20, 20, 800)
+		&__body
+			+ft(13, 13*1.4, 300)
+	+maw($sm)
+		&__num
+			display: none
+		&__term, &__body
+			padding: 15px
+			padding-left: 0
+		&__term
+			+ft(16, 16*1.4, 700)
+	+maw($xs)
+		&__cta
+			display: none
+		&__term, &__body
+			padding-right: 0

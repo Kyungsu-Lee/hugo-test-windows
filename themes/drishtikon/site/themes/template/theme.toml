@@ -1,0 +1,15 @@
+name = "drishtikon"
+languageCode = "en-us"
+license = "MIT"
+licenselink = "https://github.com/kishenarayan/drishtikon/blob/main/LICENSE"
+description = "A simple, fast Hugo theme that serves as a blog and portfolio website."
+
+homepage = "https://github.com/kishenarayan/drishtikon"
+
+tags = ["blog", "academic", "photos", "simple", "fast", "portfolio", ]
+features = ["fast", "blog", "portfolio"]
+min_version = "0.145.0"
+
+[author]
+    name = "Kishen Narayan"
+    homepage = "kishenarayan.github.io"

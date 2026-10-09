@@ -1,0 +1,46 @@
+{{- $defaultTabTitle := site.Params.ui.shortcodeTabsDefaultTitle | default "Tab" -}}
+{{- $tabGroupId := .Get "id" -}}
+{{- if not $tabGroupId -}}
+  {{- $tabGroupId = printf "lit-tabs-%d" .Ordinal -}}
+{{- end -}}
+{{- $tabs := split (strings.TrimSpace .Inner) "<!--tab-->" -}}
+
+<div class="lit-tabs" data-lit-tabs="{{ $tabGroupId }}">
+  <div class="lit-tabs__buttons" role="tablist" aria-label="Tab group {{ $tabGroupId }}">
+    {{- range $index, $tab := $tabs -}}
+      {{- $lines := split (strings.TrimSpace $tab) "\n" -}}
+      {{- $title := "" -}}
+      {{- range $lines -}}
+        {{- if hasPrefix . "title:" -}}
+          {{- $title = strings.TrimSpace (replace . "title:" "") -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $tabId := printf "%s-tab-%d" $tabGroupId $index -}}
+      <button type="button" class="lit-tabs__button{{ if eq $index 0 }} is-active{{ end }}" role="tab" data-lit-tab-target="{{ $tabId }}" aria-selected="{{ if eq $index 0 }}true{{ else }}false{{ end }}" aria-controls="{{ $tabId }}">{{ $title | default (printf "%s %d" $defaultTabTitle (add $index 1)) }}</button>
+    {{- end -}}
+  </div>
+
+  <div class="lit-tabs__panels">
+    {{- range $index, $tab := $tabs -}}
+      {{- $lines := split (strings.TrimSpace $tab) "\n" -}}
+      {{- $contentLines := slice -}}
+      {{- $capture := false -}}
+      {{- range $lines -}}
+        {{- if hasPrefix . "content:" -}}
+          {{- $capture = true -}}
+          {{- $line := strings.TrimSpace (replace . "content:" "") -}}
+          {{- if $line -}}
+            {{- $contentLines = $contentLines | append $line -}}
+          {{- end -}}
+        {{- else if $capture -}}
+          {{- $contentLines = $contentLines | append . -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $content := delimit $contentLines "\n" -}}
+      {{- $tabId := printf "%s-tab-%d" $tabGroupId $index -}}
+      <section class="lit-tabs__panel" id="{{ $tabId }}" role="tabpanel"{{ if ne $index 0 }} hidden{{ end }}>
+        {{ partial "shortcodes/render-inner.html" (dict "ctx" $ "content" $content "display" "block" "trim" true) }}
+      </section>
+    {{- end -}}
+  </div>
+</div>

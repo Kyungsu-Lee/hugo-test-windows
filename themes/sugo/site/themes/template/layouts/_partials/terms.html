@@ -1,0 +1,20 @@
+{{- $page := .page -}}
+{{- $taxonomy := .taxonomy -}}
+{{- $taxonomyClass := $taxonomy | urlize -}}
+{{- $taxonomyLabel := $taxonomy | humanize -}}
+{{- with site.Params.ui.taxonomyLabels -}}
+  {{- with index . $taxonomy -}}
+    {{- $taxonomyLabel = printf "%v" . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with $page.GetTerms $taxonomy }}
+  <section class="term-pills term-pills--{{ $taxonomyClass }}" aria-label="{{ $taxonomyLabel }}">
+    <span class="term-pills__label">{{ $taxonomyLabel }}</span>
+    <ul class="term-pills__list">
+      {{- range . }}
+        <li><a class="term-pill term-pill--{{ $taxonomyClass }}" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+  </section>
+{{- end }}

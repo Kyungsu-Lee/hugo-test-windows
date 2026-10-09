@@ -1,0 +1,25 @@
+<div class="nav-bar">
+  <div class="brand">
+    <a class="brand-link" href="{{ "/" | relURL }}">
+      <span class="brand-mark"></span>
+      <span class="brand-text">
+        <span class="brand-title">{{ .Site.Title }}</span>
+        <span class="brand-sub">{{ .Site.Params.subtitle }}</span>
+      </span>
+    </a>
+  </div>
+
+  <button class="nav-toggle" data-toggle="#mobile-nav">Menu</button>
+
+  <nav class="main-nav" aria-label="Main navigation">
+    {{ range .Site.Menus.main }}
+      <a href="{{ .URL | relURL }}" title="{{ .Name }}">{{ .Name }}</a>
+    {{ end }}
+  </nav>
+</div>
+
+<nav id="mobile-nav" class="mobile-nav">
+  {{ range .Site.Menus.main }}
+    <div><a href="{{ .URL | relURL }}">{{ .Name }}</a></div>
+  {{ end }}
+</nav>

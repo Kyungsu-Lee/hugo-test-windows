@@ -1,0 +1,22 @@
+{{- $allowed := slice "note" "tip" "info" "warning" "danger" -}}
+{{- $type := .Get "type" | default "note" | lower -}}
+{{- if not (in $allowed $type) -}}
+  {{- $type = "note" -}}
+{{- end -}}
+{{- $title := .Get "title" | default (title $type) -}}
+
+<div class="lit-admonition lit-admonition--{{ $type }}" role="note">
+  <p class="lit-admonition__title">
+    <span class="lit-admonition__badge" aria-hidden="true">
+      {{- if eq $type "note" -}}N{{- end -}}
+      {{- if eq $type "tip" -}}T{{- end -}}
+      {{- if eq $type "info" -}}i{{- end -}}
+      {{- if eq $type "warning" -}}!{{- end -}}
+      {{- if eq $type "danger" -}}X{{- end -}}
+    </span>
+    <span>{{ $title }}</span>
+  </p>
+  <div class="lit-admonition__content">
+    {{ partial "shortcodes/render-inner.html" (dict "ctx" . "content" .Inner "display" "block" "trim" true) }}
+  </div>
+</div>

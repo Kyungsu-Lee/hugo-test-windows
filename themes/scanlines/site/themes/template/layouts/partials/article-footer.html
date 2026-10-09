@@ -1,0 +1,28 @@
+{{- /* Shared article footer partial — categories and tags.
+       Uses .GetTerms so links honor the site's taxonomy config (renamed
+       taxonomies, custom permalinks, disablePathToLower) instead of hardcoding
+       /tags/ + urlize. */ -}}
+{{- $cats := .GetTerms "categories" -}}
+{{- $tags := .GetTerms "tags" -}}
+{{- if or $cats $tags }}
+<footer class="article-footer">
+  {{- with $cats }}
+  <nav class="article-taxonomy" aria-label="{{ or (i18n "categories") "Categories" }}">
+    <ul class="article-categories">
+      {{- range . }}
+      <li><a href="{{ .RelPermalink }}" class="category">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+  </nav>
+  {{- end }}
+  {{- with $tags }}
+  <nav class="article-taxonomy" aria-label="{{ or (i18n "tags") "Tags" }}">
+    <ul class="article-tags">
+      {{- range . }}
+      <li><a href="{{ .RelPermalink }}" class="tag">{{ .LinkTitle | lower }}</a></li>
+      {{- end }}
+    </ul>
+  </nav>
+  {{- end }}
+</footer>
+{{- end }}

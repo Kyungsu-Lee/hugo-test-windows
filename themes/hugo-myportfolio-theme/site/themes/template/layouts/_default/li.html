@@ -1,0 +1,27 @@
+<li class="project-item">
+
+    <a href="{{.Permalink}}" class="project-item-box">
+        <figure class="no-photoswipe">
+            {{ $image := .Resources.GetMatch .Params.small_image }}
+            {{ if $image }}
+            <img class="project-item-logo" src="{{ $image.Permalink }}" alt="">
+            {{ else }}
+            <div class="project-item-logo" />
+            {{ end }}
+        </figure>
+
+        <div>
+            {{ with .Title }}
+                <div class="project-title">
+                    {{ . }}
+                </div>
+            {{ end }}
+
+            {{ with .Params.subtitle }}
+                <div class="project-subtitle">
+                    {{ . }}
+                </div>
+            {{ end }}
+        </div>
+    </a>
+</li>

@@ -1,0 +1,262 @@
+/*! L1nkr v2.0.0 | MIT License | https://github.com/Chrede88/L1nkr */
+
+@import "tailwindcss";
+
+@config '../../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+.grid-cols-md-center2 {
+  @apply md:grid-cols-center2;
+}
+
+.grid-cols-md-center3 {
+  @apply md:grid-cols-center3;
+}
+
+.grid-cols-md-center4 {
+  @apply md:grid-cols-center4;
+}
+
+.grid-cols-md-center5 {
+  @apply md:grid-cols-center5;
+}
+
+.grid-cols-md-center6 {
+  @apply md:grid-cols-center6;
+}
+
+.grid-cols-md-center2-mono {
+  @apply md:grid-cols-center2-mono;
+}
+
+.grid-cols-md-center3-mono {
+  @apply md:grid-cols-center3-mono;
+}
+
+.grid-cols-md-center4-mono {
+  @apply md:grid-cols-center4-mono;
+}
+
+.grid-cols-md-center5-mono {
+  @apply md:grid-cols-center5-mono;
+}
+
+.grid-cols-md-center6-mono {
+  @apply md:grid-cols-center6-mono;
+}
+
+.link {
+  @apply flex h-28 w-28 transform items-center justify-center rounded-full border-2 border-slate-50 bg-indigo-500 transition duration-300 ease-out hover:scale-125;
+}
+
+.link-mono {
+  @apply flex h-22 w-22 transform items-center justify-center rounded-full transition duration-300 ease-out hover:scale-125;
+}
+
+.link_svg {
+  @apply m-1 h-20 w-20 rounded-full fill-slate-50;
+}
+
+.link_svg-mono {
+  @apply m-1 h-20 w-20 rounded-full fill-slate-700 dark:fill-slate-50;
+}
+
+.text_svg {
+  @apply absolute m-1 h-[120px] w-[120px] rounded-full fill-slate-50;
+}
+
+.text_svg-mono {
+  @apply absolute m-1 h-[120px] w-[120px] rounded-full fill-slate-700 dark:fill-slate-50;
+}
+
+.tooltip {
+  @apply invisible absolute -top-10 animate-bounce rounded-md bg-gray-950 px-2 py-1 text-center whitespace-nowrap text-slate-50 shadow-md shadow-gray-950/25 group-hover:visible after:absolute after:top-7 after:left-1/2 after:h-0 after:w-0 after:-translate-x-1/2 after:rotate-45 after:border-4 after:border-gray-950 after:shadow-md after:shadow-gray-950/25 dark:bg-slate-200 dark:text-slate-700 dark:shadow-slate-100/25 dark:after:border-slate-200 dark:after:shadow-slate-100/25;
+}
+
+.link-facebook {
+  background-color: #1877f2;
+}
+.link-github {
+  background-color: #333;
+}
+.link-twitter,
+.link-x-twitter {
+  background-color: #000;
+}
+.link-gitlab {
+  background-color: #554488;
+}
+.link-instagram {
+  background: radial-gradient(circle farthest-corner at 35% 90%, #fec564, transparent 50%), radial-gradient(circle farthest-corner at 0 140%, #fec564, transparent 50%),
+    radial-gradient(ellipse farthest-corner at 0 -25%, #5258cf, transparent 50%), radial-gradient(ellipse farthest-corner at 20% -50%, #5258cf, transparent 50%),
+    radial-gradient(ellipse farthest-corner at 100% 0, #893dc2, transparent 50%), radial-gradient(ellipse farthest-corner at 60% -20%, #893dc2, transparent 50%),
+    radial-gradient(ellipse farthest-corner at 100% 100%, #d9317a, transparent), linear-gradient(#6559ca, #bc318f 30%, #e33f5f 50%, #f77638 70%, #fec66d 100%);
+}
+.link-linkedin {
+  background-color: #0077b5;
+}
+.link-mastodon {
+  background-color: #6364ff;
+}
+.link-reddit {
+  background-color: #ff4500;
+}
+.link-slack {
+  background-color: #4a154b;
+}
+.link-snapchat {
+  background-color: #fffc00;
+}
+.link-soundcloud {
+  background-color: #ff8800;
+  background: linear-gradient(120deg, #ff8800, #ff3300);
+}
+.link-telegram {
+  background-color: #25a3e1;
+}
+.link-tiktok {
+  background-color: #fe2d55;
+}
+.link-whatsapp {
+  background-color: #45d82c;
+  background: linear-gradient(120deg, #12990b, #45d82c);
+}
+.link-youtube {
+  background-color: #ff0000;
+}
+.link-stack-exchange {
+  background-color: #0095ff;
+}
+.link-stack-overflow {
+  background-color: #f48024;
+}
+.link-discord {
+  background-color: #7289da;
+}
+.link-codepen {
+  background-color: #1e1f26;
+}
+.link-dev {
+  background-color: #0a0a0a;
+}
+.link-link {
+  background-color: #8b5cf6;
+}
+.link-email {
+  background-color: #8b5cf6;
+}
+.link-signal {
+  background-color: #3a76f0;
+  background: linear-gradient(180deg, #4e84f2, #3a76f0);
+}
+.link-dribbble {
+  background-color: #ea4c89;
+}
+.link-tumblr {
+  background-color: #001935;
+}
+.link-twitch {
+  background-color: #9146ff;
+}
+.link-patreon {
+  background-color: #ff434d;
+}
+.link-orcid {
+  background-color: #a6ce39;
+}
+.link-kickstarter {
+  background-color: #06ce78;
+}
+.link-keybase {
+  background-color: #33a0ff;
+}
+.link-flickr {
+  background-color: #ff0184;
+}
+.link-website {
+  background-color: #8b5cf6;
+}
+.link-bluesky {
+  background-color: #008ffe;
+  background: linear-gradient(0deg, #008ffe, #0062fe);
+}
+.link-bitbucket {
+  background-color: #2684ff;
+  background: linear-gradient(45deg, #2684ff, #0154ce);
+}
+.link-bandcamp {
+  background-color: #61929c;
+}
+.link-etsy {
+  background-color: #f45800;
+}
+.link-spotify {
+  background-color: #1ed760;
+}
+.link-pinterest {
+  background-color: #e60023;
+}
+.link-strava {
+  background-color: #fc4c02;
+}
+.link-untappd {
+  background-color: #ffcf0d;
+}
+.link-skype {
+  background-color: #0078d7;
+}
+.link-medium {
+  background-color: #000;
+}
+.link-foursquare {
+  background-color: #fa4778;
+}
+.link-check-mark {
+  background-color: #8b5cf6;
+}
+.link-apple {
+  background-color: #000;
+}
+.link-amazon {
+  background-color: #ff9900;
+}
+.link-google {
+  background-color: #4285f4;
+  background: linear-gradient(90deg, #4285f4 0% 25%, #db4437 25% 50%, #f4b400 50% 75%, #0f9d58 75% 100%);
+}
+.link-paypal {
+  background-color: #00457c;
+  background: linear-gradient(90deg, #00457c, #0079c1);
+}
+.link-windows {
+  background-color: #f25022;
+  background: conic-gradient(#7fba00 0% 25%, #ffb900 25% 50%, #00a4ef 50% 75%, #f25022 75% 100%);
+}
+.link-pgp-key,
+.link-PGP-Key {
+  background-color: #a13c94;
+}
+.link-ssh-key,
+.link-SSH-Key {
+  background-color: #3c62a1;
+}
+.link-certifications {
+  background-color: #3ca149;
+}

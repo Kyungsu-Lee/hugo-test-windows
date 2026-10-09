@@ -1,0 +1,333 @@
+{{- /* Featured posts (Bootstrap blog example inspired). */ -}}
+
+{{- $root := .root -}}
+{{- $sec := .section -}}
+
+{{- with .block -}}
+  {{- $block := . -}}
+
+  {{- $title := $block.Title | default "" -}}
+  {{- $items := $block.Params.items | default (slice) -}}
+
+
+
+    {{- /* Auto-fill configuration (optional) */ -}}
+    {{- $sectionName := $sec.section | default ($block.Params.section | default "") -}}
+  {{- $featuredKey := $sec.featured_key | default ($block.Params.featured_key | default "home") -}}
+  {{- $limit := $sec.limit | default ($block.Params.limit | default 0) -}}
+
+  {{- $fillContent := $sec.fill_content | default ($block.Params.fill_content | default true) -}}
+  {{- $fillSort := $sec.fill_sort | default ($block.Params.fill_sort | default "date_desc") -}}
+
+
+
+  {{- /* Final list: items first, then auto-filled posts */ -}}
+  {{- $renderItems := $items -}}
+
+  {{- /* Determine remaining capacity (0 limit => unlimited) */ -}}
+  {{- $remaining := -1 -}}
+  {{- if gt $limit 0 -}}
+    {{- $remaining = sub $limit (len $renderItems) -}}
+    {{- if lt $remaining 0 -}}{{- $remaining = 0 -}}{{- end -}}
+  {{- end -}}
+
+
+  {{- /* Append from section if configured and capacity remains */ -}}
+   {{- if and $sectionName (or (lt $remaining 0) (gt $remaining 0)) -}}
+
+    {{- $all := where $root.Site.RegularPages "Section" $sectionName -}}
+
+    {{- /* Phase 1: explicit featured */ -}}
+    {{- $feat := where $all ".Params.featured.in" "intersect" (slice $featuredKey) -}}
+    {{- $feat = sort $feat "Date" "desc" -}}
+    {{- $feat = sort $feat ".Params.featured.weight" "desc" -}}
+
+    {{- /* Track pages already added by autofill (avoid duplicates between feat + latest) */ -}}
+    {{- $seen := dict -}}
+
+    {{- range $p := $feat -}}
+      {{- if eq $remaining 0 -}}{{- break -}}{{- end -}}
+      {{- $k := $p.RelPermalink -}}
+      {{- if not (index $seen $k) -}}
+        {{- $f := $p.Params.featured | default (dict) -}}
+        {{- $fimg := index $f "image" | default (dict) -}}
+
+        {{- $imgSrc := "" -}}
+        {{- $rawSrc := index $fimg "src" | default "" -}}
+        {{- if $rawSrc -}}
+          {{- $res := $p.Resources.GetMatch $rawSrc -}}
+          {{- if $res -}}
+            {{- $imgSrc = $res.RelPermalink -}}
+          {{- else -}}
+            {{- $imgSrc = $rawSrc | relURL -}}
+          {{- end -}}
+        {{- end -}}
+
+
+        {{- /* Build teaser text: excerpt -> summary (hard-truncated) */ -}}
+        {{- $teaser := index $f "excerpt" | default "" -}}
+        {{- if not $teaser -}}
+          {{- $teaser = $p.Summary | plainify | truncate 140 -}}
+        {{- end -}}
+
+
+        {{- $cat := $p.Params.category | default "" -}}
+        {{- $tags := $p.Params.tags | default (slice) -}}
+        {{- if and (not $cat) (gt (len $tags) 0) -}}
+          {{- $cat = index $tags 0 -}}
+        {{- end -}}
+
+        {{- $it := dict
+          "title" $p.Title
+          "text"  $teaser
+          "date"  $p.Date
+          "category" $cat
+          "tags" ($p.Params.tags | default (slice))
+          "image" (dict
+            "src" $imgSrc
+            "alt" (index $fimg "alt" | default "")
+            "position" (index $fimg "position" | default "center center")
+          )
+          "link" (dict "url" $p.RelPermalink)
+        -}}
+
+        {{- $renderItems = $renderItems | append $it -}}
+        {{- $seen = merge $seen (dict $k true) -}}
+        {{- if gt $remaining 0 -}}{{- $remaining = sub $remaining 1 -}}{{- end -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- /* Phase 2: fill remaining with latest (only if fill_content=true AND limit>0) */ -}}
+    {{- if and $fillContent (gt $limit 0) (gt $remaining 0) -}}
+
+      {{- $latest := $all -}}
+
+      {{- /* Apply fill_sort (stable multi-sort: secondary first, then primary) */ -}}
+      {{- if eq $fillSort "date_desc" -}}
+        {{- $latest = sort $latest "Date" "desc" -}}
+      {{- else if eq $fillSort "date_asc" -}}
+        {{- $latest = sort $latest "Date" "asc" -}}
+      {{- else if eq $fillSort "title_desc" -}}
+        {{- $latest = sort $latest "Title" "desc" -}}
+      {{- else if eq $fillSort "title_asc" -}}
+        {{- $latest = sort $latest "Title" "asc" -}}
+      {{- else if eq $fillSort "date_desc_title_desc" -}}
+        {{- $latest = sort $latest "Title" "desc" -}}
+        {{- $latest = sort $latest "Date" "desc" -}}
+      {{- else if eq $fillSort "date_asc_title_asc" -}}
+        {{- $latest = sort $latest "Title" "asc" -}}
+        {{- $latest = sort $latest "Date" "asc" -}}
+      {{- else -}}
+        {{- /* default */ -}}
+        {{- $latest = sort $latest "Date" "desc" -}}
+      {{- end -}}
+
+      {{- range $p := $latest -}}
+        {{- if eq $remaining 0 -}}{{- break -}}{{- end -}}
+        {{- $k := $p.RelPermalink -}}
+        {{- if not (index $seen $k) -}}
+
+          {{- $f := $p.Params.featured | default (dict) -}}
+          {{- $fimg := index $f "image" | default (dict) -}}
+
+          {{- $it := dict
+            "title" $p.Title
+            "text"  ((index $f "excerpt") | default $p.Summary)
+            "date"  $p.Date
+            "category" ($p.Params.category | default "")
+            "tags" ($p.Params.tags | default (slice))
+            "image" (dict
+              "src" (index $fimg "src" | default "")
+              "alt" (index $fimg "alt" | default "")
+              "position" (index $fimg "position" | default "center center")
+            )
+            "link" (dict "url" $p.RelPermalink)
+          -}}
+
+          {{- $renderItems = $renderItems | append $it -}}
+          {{- $seen = merge $seen (dict $k true) -}}
+          {{- $remaining = sub $remaining 1 -}}
+        {{- end -}}
+      {{- end -}}
+
+    {{- end -}}
+
+  {{- end -}}
+
+
+  {{- /* Enforce limit if items alone exceed it */ -}}
+  {{- if and (gt $limit 0) (gt (len $renderItems) $limit) -}}
+    {{- $renderItems = first $limit $renderItems -}}
+  {{- end -}}
+
+
+
+
+  {{- /* Columns: section override wins, block can provide default, otherwise 2. */ -}}
+  {{- $cols := $sec.columns | default ($block.Params.columns | default 2) -}}
+  {{- if lt $cols 1 -}}{{- $cols = 1 -}}{{- end -}}
+  {{- if gt $cols 4 -}}{{- $cols = 4 -}}{{- end -}}
+
+  {{- $showTitle := $sec.show_title | default true -}}
+
+  {{- /* Defaults. */ -}}
+  {{- $defaultLinkText := $block.Params.link_text | default "Weiterlesen" -}}
+
+  {{- /* Desktop thumbnail defaults (right side, fixed width). */ -}}
+  {{- $thumb := $block.Params.thumb | default (dict) -}}
+  {{- $thumbW := $thumb.width | default 240 -}}
+
+  {{- /* Desktop card height (like Bootstrap example). */ -}}
+  {{- $cardH := $block.Params.card_height | default 240 -}}
+
+  {{- /* Fallback thumbnail background (used only when an item has no image.src). */ -}}
+  {{- $fallback := $block.Params.fallback | default (dict) -}}
+  {{- $fallbackClasses := $fallback.classes | default "bg-body-secondary" -}}
+  {{- $fallbackText := $fallback.text | default "" -}}
+
+  {{- /* Date formatting: prefer site-wide settings. */ -}}
+  {{- $dateFmt := $root.Site.Params.date_format | default ($root.Site.Params.dateFormat | default ":date_medium") -}}
+
+  <section class="mb-1 pt-2">
+    <div class="container-fluid px-0">
+
+      {{- if and $showTitle $title -}}
+        <h2 class="pb-2">{{ $title }}</h2>
+      {{- end -}}
+
+      <div class="row mb-2 row-cols-1 row-cols-lg-{{ $cols }} g-4">
+
+        {{- range $it := $renderItems -}}
+
+          {{- $itTitle := $it.title | default "" -}}
+          {{- $text := $it.text | default "" -}}
+
+          {{- $category := $it.category | default "" -}}
+          {{- $date := $it.date -}}
+
+          {{- $link := $it.link -}}
+
+          {{- $img := $it.image | default (dict) -}}
+          {{- $src := $img.src | default "" -}}
+          {{- $alt := $img.alt | default "" -}}
+          {{- $pos := $img.position | default "center center" -}}
+
+          {{- /* Resolve thumbnail image: prefer page resource, fallback to given path. */ -}}
+          {{- $thumbSrc := "" -}}
+          {{- if $src -}}
+            {{- $res := $block.Resources.GetMatch $src -}}
+            {{- if $res -}}
+              {{- $thumbSrc = $res.RelPermalink -}}
+            {{- else -}}
+              {{- $thumbSrc = $src -}}
+            {{- end -}}
+          {{- end -}}
+
+          {{- /* Resolve href (ref wins over url). */ -}}
+          {{- $href := "" -}}
+          {{- with $link -}}
+            {{- with .ref -}}
+              {{- $href = relref $root . -}}
+            {{- else -}}
+              {{- with .url -}}
+                {{- $href = . -}}
+              {{- end -}}
+            {{- end -}}
+          {{- end -}}
+
+          {{- /* Link text: item.link.text -> block default -> "Weiterlesen". */ -}}
+          {{- $lt := $defaultLinkText -}}
+          {{- with $link -}}
+            {{- with .text -}}{{- $lt = . -}}{{- end -}}
+          {{- end -}}
+
+          <div class="col">
+            <div class="border rounded overflow-hidden shadow-sm position-relative">
+
+              {{- /* Mobile / tablet: text only (no image), like Bootstrap example. */ -}}
+              <div class="d-lg-none p-4 d-flex flex-column position-static">
+                {{- if $category -}}
+                  <div class="mb-2 text-body">{{ $category }}</div>
+                {{- end -}}
+
+                {{- if $itTitle -}}
+                  <h3 class="mb-1">{{ $itTitle }}</h3>
+                {{- end -}}
+
+                {{- if $date -}}
+                  {{- $dt := time.AsTime $date -}}
+                  <div class="mb-1 text-body-secondary">{{ $dt | time.Format $dateFmt }}</div>
+                {{- end -}}
+
+                {{- if $text -}}
+                  <p class="card-text mb-auto">{{ $text }}</p>
+                {{- end -}}
+
+                {{- if and $href $lt -}}
+                  <a href="{{ $href }}" class="mt-2 link-body stretched-link">
+                    {{ $lt }}
+                  </a>
+                {{- end -}}
+              </div>
+
+              {{- /* Desktop: fixed card height + image on the right. */ -}}
+              <div class="d-none d-lg-flex align-items-stretch" style="height: {{ $cardH }}px;">
+                <div class="flex-grow-1 p-4 d-flex flex-column position-static">
+                  {{- if $category -}}
+                    <div class="mb-2 text-body">{{ $category }}</div>
+                  {{- end -}}
+
+                  {{- if $itTitle -}}
+                    <h3 class="mb-1">{{ $itTitle }}</h3>
+                  {{- end -}}
+
+                  {{- if $date -}}
+                    {{- $dt := time.AsTime $date -}}
+                    <div class="mb-1 text-body-secondary">{{ $dt | time.Format $dateFmt }}</div>
+                  {{- end -}}
+
+                  {{- if $text -}}
+                    <p class="card-text mb-auto">{{ $text }}</p>
+                  {{- end -}}
+
+                  {{- if and $href $lt -}}
+                    <a href="{{ $href }}" class="mt-2 link-body stretched-link">
+                      {{ $lt }}
+                    </a>
+
+                  {{- end -}}
+                </div>
+
+                <div class="flex-shrink-0" style="width: {{ $thumbW }}px;">
+                  {{- if $thumbSrc -}}
+                    <img
+                      src="{{ $thumbSrc }}"
+                      alt="{{ $alt }}"
+                      loading="lazy"
+                      class="d-block"
+                      style="width: {{ $thumbW }}px; height: {{ $cardH }}px; object-fit: cover; object-position: {{ $pos }};"
+                    >
+                  {{- else -}}
+                    <div
+                      class="d-flex align-items-center justify-content-center {{ $fallbackClasses }}"
+                      style="width: {{ $thumbW }}px; height: {{ $cardH }}px;"
+                      aria-label="{{ $alt | default "Thumbnail fallback" }}"
+                    >
+                      {{- if $fallbackText -}}
+                        <span class="text-body-secondary small">{{ $fallbackText }}</span>
+                      {{- end -}}
+                    </div>
+                  {{- end -}}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        {{- end -}}
+
+      </div>
+    </div>
+  </section>
+
+{{- end -}}

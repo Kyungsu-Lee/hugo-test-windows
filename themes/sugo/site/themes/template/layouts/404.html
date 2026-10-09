@@ -1,0 +1,11 @@
+{{ define "main" }}
+  {{ $ui := site.Params.ui }}
+  <section class="section-page">
+    <header class="section-page__header">
+      <p class="eyebrow">{{ $ui.notFoundEyebrow | default "Error" }}</p>
+      <h1>{{ $ui.notFoundTitle | default "404 - Page not found" }}</h1>
+      <p class="section-page__intro">{{ $ui.notFoundMessage | default "The page that you are looking for does not exist. It may have been deleted, moved or might never have existed at all." }}</p>
+      <p class="section-page__intro"><a href="{{ "/" | relLangURL }}">{{ $ui.notFoundCta | default "Go to homepage" }}</a></p>
+    </header>
+  </section>
+{{ end }}

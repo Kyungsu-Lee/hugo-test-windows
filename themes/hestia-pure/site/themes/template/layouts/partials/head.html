@@ -1,0 +1,42 @@
+{{ $title := cond .IsHome .Site.Title (printf "%s - %s" .Title .Site.Title) }}
+{{ $description := .Site.Params.description }}
+{{ if not .IsHome }}
+  {{ $description = or .Description .Summary }}
+{{ end }}
+{{ $description = $description | plainify | htmlUnescape | truncate 160 }}
+{{ $authorName := "" }}
+{{ with .Site.Params.author }}
+  {{ with .author }}{{ $authorName = . }}{{ end }}
+  {{ with .name }}{{ $authorName = . }}{{ end }}
+{{ end }}
+{{ $image := "image/theme/og.png" | absURL }}
+{{ with .Params.image }}
+  {{ $image = cond (hasPrefix (string .) "http") . (. | absURL) }}
+{{ end }}
+<head>
+  <meta charset="utf-8">
+  <title>{{ $title }}</title>
+  {{ hugo.Generator }}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{ with $authorName }}<meta name="author" content="{{ . }}">{{ end }}
+  {{ with $description }}<meta name="description" content="{{ . }}">{{ end }}
+  {{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
+  <meta property="og:site_name" content="{{ .Site.Title }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:image" content="{{ $image }}">
+  {{ with $description }}<meta property="og:description" content="{{ . }}">{{ end }}
+  <meta property="og:type" content="blog">
+  <meta name="twitter:card" content="summary_large_image">
+  {{ with .Site.Params.twitter }}<meta name="twitter:creator" content="@{{ . }}">{{ end }}
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:url" content="{{ .Permalink }}">
+  {{ with $description }}<meta name="twitter:description" content="{{ . }}">{{ end }}
+  <meta name="twitter:image" content="{{ $image }}">
+  <link rel="shortcut icon" href="{{ "image/theme/favicon.ico" | relURL }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@3.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@3.0.0/build/grids-responsive-min.css">
+  <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+  <link rel="alternate" href="{{ "index.xml" | absURL }}" type="application/rss+xml" title="{{ .Site.Title }}">
+</head>

@@ -1,0 +1,264 @@
+baseURL: https://snipsnip.pl/
+defaultContentLanguage: en
+defaultContentLanguageInSubdir: true
+languages:
+  pl:
+    languageName: Polski
+    languageCode: pl-PL
+    contentDir: content/pl
+    title: "Ciachu Ciachu"
+    weight: 2
+    params:
+      logo:
+        name: "Ciachu Ciachu"
+        dot: true
+      business:
+        name: "Ciachu Ciachu"
+        specialties:
+          - "Grooming psów długowłosych"
+          - "Show grooming"
+          - "Strzyżenie rasowe"
+        tax_ids:
+          - label: NIP
+            value: "1234567890"
+          - label: REGON
+            value: "123456789"
+        parking: "Bezpłatny parking + miejsca dla niepełnosprawnych"
+        payment_methods:
+          - "Gotówka"
+          - "Karta"
+          - "BLIK"
+        languages:
+          - "Polski"
+          - "Angielski"
+      opening_hours: "Pn-Pt 9:00-18:00, Sob 10:00-16:00"
+      error_404:
+        title: "Ups! Strona nie znaleziona"
+        description: "Strona, której szukasz, nie istnieje lub została przeniesiona. Wróć do strony głównej lub skorzystaj z poniższych linków."
+        show_links: true
+        show_recent_posts: false
+      footer:
+        description: "Profesjonalna pielęgnacja Twoich pupili"
+        columns:
+          - title: "Nawigacja"
+            links:
+              - name: "O nas"
+                url: "/pl/o-nas/"
+              - name: "Cennik"
+                url: "/pl/cennik/"
+              - name: "Galeria"
+                url: "/pl/galeria/"
+              - name: "FAQ"
+                url: "/pl/faq/"
+          - title: "Informacje"
+            links:
+              - name: "Polityka prywatności"
+                url: "/documents/polityka-prywatnosci.pdf"
+                external: true
+          - title: "Kontakt"
+            type: "contact"
+        social:
+          - platform: "facebook"
+            url: "https://facebook.com/ciachuciachupets"
+          - platform: "instagram"
+            url: "https://instagram.com/ciachuciachupets"
+          - platform: "tiktok"
+            url: "https://tiktok.com/@ciachuciachupets"
+          - platform: "buymeacoffee"
+            url: "https://buymeacoffee.com/maciejkosiarski"
+        show_credit: true
+    menu:
+      main:
+        - name: "O nas"
+          url: "/pl/o-nas/"
+          weight: 1
+        - name: "Cennik"
+          url: "/pl/cennik/"
+          weight: 2
+        - name: "Galeria"
+          url: "/pl/galeria/"
+          weight: 3
+        - name: "FAQ"
+          url: "/pl/faq/"
+          weight: 4
+        - name: "Blog"
+          url: "/pl/blog/"
+          weight: 5
+        - name: "Kontakt"
+          url: "/pl/lokalizacja/"
+          weight: 6
+  en:
+    languageName: English
+    languageCode: en-US
+    contentDir: content/en
+    title: "Snip Snip"
+    weight: 1
+    params:
+      logo:
+        name: "Snip Snip"
+        dot: true
+      business:
+        name: "Snip Snip"
+        tax_ids:
+          - label: EIN
+            value: "12-3456789"
+      error_404:
+        title: "Oops! Page Not Found"
+        description: "The page you're looking for doesn't exist or has been moved. Go back to the homepage or use the links below."
+        show_search: false
+        show_links: true
+        show_recent_posts: false
+      footer:
+        description: "Professional care for your furry friends"
+        columns:
+          - title: "Navigation"
+            links:
+              - name: "About"
+                url: "/en/about/"
+              - name: "Pricing"
+                url: "/en/pricing/"
+              - name: "Gallery"
+                url: "/en/gallery/"
+              - name: "FAQ"
+                url: "/en/faq/"
+          - title: "Information"
+            links:
+              - name: "Privacy Policy"
+                url: "/documents/polityka-prywatnosci.pdf"
+                external: true
+          - title: "Contact"
+            type: "contact"
+        social:
+          - platform: "facebook"
+            url: "https://facebook.com/snipsnip"
+          - platform: "instagram"
+            url: "https://instagram.com/snipsnip"
+          - platform: "tiktok"
+            url: "https://tiktok.com/@snipsnip"
+          - platform: "buymeacoffee"
+            url: "https://buymeacoffee.com/maciejkosiarski"
+        show_credit: true
+    menu:
+      main:
+        - name: "About"
+          url: "/en/about/"
+          weight: 1
+        - name: "Pricing"
+          url: "/en/pricing/"
+          weight: 2
+        - name: "Gallery"
+          url: "/en/gallery/"
+          weight: 3
+        - name: "FAQ"
+          url: "/en/faq/"
+          weight: 4
+        - name: "Blog"
+          url: "/en/blog/"
+          weight: 5
+        - name: "Contact"
+          url: "/en/location/"
+          weight: 6
+languageCode: en-US
+
+module:
+  imports:
+    - path: github.com/maciejkosiarski/localcraft
+
+taxonomies:
+  tag: tags
+  category: categories
+
+pagination:
+  pagerSize: 6
+
+params:
+  review_url: "https://g.page/r/example/review"
+  logo:
+    name: "Snip Snip"
+    dot: true
+  # Google Tag Manager (optional) - uncomment and add your GTM ID
+  # gtm:
+  #   id: "GTM-XXXXXXX"
+  # Custom colors (optional) - uncomment to override default theme colors
+  # colors:
+  #   primary: "#3B5C45"      # Main brand color (buttons, links, accents)
+  #   primary_light: "#4A7257"
+  #   primary_pale: "#E8F0EA"
+  #   accent: "#C4714A"       # Secondary accent color (CTAs, highlights)
+  #   accent_dark: "#B5633D"
+  #   accent_pale: "#F5E6E0"
+  #   background: "#FAF7F0"   # Page background color
+  #   text: "#2D2D2D"         # Main text color
+  #   text_muted: "#6B6B6B"   # Secondary text color
+  # SEO & Business Info
+  business:
+    name: "Snip Snip"
+    # Schema.org type: PetGroomer, HairSalon, BeautySalon, DaySpa, HealthAndBeautyBusiness
+    type: "PetGroomer"
+    phone: "+48 123 456 789"
+    email: "kontakt@snipsnip.pl"
+    street: "ul. Kwiatowa 15"
+    city: "Warszawa"
+    postalCode: "00-001"
+    country: "PL"
+    # Coordinates for map and JSON-LD
+    lat: 52.2297
+    lng: 21.0122
+    start_year: 2018
+    # Tax / registration IDs (optional) - displayed in footer contact column
+    # Use any label you need: NIP, REGON, VAT, Tax ID, EIN, etc.
+    # tax_ids:
+    #   - label: "NIP"
+    #     value: "1234567890"
+    # Customer ratings (optional) - for AggregateRating schema
+    rating:
+      value: 4.9
+      count: 127
+      best: 5
+    # Key Facts section (optional)
+    specialties:
+      - "Long-haired dog grooming"
+      - "Show grooming"
+      - "Breed-specific cuts"
+    parking: "Free parking + disabled spaces available"
+    payment_methods:
+      - "Cash"
+      - "Card"
+      - "BLIK"
+    languages:
+      - "Polish"
+      - "English"
+  # Opening hours for Key Facts section (optional)
+  opening_hours: "Mon-Fri 9:00-18:00, Sat 10:00-16:00"
+  # Open Graph image
+  og_image: "/images/og-default.jpg"
+  # Floating support button (Buy Me a Coffee, Ko-fi, etc.)
+  # Text is loaded from i18n files (support_title, support_description, support_button)
+  support_button:
+    enabled: true
+    url: "https://buymeacoffee.com/maciejkosiarski"
+    qr_image: "/images/bmc-qr-code.png"
+  # Announcement banner (optional)
+  # Each language shows the banner only if it has a non-empty "text" field — omit or comment out "text" to hide for that language.
+  # Disappears automatically after date_until when you rebuild the site.
+  # Types: info (green) | warning (orange) | success (bright green) | alert (red)
+  announcement:
+    enabled: true
+    type: alert
+    # date_from: "2026-05-01"   # optional: show only from this date
+    # date_until: "2026-05-31"  # optional: hide after this date (omit = show forever)
+    messages:
+      pl:
+        text: "To jest przykładowe powiadomienie. Edytuj lub wyłącz je w pliku hugo.yaml pod kluczem params.announcement."
+        # link_text: "Zobacz cennik"
+        # link_url: "/pl/cennik/"
+      en:
+        text: "This is an example announcement. Edit or disable it in hugo.yaml under params.announcement."
+        # link_text: "See pricing"
+        # link_url: "/en/pricing/"
+
+  # Image optimization settings
+  images:
+    quality: 80                    # Image quality (1-100). Recommendations: 60-70 (size), 80 (balanced), 90-95 (quality)
+    widths: [400, 800, 1200, 1600] # Responsive image widths in pixels
+    lazy_loading: true             # Enable lazy loading by default

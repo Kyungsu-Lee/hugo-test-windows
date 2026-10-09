@@ -1,0 +1,136 @@
+---
+hero:
+  enable: true
+  title: FINANCIAL **EXCELLENCE** STARTS HERE 
+  subtitle: Enhance your financial knowledge and management skills with our tailored courses 
+  btn:
+    label:  CTA btn
+    url: "#"
+    
+section_contacts:
+  title: contact us
+  img: '../images/map.jpg'
+
+section_faq:
+  title: FAQ
+  items:
+    - term: Can I try FinanceMastery first to make sure the product is right for me?
+      def: With a FinanceMastery subscription, you get unlimited access to 7,000+ courses, projects, specializations, and professional certification programs in a variety of subject areas, including data science, business, computer science, healthcare, personal development, humanities, and more. The subscription covers most courses on FinanceMastery. Some courses, specializations and professional certification programs are not included in it. FinanceMastery also does not offer MasterTrack™ degree or certification programs. To determine whether a particular offering is included in your subscription, look for the FinanceMastery icon within it or check this list of included content.
+    - term: What is included in the subscription FinanceMastery?
+      def: With a FinanceMastery subscription, you get unlimited access to 7,000+ courses, projects, specializations, and professional certification programs in a variety of subject areas, including data science, business, computer science, healthcare, personal development, humanities, and more.
+    - term: Will I save money with FinanceMastery?
+      def: With a FinanceMastery subscription, you get unlimited access to 7,000+ courses, projects, specializations, and professional certification programs in a variety of subject areas, including data science, business, computer science, healthcare, personal development, humanities, and more.
+    - term: What can be done with received certificates?
+      def: With a FinanceMastery subscription, you get unlimited access to 7,000+ courses, projects, specializations, and professional certification programs in a variety of subject areas, including data science, business, computer science, healthcare, personal development, humanities, and more.
+    - term: Can I get compensation from my employer?
+      def: With a FinanceMastery subscription, you get unlimited access to 7,000+ courses, projects, specializations, and professional certification programs in a variety of subject areas, including data science, business, computer science, healthcare, personal development, humanities, and more.  
+    - term: Will it motivate FinanceMastery me to study?
+      def: With a FinanceMastery subscription, you get unlimited access to 7,000+ courses, projects, specializations, and professional certification programs in a variety of subject areas, including data science, business, computer science, healthcare, personal development, humanities, and more.  
+
+section_join:
+  title: JOIN TO US
+  items:
+    - name: Anna Anna
+      img: '../images/ava.png'
+      text: Lorem ipsum dolor sit amet consectetur. Urna odio leo aenean in posuere. Quam sed ultrices interdum in ultrices. At sed elit eu sit. Lacus elit porttitor faucibus mauris porttitor.
+    - name: Anna Anna
+      img: '../images/ava.png'
+      text: Lorem ipsum dolor sit amet consectetur. Urna odio leo aenean in posuere. Quam sed ultrices interdum in ultrices. At sed elit eu sit. Lacus elit porttitor faucibus mauris porttitor.
+    - name: Anna Anna
+      img: '../images/ava.png'
+      text: Lorem ipsum dolor sit amet consectetur. Urna odio leo aenean in posuere. Quam sed ultrices interdum in ultrices. At sed elit eu sit. Lacus elit porttitor faucibus mauris porttitor.
+    - name: Anna Anna
+      img: '../images/ava.png'
+      text: Lorem ipsum dolor sit amet consectetur. Urna odio leo aenean in posuere. Quam sed ultrices interdum in ultrices. At sed elit eu sit. Lacus elit porttitor faucibus mauris porttitor.
+    - name: Anna Anna
+      img: '../images/ava.png'
+      text: Lorem ipsum dolor sit amet consectetur. Urna odio leo aenean in posuere. Quam sed ultrices interdum in ultrices. At sed elit eu sit. Lacus elit porttitor faucibus mauris porttitor.
+    - name: Anna Anna
+      img: '../images/ava.png'
+      text: Lorem ipsum dolor sit amet consectetur. Urna odio leo aenean in posuere. Quam sed ultrices interdum in ultrices. At sed elit eu sit. Lacus elit porttitor faucibus mauris porttitor.
+
+section_about:
+  title: about US
+  img: '../images/img1.png'
+  content: "FinanceMastery is your trusted partner in the world of finance, offering high-quality financial education courses and personal and business finance management skills. Our mission is to help you achieve financial stability and success through in-depth learning and practical tools. We provide interactive and up-to-date courses developed by finance experts to ensure you can confidently manage your finances. \n\n At FinanceMastery, our mission is to empower individuals and businesses with the knowledge and skills necessary to achieve financial success and stability. We are committed to providing high-quality financial education through comprehensive courses designed to meet the needs of our students. Our goal is to foster financial literacy and confidence, helping our clients make informed decisions and achieve their financial goals."
+
+section_note:
+  title: "**Invest** in your career with **Finance Mastery**"
+  items:
+    - title: Learn anything
+      desc: Study any interesting or relevant topics, complete the conditions and improve your skills
+    - title: Save up
+      desc: If you plan to take several courses this year, you can save on tuition
+    - title: Learning at a comfortable pace
+      desc: Study at your own pace, take multiple courses at the same time, or transfer to another course
+    - title: Unlimited number of certificates
+      desc: Receive a certificate for each completed training program at no additional cost
+
+section_features:
+  items:
+    - title: One training program
+      subtitle: Study one subject or skill and get a document that proves your qualifications
+      price: "49 £ – 79 £ /mo."
+      img: '../images/img2.png'
+      heading: "Included:"
+      desc: "Access to all courses within the curriculum \n\n Receive a certificate upon completion"
+      btn:
+        label: BUY NOW
+        url: "#form"
+    - title: finance mastery monthly
+      subtitle: Take several courses and get certificates in a short time
+      price: "59 £ /mo."
+      img: '../images/img3.png'
+      heading: "Included:"
+      desc: "Get unlimited certificates \n\n Get the skills and tools you need for the job with over 1,000 hands-on projects and hands-on labs from industry experts \n\n Get the skills and tools you need for the job with over 1,000 hands-on projects and hands-on labs from industry experts"
+      btn:
+        label: BUY NOW
+        url: "#form"
+    - title: finance mastery yearly
+      subtitle: Combine flexibility and economy with long-term learning goals
+      price: "399 £ /mo."
+      img: '../images/img4.png'
+      heading: "Included:"
+      desc: "Save by paying in advance for a year \n\n Enjoy maximum flexibility to achieve work-life balance and learn at your own pace"
+      btn:
+        label: BUY NOW
+        url: "#form"
+
+section_benefits:
+  title: Features of Our Program
+  items: 
+    - title: Comprehensive Curriculum
+      img: ../images/pic1.png
+      desc: Our program offers a well-rounded curriculum that covers a wide range of financial topics, from basic personal finance to advanced financial planning. Each course is designed to build upon previous knowledge, ensuring a structured learning experience.
+    - title: Expert-Led Instruction
+      img: ../images/pic2.png
+      desc: All courses are led by industry experts with extensive experience in their respective fields. Our instructors provide valuable insights and practical advice, drawing from real-world scenarios to enhance your learning.
+    - title: Personalized Support
+      img: ../images/pic3.png
+      desc: Our program includes personalized support to address your specific needs and goals. Benefit from one-on-one consultations, tailored feedback, and additional resources to help you achieve your financial objectives.
+    - title: Interactive Features
+      img: ../images/pic4.png
+      desc: Engage with interactive elements such as quizzes, simulations, and discussion forums. These features are designed to reinforce learning, test your knowledge, and provide opportunities for peer interaction and feedback.
+    - title: Ongoing Access and Updates
+      img: ../images/pic5.png
+      desc: Gain lifetime access to course materials and updates. Stay current with the latest financial trends and information, ensuring that your knowledge remains relevant and up-to-date.
+    - title: Flexible Learning Options
+      img: ../images/pic6.png
+      desc: We provide various learning formats to suit your schedule and preferences. Choose from online modules, live webinars, and downloadable resources, allowing you to learn at your own pace and convenience.
+    
+
+section_benefits_students:
+  title: Benefits for Students
+  items:
+    - title: Enhanced Financial Knowledge
+      desc: Students gain a thorough understanding of key financial concepts and strategies, which can be applied to both personal and professional financial situations. This foundational knowledge is essential for making informed financial decisions.
+    - title: Practical Skills Development
+      desc: Our courses emphasize practical, real-world applications of financial theories. Students learn valuable skills such as budgeting, investing, and financial planning that they can immediately apply to their own lives or careers.
+    - title: Access to Expert Guidance
+      desc: Students benefit from direct access to experienced instructors who provide expert advice, answer questions, and offer personalized feedback. This expert guidance helps students navigate complex financial topics with confidence.
+    - title: Flexible Learning Experience
+      desc: With various learning formats and flexible scheduling options, students can tailor their educational experience to fit their individual needs and lifestyles. This flexibility ensures that students can balance their studies with other commitments.
+    - title: Networking Opportunities
+      desc: Engage with a community of like-minded individuals through interactive features such as discussion forums and group activities. Networking with peers and professionals can provide additional insights and opportunities in the financial field.
+    - title: Lifetime Access and Resources
+      desc: Students receive lifetime access to course materials and updates, ensuring they can revisit content as needed and stay informed about the latest developments in the financial world. This ongoing access supports continued learning and growth.

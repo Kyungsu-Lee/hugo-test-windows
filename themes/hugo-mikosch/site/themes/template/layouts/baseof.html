@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="site-header">
+      {{ partial "header.html" . }}
+    </header>
+
+    <main>
+      {{ block "main" . }}{{ end }}
+    </main>
+
+    <footer class="site-footer">
+      {{ partial "footer.html" . }}
+    </footer>
+  </div>
+</body>
+</html>

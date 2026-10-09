@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <header class="blog-header-section">
+    <div class="container">
+      <h1 class="section-title">{{ .Title }}</h1>
+    </div>
+  </header>
+
+  <section class="blog-posts-section">
+    <div class="container">
+      <div class="blog-posts-grid">
+        {{- range .Pages.ByDate.Reverse }}
+          {{ partial "post-card.html" (dict "page" . "featured" false) }}
+        {{- end }}
+      </div>
+    </div>
+  </section>
+{{ end }}

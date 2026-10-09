@@ -1,0 +1,28 @@
+[pageNotExists]
+  other = "Tut mir leid, aber diese Seite existiert nicht!<br>Benutze die obigen Navigations-Buttons oder gehe zurück zur [Startseite](/de/)."
+[home]
+  other = "Start"
+[newerPosts]
+  other = "Neuere Beiträge"
+[olderPosts]
+  other = "Ältere Beiträge"
+[pageOf]
+  other = "Seite {{ .PageNumber }} von {{.TotalPages}}"
+[postedOn]
+  other = "Veröffentlicht am"
+[readMore]
+  other = "Weiter lesen"
+[contactMe]
+  other = "Schreibe mir"
+[contactMeNoscript]
+  other = "(Aktiviere JavaScript, damit der E-Mail Link funktioniert)"
+[dateTimeFormat]
+  other = "02.01.2006 um 15:04"
+[dateFormat]
+  other = "02.01.2006"
+[allTags]
+  other = "Alle Tags"
+[showCompleteMap]
+  other = "Vollständige Karte anzeigen"
+[articleListTitle]
+  other = "Artikel"

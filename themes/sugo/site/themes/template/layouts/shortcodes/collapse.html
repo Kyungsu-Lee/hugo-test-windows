@@ -1,0 +1,7 @@
+{{- $title := .Get "title" | default (site.Params.ui.shortcodeCollapseTitle | default "Click to expand") -}}
+{{- $open := .Get "open" | default "false" -}}
+{{- $id := $title | urlize | default "" -}}
+<details class="lit-collapse"{{ if eq $open "true" }} open{{ end }}{{ with $id }} id="{{ . }}"{{ end }}>
+  <summary>{{ $title }}</summary>
+  <div class="lit-collapse__content">{{ partial "shortcodes/render-inner.html" (dict "ctx" . "content" .Inner "display" "block" "trim" true) }}</div>
+</details>

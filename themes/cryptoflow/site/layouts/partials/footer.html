@@ -1,0 +1,29 @@
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer__top">
+        <div class="container">
+            {{ .Scratch.Set "logo_h" "43" }}
+            {{ .Scratch.Set "logo_w" "auto" }}
+            {{ .Scratch.Set "logo_mode" "white" }}
+            {{- partial "_logo.html" . -}}
+          
+
+            <div class="navbar__nav">
+                {{ range .Site.Menus.footer }}
+                <a class="navbar-link" href="{{ .URL | absLangURL }}">{{ .Name }}</a>
+                {{ end }}
+            </div>
+
+            <a class="btn" href="#form-main">
+                <b><span>registration</span><span>registration</span></b>
+            </a>
+        </div>
+    </div>
+    <hr class="footer__divider">
+    <div class="footer__btm">
+        <div class="container">
+            {{ .Site.Params.footer.copyright | safeHTML }}
+        </div>
+    </div>
+</footer>
+<!--Main Footer-->

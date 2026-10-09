@@ -1,0 +1,16 @@
+<section class="mt-4">
+  <ul class="grid grid-cols-[fit-content(200px)_1fr] gap-x-4 gap-y-2">
+    {{ range . }}
+      <li class="contents">
+        <time
+          datetime="{{ .Date.Format "2006-01-02" }}"
+          class="text-operandi-black-dim dark:text-vivendi-white-dim"
+        >
+          {{ .Date.Format "Jan 2 2006" }}
+        </time>
+
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      </li>
+    {{ end }}
+  </ul>
+</section>

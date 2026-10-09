@@ -1,0 +1,103 @@
+{{- $root := .root -}}
+{{- $sec := .section -}}
+
+{{- with .block -}}
+{{- $block := . -}}
+
+{{- $title := $block.Title | default "" -}}
+{{- $items := $block.Params.items | default (slice) -}}
+
+{{- /* Bootstrap example shows 3 cards, but we keep it dynamic */ -}}
+{{- $cols := $sec.columns | default ($block.Params.columns | default 3) -}}
+{{- if lt $cols 1 -}}{{- $cols = 1 -}}{{- end -}}
+{{- if gt $cols 12 -}}{{- $cols = 12 -}}{{- end -}}
+
+{{- $showTitle := $sec.show_title | default true -}}
+{{- $cardDefaults := $block.Params.card_classes | default "text-bg-dark" -}}
+{{- $contentDefaults := $block.Params.content_classes | default "text-white" -}}
+{{- $badgeDefaults := $block.Params.badge_classes | default "badge text-bg-light" -}}
+
+
+<section class="mb-1 pt-3">
+  <div class="container-fluid px-0">
+
+    {{- if and $showTitle $title -}}
+    <h2 class="pb-2 border-bottom">{{ $title }}</h2>
+    {{- end -}}
+
+    <div class="row row-cols-1 row-cols-lg-{{ $cols }} align-items-stretch g-4 py-3">
+
+      {{- range $it := $items -}}
+      {{- $itTitle := $it.title | default "" -}}
+      {{- $text := $it.text | default "" -}}
+      {{- $image := $it.image | default "" -}}
+      {{- $tags := $it.tags | default (slice) -}}
+      {{- $link := $it.link -}}
+      {{- $cardClasses := $it.card_classes | default $cardDefaults -}}
+      {{- $contentClasses := $it.content_classes | default $contentDefaults -}}
+      {{- $badgeClasses := $it.badge_classes | default $badgeDefaults -}}
+
+
+      {{- /* Resolve background image: prefer Page Resource */ -}}
+      {{- $bg := "" -}}
+      {{- if $image -}}
+      {{- $res := $block.Resources.GetMatch $image -}}
+      {{- if $res -}}
+      {{- $bg = $res.RelPermalink -}}
+      {{- else -}}
+      {{- $bg = $image -}}
+      {{- end -}}
+      {{- end -}}
+
+      {{- /* Optional click target for whole card */ -}}
+      {{- $href := "" -}}
+      {{- if $link -}}
+      {{- with $link.ref -}}
+      {{- $href = relref $root . -}}
+      {{- else -}}
+      {{- with $link.url -}}
+      {{- $href = . -}}
+      {{- end -}}
+      {{- end -}}
+      {{- end -}}
+
+
+      <div class="col">
+        <div
+          class="card card-cover {{ if $href }}position-relative{{ end }} h-100 overflow-hidden rounded-4 shadow-lg {{ $cardClasses }}"
+
+          {{- if $bg -}} style="background-image: url('{{ $bg }}');" {{- end -}}>
+          {{- if $href -}}
+          <a class="stretched-link" href="{{ $href }}" aria-label="{{ $itTitle }}"></a>
+          {{- end -}}
+
+          <div class="d-flex flex-column h-100 p-5 pb-3 {{ $contentClasses }}">
+
+            {{- if $itTitle -}}
+            <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">{{ $itTitle }}</h3>
+            {{- end -}}
+
+            {{- if $text -}}
+            <p class="mb-4">{{ $text }}</p>
+            {{- end -}}
+
+            {{- if gt (len $tags) 0 -}}
+            <ul class="d-flex list-unstyled mt-auto mb-0">
+              {{- range $tags -}}
+              <li class="me-2">
+                <span class="badge text-bg-light">{{ . }}</span>
+              </li>
+              {{- end -}}
+            </ul>
+            {{- end -}}
+          </div>
+        </div>
+      </div>
+
+      {{- end -}}
+
+    </div>
+  </div>
+</section>
+
+{{- end -}}

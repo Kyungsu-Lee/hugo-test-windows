@@ -1,0 +1,19 @@
+{{- $cv := partial "cv_data.html" . -}}
+{{ $s := slice $cv.AcademicEducation $cv.ProfessionalTraining $cv.SchoolEducation $cv.FurtherEducation }}
+{{ range $s }}
+    {{ with . }}
+    <section id="section-{{ .Title | urlize }}">
+        <h2>{{ partial "icon.html" .Icon }}{{ .Title }}</h2>
+        {{ range .Sections }}
+            <article class="innerContainer">
+                <p class="innerLeft when">{{ .StartDate }} – {{ .EndDate }}</p>
+                <div class="innerRight">
+                    <h3>{{ .Name }}</h3>
+                    <p class="org">{{ with .Website }}<a href="{{ . }}" target="_blank" rel="noopener noreferrer">{{ end }}{{ .Organisation }}{{ with .Website }}</a>{{ end }}</p>
+                    {{ with .Qualification }}<p>{{ . }}</p>{{ end }}
+                </div>
+            </article>
+        {{ end }}
+    </section>
+    {{ end }}
+{{ end }}

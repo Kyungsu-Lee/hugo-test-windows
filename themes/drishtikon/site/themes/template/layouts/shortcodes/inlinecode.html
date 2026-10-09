@@ -1,0 +1,3 @@
+{{ $lang := .Get 0 }}
+{{ $source := .InnerDeindent }}
+<span class="inline">{{ transform.Highlight $source $lang "hl_inline=true,linenos=false" }}</span>

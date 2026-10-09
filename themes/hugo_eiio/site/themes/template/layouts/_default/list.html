@@ -1,0 +1,24 @@
+{{ define "main" }}
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div id="post">
+	<h2>{{.Title}} &nbsp;</h2>
+	<hr/>
+	{{ range .Data.Pages.GroupByDate "2006" }}
+	<h3>{{ .Key }}</h3>
+	<ul>
+	  {{ range .Pages }}
+	  <li>{{.Date.Format "01/02" }}&nbsp;<a  href="{{.Permalink}}">{{ .Title }}</a>
+	    <meta itemprop="datePublished"  content="{{.Date.Format "Jan 02, 2006"}}" />
+	    <meta  itemprop="url" content="{{.Permalink}}"/>
+	  </li>
+	  {{ end }}
+	</ul>
+	{{ end }}
+	<hr/>
+	{{ partial "addthis" . }}
+	{{ template "_internal/disqus.html" . }}
+      </div>
+    </div>
+    </div>
+{{ end }}

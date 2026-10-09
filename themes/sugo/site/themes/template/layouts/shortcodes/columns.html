@@ -1,0 +1,8 @@
+<div class="lit-columns">
+  {{- $cols := split .Inner "<!--col-->" -}}
+  {{- range $cols -}}
+    <div class="lit-columns__item">
+      {{ partial "shortcodes/render-inner.html" (dict "ctx" $ "content" . "display" "block" "trim" true) }}
+    </div>
+  {{- end -}}
+</div>

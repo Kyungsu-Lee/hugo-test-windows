@@ -1,0 +1,220 @@
+// branding
+.brand-block {
+  // ponytail: !important beats .navbar-light .navbar-brand(:hover) without specificity gymnastics
+  color: $white !important;
+  background-color: $black;
+  font-weight: 700;
+}
+
+// blog post
+a.post-title {
+  color: $text-color-dark;
+  display: block;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.content {
+
+  * {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 20px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-bottom: 15px;
+  }
+
+  strong {
+    font-weight: 700;
+  }
+
+  a {
+    color: $text-color;
+    border-bottom: 1px dotted $border-color;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  ol,
+  ul {
+    padding-left: 20px;
+
+    li {
+      margin-bottom: 10px;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+    margin-bottom: 20px;
+    list-style-type: none;
+
+    li {
+      padding-left: 20px;
+      position: relative;
+
+      &::before {
+        position: absolute;
+        content: '';
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        background: $primary-color;
+        left: 3px;
+        top: 5px;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    border: 1px solid $border-color;
+  }
+
+  table td,
+  table th {
+    padding: .75rem;
+    vertical-align: top;
+    margin-bottom: 0;
+  }
+
+  th,
+  td {
+    &:not(:last-of-type) {
+      border-right: 1px solid $border-color;
+    }
+  }
+
+  th {
+    font-weight: 500;
+  }
+
+  thead {
+    background: $white;
+    margin-bottom: 0;
+
+    tr {
+      border-bottom: 1px solid $border-color;
+    }
+  }
+
+  tbody {
+    background-color: transparent;
+    margin-bottom: 0;
+  }
+
+  blockquote {
+    font-size: 20px !important;
+    color: $text-color;
+    padding: 20px 40px;
+    border-left: 2px solid $black;
+    margin: 40px 0;
+    font-weight: bold;
+    background: $white;
+
+    p {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  pre {
+    display: block;
+    padding: 9.5px;
+    margin: 10px 0px 10px;
+    white-space: pre-wrap;
+  }
+
+  code {
+    margin-bottom: 0 !important;
+    font-size: 100%;
+  }
+}
+
+
+// pagination
+.pagination {
+  margin-top: 30px;
+  justify-content: center;
+
+  .page-item {
+    .page-link {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 0;
+      background: $light;
+      text-align: center;
+      padding: 0;
+      margin-right: 10px;
+      border: 0;
+      color: $text-color;
+
+      &:hover {
+        background: $black;
+        color: $white;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+
+    &.active {
+      .page-link {
+        background: $black;
+        color: $white;
+      }
+    }
+  }
+}
+
+// pricing table
+.col-recommended {
+  margin: -2rem -1.5rem;
+  z-index: 1;
+  @include desktop {
+    margin: 0;
+    margin-bottom: 40px;
+  }
+}
+
+.price{
+  font-size: 50px;
+  font-weight: 700;
+}
+
+.enterprise{
+  background-color: $black;
+  color: $white !important;
+}
+
+.white{
+  color: $white !important;
+}
+
+.opposite{
+  color: $black;
+  background-color: $white;
+}
+.opposite:hover{
+  color: $black;
+  background-color: $white !important;
+}

@@ -1,0 +1,16 @@
+
+<article class="post">
+  <header class="mb-3">
+    <h1 class="mb-2">{{ .Title }}</h1>
+
+
+    {{ partial "helpers/post-meta.html" . }}
+
+  </header>
+
+  <div class="content">
+    {{ .Content }}
+  </div>
+  {{ partial "hooks/single-content-bottom.html" . }}
+
+</article>

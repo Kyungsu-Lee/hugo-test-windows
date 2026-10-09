@@ -1,0 +1,23 @@
+name = "Scanlines"
+license = "MIT"
+licenselink = "https://github.com/wthouse/scanlines/blob/main/LICENSE"
+# The gallery renders no README — this description is the ONLY prose shown on
+# the theme's listing page, so it has to carry the pitch.
+description = "A retro CRT terminal theme emulating the DEC VT220: four historically accurate phosphor schemes, pure-CSS scanlines and glow, and zero JavaScript."
+homepage = "https://github.com/wthouse/scanlines"
+demosite = "https://scanlines.pages.dev"
+# themes.gohugo.io normalizes tags against a fixed allowlist and silently drops
+# anything it doesn't recognize (see normalizeTag in hugoThemesSiteBuilder).
+# "retro"/"terminal"/"crt"/"monochrome" are dropped there but kept for humans;
+# "blog", "minimal", "dark", "personal" and "sass" are what actually place the
+# theme on the gallery's browse pages — and all five are accurate.
+tags = ["retro", "terminal", "crt", "monochrome", "blog", "minimal", "dark", "personal", "sass"]
+features = ["syntax highlighting", "responsive", "accessible", "crt effects", "profile mode", "structured data", "i18n", "render hooks", "categories", "woff2 fonts"]
+# Legacy key: Hugo only consults it when [module.hugoVersion].min is unset, and
+# hugo.toml sets that — so this is permanently shadowed. Kept for older tooling
+# that still reads it; keep the two in sync.
+min_version = "0.146.0"
+
+[author]
+  name = "W. Troy House"
+  homepage = "https://wt.house"

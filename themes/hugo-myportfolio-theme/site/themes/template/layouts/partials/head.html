@@ -1,0 +1,36 @@
+{{ "<!-- HEAD.HTML -->" | safeHTML }}
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{{ "<!-- Meta data -->" | safeHTML }}
+<title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+<meta name="title" content="{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}">
+{{ with .Site.Params.meta.author }}
+    <meta name="author" content="{{ . }}">
+{{ end }}
+{{ with .Site.Params.meta.description }}
+    <meta name="description" content="{{ . }}">
+{{ end }}
+
+<base href="{{ .Site.BaseURL }}">
+
+{{ hugo.Generator }}
+
+{{ "<!-- Favicon -->" | safeHTML }}
+<link rel="shortcut icon" href="{{ .Site.Params.meta.favicon | absURL }}" type="image/x-icon" />
+<link rel="icon" href="{{ .Site.Params.meta.favicon | absURL }}" type="image/x-icon" />
+{{ "<!-- Bootstrap -->" | safeHTML }}
+<link rel="stylesheet" href="{{ "plugins/bootstrap/css/bootstrap.min.css" | absURL }}" type="text/css">
+{{ "<!-- CSS Plugins -->" | safeHTML }}
+<link rel="stylesheet" href="{{ "plugins/animate/animate.min.css" | absURL }}" type="text/css">
+{{ partial "fonts.html" . }}
+{{ "<!-- Theme CSS -->" | safeHTML }}
+<link rel="stylesheet" href="{{ "css/default.css" | absURL }}" type="text/css">
+{{ range .Site.Params.custom_css_vars }}
+    <link rel="stylesheet" href="{{ (printf "%s%s" "css/" .) | absURL }}" type="text/css">
+{{ end }}
+<link rel="stylesheet" href="{{ "css/theme.css" | absURL }}" type="text/css">
+{{ range .Site.Params.custom_css }}
+    <link rel="stylesheet" href="{{ (printf "%s%s" "css/" .) | absURL }}" type="text/css">
+{{ end }}

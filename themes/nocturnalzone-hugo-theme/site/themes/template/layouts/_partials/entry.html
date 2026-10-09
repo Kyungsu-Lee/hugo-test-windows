@@ -1,0 +1,45 @@
+{{- /*
+  Renders an entry card for a list page.
+
+  @context {page} . The page to render.
+
+  @example: {{ partial "entry.html" .
+}}
+*/}}
+<article class="entry-item">
+  <div class="entry-item__meta">
+    {{ with .Date }}
+      <time datetime="{{ .Format "2006-01-02T15:04:05-07:00" }}"
+        >{{ . | time.Format ":date_long" }}</time
+      >
+    {{ end }}
+  </div>
+  <div class="entry-item__body">
+    <h2 class="entry-item__title">
+      <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+    </h2>
+    <div
+      class="entry-item__summary{{ if .Params.thumbnail }}
+        entry-item__summary--with-media
+      {{ end }}"
+    >
+      {{ with .Params.thumbnail }}
+        {{ $thumbnail := . }}
+        {{ $resource := $.Resources.GetMatch $thumbnail }}
+        <a
+          class="entry-item__media"
+          href="{{ $.RelPermalink }}"
+          aria-hidden="true"
+          tabindex="-1"
+        >
+          {{ if $resource }}
+            <img src="{{ $resource.RelPermalink }}" alt="" />
+          {{ else }}
+            <img src="{{ $thumbnail | relURL }}" alt="" />
+          {{ end }}
+        </a>
+      {{ end }}
+      <p>{{ .Summary | plainify }}</p>
+    </div>
+  </div>
+</article>

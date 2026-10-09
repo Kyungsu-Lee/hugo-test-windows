@@ -1,0 +1,19 @@
+/* Remove inversion filters */
+html, body {
+    background-color: #171717 !important;
+    color: var(--dark);
+}
+
+/* Override CSS variables for dark theme */
+body.dark-theme {
+    /* Variables already defined in style.css */
+}
+
+/* Adjust elements as needed */
+a {
+    color: var(--blue);
+}
+
+img, video, body * [style*="background-image"] {
+    filter: none; /* Ensure media displays correctly */
+}

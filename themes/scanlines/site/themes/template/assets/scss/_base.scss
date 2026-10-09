@@ -1,0 +1,751 @@
+// =============================================================================
+// BASE - Reset, Typography, and Fundamental Styles
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Font Face Declarations
+// -----------------------------------------------------------------------------
+// WOFF2 only: every browser the theme supports (and every browser that supports
+// the CSS custom properties it relies on) handles WOFF2, so a TTF fallback would
+// only ship bytes no one downloads.
+@font-face {
+  font-family: "Glass_TTY_VT220";
+  src: url("../fonts/Glass_TTY_VT220.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; // Show fallback immediately, swap when loaded
+}
+
+@font-face {
+  font-family: "Fira Code";
+  src: url("../fonts/FiraCode-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+// -----------------------------------------------------------------------------
+// CSS Reset (Minimal)
+// -----------------------------------------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--base-font-size, 20px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Body
+// -----------------------------------------------------------------------------
+body {
+  font-family: var(--font-terminal);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  min-height: 100svh; // small-viewport unit: no overshoot under mobile toolbars
+  overflow-x: hidden;
+}
+
+// -----------------------------------------------------------------------------
+// Selection
+// -----------------------------------------------------------------------------
+::selection {
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-fg);
+}
+
+// -----------------------------------------------------------------------------
+// Typography
+// -----------------------------------------------------------------------------
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-terminal);
+  font-weight: normal;
+  line-height: 1.3;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-fg-bright);
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  font-size: 1.125rem;
+}
+
+h5, h6 {
+  font-size: 1rem;
+}
+
+// Scoped to article content. Unscoped, this landed on every <p> the theme's
+// own chrome emits — most visibly .post-list-excerpt, where it pushed the
+// dashed row separator 20px below the text and 40px above the next item.
+// :where() keeps specificity at (0,0,1), so component classes still win
+// without needing to out-specify a scoped selector. It is supported in
+// Chrome 88 / Firefox 78 / Safari 14 — the theme's stated floor exactly.
+:where(.article-content) p {
+  margin-bottom: var(--spacing-md);
+}
+
+// -----------------------------------------------------------------------------
+// Links
+// -----------------------------------------------------------------------------
+a {
+  color: var(--color-link);
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: var(--color-link-hover);
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+// Content and footer credit links read as standard underlined hyperlinks —
+// fits the retro aesthetic. UI chrome (nav, buttons, chips, TOC) keeps its own styling.
+.article-content a,
+.footer-meta a {
+  text-decoration: underline;
+}
+
+// -----------------------------------------------------------------------------
+// Heading permalink anchors (added by the heading render hook)
+// -----------------------------------------------------------------------------
+.article-content {
+  h1, h2, h3, h4, h5, h6 {
+    .heading-anchor {
+      opacity: 0;
+      margin-left: 0.3em;
+      font-size: 0.8em;
+      color: var(--color-fg-dim);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    &:hover .heading-anchor {
+      opacity: 1;
+    }
+  }
+
+  .heading-anchor:focus {
+    opacity: 1;
+  }
+}
+
+// Goldmark renders footnote back-links as U+21A9 (\u21a9), which is outside the
+// bundled VT220 font's repertoire (ASCII + DEC Multinational, roughly Latin-1),
+// so it silently falls back to another face. Swap in a glyph the font has.
+//
+// Deliberately NOT the visibility:hidden trick the TOC disclosure icon uses:
+// that icon is a <span>, but this is a link, and visibility:hidden drops an
+// element out of the tab order (which is exactly why it's the recommended way
+// to hide things from assistive tech). Collapsing the font size hides the glyph
+// while leaving the anchor visible, focusable, clickable, and still exposing its
+// text to the accessibility tree.
+.footnote-backref {
+  font-size: 0;
+  // inline-block so the anchor keeps a real box: with font-size:0 an inline box
+  // collapses to zero height and the reverse-video focus indicator has nothing
+  // to paint on.
+  display: inline-block;
+
+  &::after {
+    content: "<-";
+    font-size: 0.85rem; // matches .footnotes; rem so the 0 above cannot cascade in
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Scrollbar
+// Styled to match terminal aesthetic; falls back to OS default on unsupported browsers
+// -----------------------------------------------------------------------------
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+
+  &:hover {
+    background: var(--color-fg-dim);
+  }
+}
+
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-bg-secondary);
+}
+
+// -----------------------------------------------------------------------------
+// Lists
+// -----------------------------------------------------------------------------
+ul, ol {
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-xl);
+}
+
+// Same scoping, same reason: unscoped this leaked into .article-tags,
+// .article-categories, .social-list, .archive-item, .post-list-item and the
+// TOC. .nav-item and .terms-item happened to reset it themselves, which is why
+// those two were the only chrome lists that read square.
+:where(.article-content) li {
+  margin-bottom: var(--spacing-xs);
+}
+
+ul {
+  list-style-type: none;
+}
+
+.article-content ul > li {
+  position: relative;
+
+  &::before {
+    // ">" is a prompt character (DCL's own prompt was "$"), never a bullet, so
+    // it had to go. The DEC centred dot (U+00B7) is in the font, but it renders
+    // as a 3x3px speck — 6 lit pixels measured through the scanline overlay,
+    // against 25 for "*" — and shrinks to 2.4px at a 16px base size. It was
+    // never a list-bullet convention either; plain-text lists used o, - and *.
+    content: "*";
+    color: var(--color-fg-dim);
+    position: absolute;
+    left: calc(-1 * var(--spacing-lg));
+  }
+}
+
+// Task list items already carry a checkbox, so the "*" above doubles up on
+// them: "*  [x] label". Goldmark attaches no class to a task item, so matching
+// the parent requires :has(). Kept in its own rule deliberately — a browser
+// without :has() drops the whole rule it appears in, and merging this into the
+// block above would take the bullet with it. Unsupported browsers simply keep
+// the current doubled marker, which is no worse than today.
+.article-content ul > li:has(> input[type="checkbox"]:first-child)::before,
+.article-content ul > li:has(> p:first-child > input[type="checkbox"]:first-child)::before {
+  content: none;
+}
+
+ol {
+  list-style-type: decimal;
+
+  > li::marker {
+    color: var(--color-fg-dim);
+  }
+}
+
+// Definition lists (Goldmark renders these from plain markdown)
+dl {
+  margin-bottom: var(--spacing-md);
+}
+
+dt {
+  color: var(--color-fg-bright);
+  margin-top: var(--spacing-sm);
+}
+
+dd {
+  margin-left: var(--spacing-lg);
+  color: var(--color-fg-dim);
+
+  &::before {
+    content: ": ";
+    color: var(--color-fg-dim);
+  }
+}
+
+// <em> and <strong> deliberately keep the browser's italic/bold. The VT220's
+// rendition set was bold, underline, blink and reverse — with underline already
+// meaning "link" and blink ruled out on accessibility grounds, there is no way
+// to express two distinct inline emphases within the terminal's attribute set.
+// Readability wins; the decorative italics elsewhere were removed instead.
+
+// -----------------------------------------------------------------------------
+// Code
+// -----------------------------------------------------------------------------
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--color-code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 2px;
+  border: 1px solid var(--color-border);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background-color: var(--color-code-bg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  // break only when a token can't fit, rather than mid-identifier/mid-URL
+  overflow-wrap: break-word;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+
+  code {
+    background: none;
+    padding: 0;
+    border: none;
+    font-size: inherit;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Blockquotes
+// -----------------------------------------------------------------------------
+blockquote {
+  position: relative;
+  border-left: 3px solid var(--color-accent);
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
+  margin: var(--spacing-md) 0;
+  color: var(--color-fg-dim);
+  background: rgba(255, 255, 255, 0.01);
+
+  &::before {
+    content: ">>";
+    color: var(--color-accent);
+    position: absolute;
+    left: var(--spacing-sm);
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Horizontal Rule
+// Terminal-style divider with decorative center
+// -----------------------------------------------------------------------------
+hr {
+  border: none;
+  margin: var(--spacing-xl) 0;
+  text-align: center;
+  overflow: hidden;
+  font-family: var(--font-terminal);
+  color: var(--color-border);
+  font-size: 0.85rem;
+  line-height: 1;
+
+  &::before {
+    content: "================================[ * ]================================";
+    display: block;
+    white-space: nowrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Images
+// -----------------------------------------------------------------------------
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+figure {
+  margin: var(--spacing-md) 0;
+
+  img {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  figcaption {
+    font-size: 0.875rem;
+    color: var(--color-fg-dim);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+
+    &::before {
+      content: "[ ";
+    }
+
+    &::after {
+      content: " ]";
+    }
+
+    h4 {
+      display: inline;
+      font-size: inherit;
+      font-weight: normal;
+      color: var(--color-fg-bright);
+
+      &::after {
+        content: " — ";
+      }
+    }
+
+    p {
+      display: inline;
+      margin: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Tables
+// -----------------------------------------------------------------------------
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-md);
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border);
+}
+
+// A wide table would otherwise force the whole page to scroll sideways on a
+// phone. display:block confines the overflow to the table itself.
+//
+// width:max-content is what keeps the box honest. A bare display:block table
+// still takes width:100% from the rule above, but its rows and cells are then
+// wrapped in an anonymous table box that shrink-wraps to its content — so a
+// narrow table painted its border right across the column with the cells
+// huddled at the left edge. max-content sizes the block to the content it
+// actually has; max-width caps it so a wide table still scrolls rather than
+// overflowing.
+//
+// .lntable is excluded deliberately: Chroma renders a line-numbered code block
+// as a <table>, but that is layout, not tabular content, and it should keep the
+// full width of the code box. See _syntax.scss.
+.article-content table:not(.lntable) {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+th, td {
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-align: left;
+  border: 1px solid var(--color-border);
+}
+
+th {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-fg-bright);
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--color-border);
+}
+
+tr {
+  transition: background-color 0.15s ease;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+tr:hover td {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+// -----------------------------------------------------------------------------
+// Footnotes (Goldmark-generated)
+// Terminal-style footnote references and back-references
+// -----------------------------------------------------------------------------
+.footnotes {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-fg-dim);
+
+  &::before {
+    content: "[ NOTES ]";
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-fg-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  ol {
+    padding-left: var(--spacing-lg);
+    list-style-type: decimal;
+  }
+
+  li {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+// Footnote reference links in body text.
+//
+// Goldmark puts .footnote-ref on the <a> itself and leaves the wrapping <sup>
+// unclassed — Blackfriday put it on the <sup> with the anchor inside. Styling
+// written for the old shape meant `.footnote-ref a` matched nothing (so the
+// [1] brackets never rendered), while font-size/vertical-align/line-height
+// landed on the anchor on top of the <sup>'s own superscript treatment, i.e.
+// shrunk and raised twice. The <sup> already does that job, so those three
+// declarations are gone rather than re-scoped.
+//
+// Scoped under .article-content so it outranks `.article-content a` (0,2,0
+// beats 0,1,1) — unscoped, body-link colour and underline won instead.
+.article-content .footnote-ref {
+  color: var(--color-accent);
+  text-decoration: none;
+
+  &::before {
+    content: "[";
+  }
+
+  &::after {
+    content: "]";
+  }
+
+  &:hover {
+    color: var(--color-fg-bright);
+  }
+}
+
+// Back-reference arrow. Same scoping, same reason.
+.article-content .footnote-backref {
+  color: var(--color-accent);
+  text-decoration: none;
+  margin-left: var(--spacing-xs);
+
+  &:hover {
+    color: var(--color-fg-bright);
+  }
+}
+
+// Goldmark always emits a structural <hr> as the first child of .footnotes.
+// The bare `hr` rule renders it as the theme's full-width ====[ * ]==== banner,
+// which stacks on top of this block's own dashed border-top and [ NOTES ]
+// label — three separators in a row before the first note. The block is
+// already clearly delimited, so the redundant one goes.
+.footnotes > hr {
+  display: none;
+}
+
+// -----------------------------------------------------------------------------
+// Form Elements
+// -----------------------------------------------------------------------------
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+// -----------------------------------------------------------------------------
+// Skip Link (Accessibility)
+// -----------------------------------------------------------------------------
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  z-index: $z-skip-link;
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Utility Classes
+// -----------------------------------------------------------------------------
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// -----------------------------------------------------------------------------
+// Print Styles
+// -----------------------------------------------------------------------------
+@media print {
+  .crt-overlay,
+  .nav-toggle,
+  .site-nav,
+  .social-links,
+  .status-line {
+    display: none !important;
+  }
+
+  // Remap the palette to ink-on-paper so headings, code, tables and meta all
+  // print legibly in one shot (they read from these custom properties).
+  :root {
+    --color-fg: #000;
+    --color-fg-bright: #000;
+    --color-fg-dim: #444;
+    --color-bg: #fff;
+    --color-bg-secondary: #fff;
+    --color-code-bg: #f5f5f5;
+    --color-border: #ccc;
+    --color-glow: transparent;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  // Strip the phosphor glow and CRT curvature shadow from print.
+  * {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .site-wrapper {
+    border-radius: 0;
+  }
+
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  // Colored syntax mode sets literal pastel hexes, which survive the custom
+  // property remap above and print at ~1.4:1 on paper. Force ink.
+  .syntax-colored .chroma,
+  .syntax-colored .chroma span {
+    color: #000 !important;
+  }
+
+  .syntax-colored .chroma .c,
+  .syntax-colored .chroma .c1,
+  .syntax-colored .chroma .ch,
+  .syntax-colored .chroma .cm,
+  .syntax-colored .chroma .cp,
+  .syntax-colored .chroma .cpf,
+  .syntax-colored .chroma .cs {
+    color: #444 !important;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Focus Visible (VT220-style reverse video)
+// Base: outline ring for all elements (safe for images, inputs, SVGs).
+// Enhancement: reverse-video on text-based interactive elements.
+// -----------------------------------------------------------------------------
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+.nav-link:focus-visible,
+.profile-btn:focus-visible {
+  // Transparent rather than `none`: the reverse-video treatment below is built
+  // from background-color, color and box-shadow, and forced-colors mode
+  // overrides the first two with system colours while forcing box-shadow to
+  // none — which with `outline: none` would leave no focus indicator at all.
+  // A transparent outline is invisible in normal rendering, and forced-colors
+  // repaints transparent outline colours with the system highlight, so the
+  // ring reappears exactly where it's needed. No media query required.
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  box-shadow: 0 0 0 2px var(--color-fg);
+}
+
+// Multi-coloured toggle controls (nav / TOC) reverse-video poorly because of
+// their child spans, so give them a strong accent ring instead. The nav
+// checkbox is visually hidden, so mirror its focus ring onto the adjacent label.
+.nav-checkbox:focus-visible ~ .nav-toggle,
+.nav-toggle:focus-visible,
+.toc-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-color: var(--color-fg);
+  color: var(--color-fg-bright);
+}
+
+// Same problem, worse consequence: these are anchors, so unlike the labels
+// above they DO match the reverse-video rule. Their visible text lives in a
+// child element that declares its own colour (.terms-name, .post-nav-title,
+// .ascii-header), so the anchor's `color: var(--color-bg)` never reaches it.
+// The label keeps --color-fg and lands on a --color-fg background: the same
+// token on both sides, 1.00:1, invisible — in every scheme, not just
+// highContrast (where --color-fg and --color-fg-bright are both #ffffff).
+//
+// Because they matched the rule above, the accent ring is not enough on its
+// own; the background and glow it applied have to be undone explicitly.
+.terms-link:focus-visible,
+.post-nav-link:focus-visible,
+.ascii-header-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--color-fg-bright);
+}
+
+// Fallback for browsers without :focus-visible support — links already have
+// a :focus outline (see Links), buttons did not.
+button:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}

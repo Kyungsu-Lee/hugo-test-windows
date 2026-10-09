@@ -1,0 +1,6 @@
+{{ define "title" }}404 | {{ .Site.Title }}{{ end }}
+{{ define "main" }}
+<h1>404</h1>
+<p>{{ i18n "not_found" | default "Page not found. It may have been moved or deleted." }}</p>
+<p><a href="{{ .Site.Home.RelPermalink }}">{{ i18n "back_home" | default "Go to the homepage" }}</a></p>
+{{ end }}

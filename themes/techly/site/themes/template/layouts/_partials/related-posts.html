@@ -1,0 +1,49 @@
+{{- $cfg := site.Params.related | default dict -}}
+{{- if eq ($cfg.enabled | default true) false -}}
+  {{- return -}}
+{{- end -}}
+
+{{- $limit := $cfg.limit | default 3 -}}
+{{- $heading := $cfg.heading | default "More articles" -}}
+{{- $sections := site.Params.mainSections | default (slice "posts") -}}
+
+{{- $related := where (site.RegularPages.Related .) "Section" "in" $sections -}}
+{{- $related = where $related "Permalink" "ne" .Permalink -}}
+{{- $related = $related | first $limit -}}
+
+{{- if gt (len $related) 0 -}}
+  <section class="related-articles-section" aria-labelledby="related-heading">
+    <div class="container">
+      <h2 class="section-title" id="related-heading">{{ $heading }}</h2>
+      <div class="related-articles-grid">
+        {{- range $related }}
+          {{- $cover := partial "post-cover.html" . -}}
+          <article class="related-article-card{{ if not $cover.has }} related-article-card--no-image{{ end }}">
+            <a href="{{ .RelPermalink }}">
+              {{- if $cover.has }}
+                <div class="related-article-image">
+                  <img src="{{ $cover.src }}" alt="{{ $cover.alt }}" loading="lazy">
+                </div>
+              {{- end }}
+              <div class="related-article-content">
+                <h3>{{ .LinkTitle }}</h3>
+                <p>
+                  {{- with .Params.description -}}
+                    {{ . | truncate 140 }}
+                  {{- else -}}
+                    {{ .Summary | plainify | truncate 140 }}
+                  {{- end -}}
+                </p>
+                <span class="related-date">
+                  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+                </span>
+              </div>
+            </a>
+          </article>
+        {{- end }}
+      </div>
+
+      {{- partial "related-more-link.html" (dict "page" . "related" $related "cfg" $cfg) -}}
+    </div>
+  </section>
+{{- end -}}

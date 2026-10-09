@@ -1,0 +1,60 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_features }}
+{{ with $data.homepage.section_features }}
+
+<section class="section section_features">
+    <div class="container">
+        <div class="box1">
+
+            <div class="features swiper-container">
+                <div class="swiper-nav mt-0">
+                    <button class="swiper-nav-prev">
+                        <svg class="icon" width="24" height="16">
+                            <use xlink:href="#arr-rt"></use>
+                        </svg>
+                    </button>
+                    <button class="swiper-nav-next">
+                        <svg class="icon" width="24" height="16">
+                            <use xlink:href="#arr-lt"></use>
+                        </svg>
+                    </button>
+                </div>
+                <div class="swiper-wrapper">
+                {{ range .items }}
+                <figure class="feature swiper-slide">
+                    <center class="feature__img">
+                        <img src="{{ .img | relURL }}" alt="{{ .title }}" width="250" height="250">
+                    </center>
+                    <figcaption class="feature__caption">
+                        <div class="feature__title">
+                            {{ .title }}
+                        </div>
+                        <div class="feature__subtitle">
+                            {{ .subtitle }}
+                        </div>
+                        <div class="feature__info">
+                            <b>{{ .heading }}</b>
+                            <div>
+                                {{ .desc | markdownify }}
+                            </div>
+                        </div>
+
+                        <div><big class="feature__price">{{ .price }}</big></div>
+
+                        <a href="#" class="btn">
+                            <b><span>BUY NOW</span><span>BUY NOW</span></b>
+                        </a>
+                    </figcaption>
+                </figure>
+                {{ end }}
+                </div>
+               
+            </div>
+        
+        </div>
+    </div>
+</section>
+
+{{ end }}
+{{ end }}

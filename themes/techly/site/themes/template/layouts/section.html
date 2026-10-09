@@ -1,0 +1,32 @@
+{{ define "main" }}
+  {{- $sections := site.Params.mainSections | default (slice "posts") -}}
+  {{- $posts := cond (in $sections .Section) (partial "sort-posts-pinned.html" .Pages) (.Pages.ByDate.Reverse) -}}
+
+  <header class="blog-header-section">
+    <div class="container">
+      <h1 class="section-title">{{ .Title }}</h1>
+      {{- with .Content }}
+        <div class="section-subtitle">{{ . }}</div>
+      {{- end }}
+    </div>
+  </header>
+
+  <section class="blog-posts-section" aria-label="Articles">
+    <div class="container">
+      <div class="blog-main">
+        {{- if gt (len $posts) 0 }}
+          {{ partial "post-card.html" (dict "page" (index $posts 0) "featured" true) }}
+          {{- if gt (len $posts) 1 }}
+            <div class="blog-posts-grid">
+              {{- range after 1 $posts }}
+                {{ partial "post-card.html" (dict "page" . "featured" false) }}
+              {{- end }}
+            </div>
+          {{- end }}
+        {{- else }}
+          <p>No articles in this section yet.</p>
+        {{- end }}
+      </div>
+    </div>
+  </section>
+{{ end }}

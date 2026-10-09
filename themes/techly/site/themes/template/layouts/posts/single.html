@@ -1,0 +1,75 @@
+{{ define "main" }}
+  {{- $authorName := site.Params.author.name | default site.Params.authorName -}}
+  {{- $authorAvatar := site.Params.author.avatar | default site.Params.authorAvatar -}}
+  {{- $author := .Params.author | default $authorName -}}
+  {{- $avatar := .Params.authorAvatar | default $authorAvatar -}}
+  {{- $section := site.GetPage .Section -}}
+
+  <article class="blog-article">
+    <header class="article-header">
+      <div class="container">
+        <div class="article-header-content">
+          <h1 class="article-title">{{ .Title }}</h1>
+          {{- with .Params.description }}
+            <p class="article-lead">{{ . }}</p>
+          {{- else }}
+            {{- with .Summary }}
+              <p class="article-lead">{{ . | plainify | truncate 240 }}</p>
+            {{- end }}
+          {{- end }}
+          <div class="article-author-info">
+            {{- with $avatar }}
+              <img src="{{ . | relURL }}" alt="" class="author-avatar" width="56" height="56">
+            {{- end }}
+            <div class="author-details">
+              <span class="author-name">{{ $author }}</span>
+              <div class="article-date">
+                <time datetime="{{ .Date.Format "2006-01-02" }}" title="{{ .Date.Format "January 2, 2006" }}">
+                  {{ .Date.Format "January 2, 2006" }}
+                </time>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-body">
+      <div class="container">
+        {{- $ancestors := slice -}}
+        {{- with $section }}
+          {{- $ancestors = $ancestors | append . -}}
+        {{- end }}
+        {{ partial "breadcrumb.html" (dict "page" . "ancestors" $ancestors) }}
+      </div>
+
+      {{ partial "post-image.html" . }}
+
+      <div class="container">
+        <div class="article-layout">
+          {{ partial "post-series-notice.html" . }}
+          <div class="article-content">
+            {{ .Content }}
+
+            {{- with .GetTerms "tags" }}
+              <div class="article-tags">
+                <h2>Tags</h2>
+                <ul class="tags-list">
+                  {{- range . }}
+                    <li><a class="tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+                  {{- end }}
+                </ul>
+              </div>
+            {{- end }}
+
+            {{ partial "post-series-nav.html" . }}
+          </div>
+
+          {{ partial "toc.html" . }}
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {{ partial "related-posts.html" . }}
+{{ end }}

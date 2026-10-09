@@ -1,0 +1,36 @@
+<div class="vg-sidebar{{ if .IsHome }} vg-sidebar_home{{ end }}">
+  {{ partial "theme-switcher.html" (dict "context" "sidebar" "page" .) }}
+
+  <div class="vg-sidebar-main">
+    <div class="vg-sidebar__menu">
+      {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+    </div>
+
+    <div class="vg-sidebar__logo">
+      {{ with resources.Get "logo-sidebar.png" }}
+      {{ $1x := .Resize (printf "%dx webp q82" (div .Width 2)) }}
+      {{ $2x := .Resize (printf "%dx webp q82" .Width) }}
+      <img src="{{ $1x.RelPermalink }}"
+           srcset="{{ $2x.RelPermalink }} 2x"
+           alt="{{ $.Site.Title }}"
+           aria-label="{{ $.Site.Title }}" />
+      {{ end }}
+    </div>
+
+    <div class="vg-sidebar__about">
+      {{ .Site.Params.description | safeHTML }}
+    </div>
+
+    <div class="vg-sidebar-tags">
+      {{ range .Site.Taxonomies.tags.ByCount }}
+      {{ with $.Site.GetPage (printf "/tags/%s" .Name) }}
+      <a class="vg-sidebar-tags__tag" href="{{ .RelPermalink }}">{{ .Name }}</a>
+      {{ end }}
+      {{ end }}
+    </div>
+  </div>
+
+  <div class="vg-sidebar-footer">
+    {{ partial "social.html" . }}
+  </div>
+</div>

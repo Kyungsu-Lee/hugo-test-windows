@@ -1,0 +1,3 @@
+module github.com/chrede88/L1nkr/v2
+
+go 1.27.1

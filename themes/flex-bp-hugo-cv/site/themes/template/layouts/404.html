@@ -1,0 +1,13 @@
+{{ define "title" }}404 &ndash; {{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+<div class="container container-404">
+    <main>
+        <header class="cv-head">
+            <p class="cv-kicker">404</p>
+            <h1>{{ i18n "error404" }}</h1>
+        </header>
+        <p><a href="{{ "/" | relLangURL }}">{{ i18n "gotohome" }}</a></p>
+    </main>
+</div>
+{{ end }}

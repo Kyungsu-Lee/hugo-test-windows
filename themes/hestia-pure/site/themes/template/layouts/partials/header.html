@@ -1,0 +1,13 @@
+<header class="header">
+  {{ if .IsHome }}
+  <h1><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></h1>
+  {{ else }}
+  <div class="site-title"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></div>
+  {{ end }}
+  {{ with .Site.Params.description }}<p class="site-desc">{{ . }}</p>{{ end }}
+  {{ if or .Site.Params.googleCustomSearch .Site.Params.googlecustomsearch }}
+  <div class="search">
+    <gcse:searchbox-only></gcse:searchbox-only>
+  </div>
+  {{ end }}
+</header>

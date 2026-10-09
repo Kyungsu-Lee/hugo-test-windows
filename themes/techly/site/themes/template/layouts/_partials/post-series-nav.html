@@ -1,0 +1,53 @@
+{{- $page := . -}}
+{{- with $page.GetTerms "series" -}}
+  {{- $series := index . 0 -}}
+  {{- $posts := $series.Pages.ByDate -}}
+  {{- if gt (len $posts) 1 -}}
+    {{- $prev := false -}}
+    {{- $next := false -}}
+    {{- range $i, $p := $posts -}}
+      {{- if eq $p.Permalink $page.Permalink -}}
+        {{- if gt $i 0 -}}
+          {{- $prev = index $posts (sub $i 1) -}}
+        {{- end -}}
+        {{- if lt $i (sub (len $posts) 1) -}}
+          {{- $next = index $posts (add $i 1) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+
+    <section class="post-series-section" aria-label="{{ printf "Articles in %s" $series.LinkTitle }}">
+      <aside class="post-series">
+          <nav class="post-series-nav">
+            <p class="post-series-nav-label">Articles in this series</p>
+            <ol class="post-series-list">
+              {{- range $posts -}}
+                <li{{ if eq .Permalink $page.Permalink }} class="is-current"{{ end }}>
+                  <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+                </li>
+              {{- end -}}
+            </ol>
+
+            {{- if or $prev $next -}}
+              <div class="post-series-pagination">
+                {{- with $prev -}}
+                  <a class="post-series-prev" href="{{ .RelPermalink }}">
+                    <span class="post-series-pagination-label">Previous</span>
+                    <span class="post-series-pagination-title">{{ .LinkTitle }}</span>
+                  </a>
+                {{- else -}}
+                  <span></span>
+                {{- end -}}
+                {{- with $next -}}
+                  <a class="post-series-next" href="{{ .RelPermalink }}">
+                    <span class="post-series-pagination-label">Next</span>
+                    <span class="post-series-pagination-title">{{ .LinkTitle }}</span>
+                  </a>
+                {{- end -}}
+              </div>
+            {{- end -}}
+          </nav>
+        </aside>
+    </section>
+  {{- end -}}
+{{- end -}}

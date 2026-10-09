@@ -1,0 +1,20 @@
+{{ $p := .Site.Params }}
+<aside class="page-aside" data-reveal>
+  <div class="profile-card">
+    {{ with $p.profile_image }}
+      <img src="{{ . }}" alt="Profile">
+    {{ end }}
+    <div class="profile-body">
+      <div class="profile-title">{{ .Site.Title }}</div>
+      {{ with $p.subtitle }}<div class="muted">{{ . }}</div>{{ end }}
+      {{ with $p.profile_blurb }}<p class="profile-blurb">{{ . }}</p>{{ end }}
+      {{ with $p.social }}
+        <div class="profile-links">
+          {{ range . }}
+            <a href="{{ .url }}">{{ .name }}</a>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</aside>

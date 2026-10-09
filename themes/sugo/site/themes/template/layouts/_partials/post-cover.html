@@ -1,0 +1,89 @@
+{{- $page := .page | default . -}}
+{{- $link := .link | default $page.RelPermalink -}}
+{{- $class := .class | default "" -}}
+{{- $loading := .loading | default "lazy" -}}
+{{- $coverParam := $page.Params.cover -}}
+{{- $disabled := false -}}
+{{- $src := "" -}}
+{{- $alt := "" -}}
+{{- $coverType := printf "%T" $coverParam -}}
+
+{{- if eq $coverType "bool" -}}
+  {{- if not $coverParam -}}
+    {{- $disabled = true -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if reflect.IsMap $coverParam -}}
+  {{- with index $coverParam "imageDisplay" -}}
+    {{- if not . -}}
+      {{- $disabled = true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with index $coverParam "image" -}}
+    {{- $src = printf "%v" . -}}
+  {{- end -}}
+  {{- with index $coverParam "alt" -}}
+    {{- $alt = printf "%v" . -}}
+  {{- end -}}
+{{- else if eq $coverType "string" -}}
+  {{- $src = strings.TrimSpace $coverParam -}}
+{{- end -}}
+
+{{- if and (not $disabled) (eq $src "") -}}
+  {{- $raw := $page.RawContent -}}
+  {{- with (findRE `(?is)!\[[^\]]*\]\([^)]+\)|\{\{[<%]\s*figure\b[\s\S]*?[>%]\}\}|<img[^>]*>` $raw 1) -}}
+    {{- $firstImageRef := index . 0 -}}
+    {{- if hasPrefix $firstImageRef "![" -}}
+      {{- with (findRESubmatch `!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)` $firstImageRef 1) -}}
+        {{- $src = index (index . 0) 2 -}}
+        {{- $alt = index (index . 0) 1 -}}
+      {{- end -}}
+    {{- else if in (lower $firstImageRef) "figure" -}}
+      {{- with (findRESubmatch `(?is)\bsrc\s*=\s*["']([^"']+)["']` $firstImageRef 1) -}}
+        {{- $src = index (index . 0) 1 -}}
+      {{- end -}}
+      {{- with (findRESubmatch `(?is)\balt\s*=\s*["']([^"']+)["']` $firstImageRef 1) -}}
+        {{- $alt = index (index . 0) 1 -}}
+      {{- end -}}
+    {{- else -}}
+      {{- with (findRESubmatch `(?is)\bsrc\s*=\s*["']([^"']+)["']` $firstImageRef 1) -}}
+        {{- $src = index (index . 0) 1 -}}
+      {{- end -}}
+      {{- with (findRESubmatch `(?is)\balt\s*=\s*["']([^"']+)["']` $firstImageRef 1) -}}
+        {{- $alt = index (index . 0) 1 -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if and (not $disabled) (eq $src "") -}}
+  {{- with $page.Resources.ByType "image" -}}
+    {{- with index . 0 -}}
+      {{- $src = .RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if and (not $disabled) (ne $src "") -}}
+  {{- if not (or (hasPrefix $src "/") (hasPrefix $src "http://") (hasPrefix $src "https://") (hasPrefix $src "//")) -}}
+    {{- $resource := $page.Resources.GetMatch $src -}}
+    {{- if not $resource -}}
+      {{- $resource = $page.Resources.GetMatch (printf "*%s" (path.Base $src)) -}}
+    {{- end -}}
+    {{- if $resource -}}
+      {{- $src = $resource.RelPermalink -}}
+    {{- else -}}
+      {{- $src = printf "%s%s" $page.RelPermalink (strings.TrimPrefix "./" $src) -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $resolvedAlt := strings.TrimSpace $alt -}}
+  {{- if eq $resolvedAlt "" -}}
+    {{- $resolvedAlt = $page.LinkTitle -}}
+  {{- end -}}
+
+  <a class="{{ $class }}" href="{{ $link }}" aria-hidden="true" tabindex="-1">
+    <img src="{{ $src | safeURL }}" alt="{{ $resolvedAlt }}" loading="{{ $loading }}" decoding="async">
+  </a>
+{{- end -}}

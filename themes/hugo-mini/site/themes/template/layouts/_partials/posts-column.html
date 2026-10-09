@@ -1,0 +1,41 @@
+{{- /*
+  Renders one column of category groups for the blog listing.
+  Inputs (from posts-column dict):
+    .groups   — slice of category slugs (or "_untagged" for posts with no category)
+    .allPosts — posts, already filtered for `hidden` and sorted newest first
+
+  Within each category, posts with `pinned = true` are floated to the
+  top (preserving reverse-chronological order between themselves), the
+  rest follow in reverse-chronological order.
+*/ -}}
+{{- $groups := .groups -}}
+{{- $allPosts := .allPosts -}}
+{{- $newCutoff := now.AddDate 0 0 (int (mul -1 (site.Params.newPostDays | default 30))) -}}
+<div class="posts-column">
+  {{- range $groups }}
+    {{- $tag := . -}}
+    {{- $title := "" -}}
+    {{- $catPosts := slice -}}
+
+    {{- if eq $tag "_untagged" -}}
+      {{- $title = i18n "misc" -}}
+      {{- $catPosts = $.uncategorized -}}
+    {{- else -}}
+      {{- $title = i18n (printf "cat_%s" $tag) | default $tag -}}
+      {{- $catPosts = where $allPosts ".Params.categories" "intersect" (slice $tag) -}}
+    {{- end -}}
+
+    {{- $pinned := where $catPosts ".Params.pinned" true -}}
+    {{- $unpinned := where $catPosts ".Params.pinned" "ne" true -}}
+    {{- $ordered := $pinned | append $unpinned -}}
+
+    <div class="posts-group">
+      <h3 class="posts-group-title">{{ $title }}</h3>
+      <ul class="blog-posts">
+        {{- range $ordered }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ if ge .Date $newCutoff }} <span class="badge-new">{{ i18n "new_badge" | default "New" }}</span>{{ end }}</li>
+        {{- end }}
+      </ul>
+    </div>
+  {{- end }}
+</div>

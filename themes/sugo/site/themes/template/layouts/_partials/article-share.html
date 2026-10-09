@@ -1,0 +1,77 @@
+{{- $ui := site.Params.ui -}}
+{{- $defaultNetworks := slice "x" "facebook" "linkedin" "reddit" "whatsapp" "telegram" "pinterest" "bluesky" -}}
+{{- $configuredNetworks := site.Params.share.networks -}}
+{{- $networks := $defaultNetworks -}}
+{{- if $configuredNetworks -}}
+  {{- $networks = slice -}}
+  {{- if reflect.IsSlice $configuredNetworks -}}
+    {{- range $configuredNetworks -}}
+      {{- $network := lower (strings.TrimSpace (printf "%v" .)) -}}
+      {{- if ne $network "" -}}
+        {{- $networks = $networks | append $network -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- range (split (printf "%v" $configuredNetworks) ",") -}}
+      {{- $network := lower (strings.TrimSpace .) -}}
+      {{- if ne $network "" -}}
+        {{- $networks = $networks | append $network -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $pageURL := .Permalink -}}
+{{- $title := .Title -}}
+{{- $items := slice -}}
+
+{{- range $networks -}}
+  {{- $network := . -}}
+  {{- $href := "" -}}
+  {{- $label := "" -}}
+
+  {{- if eq $network "x" -}}
+    {{- $href = printf "https://x.com/intent/tweet?%s" (querify "text" $title "url" $pageURL) -}}
+    {{- $label = "X" -}}
+  {{- else if eq $network "facebook" -}}
+    {{- $href = printf "https://www.facebook.com/sharer/sharer.php?%s" (querify "u" $pageURL) -}}
+    {{- $label = "Facebook" -}}
+  {{- else if eq $network "linkedin" -}}
+    {{- $href = printf "https://www.linkedin.com/sharing/share-offsite/?%s" (querify "url" $pageURL) -}}
+    {{- $label = "LinkedIn" -}}
+  {{- else if eq $network "reddit" -}}
+    {{- $href = printf "https://www.reddit.com/submit?%s" (querify "url" $pageURL "title" $title) -}}
+    {{- $label = "Reddit" -}}
+  {{- else if eq $network "whatsapp" -}}
+    {{- $href = printf "https://api.whatsapp.com/send?%s" (querify "text" (printf "%s %s" $title $pageURL)) -}}
+    {{- $label = "WhatsApp" -}}
+  {{- else if eq $network "telegram" -}}
+    {{- $href = printf "https://t.me/share/url?%s" (querify "url" $pageURL "text" $title) -}}
+    {{- $label = "Telegram" -}}
+  {{- else if eq $network "pinterest" -}}
+    {{- $href = printf "https://pinterest.com/pin/create/button/?%s" (querify "url" $pageURL "description" $title) -}}
+    {{- $label = "Pinterest" -}}
+  {{- else if eq $network "bluesky" -}}
+    {{- $href = printf "https://bsky.app/intent/compose?%s" (querify "text" (printf "%s %s" $title $pageURL)) -}}
+    {{- $label = "Bluesky" -}}
+  {{- end -}}
+
+  {{- if and (ne $href "") (ne $label "") -}}
+    {{- $items = $items | append (dict "network" $network "href" $href "label" $label) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if gt (len $items) 0 -}}
+  <section class="article-share" aria-label="{{ $ui.articleShareAriaLabel | default "Share this article" }}">
+    <h2 class="article-share__heading">{{ $ui.articleShareHeading | default "Share this article" }}</h2>
+    <ul class="article-share__list">
+      {{- range $items -}}
+        <li>
+          <a href="{{ .href }}" target="_blank" rel="noopener noreferrer" aria-label="Share on {{ .label }}" title="Share on {{ .label }}">
+            <img src="{{ printf "social/%s.svg" .network | relURL }}" alt="{{ .label }}">
+          </a>
+        </li>
+      {{- end -}}
+    </ul>
+  </section>
+{{- end -}}

@@ -1,0 +1,40 @@
+{{- $page := . -}}
+{{- $content := printf "%s" $page.Content -}}
+{{- $refMatches := findRE `id="fnref:([^"]+)"` $content -}}
+{{- if gt (len $refMatches) 0 -}}
+  {{- $missingRefs := slice -}}
+  {{- range $refMatches -}}
+    {{- $id := replaceRE `^id="fnref:([^"]+)"$` "$1" . -}}
+    {{- if and (not (in $missingRefs $id)) (not (in $content (printf "id=\"fn:%s\"" $id))) -}}
+      {{- $missingRefs = $missingRefs | append $id -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if gt (len $missingRefs) 0 -}}
+    {{- $defs := dict -}}
+    {{- range (findRE `(?m)^\[\^([^\]]+)\]:[ \t]*(.*)$` $page.RawContent) -}}
+      {{- $id := replaceRE `(?m)^\[\^([^\]]+)\]:[ \t]*(.*)$` "$1" . -}}
+      {{- $text := replaceRE `(?m)^\[\^([^\]]+)\]:[ \t]*(.*)$` "$2" . -}}
+      {{- $defs = merge $defs (dict $id $text) -}}
+    {{- end -}}
+
+    {{- $items := slice -}}
+    {{- range $missingRefs -}}
+      {{- $id := . -}}
+      {{- with index $defs $id -}}
+        {{- $note := printf "%s" ($page.RenderString (dict "display" "inline") .) -}}
+        {{- $item := printf `<li id="fn:%s">%s <a href="#fnref:%s" class="footnote-backref" role="doc-backlink">&#8617;</a></li>` $id $note $id -}}
+        {{- $items = $items | append $item -}}
+      {{- end -}}
+    {{- end -}}
+
+    {{- if gt (len $items) 0 -}}
+      <section class="footnotes" role="doc-endnotes">
+        <hr>
+        <ol>
+          {{- delimit $items "\n" | safeHTML -}}
+        </ol>
+      </section>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

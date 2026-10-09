@@ -1,0 +1,37 @@
+{{- $searchPage := partial "search-page.html" . -}}
+{{- if $searchPage -}}
+  {{- $isNav := in (.class | default "") "search-form--nav" -}}
+  <div class="{{ if $isNav }}search-form-wrap{{ end }}">
+    <form
+      class="{{ with .class }}{{ . }}{{ else }}search-form{{ end }}"
+      role="search"
+      action="{{ $searchPage.RelPermalink }}"
+      method="get"
+    >
+      <label class="visually-hidden" for="{{ .inputId | default "search-input" }}">Search</label>
+      <input
+        type="search"
+        name="q"
+        id="{{ .inputId | default "search-input" }}"
+        class="search-input"
+        placeholder="{{ .placeholder | default "Search…" }}"
+        autocomplete="off"
+        {{- if $isNav }}
+          aria-controls="nav-search-suggestions"
+          aria-expanded="false"
+          aria-autocomplete="list"
+        {{- end }}
+        {{- with .value }} value="{{ . }}"{{ end }}
+      >
+      <button type="submit" class="search-submit" aria-label="Search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+      </button>
+    </form>
+    {{- if $isNav }}
+      <div class="search-suggestions" id="nav-search-suggestions" role="listbox" hidden></div>
+    {{- end }}
+  </div>
+{{- end -}}

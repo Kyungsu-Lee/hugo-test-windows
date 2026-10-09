@@ -1,0 +1,20 @@
+{{- with resources.Get "css/main.css" }}
+  {{- $css := . }}
+  {{- if not hugo.IsDevelopment }}
+    {{- $css = $css | minify }}
+  {{- end }}
+  {{- with $css }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" />
+    {{- else }}
+      {{- with . | fingerprint }}
+        <link
+          rel="stylesheet"
+          href="{{ .RelPermalink }}"
+          integrity="{{ .Data.Integrity }}"
+          crossorigin="anonymous"
+        />
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

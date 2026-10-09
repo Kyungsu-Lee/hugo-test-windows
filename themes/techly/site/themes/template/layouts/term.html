@@ -1,0 +1,13 @@
+{{ define "main" }}
+  <header class="blog-header-section">
+    <div class="container">
+      <h1 class="section-title">{{ .Title }}</h1>
+    </div>
+  </header>
+
+  <section class="blog-posts-section" aria-label="Articles">
+    <div class="container">
+      {{ partial "paginated-post-grid.html" (dict "page" . "pages" (.Pages.ByDate.Reverse)) }}
+    </div>
+  </section>
+{{ end }}

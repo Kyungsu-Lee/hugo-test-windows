@@ -1,0 +1,12 @@
+{{/* sidebar item wrapper */}}
+
+{{- $bg := default "bg-body-secondary" site.Params.sidebar.background_class -}}
+
+<div class="mb-3 p-3 rounded {{ $bg }}">
+  {{- if .Title -}}
+    <h6 class="mb-2">{{ .Title }}</h6>
+  {{- end -}}
+  <div class="felmdrav-sidebar-content">
+    {{ .Content }}
+  </div>
+</div>

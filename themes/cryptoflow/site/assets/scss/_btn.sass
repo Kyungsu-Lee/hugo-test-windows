@@ -1,0 +1,124 @@
+.btn
+	+flex(inline-flex, center, center, nowrap)
+	height: 50px
+	min-width: 230px
+	max-width: 250px
+	padding: 8px 16px
+	border-radius: 5px
+	border: 0px solid transparent
+	background: $grad
+	color: $white
+	text-align: center
+	text-transform: uppercase
+	+ft(16, 16, 600)
+	transition: $trs
+
+	b
+		position: relative
+		overflow: hidden
+		font-weight: inherit
+	span
+		display: block
+		transition: all .25s linear
+		&:last-child
+			position: absolute
+			top: 100%
+			bottom: 0
+
+	&:hover, &:active, &:focus
+		background-color: darken($main, 10%)
+		color: $white
+		span
+			&:first-child
+				transform: translateY(-165%)
+			&:last-child
+				transform: translateY(0)
+				top: 0
+				margin: auto
+
+	&_top
+		+ps(fixed, (r, 16px), (b, 16px))
+		z-index: 1000
+		+sz(40px, 40px)
+		+theme(main)
+		border-radius: $brs
+		border: none
+	&-bd
+		@extend .btn
+		max-width: 100%
+		background: transparent
+		color: $white
+		border: 2px solid $main
+	&-link
+		text-transform: uppercase
+		+ft(16, 16, 700)
+		@extend %text-grad
+		border-bottom: 1px solid $main
+		transition: $trs
+		&:hover
+			border-bottom-color: transparent
+	+maw($xs)
+		max-width: 100%
+		width: 100%
+		min-width: 0
+
+.form
+	&__wrap
+		max-width: 470px
+		margin-left: auto
+		margin-right: auto
+		margin-top: 32px
+		margin-bottom: 32px
+		padding: 32px
+		border-radius: 8px
+		background-color: rgba($black, 0.2)
+		border: 1px solid $main
+		box-shadow: $bxsd
+		text-align: center
+
+	&__caption
+		+ft(24, 24*1.2, 600)
+		text-transform: uppercase
+		margin-bottom: $gap4
+		b
+			color: $main
+			font-weight: inherit
+			@extend %text-grad
+	&__note
+		font-weight: 400
+		font-size: 80%
+		margin-top: $gap1
+	
+	label
+		display: block
+		text-align: left
+
+	input
+		width: 100%
+		padding: 14px 16px
+		background-color: rgba($white, 0.1)
+		border: 1px solid $dark
+		border-width: 0 0 1px
+		border-radius: 4px
+		color: $white
+
+	button
+		@extend .btn
+		width: 100%
+		max-width: 100%
+		margin-top: 24px
+
+	&__row
+		margin-top: 12px
+		margin-bottom: 12px
+		&--inline
+			display: grid
+			grid-template-columns: 1fr 1fr
+			gap: 12px
+			+maw($xs)
+				grid-template-columns: 1fr
+	+maw($sm)
+		&__caption
+			+ft(18, 18*1.4, 700)
+	
+

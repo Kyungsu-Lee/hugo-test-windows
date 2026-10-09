@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <section class="page-intro">
+    <p class="eyebrow">Term</p>
+    <h1 class="page-title">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="page-intro__body prose">{{ . }}</div>
+    {{ end }}
+  </section>
+
+  <section class="section-list">
+    <div class="entry-list">
+      {{ range .Pages }}
+        {{ partial "entry.html" . }}
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

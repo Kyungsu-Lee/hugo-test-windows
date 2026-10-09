@@ -1,0 +1,10 @@
+<h1>
+  {{ .Title }}
+</h1>
+
+<p>
+  {{ .Description | markdownify }}
+  {{ with .OutputFormats.Get "rss" }}
+    <a href="{{ .Permalink }}" class="feed-link"> [RSS feed] </a>
+  {{ end }}
+</p>

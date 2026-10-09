@@ -1,0 +1,479 @@
+/*
+ * hugo-mini theme behaviour: mobile menu, theme toggle, Telegram widget,
+ * code-copy buttons, heading anchors, recent-posts sidebar, back-to-top.
+ *
+ * Plain JavaScript on purpose — it is bundled through Hugo Pipes but NOT run
+ * through ExecuteAsTemplate, so it stays lintable and formattable and no `{{`
+ * in JS syntax can break the build. Localized strings arrive via
+ * body[data-i18n] (see layouts/baseof.html).
+ */
+(function () {
+  'use strict';
+
+  // Breakpoint shared with CSS (@media max-width: 768px). Keep in sync.
+  var MOBILE_QUERY = '(max-width: 768px)';
+
+  var i18n = {};
+  try {
+    i18n = JSON.parse(document.body.getAttribute('data-i18n') || '{}');
+  } catch (e) {
+    /* malformed attribute — fall back to the English defaults below */
+  }
+  function t(key, fallback) {
+    return i18n[key] || fallback;
+  }
+
+  /** Debounced window listener; returns the wrapped handler. */
+  function onResize(fn, delay) {
+    var timer = null;
+    function handler() {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(fn, delay || 150);
+    }
+    window.addEventListener('resize', handler);
+    return handler;
+  }
+
+  /** Run now if the DOM is parsed, otherwise on DOMContentLoaded. */
+  function ready(fn) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fn);
+    } else {
+      fn();
+    }
+  }
+
+  // ── Mobile menu ────────────────────────────────────────────────────────
+  ready(function initMobileMenu() {
+    var toggle = document.querySelector('.mobile-menu-toggle');
+    var nav = document.querySelector('.main-nav');
+    if (!toggle || !nav) return;
+
+    function closeMenu() {
+      nav.classList.remove('active');
+      toggle.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+      document.documentElement.classList.remove('menu-open');
+    }
+
+    function openMenu() {
+      window.scrollTo(0, 0);
+      nav.classList.add('active');
+      toggle.classList.add('active');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+      document.documentElement.classList.add('menu-open');
+    }
+
+    toggle.addEventListener('click', function () {
+      if (nav.classList.contains('active')) closeMenu();
+      else openMenu();
+    });
+
+    // Close on link click, but not when opening in a new tab.
+    nav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        if (!e.ctrlKey && !e.metaKey && !e.shiftKey) closeMenu();
+      });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || !nav.classList.contains('active')) return;
+      closeMenu();
+      toggle.focus();
+    });
+  });
+
+  // ── Theme toggle + widgets that follow it ──────────────────────────────
+  (function () {
+    var STORAGE_KEY = 'theme';
+    var LABELS = {
+      light: t('toDark', 'Switch to dark theme'),
+      dark: t('toLight', 'Switch to light theme'),
+    };
+    var root = document.documentElement;
+    var mql = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function currentTheme() {
+      return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    }
+
+    function storedChoice() {
+      try {
+        return localStorage.getItem(STORAGE_KEY);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function syncLikelyTheme() {
+      var dark = currentTheme() === 'dark';
+      document.querySelectorAll('.likely').forEach(function (w) {
+        w.classList.toggle('likely-dark-theme', dark);
+      });
+    }
+
+    var tgWidget = null;
+    function syncTelegramTheme() {
+      if (!tgWidget) return;
+      var dark = currentTheme() === 'dark';
+      tgWidget.setAttribute('data-dark', dark ? '1' : '0');
+      // Telegram queues options until the iframe is ready. Keep the same
+      // iframe so switching themes cannot reload comments or lose a draft.
+      if (window.Telegram && typeof window.Telegram.setWidgetOptions === 'function') {
+        window.Telegram.setWidgetOptions({ dark: dark }, tgWidget);
+      }
+    }
+
+    function loadTelegramWidget() {
+      var container = document.getElementById('tg-comments');
+      if (!container || tgWidget) return;
+      var discussion = container.getAttribute('data-tg-discussion');
+      if (!discussion) return;
+      tgWidget = document.createElement('script');
+      tgWidget.async = true;
+      tgWidget.src = 'https://telegram.org/js/telegram-widget.js?22';
+      tgWidget.setAttribute('data-telegram-discussion', discussion);
+      tgWidget.setAttribute('data-comments-limit', container.getAttribute('data-tg-limit') || '20');
+      tgWidget.onload = syncTelegramTheme;
+      syncTelegramTheme();
+      container.appendChild(tgWidget);
+    }
+
+    function observeTelegramWidget() {
+      var container = document.getElementById('tg-comments');
+      if (!container || typeof IntersectionObserver === 'undefined') {
+        loadTelegramWidget();
+        return;
+      }
+      var observer = new IntersectionObserver(
+        function (entries) {
+          if (entries[0].isIntersecting) {
+            loadTelegramWidget();
+            observer.disconnect();
+          }
+        },
+        { rootMargin: '200px' }
+      );
+      observer.observe(container);
+    }
+
+    // Follow the system until the user makes an explicit choice.
+    function onSystemChange() {
+      if (storedChoice() !== null) return;
+      root.setAttribute('data-theme', mql.matches ? 'dark' : 'light');
+      var btn = document.querySelector('.theme-toggle');
+      if (btn) {
+        btn.title = LABELS[currentTheme()];
+        btn.setAttribute('aria-label', LABELS[currentTheme()]);
+      }
+      syncLikelyTheme();
+      syncTelegramTheme();
+    }
+    if (mql.addEventListener) mql.addEventListener('change', onSystemChange);
+    else if (mql.addListener) mql.addListener(onSystemChange); // Safari < 14
+
+    // A mobile browser can restore an article together with its old iframe.
+    window.addEventListener('pageshow', syncTelegramTheme);
+
+    ready(function initThemeToggle() {
+      syncLikelyTheme();
+      observeTelegramWidget();
+      var btn = document.querySelector('.theme-toggle');
+      if (!btn) return;
+      btn.title = LABELS[currentTheme()];
+      btn.setAttribute('aria-label', LABELS[currentTheme()]);
+      btn.addEventListener('click', function () {
+        var next = currentTheme() === 'dark' ? 'light' : 'dark';
+        try {
+          localStorage.setItem(STORAGE_KEY, next);
+        } catch (e) {
+          /* private mode — the choice just won't persist */
+        }
+        root.setAttribute('data-theme', next);
+        btn.title = LABELS[next];
+        btn.setAttribute('aria-label', LABELS[next]);
+        syncLikelyTheme();
+        syncTelegramTheme();
+      });
+    });
+  })();
+
+  // ── Copy button on code blocks ─────────────────────────────────────────
+  (function () {
+    if (!navigator.clipboard) return;
+    var svgCopy =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    var svgCheck =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    var FEEDBACK_MS = 1500;
+
+    document.querySelectorAll('.highlight').forEach(function (block) {
+      var code = block.querySelector('code');
+      if (!code) return;
+      var wrapper = block.closest('.code-block[data-code]');
+      var source = wrapper ? wrapper.getAttribute('data-code') : code.textContent;
+      var btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.type = 'button';
+      btn.innerHTML = svgCopy;
+      btn.title = t('copy', 'Copy');
+      btn.setAttribute('aria-label', t('copy', 'Copy'));
+      btn.setAttribute('aria-live', 'polite');
+      btn.querySelector('svg').setAttribute('aria-hidden', 'true');
+      var timer = null;
+      btn.addEventListener('click', function () {
+        navigator.clipboard
+          .writeText(source)
+          .then(function () {
+            btn.innerHTML = svgCheck;
+            btn.querySelector('svg').setAttribute('aria-hidden', 'true');
+            btn.setAttribute('aria-label', t('copied', 'Copied'));
+            btn.classList.add('copied');
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(function () {
+              btn.innerHTML = svgCopy;
+              btn.querySelector('svg').setAttribute('aria-hidden', 'true');
+              btn.setAttribute('aria-label', t('copy', 'Copy'));
+              btn.classList.remove('copied');
+              timer = null;
+            }, FEEDBACK_MS);
+          })
+          .catch(function () {
+            /* permission denied or insecure context */
+          });
+      });
+      block.appendChild(btn);
+    });
+  })();
+
+  // ── Heading anchors: click copies the section URL ───────────────────────
+  (function () {
+    if (!navigator.clipboard) return;
+    var FEEDBACK_MS = 1200;
+    // Live query: re-evaluated on each interaction so rotating a tablet
+    // switches behaviour instead of keeping whatever was true at load.
+    var mobileMql = window.matchMedia(MOBILE_QUERY);
+
+    document.querySelectorAll('.heading-anchor').forEach(function (anchor) {
+      var heading = anchor.parentElement;
+      var timer = null;
+      var originalLabel = anchor.getAttribute('aria-label');
+      anchor.setAttribute('aria-live', 'polite');
+
+      // Mobile: tap the heading to reveal the icon, tap the icon to copy.
+      if (heading) {
+        heading.addEventListener('click', function (e) {
+          if (!mobileMql.matches) return;
+          if (e.target === anchor || anchor.contains(e.target)) {
+            e.stopPropagation();
+            return;
+          }
+          heading.classList.toggle('anchor-visible');
+        });
+      }
+
+      anchor.addEventListener('click', function () {
+        navigator.clipboard
+          .writeText(anchor.href)
+          .then(function () {
+            anchor.classList.add('copied');
+            anchor.setAttribute('aria-label', t('copied', 'Copied'));
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(function () {
+              anchor.classList.remove('copied');
+              anchor.setAttribute('aria-label', originalLabel);
+              timer = null;
+            }, FEEDBACK_MS);
+          })
+          .catch(function () {
+            /* permission denied or insecure context */
+          });
+      });
+    });
+  })();
+
+  // Mermaid: load once near the first diagram, then render only diagrams
+  // near the viewport. Serialize renders so theme changes cannot reset a
+  // node while Mermaid is still writing its SVG.
+  ready(function () {
+    var configText = document.body.getAttribute('data-mermaid');
+    if (!configText) return;
+    var config = JSON.parse(configText);
+    var entries = Array.from(document.querySelectorAll('.mermaid'), function (node) {
+      return { node: node, source: node.textContent, visible: false, theme: null, failed: false };
+    });
+    if (!entries.length) return;
+    var library;
+    var running = false;
+    var observer;
+
+    function load() {
+      if (!library) {
+        if (config.module) {
+          library = import(config.src).then(function (module) { return module.default; });
+        } else {
+          library = new Promise(function (resolve, reject) {
+            var script = document.createElement('script');
+            script.src = config.src;
+            if (config.integrity) {
+              script.integrity = config.integrity;
+              script.crossOrigin = 'anonymous';
+              script.referrerPolicy = 'no-referrer';
+            }
+            script.onload = function () {
+              if (window.mermaid) resolve(window.mermaid);
+              else reject(new Error('Mermaid did not initialize'));
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+        }
+      }
+      return library;
+    }
+
+    async function render() {
+      if (running) return;
+      running = true;
+      try {
+        var mermaid = await load();
+        mermaid.initialize({ startOnLoad: false });
+        if (document.fonts) await document.fonts.ready;
+        while (true) {
+          var theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'neutral';
+          var entry = entries.find(function (item) {
+            return item.visible && !item.failed && item.theme !== theme;
+          });
+          if (!entry) break;
+          entry.node.textContent = entry.source;
+          entry.node.removeAttribute('data-processed');
+          mermaid.initialize({ startOnLoad: false, theme: theme });
+          try {
+            await mermaid.run({ nodes: [entry.node] });
+          } catch (error) {
+            entry.node.textContent = entry.source;
+            entry.failed = true;
+          }
+          entry.theme = theme;
+          entry.node.style.visibility = 'visible';
+        }
+      } catch (error) {
+        // A missing entry/chunk must leave readable source, not a blank block.
+        entries.forEach(function (entry) {
+          entry.node.textContent = entry.source;
+          entry.node.style.visibility = 'visible';
+          entry.failed = true;
+        });
+        if (observer) observer.disconnect();
+      } finally {
+        running = false;
+      }
+    }
+
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(function (changes) {
+        changes.forEach(function (change) {
+          if (!change.isIntersecting) return;
+          entries.find(function (entry) { return entry.node === change.target; }).visible = true;
+          observer.unobserve(change.target);
+          render();
+        });
+      }, { rootMargin: '200px' });
+      entries.forEach(function (entry) { observer.observe(entry.node); });
+    } else {
+      entries.forEach(function (entry) { entry.visible = true; });
+      render();
+    }
+    new MutationObserver(function () {
+      if (entries.some(function (entry) { return entry.visible && !entry.failed; })) render();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  });
+
+  // ── Recent-posts sidebar: absolute in the right gutter on desktop ───────
+  (function () {
+    var MIN_GUTTER = 180;
+    var GAP = 24;
+    var sidebar = document.getElementById('recent-sidebar');
+    if (!sidebar) return;
+
+    function measure() {
+      var rect = document.body.getBoundingClientRect();
+      var gutter = window.innerWidth - rect.right;
+      if (gutter < MIN_GUTTER) {
+        sidebar.classList.remove('is-sidebar');
+        sidebar.style.cssText = '';
+        return;
+      }
+      var h1 = document.querySelector('h1');
+      var topPos = h1
+        ? Math.round(h1.getBoundingClientRect().top + window.pageYOffset)
+        : Math.round(rect.top + window.pageYOffset);
+      sidebar.classList.add('is-sidebar');
+      sidebar.style.display = 'block';
+      sidebar.style.top = topPos + 'px';
+      sidebar.style.left = Math.round(rect.left + window.pageXOffset + rect.width + GAP - 16) + 'px';
+      sidebar.style.width = Math.round(gutter - GAP - 16) + 'px';
+    }
+
+    onResize(measure);
+    measure();
+    // The first measure runs against fallback-font metrics; once the web font
+    // swaps in, h1 moves and the sidebar would sit at a stale offset.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measure);
+    }
+  })();
+
+  // ── Back to top: click area in the left gutter ──────────────────────────
+  (function () {
+    var SCROLL_THRESHOLD = 400;
+    var MIN_GUTTER = 130;
+    var label = t('goUp', 'Go up');
+
+    var wrap = document.createElement('a');
+    wrap.className = 'back-to-top-wrap';
+    // href keeps it keyboard-focusable; the handler preventDefaults the jump.
+    wrap.setAttribute('href', '#');
+    wrap.setAttribute('role', 'button');
+    wrap.setAttribute('aria-label', label);
+
+    var inner = document.createElement('div');
+    inner.className = 'back-to-top';
+    inner.innerHTML =
+      '<svg class="back-to-top-icon" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 5l4-4 4 4"/></svg>';
+    inner.appendChild(document.createTextNode(label));
+
+    wrap.appendChild(inner);
+    document.body.appendChild(wrap);
+
+    var gutterOk = false;
+
+    function onScroll() {
+      if (gutterOk && window.pageYOffset > SCROLL_THRESHOLD) {
+        wrap.classList.add('shown');
+      } else {
+        wrap.classList.remove('shown');
+      }
+    }
+
+    function measure() {
+      var gutter = document.body.getBoundingClientRect().left;
+      gutterOk = gutter > MIN_GUTTER;
+      wrap.style.width = gutter + 'px';
+      wrap.style.display = gutterOk ? 'block' : 'none';
+      onScroll();
+    }
+
+    wrap.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.scroll(0, 0);
+      onScroll();
+    });
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onResize(measure);
+    measure();
+  })();
+})();

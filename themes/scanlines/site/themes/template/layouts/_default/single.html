@@ -1,0 +1,21 @@
+{{ define "main" }}
+<div class="container">
+  <div class="content-wrapper">
+      <article class="article">
+        {{- partial "article-header.html" . -}}
+
+        <div class="article-content">
+          {{ .Content }}
+        </div>
+
+        {{- partial "article-footer.html" . -}}
+      </article>
+
+      {{- /* Prev/next only makes sense within the posts section — root pages
+             like /about/ would otherwise chain to unrelated siblings */ -}}
+      {{- if eq .Section (site.Params.scanlines.contentSection | default "posts") -}}
+      {{- partial "post-nav.html" . -}}
+      {{- end -}}
+  </div>
+</div>
+{{ end }}

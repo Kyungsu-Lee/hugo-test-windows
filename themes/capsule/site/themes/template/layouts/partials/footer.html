@@ -1,0 +1,82 @@
+<footer class="footer">
+  <div class="container">
+    <nav class="level">
+
+      {{ range $.Site.Home.Sections -}}
+      <div class="level-item has-text-centered">
+        <a href="{{ .Permalink }}" class="heading">
+          <span class="header">{{ .Title }}</span>
+        </a>
+      </div>
+      {{- end }}
+
+    </nav>
+
+    <nav class="level">
+
+      <div class="level-left has-text-centered">
+        <div class="level-item">
+          <form class="control has-icons has-icons-right" method="get"
+                action="{{ if .Site.Params.searchURL }}{{ .Site.Params.searchURL }}
+                        {{- else }}https://duckduckgo.com
+                        {{- end }}">
+            <input class="input" type="text" name="q" maxlength="255"
+                   placeholder="{{- i18n "search" }}">
+            <input class="input" type="hidden" name="sites"
+                   value="{{ .Site.BaseURL }}">
+            <span class="icon is-small is-right"><i class="fas fa-search"></i></span>
+          </form>
+        </div>
+      </div>
+
+      <div class="level-right has-text-centered">
+        <div class="level-item buttons">
+
+          <a class="button" href="{{ "/" | relLangURL }}">
+            <span class="icon"><i class="fa-solid fa-house"></i></span>
+          </a>
+
+          <a class="button" href="mailto:{{ .Site.Params.Author.email }}">
+            <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+          </a>
+
+          <!-- Most sites have the template https://<site>.com/<user>, so just
+               use that instead of hardcoding everything. Sites that don't
+               follow the template will need hard-coding, though... -->
+          {{- range $key, $value := .Site.Params.Social }}
+            {{- if eq $key "hacker-news" }}
+          <a class="button"
+             href="https://news.ycombinator.com/user?id={{ $value }}">
+            <span class="icon"><i class="fa-brands fa-{{ $key }}"></i></span>
+          </a>
+
+            {{- else if eq $key "codeberg" }}
+          <a class="button" href="https://{{ $key }}.org/{{ $value }}">
+            <span class="icon"><i class="fa fa-code"></i></span>
+          </a>
+
+            {{- else if eq $key "reddit" }}
+          <a class="button"
+             href="https://reddit.com/user/{{ $value }}">
+            <span class="icon"><i class="fa-brands fa-{{ $key }}"></i></span>
+          </a>
+
+            {{- else }}
+          <a class="button" href="https://{{ $key }}.com/{{ $value }}">
+            <span class="icon"><i class="fa-brands fa-{{ $key }}"></i></span>
+          </a>
+
+            {{- end }}
+          {{- end }}
+
+          <a class="button"
+             href="{{ with .OutputFormats.Get "RSS" }}{{ .RelPermalink | relLangURL }}{{ end }}">
+            <span class="icon"><i class="fas fa-rss"></i></span>
+          </a>
+
+        </div>
+      </div>
+
+    </nav>
+  </div>
+</footer>

@@ -1,0 +1,22 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="logo-prompt" aria-hidden="true">&gt;_</span> {{ site.Title }}
+        </div>
+        {{- with site.Params.footer.tagline }}
+          <p>{{ . }}</p>
+        {{- else }}
+          <p>{{ site.Params.description }}</p>
+        {{- end }}
+      </div>
+      {{ partial "footer-social.html" . }}
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{- with site.Params.footer.since -}}
+        {{- if ne (int .) now.Year }}{{ int . }} - {{ end -}}
+      {{- end }}{{ now.Year }} {{ site.Params.footer.copyright | default site.Params.author.name }}</p>
+    </div>
+  </div>
+</footer>

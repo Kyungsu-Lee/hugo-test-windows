@@ -1,0 +1,43 @@
+.btn {
+	display: inline-block;
+	font-size: 13px;
+	border: 1px solid #ffffff;
+	padding: 6px 12px;
+	white-space: nowrap;
+}
+
+.btn:hover {
+	background-color: #bdbdbd4d;
+}
+
+a > .btn:hover {
+  text-decoration: none;
+}
+
+/*
+XXX Maybe but this in? Somethimes it's not smooth and that makes it ugly...
+.btn, .btn-primary, a.btn-default, a {
+	transition: all 0.1s linear;
+}
+*/
+
+.btn-posts-navigation {
+	white-space: nowrap;
+}
+
+.btn-home {
+	margin-right: 20px;
+}
+
+.button-list-item {
+	margin-left: 15px;
+	background-color: #00000020 !important;
+}
+
+.button-list-item:hover {
+	background-color: #bdbdbd20 !important;
+}
+
+.button-list-item:first-child {
+	margin-left: 0px;
+}

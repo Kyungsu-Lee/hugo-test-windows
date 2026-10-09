@@ -1,0 +1,228 @@
+# Page settings
+
+baseURL = "https://example.org/"
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = true
+disableKinds = ["taxonomy", "term", "rss", "sitemap", "404"]
+
+
+# Settings shared by all languages
+[params]
+googleTagManager = "GTM-xxxxxxxx"
+
+[params.metadata]
+ogImage = "images/work1.jpg"
+twitterSite = "@username"
+
+# English
+[languages.en]
+locale = "en-US"
+label = "English"
+title = "Hugo Theme Doors"
+copyright = "© Hugo Theme Doors"
+weight = 1
+
+[languages.en.params]
+languageSelector = "Language"
+
+[languages.en.params.metadata]
+description = "A collection of my works."
+
+[languages.en.params.projects]
+
+[[languages.en.params.projects.groups]]
+title = "Featured work"
+
+[[languages.en.params.projects.groups.list]]
+title = "Name of the work 1"
+url = "#"
+description = "Describe your work summary"
+image = "images/work1.jpg"
+w = "780"
+h = "518"
+
+[languages.en.params.subprojects]
+
+[[languages.en.params.subprojects.list]]
+title = "The work 2"
+url = "#"
+description = "Lorem ipsum dolor sit amet"
+image = "images/work2.jpg"
+w = "780"
+h = "522"
+
+[[languages.en.params.subprojects.list]]
+title = "The work 3"
+url = "#"
+description = "Consectetur adipiscing elit"
+image = "images/work3.jpg"
+w = "780"
+h = "518"
+
+[[languages.en.params.subprojects.list]]
+title = "The work 4"
+url = "#"
+description = "Sed do eiusmod tempor incididunt"
+image = "images/work4.jpg"
+w = "780"
+h = "518"
+
+[languages.en.params.contact]
+position = "top"
+avatar = "images/work4.jpg"
+name = "Jane Doe"
+description = "I would like to hear from you. Please contact me via email or social media."
+
+[[languages.en.params.contact.links]]
+label = "X"
+url = "#"
+icon = "x"
+
+[[languages.en.params.contact.links]]
+label = "LinkedIn"
+url = "#"
+icon = "linkedin"
+
+[[languages.en.params.contact.links]]
+label = "Instagram"
+url = "#"
+icon = "instagram"
+
+[[languages.en.params.contact.links]]
+label = "YouTube"
+url = "#"
+icon = "youtube"
+
+[[languages.en.params.contact.links]]
+label = "note"
+url = "#"
+icon = "note"
+
+[[languages.en.params.contact.links]]
+label = "News"
+url = "#"
+icon = "images/icons/newspaper.svg"
+
+[[languages.en.params.contact.links]]
+label = "Email"
+url = "mailto:jane@example.com"
+icon = "email"
+
+[languages.en.params.footer]
+
+[[languages.en.params.footer.links]]
+label = "Contact"
+url = "/contact/"
+
+[[languages.en.params.footer.links]]
+label = "Terms of Use"
+url = "/terms/"
+
+[[languages.en.params.footer.links]]
+label = "Privacy Policy"
+url = "/privacy/"
+
+# Japanese
+[languages.ja]
+locale = "ja-JP"
+label = "日本語"
+title = "Hugoテーマ Doors"
+copyright = "© Hugoテーマ Doors"
+weight = 2
+
+[languages.ja.params]
+description = ["作品へのリンク集です。", "気になる作品を見つけてください。"]
+languageSelector = "言語"
+
+[languages.ja.params.metadata]
+description = "作品へのリンク集です。"
+
+[languages.ja.params.projects]
+
+[[languages.ja.params.projects.list]]
+title = "作品名1"
+url = "#"
+description = "作品の概要"
+image = "images/work1.jpg"
+w = "780"
+h = "518"
+
+[languages.ja.params.subprojects]
+
+[[languages.ja.params.subprojects.list]]
+title = "作品2"
+url = "#"
+description = "作品の説明文"
+image = "images/work2.jpg"
+w = "780"
+h = "522"
+
+[[languages.ja.params.subprojects.list]]
+title = "作品3"
+url = "#"
+description = "作品の説明文"
+image = "images/work3.jpg"
+w = "780"
+h = "518"
+
+[[languages.ja.params.subprojects.list]]
+title = "作品4"
+url = "#"
+description = "作品の説明文"
+image = "images/work4.jpg"
+w = "780"
+h = "518"
+
+[languages.ja.params.contact]
+avatar = "images/work4.jpg"
+name = "山田 花子"
+description = "ご連絡はメールまたはSNSからお願いします。"
+
+[[languages.ja.params.contact.links]]
+label = "X"
+url = "#"
+icon = "x"
+
+[[languages.ja.params.contact.links]]
+label = "LinkedIn"
+url = "#"
+icon = "linkedin"
+
+[[languages.ja.params.contact.links]]
+label = "Instagram"
+url = "#"
+icon = "instagram"
+
+[[languages.ja.params.contact.links]]
+label = "YouTube"
+url = "#"
+icon = "youtube"
+
+[[languages.ja.params.contact.links]]
+label = "note"
+url = "#"
+icon = "note"
+
+[[languages.ja.params.contact.links]]
+label = "ニュース"
+url = "#"
+icon = "images/icons/newspaper.svg"
+
+[[languages.ja.params.contact.links]]
+label = "メール"
+url = "mailto:hanako@example.com"
+icon = "email"
+
+[languages.ja.params.footer]
+
+[[languages.ja.params.footer.links]]
+label = "お問い合わせ"
+url = "/ja/contact/"
+
+[[languages.ja.params.footer.links]]
+label = "利用規約"
+url = "/ja/terms/"
+
+[[languages.ja.params.footer.links]]
+label = "プライバシーポリシー"
+url = "/ja/privacy/"

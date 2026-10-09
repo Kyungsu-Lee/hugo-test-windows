@@ -1,0 +1,30 @@
+{{- if site.Params.theme.footer.enabled -}}
+  {{- $footerItems := site.GetPage "/sections/footer" -}}
+  {{- if $footerItems -}}
+
+    {{- $bgColor := site.Params.theme.footer.background_color -}}
+    {{- $bgClass := site.Params.theme.footer.background_class -}}
+    {{- $fgColor := site.Params.theme.footer.font_color -}}
+    {{- $lnColor := site.Params.theme.footer.link_color -}}
+
+    <div class="footer-container{{ if and (not $bgColor) $bgClass }} {{ $bgClass }}{{ end }}"
+         {{- if or $bgColor $fgColor $lnColor -}}
+         style="
+           {{- if $bgColor -}}--felmdrav-footer-bg: {{ $bgColor }};{{- end -}}
+           {{- if $fgColor -}}--felmdrav-footer-fg: {{ $fgColor }};{{- end -}}
+           {{- if $lnColor -}}--felmdrav-footer-link: {{ $lnColor }};{{- end -}}
+         "
+         {{- end -}}>
+      <div class="container pt-3 pb-2">
+        <footer>
+          <div class="row">
+            {{- range sort (sort $footerItems.Resources "Name") "Weight" -}}
+              {{- partial "footer_column.html" . -}}
+            {{- end -}}
+          </div>
+        </footer>
+      </div>
+    </div>
+
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,86 @@
+{{ define "main" }}
+  {{ $ui := site.Params.ui }}
+  {{ $items := slice }}
+
+  {{ if eq .Data.Plural "authors" }}
+    {{ $seen := dict }}
+
+    {{ range .Data.Terms.Alphabetical }}
+      {{ $slug := .Page.RelPermalink | replaceRE "^/authors/" "" | replaceRE "/$" "" | lower }}
+      {{ $items = $items | append (dict "title" .Page.LinkTitle "permalink" .Page.RelPermalink "count" .Count "sortKey" (lower .Page.LinkTitle)) }}
+      {{ $seen = merge $seen (dict $slug true) }}
+    {{ end }}
+
+    {{ range (where site.RegularPages "Section" "authors") }}
+      {{ $slug := .RelPermalink | replaceRE "^/authors/" "" | replaceRE "/$" "" | lower }}
+      {{ if not (index $seen $slug) }}
+        {{ $count := 0 }}
+        {{ $authorName := lower (strings.TrimSpace .Title) }}
+        {{ range site.RegularPages }}
+          {{ if ne .RelPermalink $.RelPermalink }}
+            {{ $matched := false }}
+            {{ with .Params.authors }}
+              {{ if reflect.IsSlice . }}
+                {{ range . }}
+                  {{ $candidate := lower (strings.TrimSpace (printf "%v" .)) }}
+                  {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $slug) }}
+                    {{ $matched = true }}
+                  {{ end }}
+                {{ end }}
+              {{ else }}
+                {{ $candidate := lower (strings.TrimSpace (printf "%v" .)) }}
+                {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $slug) }}
+                  {{ $matched = true }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+            {{ if and (not $matched) .Params.author }}
+              {{ if reflect.IsSlice .Params.author }}
+                {{ range .Params.author }}
+                  {{ $candidate := lower (strings.TrimSpace (printf "%v" .)) }}
+                  {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $slug) }}
+                    {{ $matched = true }}
+                  {{ end }}
+                {{ end }}
+              {{ else }}
+                {{ $candidate := lower (strings.TrimSpace (printf "%v" .Params.author)) }}
+                {{ if or (eq $candidate $authorName) (eq (urlize $candidate) $slug) }}
+                  {{ $matched = true }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+            {{ if $matched }}
+              {{ $count = add $count 1 }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+
+        {{ $items = $items | append (dict "title" .LinkTitle "permalink" .RelPermalink "count" $count "sortKey" (lower .LinkTitle)) }}
+        {{ $seen = merge $seen (dict $slug true) }}
+      {{ end }}
+    {{ end }}
+
+    {{ $items = sort $items "sortKey" "asc" }}
+  {{ else }}
+    {{ range .Data.Terms.Alphabetical }}
+      {{ $items = $items | append (dict "title" .Page.LinkTitle "permalink" .Page.RelPermalink "count" .Count "sortKey" (lower .Page.LinkTitle)) }}
+    {{ end }}
+  {{ end }}
+
+  <section class="taxonomy-page">
+    <header class="taxonomy-page__header">
+      <p class="eyebrow">{{ $ui.taxonomyEyebrow | default "Browse" }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Content }}<div class="taxonomy-page__intro">{{ . }}</div>{{ end }}
+    </header>
+
+    <ul class="taxonomy-list">
+      {{ range $items }}
+        <li class="taxonomy-list__item">
+          <a href="{{ .permalink }}">{{ .title }}</a>
+          <span>{{ .count }}</span>
+        </li>
+      {{ end }}
+    </ul>
+  </section>
+{{ end }}

@@ -1,0 +1,10 @@
+{{- $ui := site.Params.ui -}}
+{{- $copyrightTemplate := $ui.footerCopyright | default "Copyright {year}. All rights reserved." -}}
+{{- $copyrightText := replace $copyrightTemplate "{year}" (printf "%d" now.Year) -}}
+<footer class="site-footer" data-pagefind-ignore>
+  <div class="site-footer__top">
+    <p class="site-footer__title">{{ site.Title }}</p>
+    <p class="site-footer__tagline">{{ $ui.footerTagline | default "Essays, criticism, and long-form narrative." }}</p>
+  </div>
+  <p class="site-footer__meta">{{ $copyrightText }}</p>
+</footer>

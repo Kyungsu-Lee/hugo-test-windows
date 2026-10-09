@@ -1,0 +1,45 @@
+{{ define "main" }}
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage }}
+<style>
+</style>
+{{ end }}
+
+
+{{ "<!-- Hero Section -->" | safeHTML }}
+{{ "<!-- End of Hero Section -->" | safeHTML }}
+
+<article class="hero__wrap">
+    {{- partial "header.html" . -}}
+    {{- partial "_hero.html" . -}}
+</article>
+
+<!-- BEGIN section -->
+{{- partial "_sec-features.html" . -}}
+<!-- END section -->
+
+
+<!-- BEGIN section -->
+{{- partial "_sec-note.html" . -}}
+<!-- END section -->
+
+<!-- BEGIN section -->
+{{- partial "_sec-about.html" . -}}
+<!-- END section -->
+
+<!-- BEGIN section -->
+{{- partial "_sec-join.html" . -}}
+<!-- END section -->
+
+<!-- BEGIN section -->
+{{- partial "_sec-faq.html" . -}}
+<!-- END section -->
+
+<!-- BEGIN section -->
+{{- partial "_sec-contacts.html" . -}}
+<!-- END section -->
+
+
+
+{{ end }}

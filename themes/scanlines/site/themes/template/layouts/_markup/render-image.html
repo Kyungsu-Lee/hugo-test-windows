@@ -1,0 +1,14 @@
+{{- /* Image render hook: lazy-load markdown images. Emits a plain <img> (not a
+       <figure>) so the output is valid whether the image is inline or a
+       standalone block — Goldmark wraps standalone images in <p>, and a <figure>
+       inside <p> is invalid. The CRT grayscale treatment is applied via CSS;
+       use Hugo's built-in `figure` shortcode when you want a visible caption. */ -}}
+{{- $alt := .Text | default .PlainText -}}
+{{- /* Site-relative destinations go through relURL so they keep working under a
+       subdirectory baseURL; absolute URLs and page-bundle resources pass
+       through untouched. */ -}}
+{{- $src := .Destination -}}
+{{- if and (strings.HasPrefix $src "/") (not (strings.HasPrefix $src "//")) -}}
+  {{- $src = strings.TrimPrefix "/" $src | relURL -}}
+{{- end -}}
+<img src="{{ $src }}" alt="{{ $alt }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">

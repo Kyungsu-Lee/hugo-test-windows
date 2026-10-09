@@ -1,0 +1,15 @@
+<nav class="contacts">
+    {{ range .Site.Params.contact }}
+       <div class="contacts__item">
+        <div class="contacts__title">{{ .title }}:</div>
+        {{ if .link }}
+            <a href="{{ .link }}" class="contacts__data">{{ .contact }}</a>
+        {{ else }}
+            <div class="contacts__data">
+                {{ .contact }}
+            </div>
+        {{ end }}
+       </div>
+        
+    {{ end }}
+</nav>

@@ -1,0 +1,139 @@
+[articles]
+other = "Articles"
+
+[misc]
+other = "Miscellaneous"
+
+[popular]
+other = "Popular"
+
+[recent_posts]
+other = "More articles"
+
+[latest_posts]
+other = "Latest articles"
+
+[home]
+other = "Home"
+
+[go_up]
+other = "Go up"
+
+[theme_light]
+other = "Switch to light theme"
+
+[theme_dark]
+other = "Switch to dark theme"
+
+[toggle_theme]
+other = "Toggle theme"
+
+[month_january]
+other = "January"
+
+[month_february]
+other = "February"
+
+[month_march]
+other = "March"
+
+[month_april]
+other = "April"
+
+[month_may]
+other = "May"
+
+[month_june]
+other = "June"
+
+[month_july]
+other = "July"
+
+[month_august]
+other = "August"
+
+[month_september]
+other = "September"
+
+[month_october]
+other = "October"
+
+[month_november]
+other = "November"
+
+[month_december]
+other = "December"
+
+# Category display names
+[cat_marketing]
+other = "Marketing"
+
+[cat_strategy]
+other = "Strategy & Frameworks"
+
+[cat_metrics]
+other = "Metrics & Analytics"
+
+[cat_leadership]
+other = "Team & Leadership"
+
+[cat_self-development]
+other = "Self-Development"
+
+[cat_productivity]
+other = "Productivity"
+
+[cat_collections]
+other = "Collections"
+
+[cat_getting-started]
+other = "Getting Started"
+
+[new_badge]
+other = "New"
+
+[not_found]
+other = "Page not found. It may have been moved or deleted."
+
+[back_home]
+other = "Go to the homepage"
+
+[switch_language]
+other = "Switch language"
+
+[about_author]
+other = "About the author"
+
+[contacts]
+other = "Contacts"
+
+[sections]
+other = "Sections"
+
+[website]
+other = "Website"
+
+[telegram_channel]
+other = "Telegram channel"
+
+[copy]
+other = "Copy"
+
+[copied]
+other = "Copied"
+
+[toggle_menu]
+other = "Toggle menu"
+
+[copy_section_link]
+other = "Copy link to this section"
+
+[telegram_reactions]
+other = "Reactions on Telegram"
+
+[wavy_arrow_to]
+other = "to"
+
+[github_stars]
+one = "{{ .Count }} star on GitHub"
+other = "{{ .Count }} stars on GitHub"

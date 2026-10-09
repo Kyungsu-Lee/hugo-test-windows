@@ -1,0 +1,72 @@
+<!-- To add JavaScript code, place a file "javascript_header.html" into the folder "layouts/partials/" or your main directory. 
+This will overwrite this placeholder file, so you can add a JavaScript snippet.
+-->
+<script src="{{ "js/jquery-3.7.1.min.js" | relURL }}"></script>
+<script>
+  // English comments only:
+  $(function () {
+    const themes = [
+      //    "bolt","brite","btcn","calabaza",  "cerulean",  "cosmo",  "cyborg", "darkly", "flatly", "hoff", "journal", "kdo2", "kdo_flatly", "kunsch", "litera",  "lumen", "lux", "malibu", "materia", "minim", "minty", "morph", "pulse", "quartz",  "sandstone", "simplex", "sketchy", "slate", "slate_accessibility_ready", "solar", "sonic", "spacelab", "superhero", "united", "vapor", "versa", "yeti", "zephyr" 
+
+      "bolt", "brite", "btcn", "calabaza", "cerulean", "cosmo", "cyborg", "darkly", "flatly",
+      "hoff", "journal", "kdo2", "kdo_flatly", "kunsch", "litera", "lumen", "lux",
+      "malibu", "materia", "minim", "minty", "morph", "pulse", "quartz", "sandstone", "simplex",
+      "sketchy", "slate", "slate_accessibility_ready", "solar", "sonic", "spacelab",
+      "superhero", "united", "vapor", "yeti", "zephyr"
+
+    ];
+
+
+    const $link = $("#bs-theme");
+    const $picker = $("#themePicker");
+
+    // Adjust this path to your "pure Bootstrap" CSS file
+    const bootstrapDefaultHref = `{{ "css/bootstrap.min.css" | relURL }}`;
+
+    if ($picker.length) {
+      // Add "Default" option (Bootstrap without Bootswatch)
+      $picker.append($("<option/>").val("").text("Bootstrap (default)"));
+
+      // Add all bootswatch themes
+      themes.forEach(t => $picker.append($("<option/>").val(t).text(t)));
+      function setTheme(t) {
+        const theme = (t ?? "").toString().trim();
+
+        // Default: disable override, keep bundled bootstrap
+        if (!theme) {
+          $link.attr("href", "");
+          localStorage.setItem("bootswatchTheme", "");
+          $picker.val("");
+
+          const url = new URL(window.location.href);
+          url.searchParams.delete("theme");
+          history.replaceState(null, "", url.toString());
+          return;
+        }
+
+        // Enable bootswatch override
+        $link.attr("href", `{{ "css/bootswatch" | relURL }}/${theme}/bootstrap.min.css`);
+        localStorage.setItem("bootswatchTheme", theme);
+        $picker.val(theme);
+
+        const url = new URL(window.location.href);
+        url.searchParams.set("theme", theme);
+        history.replaceState(null, "", url.toString());
+      }
+
+
+      const urlTheme = new URL(window.location.href).searchParams.get("theme");
+      const storedTheme = localStorage.getItem("bootswatchTheme");
+
+      // If site param is empty -> default Bootstrap (pur)
+      const siteDefault = `{{ .Site.Params.theme.bootstrap_theme | default "" }}`;
+
+      const initial = (urlTheme !== null ? urlTheme : (storedTheme !== null ? storedTheme : siteDefault));
+      setTheme(initial);
+
+      $picker.on("change", function () { setTheme($(this).val()); });
+     
+    }
+
+  });
+</script>

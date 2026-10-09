@@ -1,0 +1,35 @@
+{{ define "main" }}
+<div class="content-narrow">
+  <header class="page-header">
+    <h1 class="page-title">{{ .Title }}</h1>
+    <p class="page-description">{{ i18n "archive_description" }}</p>
+  </header>
+
+  {{- $posts := where .Site.RegularPages "Section" "posts" -}}
+  {{- $totalPosts := len $posts -}}
+  <p class="archive-total">{{ i18n "articles_written" $totalPosts }}</p>
+
+  {{- $byYear := $posts.GroupByDate "2006" -}}
+  {{- range $byYear }}
+  <div class="archive-group">
+    <div class="archive-year-header">
+      <h2 class="archive-year">{{ .Key }}</h2>
+      <span class="archive-year-count">{{ len .Pages }}</span>
+    </div>
+    <ul class="archive-list">
+      {{- range .Pages }}
+      <li class="archive-item">
+        <a class="archive-item-link" href="{{ .RelPermalink }}">
+          <time class="archive-date" datetime="{{ .Date.Format "2006-01-02" }}">
+            {{ .Date.Format "02 Jan" }}
+          </time>
+          <span class="archive-title">{{ .Title }}</span>
+          <span class="archive-reading">{{ .ReadingTime }} min</span>
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+</div>
+{{ end }}

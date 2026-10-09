@@ -1,0 +1,49 @@
+/* Button style */
+.btn {
+  font-size: 16px;
+  font-family: $primary-font;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 15px 30px;
+  border-radius: 0;
+  border: 1px solid $black;
+  transition: .2s ease;
+  white-space: nowrap;
+
+  &:hover,
+  &:active,
+  &:focus {
+    outline: 0;
+    box-shadow: none;
+  }
+}
+
+.btn-primary {
+  background-color: $black;
+  color: $white;
+  border-color: $black;
+
+  &:active,
+  &:hover,
+  &.focus,
+  &.active {
+    background-color: $white !important;
+    color: $black !important;
+    border-color: $black !important;
+  }
+}
+
+.btn-outline-primary {
+  background-color: transparent;
+  color: $black;
+  border-color: $black;
+
+  &:active,
+  &:hover,
+  &.focus,
+  &.active {
+    background-color: $black !important;
+    border-color: $black !important;
+    color: $white !important;
+  }
+}

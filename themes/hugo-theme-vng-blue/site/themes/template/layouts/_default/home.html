@@ -1,0 +1,50 @@
+{{ define "main" }}
+{{ $eventPosition := default "none" .Site.Params.homeEventPosition }}
+<div class="vg-home">
+  <div class="vg-home-center vg-home-center_top{{ if ne $eventPosition "top" }} vg-home-center_without-event{{ end }}">
+    <div class="vg-home-center__logo">
+      {{ with resources.Get "home-logo-top.png" }}
+      {{ $1x := .Resize (printf "%dx webp q82" (div .Width 2)) }}
+      {{ $2x := .Resize (printf "%dx webp q82" .Width) }}
+      <img src="{{ $1x.RelPermalink }}"
+           srcset="{{ $2x.RelPermalink }} 2x"
+           alt="Top logo" />
+      {{ end }}
+    </div>
+
+    {{ if eq $eventPosition "top" }}
+    <div class="vg-home-center__content">
+      {{ partial "home/home-social.html" . }}
+    </div>
+    {{ end }}
+  </div>
+
+  <div class="vg-home-center vg-home-center_bottom">
+    {{ if eq $eventPosition "bottom" }}
+    <div class="vg-home-center__content">
+      {{ partial "home/home-social.html" . }}
+    </div>
+    {{ end }}
+
+    <div class="vg-home-center__content">
+      {{ partial "home/home-blog-link.html" . }}
+    </div>
+
+    {{ if ne $eventPosition "bottom" }}
+    {{ with resources.Get "home-logo-bottom.png" }}
+    <div class="vg-home-center__logo">
+      {{ $1x := .Resize (printf "%dx webp q82" (div .Width 2)) }}
+      {{ $2x := .Resize (printf "%dx webp q82" .Width) }}
+      <img src="{{ $1x.RelPermalink }}"
+           srcset="{{ $2x.RelPermalink }} 2x"
+           alt="Bottom logo" />
+    </div>
+    {{ end }}
+    {{ end }}
+  </div>
+
+  <div class="vg-home__content">
+    {{ .Content }}
+  </div>
+</div>
+{{ end }}

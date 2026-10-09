@@ -1,0 +1,20 @@
+{{ define "main" }}
+  <section class="page-layout">
+    <article class="page-main content">
+      <header class="page-hero" data-reveal>
+        {{ if .Section }}<div class="kicker">{{ .Section | title }}</div>{{ end }}
+        <h1>{{ .Title }}</h1>
+        {{ if not .Date.IsZero }}
+          <div class="muted">{{ .Date.Format "Jan 02, 2006" }}</div>
+        {{ end }}
+      </header>
+      {{ with .Params.image }}
+        <div class="page-media" data-reveal>
+          <img src="{{ . }}" alt="{{ $.Title }}">
+        </div>
+      {{ end }}
+      <div class="content-body">{{ .Content }}</div>
+    </article>
+    {{ partial "profile-card.html" . }}
+  </section>
+{{ end }}

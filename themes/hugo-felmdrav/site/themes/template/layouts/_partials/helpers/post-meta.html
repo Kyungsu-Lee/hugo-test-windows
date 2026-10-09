@@ -1,0 +1,59 @@
+{{- /* post-meta.html */ -}}
+
+{{- $hideMeta := .Params.hide_meta | default .Site.Params.hide_meta | default false -}}
+{{- if $hideMeta -}}
+{{- /* Meta disabled globally (and per-page override) */ -}}
+{{- else -}}
+
+{{- $showNumberOfWords := .Params.show_number_of_words | default .Site.Params.show_number_of_words -}}
+{{- $dateFormat := .Site.Params.date_format | default "Mon Jan 2, 2006" -}}
+
+{{- $author := "" -}}
+{{- with .Params.author -}}
+{{- $author = . -}}
+{{- else -}}
+{{- with .Site.Params.author -}}
+{{- $author = . -}}
+{{- end -}}
+{{- end -}}
+{{- $author = trim $author " \t\r\n" -}}
+
+{{- $showDate := .Site.Params.show_date | default false -}}
+{{- $hasDate := and $showDate (gt .Date.Year 1) -}}
+{{- $hasAuthor := ne $author "" -}}
+
+{{- if or $hasDate $hasAuthor $showNumberOfWords -}}
+<div class="post-meta small text-body-secondary">
+
+  {{- if $hasDate -}}
+  <span>
+    <i class="bi bi-clock" aria-hidden="true"></i>
+    <span class="visually-hidden">{{ i18n "date" }}: </span>
+    <time datetime="{{ .Date.Format " 2006-01-02T15:04:05Z07:00" }}">
+      {{ .Date.Format $dateFormat }}
+    </time>
+  </span>
+  {{- end -}}
+
+  {{- if and $hasDate $hasAuthor -}}
+  <span class="mx-2">–</span>
+  {{- end -}}
+
+  {{- if $hasAuthor -}}
+  <span>
+    <i class="bi bi-person" aria-hidden="true"></i>
+    <span class="visually-hidden">{{ i18n "author" }}: </span>
+    {{ $author }}
+  </span>
+  {{- end -}}
+
+  {{- if $showNumberOfWords -}}
+  <span class="mx-2">–</span>
+  <span class="ms-2">
+    {{ .FuzzyWordCount }} {{ i18n "words" }}
+  </span>
+  {{- end -}}
+
+</div>
+{{- end -}}
+{{- end -}}

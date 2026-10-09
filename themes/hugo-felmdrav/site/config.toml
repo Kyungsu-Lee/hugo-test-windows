@@ -1,0 +1,374 @@
+baseurl = "https://example.com/"
+locale = "en_US"
+title = "Felmdrav - A Hugo Theme"
+
+
+
+# Language setting of the site, for language configuration see
+#  https://gohugo.io/content-management/multilingual/
+# There are only a few strings which need to be translated, feel free to add more
+# languages.
+DefaultContentLanguage = "en" # current values: "en" or "de"
+
+# To enable a demo of pagination, this value is set to 2 instead of the default. See https://gohugo.io/getting-started/configuration/
+# for all site variables. The paginate default is 10
+
+[pagination]
+  pagerSize = 2
+
+# Google Analytics setting, see Hugo internal templates
+#googleAnalytics = "UA-123-45"
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[security]
+  allowContent = ['text/html', 'text/markdown']
+
+# For all color settings, please use the format "#rrggbb". 
+
+# Generic parameters
+[params]
+  #author= "Heinz"
+  append_site_title = true # Append site title to title tag on every page. Default false
+  #favicon = 'img/favicon.ico' # Add favicon, default empty
+  subtitle = "Example of Subtitle"
+  date_format = "January 2, 2006" # Format dates with Hugo time formatting, see https://gohugo.io/methods/time/format/
+  show_date = true # true|false: Show date on summaries. This is a global setting. If the date should be shown, you have to add a "date" parameter to the content files, otherwise the default value will be used, which is something you don't want.
+  show_number_of_words = false # true|false: Show number of word on article header of single content page
+  hide_meta = false # Hide meta information (date, author, word count) on summary and single pages
+  mainSections = ["posts"]
+
+
+# Navigation bar settings
+
+[params.navbar]
+    style = "header" # Navigation bar style, values "fixed-top" or "header", default is fixed-top
+    
+    color_scheme = "navbar-dark" # navbar-light, navbar-dark
+    
+    bg_scheme = "bg-primary" # see Bootstrap docs, bg.* utilities https://getbootstrap.com/docs/5.3/utilities/background/
+    
+    background_color = ''  # custom background color parameters, e.g. #e3f2fd !important, If color is set, it will be used for background. Set empty for above selection.
+    
+    adjust_header = 20 # Adjust header by adding a distance between navigation and content. Some of the styles need more space, so you can use this option to adjust. Use an integer value of pixels. Only when using fixed-top
+    
+    text_alignment = '' # don't set or leave empty for default (left), or justify-content-end, justify-content-center 
+
+    #brand_image = 'img/rg_mod_20.png' # The "brand image" will be set in "fixed-top" style as icon beside the site title.
+
+
+# Meta header parameter settings
+
+# You can add as many rows as you want, every row defines a meta tag with its key and value. 
+# The content will be included in the head of the site as: <meta name="_key_" content="_value_">.
+
+[params.meta]
+    description = "This is only an example value for the meta description"
+    keywords = "example, site, theme, felmdrav"
+    #author = "John Doe"
+    "DC.Copyright" = "Karl Mustermann"
+    
+
+# Theme configuration
+
+[params.theme]
+
+    bootstrap_theme = '' #'solar' # Use empty value for default Bootstrap color scheme or one of the following values:
+    # bolt, bstrap, btcn, calabaza, cerulean, cosmo, cyborg, darkly, flatly, hoff, journal,
+    # kdo_flatly, kdo2, kunsch, lumen, lux, malibu, materia, minim, minty, pulse, sandstone, 
+    # signa, simplex, sketchy, slate_accessibility_ready, slate, solar, sonic, spacelab, united, yeti
+
+    background_color = '' # If color is set, it will be used for background. Set empty for default.
+    background_image = '' # Set background image, use file name with path in static folder, e.g. 'img/background.jpg'
+    background_image_repeat = '' # Set background image repeat option, see https://developer.mozilla.org/de/docs/Web/CSS/background-repeat
+
+
+# Header configuration
+
+[params.theme.header]
+
+  enabled = true
+
+  # Hero image (optional)
+  image = 'img/header_bg_example.png' # Use header image. This option is only valid if the theme is configured to the "header" style. 
+  
+  alt_text = 'alt text for header image' # Set alt text for header image, default empty
+    
+  # Text display
+  show_text = true
+  text_on_image = true
+
+  # Text alignment on image:
+  # lt = left/top, mt = middle/top, rt = right/top
+  # lb = left/bottom, mb = middle/bottom, rb = right/bottom
+  overlay_alignment = "lb"
+
+  # Padding inside the hero overlay (use rem values)
+  overlay_padding = "1rem"
+
+
+[params.theme.header.backdrop]
+  # Default OFF: enable only if needed for readability
+  enabled = false
+
+  # Background color behind title+subtitle (#rrggbb only)
+  color = "#257a30ff"
+
+  
+  # Opacity of the backdrop box (0.0 .. 1.0)
+  opacity = 0.25
+
+  # Box styling
+  radius = "0.5rem"
+  padding = "0.75rem 1rem"
+
+
+[params.theme.header.text_shadow]
+  enabled = false
+
+  # Shadow color (hex only)
+  color = "#487245ff"
+
+  # Shadow opacity (0.0 .. 1.0)
+  opacity = 0.75
+
+# Optional color overrides.
+# Leave empty to use Bootstrap / Bootswatch defaults.
+[params.theme.header.colors]
+  title = "#222222ff" # use rrggbb
+  subtitle = "#435465ff" # use rrggbb
+
+
+  # The following options are mostly used when the navbar is in "header" mode, i.e. not fixed-top
+  background_color = '' # header background color, leave empty for default
+
+
+
+# Typography settings for hero title and subtitle
+# Uses modern fluid sizing via CSS clamp()
+[params.theme.header.type]
+
+  # Font weights
+  #title_weight = 800
+  #subtitle_weight = 450
+
+  # Responsive font sizes (rem recommended)
+  title_min = "1.15rem"
+  title_max = "3.0rem"
+  subtitle_min = "0.9rem"
+  subtitle_max = "1.55rem"
+
+  # Limit line length for better readability
+  text_max_width = "68ch"
+
+  # Prevent title wrapping on large screens
+  title_nowrap = true
+
+
+# Footer configuration
+
+# To create a footer, create a directory "sections/footer" into your project’s content directory.
+# Then add some content files (.md or .html) to the footer folder AND create an index.md file with the Front Matter setting
+# headless: true
+# Without the "headless" setting the sidebar will not be displayed! 
+# See https://gohugo.io/content-management/page-bundles/#headless-bundle 
+# You can modify the style with a partial "footer_column.html", see example in "layouts/partials/".
+# If you don't have content files in the footer area, the demo texts from below will be shown. If you don't want this, please delete
+# the [[params.theme.footer.demoColumn]] entries or just disable the footer by setting enabled = false. 
+
+[params.theme.footer]
+    enabled = true # Show the footer part
+
+    # add to docs: Sorting weight / name, weight first, then name, if no weight available
+
+    #numberColumns = 3 # Set number of columns available in footer of a page. Use the "footer" folder in the page structure to add content. If nothing is set, the default number is 3. Currently.i.e. since v0.2 not used, the number of columns is identical to the number of files in footer directory.
+    font_color = '' # '#f9fcf9' # set #rgb code, leave empty or don't set for default
+    link_color = '' # Set color of links as #rrggbb code, leave empty for default
+    background_color = "" #'#29281f' # Set color of background as #rrggbb code, leave empty for default
+    background_class ="" # optional: e.g. "bg-dark text-light" or "bg-body-tertiary"
+ 
+
+
+# Subfooter configuration
+
+# To create a subfooter, create a directory "sections/subfooter" into your project’s content directory.
+# Then add some content files (.md or .html) to the subfooter folder AND create an index.md file with the Front Matter setting
+# headless: true
+# Without the "headless" setting the sidebar will not be displayed! 
+# See https://gohugo.io/content-management/page-bundles/#headless-bundle 
+# You can modify the style with a partial "subfooter_item.html", see example in "layouts/partials/".
+
+[params.theme.subfooter] 
+    enabled = true # Show the content below the footer
+    font_color = '' # Text color in subfooter. Leave empty to use the theme default. 
+    link_color = '' # Link color in subfooter. Leave empty to use the theme default. 
+    background_color = '' # Background color of subfooter. Leave empty to use the theme default. 
+    background_class ="" # optional: e.g. "bg-dark text-light" or "bg-body-tertiary"
+ 
+
+# Font configuration
+
+# In this section it is possible to modify the font settings of title, subtitle, navigation bar, body (i.e. the default text used in the content areas) and headlines h1 - h6. You can use Google Fonts as well as any font string the browser supports. 
+
+[params.fonts]
+   
+    header_title = '' # Exoset font, use string, e.g. "Lucida, Verdana, sans-serif". You can use any font value. Please activate Google Font option if you want to include Google Fonts, see their names on https://fonts.google.com/ # applies to .hero-title
+
+
+    header_title_googlefont = false # If the font in the above variable is a Google font, set this option to true. # unchanged
+    #header_title_variant = '800' # font variant, if available, e.g. "regular", "bold" etc. Not every font is available in multiple variants. # unchanged
+
+    #header_title_size = '50px' # set font size, empty for default settings. Valid values are '20px', '1.2em' and so on # weg - pixel sizes not supported anymore
+    
+    header_subtitle = '' # Font settings for subtitle # now applies to .hero-subtitle
+    header_subtitle_googlefont = false # If the font in the above variable is a Google font, set this option to true. # unchanged
+    #header_subtitle_variant = '600' # See above # unchanged
+    #header_subtitle_size = '30px' # See above # replaced by fluid sizing
+
+    #navbar = 'Lucida, Verdana' # font settings for navigation bar
+    #navbar_googlefont = false # If the font in the above variable is a Google font, set this option to true.  
+    #navbar_variant = '' # See above
+    #navbar_size = '20px' # See above
+
+    body = '' # font settings for body content
+    body_googlefont = false # If the font in the above variable is a Google font, set this option to true. 
+    body_variant = '' # See above
+    body_size = '' # See above
+
+    headline = 'Open Sans' # font settings for body content
+    headline_googlefont = false # If the font in the above variable is a Google font, set this option to true. 
+    headline_variant = '' # See above
+    headline_base_size = '' # Set base font of headlines. The real size of H1 - H6 will be calculated based on this size with the same resize factors as in the CSS framework. Choose a size of 0 (zero) to use the default font size of the theme. Please use only integer values without "px", "em" or something else. 
+
+
+# Web analytics configuration
+
+# For Google Analytics, set the googleAnalytics config option to use internal Google Analytics template as described on
+# https://gohugo.io/templates/internal/ 
+# The config option has to be in the first level above the [params] section!
+
+# This theme includes the standard embed codes for Matomo. If you have configured some special options, you can simply overwrite the analytics partials. Just place the snippet code in the file "layouts/partials/analytics/matomo.html" in your site folder. Or copy the theme partials from their path and change their options. If you have added custom snippet files, Hugo's lookup order will use your partial file at first. 
+
+[params.analytics.matomo]
+    enabled = false # Enable Matomo web analytics
+    url = 'https://analytics.example.com' # URL of Matomo application
+    site_id = 0 # Matomo site id. Provided by Matomo when a site is added.
+
+# Sidebar section
+
+# To create a sidebar, create a directory "sections/sidebar" into your project’s content directory.
+# Then add some content files (.md or .html) to the sidebar folder AND create an index.md file with the Front Matter setting
+# headless: true
+# Without the "headless" setting the sidebar will not be displayed! 
+# See https://gohugo.io/content-management/page-bundles/#headless-bundle 
+# You can modify the style with a partial "sidebar_item.html", see example in "layouts/partials/".
+
+[params.sidebar]
+  # hint: see documentation, the handling of sidebar defaults and configuration in front matter has to be described!
+  left = ""
+  right = ""
+  
+  #    default_pos = 'right' # options: 'left', 'right'. Left means sidebar on the left side, right displays the sidebar on the right side
+    #background_class = "border" # body-tertiary | none | border 
+    # maybe later make background_class more configurable, but currently this seems enough
+ 
+[params.grid]
+  left = 3
+  main = 6
+  right = 3
+
+# Image processing configuration
+
+# With this option you can use the image processing options from hugo-theme-bootstrap (https://github.com/razonyang/hugo-theme-bootstrap).
+# Please see the documentation at https://hbs.razonyang.com/v1/en/docs/image-processing/ .
+#
+# If no parameter is added to the image in the Markdown code, the default behavior changes the width of the image so that it scales with the parent element.
+
+[params.images]
+    extended_rendering = false # backward compatible default setting is "false"; set to true to activate extended image rendering functions
+
+# Post options
+
+[params.post]
+  image_title_as_caption = false # default false; set to true to use image title as caption.
+                              # Markdown example: ![Image Caption](/image.jpg "This is my image title as caption")
+
+
+
+# Menu section
+
+# This is an example of the main menu. You can also use the in-file setting in the header of the content files. 
+
+
+[menu]
+
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 10
+
+
+  [[menu.main]]
+    identifier = "posts"
+    name = "Blog"
+    url = "/posts/"
+    weight = 20
+
+
+  [[menu.main]]
+    identifier = "components"
+    name = "Components"
+    url = "/components/"
+    pageRef = "/components"
+    weight = 30
+
+
+  [[menu.main]]
+    name = "Layout"
+    identifier = "layout"
+    url = "#"
+    weight = 40
+
+  [[menu.main]]
+    name = "Sidebar left (3/9)"
+    parent = "layout"
+    url = "/layout/sidebar-left/"
+    weight = 10
+
+  [[menu.main]]
+    name = "Sidebar right (4/8)"
+    parent = "layout"
+    url = "/layout/sidebar-right/"
+    weight = 20
+
+  [[menu.main]]
+    name = "Both sidebars (3/6/3)"
+    parent = "layout"
+    url = "/layout/sidebar-both/"
+    weight = 30
+
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 50
+# [[menu.main]]
+#    identifier = "about-team"
+#    name = "Team"
+#    url = "/about/"
+#    parent = "about"
+#    weight = 31
+
+#  [[menu.main]]
+#    identifier = "about-contact"
+#    name = "Kontakt"
+#    url = "/contact/"
+#    parent = "about"
+#    weight = 32    
+    
+[taxonomies]
+category = "categories"
+tag = "tags"
+series = "series"
+  

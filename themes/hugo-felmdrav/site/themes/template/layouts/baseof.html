@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="{{- .Site.Language.Locale | default "" -}}">
+
+{{ partial "head.html" . }}
+
+<body>
+
+{{/* page override wins over site default */}}
+
+{{- $navbarStyle := default "fixed-top" .Site.Params.navbar.style -}}
+{{- with .Params.navbar.style -}}
+  {{- $navbarStyle = . -}}
+{{- end -}}
+
+{{- if eq $navbarStyle "fixed-top" -}}
+  {{- partial "header_fixed_top.html" . -}}
+{{- else -}}
+  {{- partial "header_default.html" . -}}
+{{- end -}}
+
+<div id="main">
+  {{- block "main" . }}{{- end }}
+</div>
+
+    {{ block "footer" . }}
+        {{ partial "footer_container.html" . }}
+    {{ end }}
+    {{ block "subfooter" . }}
+        {{ partial "subfooter_container.html" . }}
+    {{ end }}
+
+    <div id="media-width-detection-element"></div>
+
+    {{- if .Site.Params.analytics.matomo.enabled -}}
+    {{ partial "analytics/matomo.html" . }}
+    {{- end -}}
+{{/* {{ template "_internal/google_analytics_async.html" . }} */}}
+{{ template "_internal/google_analytics.html" . }}
+{{- partial "bottom.html" . -}}
+{{- partial "javascript_footer.html" . }}
+</body>
+</html>

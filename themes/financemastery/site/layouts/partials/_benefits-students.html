@@ -1,0 +1,29 @@
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.section_benefits_students }}
+{{ with $data.homepage.section_benefits_students }}
+<section class="section section_benefits2">
+    <div class="container">
+
+        <div class="benefit2__wrap">
+            <h2>{{ .title }}</h2>
+
+            <div class="benefit2__container">
+                {{ range .items }}
+                    <figure class="benefit2">
+                        <div class="benefit2__content">
+                            <div class="benefit2__title">{{ .title }}</div>
+                            <div class="benefit2__desc">
+                                {{ .desc }}
+                            </div>
+                        </div>
+                    </figure>
+                {{ end }}
+            </div>
+        </div>
+       
+
+    </div>
+</section>
+{{ end }}
+{{ end }}

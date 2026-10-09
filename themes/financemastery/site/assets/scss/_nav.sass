@@ -1,0 +1,262 @@
+.header
+	padding-top: $gap2
+	padding-bottom: $gap2
+	border-bottom: 1px solid $main
+
+
+.drawer
+	+ps(fixed, (t, 0), (l, 0))
+	z-index: 100500
+	+sz(100%, 100%)
+	+theme(dark)
+	padding: $gap3
+	height: 0
+	visibility: hidden
+	transform: translateX(-100%)
+	transition: transform 0.3s linear
+	.container
+		display: flex
+		flex-direction: column
+	&__header
+		+flex(flex, center, space-between, nowrap)
+		padding-bottom: $gap3
+	&__content
+		display: flex
+		flex-direction: column
+		justify-content: space-between
+		height: 100%
+	&__nav
+		display: flex
+		flex-direction: column
+		margin-bottom: $gap3
+		a
+			padding: $gap3 0
+			+flex(flex, center, space-between, nowrap)
+			+ft(22, 22, 400)
+			text-transform: uppercase
+			border: 1px solid $white
+			border-width: 1px 0 0
+			&:first-child
+				border-top: 0
+			svg
+				color: $main
+	&.show
+		display: flex
+		visibility: visible
+		height: 100%
+		transform: translateX(0)
+
+	+miw(1200)
+		&.show
+			display: none
+
+	+maw($xs)
+		.contacts
+			text-align: center
+		.logo img
+			width: 80%
+		&__nav a
+			+ft(16, 16, 500)
+
+
+.navbar
+	+flex(flex, center, space-between, nowrap)
+	gap: $gap3
+	row-gap: $gap2
+	&__btns
+		+flex(inline-flex, center, center, nowrap)
+		gap: $gap2
+	&-toggler
+		padding: 0
+		display: none
+		color: inherit
+		&:hover, &:active, &:focus
+			box-shadow: none
+	&__nav
+		display: flex
+		gap: 2.5em
+		justify-content: center
+		a
+			position: relative
+			transition: $trs
+			text-transform: uppercase
+			//+ft(18, 18, 400)
+			+ft(16, 16, 400)
+			&::after 
+				content: ''
+				display: block
+				margin-top: 2px
+				+sz(0, 2px)
+				background: $main
+				transition: width .3s
+			&:hover
+				color: $main
+				&::after
+					width: 100%
+
+	+maw(1200)
+		&__nav	
+			display: none
+		&-toggler
+			display: inline-block
+	+maw($md)
+		&__btns .btns
+			display: none
+	+maw($xs)
+		.logo
+			img
+				width: 80%
+
+.hero
+	&__wrap
+		//background-image: url('../images/bg/bg-hero.svg')
+		background-repeat: no-repeat
+		background-size: contain
+		background-position: 100% 50%
+	&__container
+		position: relative
+		display: grid
+		grid-template-columns: 1.5fr 100px 1fr
+		row-gap: $gap6
+		align-items: center
+		z-index: 2
+		hgroup
+			position: relative
+			z-index: 2
+	&__label
+		position: relative
+		margin-top: auto
+		margin-bottom: 75%
+		z-index: 1
+		+flex(flex, center, center, nowrap)
+		gap: $gap2
+		img
+			position: absolute
+			top: 50%
+			left: 50%
+			transform: translate(-50%, -50%)
+			&:nth-of-type(1), &:nth-of-type(3)
+				display: none
+	&__sub
+		margin: 0
+	p
+		margin: 0
+
+	+maw(1400)
+		&__container
+			grid-template-columns: 1fr 100px 1fr	
+	+maw($md)
+		&__container
+			row-gap: $gap2
+		&__label
+			margin-top: 0
+			margin-bottom: 0
+			//min-height: 150px
+			img
+				max-width: 200px
+				+sz(10vmax, 10vmax)
+				position: relative
+				transform: none
+				left: 0
+				right: 0
+				top: 0
+				&:nth-of-type(1), &:nth-of-type(3)
+					display: block
+		&__container
+			grid-template-columns: 1fr
+			justify-content: center
+			text-align: center
+
+
+.footer
+	+theme(dark)
+	&__top
+		padding: var(--gap10) 0
+		display: grid
+		gap: var(--gap3)
+		grid-template-columns: 1fr 200px 2fr
+		+ft(18, 27, 400)
+		+ft(16, 16*1.4, 400)
+	&__nav
+		+flex(flex, flex-start, flex-start, wrap)
+		flex-direction: column
+		gap: var(--gap3)
+		text-transform: uppercase
+		a
+			position: relative
+			transition: $trs
+			&:hover, &:active, &:focus
+				color: $main
+				&::after
+					width: 100%
+			&::after 
+				content: ''
+				display: block
+				margin-top: 2px
+				+sz(0, 2px)
+				background: $main
+				transition: width .3s
+	+maw(1400)
+		&__top
+			grid-template-columns: 1fr 
+			text-align: center
+		&__nav
+			flex-direction: row
+			justify-content: center
+			margin-bottom: $gap2
+			margin-top: $gap1
+			column-gap: $gap3
+			gap: $gap5
+	+maw($sm)
+		&__nav
+			row-gap: $gap1
+			column-gap: $gap3
+			+ft(15, 15, 500)
+	+maw($xs)
+		&__nav
+			flex-direction: column
+			align-items: center
+			margin-top: 0
+			margin-bottom: 0
+		&__top
+			.logo img
+				max-width: 250px
+  
+
+.contacts
+	display: grid
+	grid-template-columns: repeat(3, auto)
+	gap: $gap5
+	&__title
+		text-transform: uppercase
+		color: $main
+		+ft(18, 22, 800, $ffHeading)
+		margin-bottom: $gap3
+	&__data
+		text-transform: uppercase
+	+maw(1400)
+		&__item
+			&:nth-child(1)
+				order: 1
+			&:nth-child(2)
+				order: 2
+		&__data
+			+ft(14, 14*1.4, 400)
+	+maw(960)
+		grid-template-columns: 1fr 1fr
+		gap: $gap1
+		&__title
+			margin-bottom: $gap1
+		&__item
+			&:nth-child(1)
+				order: 3
+				grid-column: 1 / -1
+	+maw(460)
+		grid-template-columns: 1fr
+		gap: $gap1
+		&__title
+			margin-bottom: $gap1
+
+.logo
+	&::after
+		display: none

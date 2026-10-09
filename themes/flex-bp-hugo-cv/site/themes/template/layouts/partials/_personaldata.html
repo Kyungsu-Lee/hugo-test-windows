@@ -1,0 +1,12 @@
+{{- $cv := partial "cv_data.html" . -}}
+{{ $data := $cv.PersonalData }}
+{{ with $data }}
+<section id="section-{{ .Title | urlize }}">
+    <h2>{{ partial "icon.html" .Icon }}{{ .Title }}</h2>
+    <dl class="listspecial">
+        {{ range $data.Contacts }}
+            <div><dt>{{ partial "icon.html" .Icon }}{{ .Name }}</dt><dd>{{ .Value | markdownify }}</dd></div>
+        {{ end }}
+    </dl>
+</section>
+{{ end }}

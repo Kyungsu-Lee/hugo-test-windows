@@ -1,0 +1,33 @@
+{{- $show := site.Params.footer.showSocial | default true -}}
+{{- if not $show -}}
+  {{- return -}}
+{{- end -}}
+
+{{- with site.Menus.social -}}
+  <nav class="footer-social" aria-label="Social links">
+    <ul class="footer-social-list">
+      {{- range . }}
+        {{- $icon := .Params.icon | default "" -}}
+        <li>
+          <a
+            class="footer-social-link"
+            href="{{ .URL }}"
+            {{- if strings.HasPrefix .URL "http" }}
+              target="_blank"
+              rel="noopener noreferrer"
+            {{- else if .Params.rel }}
+              rel="{{ .Params.rel }}"
+            {{- end }}
+          >
+            {{- with $icon -}}
+              {{- with resources.Get (printf "icons/%s.svg" $icon) -}}
+                <span class="footer-social-icon" aria-hidden="true">{{ .Content | safeHTML }}</span>
+              {{- end -}}
+            {{- end -}}
+            <span class="visually-hidden">{{ .Name }}</span>
+          </a>
+        </li>
+      {{- end }}
+    </ul>
+  </nav>
+{{- end -}}

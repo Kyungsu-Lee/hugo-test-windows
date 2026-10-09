@@ -1,0 +1,10 @@
+{{ if .Params.toc }}
+  <details
+    class="bg-operandi-white-dim dark:bg-vivendi-black-dim rounded-lg p-4"
+  >
+    <summary class="ml-1">
+      <span> Table of Contents </span>
+    </summary>
+    {{ .TableOfContents }}
+  </details>
+{{ end }}

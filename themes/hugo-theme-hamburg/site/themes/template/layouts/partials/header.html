@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Locale }}">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta http-equiv='content-language' content="{{ .Site.Language.Locale }}">
+
+  <!-- Open Graph Protocol entries -->
+  <meta property="og:title" content="{{ if ne .Permalink "/" }}{{ .Title }} &middot; {{ end }}{{ .Site.Title }}" />
+  {{ if .Description }}
+    <meta property="og:description" content="{{ .Description }}">
+  {{ else if .IsPage }}
+    <meta property="og:description" content="{{ .Summary | plainify }}">
+  {{ else if .Site.Params.description }}
+    <meta property="og:description" content="{{ .Site.Params.description }}">
+  {{ end }}
+  <meta property="og:site_name" content="{{ .Site.Title }}" />
+  <meta property="og:url" content="{{ .Permalink }}" />
+  {{ if isset .Params "image" }}
+    <meta property="og:image" content="{{ .Params.image | absURL }}" />
+  {{ else }}
+    <meta property="og:image" content="{{ "images/bg.jpg" | absURL }}" />
+  {{ end }}
+  
+  {{ if .IsPage }}
+    <meta property="og:type" content="article" />
+    {{ with .Site.Params.facebook }}
+      <meta property="og:article:author" content="https://facebook.com/{{ . }}" />
+    {{ end }}
+    <meta property="og:article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" | safeHTML }}" />
+    {{ range .Params.tags }}
+      <meta property="og:article:tag" content="{{ . }}" />
+    {{ end }}
+  {{ else }}
+    <meta property="og:type" content="website" />
+  {{ end }}
+  
+  {{ with .Site.Params.themecolor }}
+    <meta name="theme-color" content="{{ . }}" />
+  {{ end }}
+
+  <!-- Description, title, etc. -->
+  {{ if .Description }}
+    <meta name="description" content="{{ .Description }}">
+  {{ else if .IsPage }}
+    <meta name="description" content="{{ .Summary | plainify }}">
+  {{ else if .Site.Params.description }}
+    <meta name="description" content="{{ .Site.Params.description }}">
+  {{ end }}
+
+  <title>
+   {{ if .IsHome }}
+     {{ i18n "home" }} | {{ .Site.Title }}
+   {{ else if .Params.hide_site_title }}
+     {{ .Page.Title }}
+   {{ else if .Page.Title }}
+     {{ .Page.Title }} | {{ .Site.Title }}
+   {{ else }}
+     {{ .Site.Title }}
+   {{ end }}
+  </title>
+
+  {{ with .Params.tags }}
+    <meta name="keywords" content="{{ delimit . ", " }}">
+  {{ end }}
+
+  <!-- Styling -->
+  {{ $CSS := resources.Match "css/**.css" | resources.Concat "css/main.css" }}
+  <link rel="stylesheet" href="{{ $CSS.Permalink }}" media="all">
+
+  <!-- Deactivate this due to possible problems with the GDPR -->
+  <!-- <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css"> -->
+  <link rel="shortcut icon" href="{{ .Site.BaseURL }}favicon.ico" />
+  <link rel="apple-touch-icon" href="{{ .Site.BaseURL }}apple-touch-icon.png" />
+
+  {{ range .Site.Params.customCSS }}
+    <link rel="stylesheet" href="{{ (print "css/" . ) | absURL }}">
+  {{ end }}
+
+  {{ if eq .Permalink "/" }}
+    <link href="{{ .RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
+  {{ end }}
+
+  {{ if isset .Params "canonical" }}
+    <link rel="canonical" href="{{ .Params.canonical }}" />
+  {{ else }}
+    <link rel="canonical" href="{{ .Permalink }}" />
+  {{ end }}
+
+  <!-- Condition specifically made for pagination to be able to call paginator multiple times (here and in index.html). -->
+  {{ if .Page.IsBranch }}
+    {{ with $paginator := .Paginate (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
+      {{ if $paginator.HasPrev }}
+        <link rel="prev" href="{{ $paginator.Prev.URL | absURL }}" />
+      {{ end }}
+      {{ if $paginator.HasNext }}
+        <link rel="next" href="{{ $paginator.Next.URL | absURL }}" />
+      {{ end }}
+    {{ end }}
+  {{ end }}
+</head>
+<body>
+{{ if isset .Params "headerImage" }}
+  <header class="global-header" style="background-image:url({{ .Params.headerImage | absURL }}); background-position-y: {{ .Params.headerImagePositionY }};">
+{{ else }}
+  <header class="global-header" style="background-image:url({{ "images/bg.jpg" | absURL }}); background-position: center;">
+{{ end }}
+    <section class="header-text">
+      <div class="site-title-container">
+        <a class="site-title" href="{{ "" | absLangURL }}">{{ .Site.Title }}</a>
+      </div>
+
+      {{ with .Site.Params.subtitle }}
+        <p class="tag-line">
+          {{ . }}
+        </p>
+      {{ end }}
+      
+      <!-- sites -->
+      <div class="navbar-wrapper">
+        <div class="navbar-container">
+          {{ range .Site.Menus.main }}
+            <a class="btn btn-default button-list-item" href="{{ .URL | absLangURL | safeURL }}">
+              {{ .Name }}
+            </a>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- Home and language buttons -->
+      <div class="home-lang-wrapper">
+        {{ if ( not .IsHome ) }}
+          <a class="btn btn-default btn-home" href="{{ "" | absLangURL }}">
+            <i class="fa fa-angle-left" aria-hidden="true"></i>
+            &nbsp;{{ i18n "home" }}
+          </a>
+        {{ end }}
+
+        <!-- Languages -->
+        {{ $url := urls.Parse .Permalink }}
+        <!-- The url.Host has only the domain in it -->
+        {{ $address := print $url.Scheme "://" $url.Host }}
+        <!-- Difference between address and base URL. This could result in "" or "/beta/" or similar. -->
+        {{ $i18nBasePath := strings.TrimPrefix $address .Site.BaseURL }}
+        <!-- Path like "/beta/" attached with the language code. E.g. "/beta/de" -->
+        {{ $pathPrefix := print $i18nBasePath .Language }}
+        <!-- This will get the path to the resource from the language code and beyond -->
+        {{ $path := strings.TrimPrefix $pathPrefix $url.Path }}
+        {{ if .IsTranslated }}
+          <div class="language-container">
+            {{ range .Site.Home.AllTranslations }}
+              <a class="btn btn-default button-list-item" href="{{ .Permalink }}{{ strings.TrimPrefix "/" $path }}">{{ .Language.Label }}</a>
+            {{ end }}
+          </div>
+        {{ end }}
+      </div>
+    </section>
+  </header>
+  <main>

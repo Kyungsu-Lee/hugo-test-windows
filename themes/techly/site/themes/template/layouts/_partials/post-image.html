@@ -1,0 +1,8 @@
+{{- $cover := partial "post-cover.html" . -}}
+{{- if $cover.has -}}
+  <figure class="article-cover">
+    <div class="container">
+      <img src="{{ $cover.src }}" alt="{{ $cover.alt }}">
+    </div>
+  </figure>
+{{- end -}}

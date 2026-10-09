@@ -1,0 +1,31 @@
+{{- $features := site.Params.features -}}
+{{- $ui := site.Params.ui -}}
+{{- $breadcrumbsEnabled := ne $features.enableBreadcrumbs false -}}
+{{- $breadcrumbsAllowedForPage := ne .Params.breadcrumbs false -}}
+{{- if and $breadcrumbsEnabled $breadcrumbsAllowedForPage (not .IsHome) -}}
+  {{- $currentLabel := strings.TrimSpace .LinkTitle -}}
+  {{- if eq $currentLabel "" -}}
+    {{- $currentLabel = $ui.breadcrumbCurrentFallback | default "Current page" -}}
+  {{- end -}}
+  {{- $crumbClass := "breadcrumbs breadcrumbs--wide" -}}
+  {{- if .IsPage -}}
+    {{- $crumbClass = "breadcrumbs breadcrumbs--content" -}}
+  {{- end -}}
+  <nav class="{{ $crumbClass }}" aria-label="{{ $ui.breadcrumbAriaLabel | default "Breadcrumb" }}" data-pagefind-ignore>
+    <ol class="breadcrumbs__list" style="--breadcrumbs-separator: '{{ $ui.breadcrumbSeparator | default "/" }}';">
+      <li class="breadcrumbs__item">
+        <a href="{{ site.Home.RelPermalink }}">{{ $ui.breadcrumbHomeLabel | default "Home" }}</a>
+      </li>
+      {{- range .Ancestors.Reverse -}}
+        {{- if not .IsHome -}}
+          <li class="breadcrumbs__item">
+            <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+          </li>
+        {{- end -}}
+      {{- end -}}
+      <li class="breadcrumbs__item is-current" aria-current="page">
+        <span>{{ $currentLabel }}</span>
+      </li>
+    </ol>
+  </nav>
+{{- end -}}

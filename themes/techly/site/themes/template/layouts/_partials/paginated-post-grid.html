@@ -1,0 +1,22 @@
+{{- /*
+Renders a paginated grid of post cards.
+
+@context {page} page The list or term page (Paginate is invoked on this context).
+@context {slice} pages Sorted page collection to paginate.
+*/ -}}
+
+{{- $page := .page -}}
+{{- $pages := .pages -}}
+{{- $paginator := $page.Paginate $pages -}}
+{{- if gt (len $paginator.Pages) 0 -}}
+  <div class="blog-main">
+    <div class="blog-posts-grid">
+      {{- range $paginator.Pages }}
+        {{ partial "post-card.html" (dict "page" . "featured" false) }}
+      {{- end }}
+    </div>
+    {{ partial "pagination.html" (dict "page" $page "format" "terse") }}
+  </div>
+{{- else -}}
+  <p>No articles yet.</p>
+{{- end -}}

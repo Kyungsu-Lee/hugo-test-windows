@@ -1,0 +1,47 @@
+{{- $page := .page -}}
+{{- $mode := .mode -}}
+{{- $facts := .facts | default slice -}}
+{{- $model := partial "content-model.html" $page -}}
+<header
+    class="post-header nf-article__opening nf-article__opening--{{ $mode }}"
+    data-headline-scale="{{ $model.Visual.HeadlineScale }}"
+    data-opening-alignment="{{ $model.Visual.OpeningAlignment }}"
+    data-opening-inverted="{{ $model.Visual.InvertOpening }}">
+    {{- partial "breadcrumbs.html" $page }}
+    <div class="nf-article__opening-grid">
+        <div class="nf-article__heading">
+            <p class="nf-article__kicker">
+                {{- with $model.Content.Format -}}
+                    {{- . | humanize -}}
+                {{- else -}}
+                    {{- $mode | humanize -}}
+                {{- end -}}
+            </p>
+            <h1 class="post-title nf-article__title">{{ $page.Title }}</h1>
+            {{- with or $page.Params.subtitle $page.Description }}
+            <p class="post-description nf-deck">{{ . | markdownify }}</p>
+            {{- end }}
+        </div>
+        {{- with $facts }}
+        <dl class="nf-article__facts nf-article__facts--{{ $mode }}">
+            {{- range . }}
+            <div>
+                <dt>{{ .label }}</dt>
+                <dd>{{ .value }}</dd>
+            </div>
+            {{- end }}
+        </dl>
+        {{- end }}
+    </div>
+    {{- partial "article-meta.html" $page }}
+    {{- $canonical := $model.SEO.Canonical | default $page.Permalink -}}
+    <dl class="nf-print-only nf-print-metadata">
+        {{- with partial "author.html" $page }}
+        <div><dt>{{ i18n "nf_author" | default "Author" }}</dt><dd>{{ . }}</dd></div>
+        {{- end }}
+        {{- if not $page.Date.IsZero }}
+        <div><dt>{{ i18n "nf_date" | default "Date" }}</dt><dd>{{ $page.Date | time.Format (default ":date_long" site.Params.DateFormat) }}</dd></div>
+        {{- end }}
+        <div><dt>{{ i18n "nf_canonical_url" | default "Canonical URL" }}</dt><dd><a href="{{ $canonical }}">{{ $canonical }}</a></dd></div>
+    </dl>
+</header>

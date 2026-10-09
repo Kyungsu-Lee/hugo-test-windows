@@ -1,0 +1,196 @@
+{{- $ui := site.Params.ui -}}
+{{- $features := site.Params.features -}}
+{{- $mathEnabledGlobally := ne $features.enableMath false -}}
+{{- $mathEnabledForPage := and .IsPage $mathEnabledGlobally (.Param "math") -}}
+{{- $mathJaxScript := $ui.mathJaxScript | default "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" -}}
+{{- $titleSeparator := $ui.titleSeparator | default " | " -}}
+{{- $themeStorageKey := $ui.themeStorageKey | default "mytheme-color-scheme" -}}
+{{- $themeToggleEnabled := ne $features.enableThemeToggle false -}}
+{{- $themeDefault := "light" -}}
+{{- if $themeToggleEnabled -}}
+  {{- if eq (lower ($ui.themeDefault | default "light")) "dark" -}}
+    {{- $themeDefault = "dark" -}}
+  {{- end -}}
+{{- else -}}
+  {{- if eq (lower ($features.fixedThemeWhenToggleOff | default "light")) "dark" -}}
+    {{- $themeDefault = "dark" -}}
+  {{- end -}}
+{{- end -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s%s%s" .Title $titleSeparator site.Title }}{{ end }}</title>
+{{- $description := "" -}}
+{{- with .Params.description -}}
+  {{- $description = . | plainify | strings.TrimSpace -}}
+{{- else -}}
+  {{- with .Params.summary -}}
+    {{- $description = . | plainify | strings.TrimSpace -}}
+  {{- end -}}
+{{- end -}}
+{{- if and (eq $description "") .IsPage -}}
+  {{- $description = partial "summary-text.html" (dict "page" . "length" 180) | plainify | strings.TrimSpace -}}
+{{- end -}}
+{{- if and (eq $description "") site.Params.description -}}
+  {{- $description = site.Params.description | plainify | strings.TrimSpace -}}
+{{- end -}}
+{{- if and (eq $description "") site.Title -}}
+  {{- $description = site.Title -}}
+{{- end -}}
+{{- $description = $description | htmlUnescape -}}
+{{- $canonicalURL := .Permalink -}}
+{{- with .Params.canonicalURL -}}
+  {{- $canonicalURL = . | absURL -}}
+{{- end -}}
+{{- $ogType := "website" -}}
+{{- if .IsPage -}}
+  {{- $ogType = "article" -}}
+{{- end -}}
+{{- $socialImage := "" -}}
+{{- $coverParam := .Params.cover -}}
+{{- if reflect.IsMap $coverParam -}}
+  {{- with index $coverParam "image" -}}
+    {{- $socialImage = printf "%v" . | strings.TrimSpace -}}
+  {{- end -}}
+{{- else if eq (printf "%T" $coverParam) "string" -}}
+  {{- $socialImage = $coverParam | strings.TrimSpace -}}
+{{- end -}}
+{{- if and (eq $socialImage "") .IsPage -}}
+  {{- with .Resources.ByType "image" -}}
+    {{- with index . 0 -}}
+      {{- $socialImage = .RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if and (ne $socialImage "") .IsPage -}}
+  {{- if or (hasPrefix $socialImage "http://") (hasPrefix $socialImage "https://") (hasPrefix $socialImage "//") -}}
+  {{- else if hasPrefix $socialImage "/" -}}
+    {{- $socialImage = absURL $socialImage -}}
+  {{- else -}}
+    {{- $resource := .Resources.GetMatch $socialImage -}}
+    {{- if not $resource -}}
+      {{- $resource = .Resources.GetMatch (printf "*%s" (path.Base $socialImage)) -}}
+    {{- end -}}
+    {{- if $resource -}}
+      {{- $socialImage = $resource.Permalink -}}
+    {{- else -}}
+      {{- $socialImage = absURL (printf "%s%s" .RelPermalink (strings.TrimPrefix "./" $socialImage)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<link rel="canonical" href="{{ $canonicalURL }}">
+<meta name="description" content="{{ $description }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:type" content="{{ $ogType }}">
+<meta property="og:url" content="{{ $canonicalURL }}">
+{{- with $socialImage }}<meta property="og:image" content="{{ . }}">{{ end -}}
+<meta name="twitter:card" content="{{ if $socialImage }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ .Title }}">
+<meta name="twitter:description" content="{{ $description }}">
+{{- with $socialImage }}<meta name="twitter:image" content="{{ . }}">{{ end -}}
+{{- with site.Params.social.twitter }}<meta name="twitter:site" content="@{{ . }}">{{ end -}}
+{{- if .IsPage -}}
+  <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+  <meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end -}}
+{{- if gt (len .Sites) 1 }}
+  {{- if .IsTranslated }}
+    {{- range .AllTranslations }}
+      <link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}">
+    {{- end }}
+  {{- else }}
+    <link rel="alternate" hreflang="{{ .Language.LanguageCode }}" href="{{ .Permalink }}">
+  {{- end }}
+{{- end }}
+{{- if .IsPage }}
+  {{- $authorsMeta := "" -}}
+  {{- $categoriesMeta := "" -}}
+  {{- $tagsMeta := "" -}}
+  {{- with .Params.categories -}}
+    {{- if reflect.IsSlice . -}}
+      {{- $categoriesMeta = delimit . ", " -}}
+    {{- else -}}
+      {{- $categoriesMeta = printf "%v" . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Params.tags -}}
+    {{- if reflect.IsSlice . -}}
+      {{- $tagsMeta = delimit . ", " -}}
+    {{- else -}}
+      {{- $tagsMeta = printf "%v" . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Params.authors -}}
+    {{- if reflect.IsSlice . -}}
+      {{- $authorsMeta = delimit . ", " -}}
+    {{- else -}}
+      {{- $authorsMeta = printf "%v" . -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if and (eq $authorsMeta "") .Params.author -}}
+    {{- if reflect.IsSlice .Params.author -}}
+      {{- $authorsMeta = delimit .Params.author ", " -}}
+    {{- else -}}
+      {{- $authorsMeta = printf "%v" .Params.author -}}
+    {{- end -}}
+  {{- end -}}
+  <meta data-pagefind-meta="title" content="{{ .Title }}">
+  {{- with .Params.subtitle }}<meta data-pagefind-meta="subtitle" content="{{ . }}">{{ end -}}
+  {{- with .Params.description }}<meta data-pagefind-meta="description" content="{{ . }}">{{ end -}}
+  {{- with .Type }}<meta data-pagefind-meta="type" content="{{ . }}">{{ end -}}
+  {{- with .Section }}<meta data-pagefind-meta="section" content="{{ . }}">{{ end -}}
+  {{- with $categoriesMeta }}<meta data-pagefind-meta="categories" content="{{ . }}">{{ end -}}
+  {{- with $tagsMeta }}<meta data-pagefind-meta="tags" content="{{ . }}">{{ end -}}
+  {{- with $authorsMeta }}<meta data-pagefind-meta="authors" content="{{ . }}">{{ end -}}
+{{- end }}
+<script>
+(function () {
+  try {
+    var storageKey = {{ $themeStorageKey | jsonify }};
+    var defaultTheme = {{ $themeDefault | jsonify }};
+    var themeToggleEnabled = {{ $themeToggleEnabled | jsonify }};
+    var fixedThemeWhenToggleOff = {{ ($features.fixedThemeWhenToggleOff | default "light") | jsonify }};
+    window.__MYTHEME_STORAGE_KEY__ = storageKey;
+    window.__MYTHEME_DEFAULT_THEME__ = defaultTheme;
+    window.__MYTHEME_THEME_TOGGLE_ENABLED__ = themeToggleEnabled;
+    window.__MYTHEME_FIXED_THEME__ = fixedThemeWhenToggleOff;
+    var theme = defaultTheme;
+    if (themeToggleEnabled) {
+      var storedTheme = localStorage.getItem(storageKey);
+      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      theme = storedTheme === "light" || storedTheme === "dark" ? storedTheme : (prefersDark ? "dark" : "light");
+    } else {
+      theme = fixedThemeWhenToggleOff === "dark" ? "dark" : "light";
+    }
+    if (theme !== "light" && theme !== "dark") {
+      theme = defaultTheme;
+    }
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (error) {
+    document.documentElement.setAttribute("data-theme", {{ $themeDefault | jsonify }});
+  }
+})();
+</script>
+{{- if $mathEnabledForPage }}
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [["$", "$"], ["\\(", "\\)"]],
+    displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+    processEscapes: true,
+    processEnvironments: true,
+    tags: "ams"
+  },
+  options: {
+    skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+  },
+  chtml: {
+    scale: 1
+  }
+};
+</script>
+<script id="mathjax-script" defer src="{{ $mathJaxScript | safeURL }}"></script>
+{{- end }}
+{{ partialCached "head/fonts.html" . }}
+{{ partialCached "head/css.html" . }}

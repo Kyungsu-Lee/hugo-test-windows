@@ -1,0 +1,13 @@
+.canon-list-detail {
+  .detail-pane,
+  .list-pane {
+    --layout-flex: 1 1 auto;
+  }
+}
+
+/* Compact: 0px-599px */
+@media screen and (max-width: 599px) {
+  .canon-list-detail .detail-pane {
+    --layout-display: none;
+  }
+}

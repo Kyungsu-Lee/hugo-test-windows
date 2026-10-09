@@ -1,0 +1,14 @@
+{{- $sections := site.Params.mainSections | default (slice "posts") -}}
+{{- $pages := where site.RegularPages "Section" "in" $sections -}}
+[
+{{- range $index, $page := $pages -}}
+  {{- if gt $index 0 }},{{ end -}}
+  {{- dict
+    "title" $page.Title
+    "summary" ($page.Summary | plainify)
+    "content" ($page.Plain | plainify)
+    "permalink" $page.RelPermalink
+    "date" ($page.Date.Format "2006-01-02")
+  | jsonify -}}
+{{- end -}}
+]

@@ -1,0 +1,7 @@
+{{- $ui := site.Params.ui -}}
+{{- $fontStylesheetHref := $ui.fontStylesheetHref | default "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&family=Libre+Baskerville:wght@400;700&display=swap" -}}
+{{- if $fontStylesheetHref -}}
+  <link rel="preconnect" href="{{ $ui.fontPreconnectPrimary | default "https://fonts.googleapis.com" }}">
+  <link rel="preconnect" href="{{ $ui.fontPreconnectSecondary | default "https://fonts.gstatic.com" }}" crossorigin>
+  <link href="{{ $fontStylesheetHref }}" rel="stylesheet">
+{{- end -}}

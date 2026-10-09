@@ -1,0 +1,17 @@
+{{- $cv := partial "cv_data.html" . -}}
+{{ $data := $cv.BriefProfile }}
+{{ with $data }}
+<section id="section-{{ .Title | urlize }}">
+    <h2>{{ partial "icon.html" .Icon }}{{ .Title }}</h2>
+    {{ range $data.Sections }}
+        <div class="innerContainer">
+            <h3 class="innerLeft">{{ .Name }}</h3>
+            <ul class="innerRight plainlist">
+                {{ range .Items }}
+                    <li>{{ . }}</li>
+                {{ end }}
+            </ul>
+        </div>
+    {{ end }}
+</section>
+{{ end }}

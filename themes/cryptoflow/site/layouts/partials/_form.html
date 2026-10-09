@@ -1,0 +1,58 @@
+<!-- BEGIN form -->
+
+
+<div id="form-main" class="form__wrap" data-aos="fade-up">
+	<div class="form__caption">
+		<div>
+			Your path to wealth in <b>cryptocurrency!</b>
+		</div>
+	</div>
+	<form action="./send.php?subid={subid}" method="POST" class="_main-form register-form my-form form" id="reg_form"
+		name="reg_form">
+		<!--PHP FORM ERROR-->
+		<input type="hidden" name="custom1" value="<?= isset($_GET['pixel']) ? $_GET['pixel'] : '{pixel}'; ?>" />
+		<input type="hidden" name="custom2" value="<?= isset($_GET['aff']) ? $_GET['aff'] : '{aff}'; ?>" />
+		<input type="hidden" name="custom3" value="FB1" />
+		<input type="hidden" name="custom4"
+			value="<?= isset($_GET['creative']) ? $_GET['creative'] : '{creative}'; ?>" />
+		<input type="hidden" name="custom5" value="fb" />
+		<input type="hidden" name="custom6" value="<?= isset($_GET['ad_id']) ? $_GET['ad_id'] : '{ad_id}'; ?>" />
+		<input type="hidden" name="custom7" value="<?= isset($_GET['acc']) ? $_GET['acc'] : '{acc}'; ?>" />
+		<input type="hidden" name="custom8" value="{subid}" />
+
+
+		<input type="hidden" name="offerName" value="Crypto_Flow" />
+		<input type="hidden" name="offerWebsite" value="Crypto_Flow" />
+		<input type="hidden" name="locale" value="" />
+		<div class="form__row form__row--inline">
+			<div class="input-block input-block-first-name">
+				<label for="user_name">First Name</label>
+				<input type="text" name="firstName" placeholder="Your First Name " required="" />
+				<span id="" class="form-error first-name-error"></span>
+			</div>
+
+			<div class="input-block input-block-last-name">
+				<label for="user_secondname">Last Name</label>
+				<input type="text" name="lastName" placeholder="Your Last Name" required="" />
+				<span id="" class="form-error last-name-error"></span>
+			</div>
+		</div>
+		<div class="input-block input-block-email form__row">
+			<label for="user_email">Email</label>
+			<input type="email" name="email" placeholder="Your E-mail Address" required="" />
+			<span id="" class="form-error email-error"></span>
+		</div>
+		<div class="input-block input-block-phone form__row">
+			<label for="user_tel">Phone</label>
+			<input type="tel" name="phone" class="phone" required="" id="phone" />
+			<span class="form-error phone-error"></span>
+		</div>
+		<input type="hidden" name="full-phone" id="full-phone" />
+		<button type="submit" value="Submit" class="btn secondary-solid-btn btn-block buttonSend" id="submitButton">
+			<b><span>start now</span><span>start now</span></b>
+		</button>
+	</form>
+</div>
+
+
+<!-- END form -->

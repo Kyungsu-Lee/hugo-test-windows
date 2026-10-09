@@ -1,0 +1,86 @@
+categories:
+  - name: "Psy małe"
+    description: "do 10 kg"
+    services:
+      - name: "Kąpiel z suszeniem"
+        price: "50 zł"
+        description: "45 min"
+        tags: ["kąpiel", "pielęgnacja"]
+      - name: "Strzyżenie maszynką"
+        price: "80 zł"
+        description: "60 min"
+        tags: ["strzyżenie"]
+      - name: "Strzyżenie nożyczkami"
+        price: "100 zł"
+        description: "90 min"
+        tags: ["strzyżenie"]
+      - name: "Trymowanie"
+        price: "120 zł"
+        description: "120 min"
+        tags: ["trymowanie"]
+      - name: "Rozczesywanie kołtunów"
+        price: "30 zł"
+        description: "30 min"
+        tags: ["pielęgnacja"]
+
+  - name: "Psy średnie"
+    description: "10–25 kg"
+    services:
+      - name: "Kąpiel z suszeniem"
+        price: "70 zł"
+        description: "60 min"
+        tags: ["kąpiel", "pielęgnacja"]
+      - name: "Strzyżenie maszynką"
+        price: "120 zł"
+        description: "90 min"
+        tags: ["strzyżenie"]
+      - name: "Strzyżenie nożyczkami"
+        price: "150 zł"
+        description: "120 min"
+        tags: ["strzyżenie"]
+      - name: "Trymowanie"
+        price: "180 zł"
+        description: "150 min"
+        tags: ["trymowanie"]
+      - name: "Rozczesywanie kołtunów"
+        price: "50 zł"
+        description: "45 min"
+        tags: ["pielęgnacja"]
+
+  - name: "Psy duże"
+    description: "powyżej 25 kg"
+    services:
+      - name: "Kąpiel z suszeniem"
+        price: "100 zł"
+        description: "90 min"
+        tags: ["kąpiel", "pielęgnacja"]
+      - name: "Strzyżenie maszynką"
+        price: "180 zł"
+        description: "120 min"
+        tags: ["strzyżenie"]
+      - name: "Strzyżenie nożyczkami"
+        price: "220 zł"
+        description: "150 min"
+        tags: ["strzyżenie"]
+      - name: "Trymowanie"
+        price: "250 zł"
+        description: "180 min"
+        tags: ["trymowanie"]
+      - name: "Rozczesywanie kołtunów"
+        price: "80 zł"
+        description: "60 min"
+        tags: ["pielęgnacja"]
+
+extras:
+  - name: "Obcinanie pazurków"
+    price: "20 zł"
+    description: "10 min"
+  - name: "Czyszczenie uszu"
+    price: "15 zł"
+    description: "10 min"
+  - name: "Wyrywanie włosów z uszu"
+    price: "15 zł"
+    description: "10 min"
+  - name: "Czyszczenie gruczołów"
+    price: "25 zł"
+    description: "10 min"

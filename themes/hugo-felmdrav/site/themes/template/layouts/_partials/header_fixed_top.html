@@ -1,0 +1,24 @@
+{{- $navbarColorScheme := default "navbar-dark" site.Params.navbar.color_scheme -}}
+{{- $navbarBgScheme := default "bg-primary" site.Params.navbar.bg_scheme -}}
+
+
+<nav class="navbar fixed-top navbar-expand-lg {{ $navbarColorScheme }} {{ $navbarBgScheme }}">
+  <div class="container-fluid">
+     <a class="navbar-brand" href="{{ .Site.BaseURL }}">{{ if .Site.Params.navbar.brand_image }}<img src="{{ .Site.BaseURL }}{{ .Site.Params.navbar.brand_image }}" width="30" height="30" class="d-inline-block align-top" alt="">&nbsp; {{ end }}{{ .Site.Title }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse {{ .Site.Params.navbar.text_alignment }}" id="navbarMain">
+      <ul class="navbar-nav me-auto">
+              {{- partial "navbar_items.html" . -}}
+      </ul>
+
+      {{/* Right slot */}}
+      <div class="d-flex align-items-center ms-auto">
+        {{- partial "navbar_right.html" . -}}
+      </div>
+
+    </div>
+  </div>
+</nav>

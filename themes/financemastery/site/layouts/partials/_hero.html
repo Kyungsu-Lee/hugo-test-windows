@@ -1,0 +1,29 @@
+
+{{ $data := index .Site.Data .Site.Language.Lang }}
+
+{{ if $data.homepage.hero }}
+{{ with $data.homepage.hero }}
+
+<section class="section section_hero">
+    <div class="hero container">
+        <div class="hero__container">
+
+            <hgroup>
+                <h1>{{ .title | markdownify }}</h1>
+                <p class="hero__sub">{{ .subtitle }}</p>
+            </hgroup>
+           <div class="hero__label">
+            <img src="../images/label.svg" width="200" height="200" alt="ALT">
+            <img src="../images/label.svg" width="200" height="200" alt="ALT">
+            <img src="../images/label.svg" width="200" height="200" alt="ALT">
+           </div>
+            {{- partial "_form.html" . -}}
+
+        </div>
+     
+
+    </div>
+</section>
+
+{{ end }}
+{{ end }}

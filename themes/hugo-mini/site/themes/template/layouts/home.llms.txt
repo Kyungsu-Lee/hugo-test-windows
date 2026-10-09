@@ -1,0 +1,42 @@
+{{- /*
+  llms.txt — plain-text site summary for AI crawlers.
+
+  Everything is data-driven from site config:
+    - site title / baseURL / params.description — header
+    - params.llms.about — free-text author/site bio (per-language)
+    - params.telegramChannel + params.social — contacts
+    - menu.main (internal entries) — sections
+    - posts from the site's main section(s) — article list
+*/ -}}
+# {{ site.Title }} — {{ site.BaseURL }}
+{{ with site.Params.description }}
+> {{ . }}
+{{ end }}
+{{- with site.Params.llms.about }}
+## {{ i18n "about_author" }}
+
+{{ . }}
+{{ end }}
+## {{ i18n "contacts" }}
+
+- {{ i18n "website" }}: {{ site.BaseURL }}
+{{- with site.Params.telegramChannel }}
+- {{ i18n "telegram_channel" }}: https://t.me/{{ . }}
+{{- end }}
+{{- $labels := dict "telegram" "Telegram" "linkedin" "LinkedIn" "github" "GitHub" "x" "X" "youtube" "YouTube" "facebook" "Facebook" "instagram" "Instagram" "email" "Email" }}
+{{- range $key, $url := site.Params.social }}
+- {{ index $labels $key | default (title $key) }}: {{ $url }}
+{{- end }}
+
+## {{ i18n "sections" }}
+{{ range site.Menus.main }}
+{{- if not (or (hasPrefix .URL "http://") (hasPrefix .URL "https://")) }}
+- {{ .Name }}: {{ .URL | absURL }}
+{{- end }}
+{{- end }}
+{{ with partial "main-pages.html" . }}
+## {{ i18n "articles" }}
+{{ range . }}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{- end }}
+{{ end -}}

@@ -1,0 +1,57 @@
+{{ $fixed := .fixed }}
+{{ with .context }}
+    {{ if .Site.Params.navigation.links }}
+        {{ "<!-- NAVIGATION -->" | safeHTML }}
+        {{ if $fixed }}
+        <nav id="navFixed" class="navbar navbar-default navbar-fixed-top">
+        {{ else }}
+        <nav id="navNotFixed" class="navbar navbar-default">
+        {{ end }}
+            <div class="container-fluid">
+                {{ "<!-- Brand and toggle get grouped for better mobile display -->" | safeHTML }}
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    {{ if .Site.Params.navigation.brand_logo }}
+                        <a class="navbar-brand page-scroll" href="#">
+                            <img id="brand_logo" src="{{ .Site.Params.navigation.brand_logo }}" class="img-responsive">
+                        </a>
+                    {{ else if .Site.Params.navigation.brand }}
+                        <a class="navbar-brand page-scroll" href="#">{{ .Site.Params.navigation.brand | markdownify }}</a>
+                    {{ end }}
+                </div>
+                {{ "<!-- Get the navigation menu entries and create the links -->" | safeHTML }}
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        {{ $links := .Site.Params.navigation.links }}
+                        {{ range .Site.Params.homepage.sections }}
+                            {{ if and (eq . "projects") $links.projects }}
+                                {{ $categories := $.context.Site.Params.projects.categories }}
+                                {{ range $categories }}
+                                    {{ $category := . }}
+                                    {{ range $links.projects }}
+                                        {{ if in $category .section }}
+                                            <li>
+                                                <a class="page-scroll" href="#projects_{{ .section }}">{{ .label }}</a>
+                                            </li>
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                            {{ else if isset $links . }}
+                                <li>
+                                    <a class="page-scroll" id={{ printf "nav_%s" . }} href={{ printf "#%s" . }}>{{ index $links . }}</a>
+                                </li>
+                            {{ end }}
+                        {{ end }}
+                    </ul>
+                </div>
+                {{ "<!-- /.navbar-collapse -->" | safeHTML }}
+            </div>
+            {{ "<!-- /.container-fluid -->" | safeHTML }}
+        </nav>
+    {{ end }}
+{{ end }}

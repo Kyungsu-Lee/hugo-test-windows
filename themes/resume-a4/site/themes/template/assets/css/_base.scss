@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  // Firefox computes body text (0.88rem) at 12.32px and fits the A4 page.
+  // Setting 14px (0.88 × 14 = 12.32) makes Chrome match Firefox exactly.
+  font-size: 14px;
+}
+
+body {
+  background: #fff;
+  color: $text-color;
+  font-family: $font-1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: $text-color;
+
+  i {
+    padding: 0 0.2rem 0 0.25rem;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:not(.no-external-icon)::after {
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+    margin: 0 0.2rem 0 0.25rem;
+  }
+}
+
+li {
+  list-style-type: square;
+  padding-left: 0px;
+  list-style-position: inside;
+  margin: 0.5rem 0;
+}

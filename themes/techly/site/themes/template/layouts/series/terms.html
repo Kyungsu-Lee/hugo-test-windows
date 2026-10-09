@@ -1,0 +1,35 @@
+{{ define "main" }}
+  <header class="blog-header-section">
+    <div class="container">
+      <h1 class="section-title">{{ .Title }}</h1>
+      {{- with .Content }}
+        <div class="section-subtitle series-taxonomy-intro">{{ . }}</div>
+      {{- end }}
+    </div>
+  </header>
+
+  <section class="blog-posts-section" aria-label="Series">
+    <div class="container">
+      <div class="series-grid">
+        {{- range .Data.Terms.Alphabetical }}
+          <article class="series-card">
+            <h2 class="series-card-title">
+              <a href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a>
+            </h2>
+            {{- with .Page.Params.description }}
+              <p class="series-card-description">{{ . }}</p>
+            {{- else -}}
+              {{- with .Page.Content }}
+                <p class="series-card-description">{{ . | plainify | truncate 200 }}</p>
+              {{- end }}
+            {{- end }}
+            <p class="series-card-count">
+              {{- $count := .Count -}}
+              {{ $count }} {{ if eq $count 1 }}article{{ else }}articles{{ end }}
+            </p>
+          </article>
+        {{- end }}
+      </div>
+    </div>
+  </section>
+{{ end }}

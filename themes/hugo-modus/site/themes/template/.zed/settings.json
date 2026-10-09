@@ -1,0 +1,32 @@
+{
+  "enable_language_server": true,
+  "lsp": {
+    "vscode-css-language-server": {
+      "settings": {
+        "css": {
+          "lint": {
+            "unknownAtRules": "ignore"
+          }
+        }
+      }
+    }
+  },
+  "languages": {
+    "HTML": {
+      "prettier": {
+        "allowed": true,
+        "plugins": [
+          "prettier-plugin-go-template",
+          "prettier-plugin-tailwindcss"
+        ],
+        "parser": "go-template"
+      }
+    },
+    "CSS": {
+      "prettier": {
+        "allowed": true,
+        "plugins": ["prettier-plugin-tailwindcss"]
+      }
+    }
+  }
+}

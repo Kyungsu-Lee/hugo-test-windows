@@ -1,0 +1,88 @@
+---
+hero:
+  enable: true
+  title_before: "Open up your **financial future**"
+  title_after: "with **Cryptoflow!**"
+  subtitle: Experience hassle-free cryptocurrency lending and watch your investment grow
+  
+section_features:
+  title: Safe **Passive Income** with Cryptocurrency
+  desc: Cryptoflow is an advanced platform that allows users to earn passive income through cryptocurrency lending. Its ease of use makes it accessible to both beginners and experienced investors, and its intuitive interface makes it easy to manage your assets. Thanks to advanced security systems and transparent conditions, users can be confident in the safety of their funds and the stability of their income.
+  items: 
+    - icon: i1
+      title: "Ease of Use:"
+      desc: The intuitive interface allows users to navigate the platform effortlessly, even if they are new to the world of cryptocurrency.
+    - icon: i2
+      title: "High Security:"
+      desc: Advanced data protection and asset security technologies ensure the safety of users' funds, minimizing the risk of loss.
+    - icon: i3
+      title: "Competitive Yield Rates:"
+      desc: Cryptoflow offers attractive conditions for cryptocurrency lending, enabling users to earn a stable and high passive income.
+    - icon: i4
+      title: "Transaction Transparency:"
+      desc: All transactions and lending terms are clear and transparent, fostering trust and confidence among users in their investments.
+
+section_stat: 
+  items: 
+    - val: 98%
+      desc: The platform guarantees stable operation with 98% uptime.
+    - val: ">3.000"
+      desc: The platform has attracted over 3,000 active users who regularly earn money from cryptocurrency lending.
+    - val: 10+
+      desc: Cryptoflow supports over 10 different cryptocurrencies including Bitcoin, Ethereum, and stablecoins.
+  btn:
+    label: join us
+
+section_comments: 
+  title: Testimonials
+  btn:
+    label: MORE
+  comments: 
+    - name: Thandi Mokoena
+      job: Stellenboscher
+      ava: './images/comments/ava1.png'
+      desc: "This is INCREDIBLE. I'm officially debt-free, and I couldn't have done it without your ongoing support. I never imagined overcoming this challenge, but it feels amazing!"
+    - name: Sipho Dlamini
+      job: Knysna
+      ava: './images/comments/ava2.png'
+      desc: "Susan, I can’t thank you enough. Even when I was skeptical, you stayed by my side. You made such a hard time more bearable, and now I'm on the path to being debt-free."
+    - name: Zanele van der Merwe
+      job: Stellenbosch
+      ava: './images/comments/ava3.png'
+      desc: "I’m beyond thankful for all the help you’ve given me. Being buried in debt felt impossible to overcome, but your unwavering support has turned things around. Good times ahead!"
+    - name: Zanele van der Merwe
+      job: Stellenbosch
+      ava: './images/comments/ava4.png'
+      desc: "I’m beyond thankful for all the help you’ve given me. Being buried in debt felt impossible to overcome, but your unwavering support has turned things around. Good times ahead!"
+  
+section_cta:
+  title: Don't wait! Start your journey to financial freedom today with Cryptoflow.
+  btn:
+    label: start now
+
+section_blog: 
+  title: blog
+  btn:
+    label: MORE
+  news: 
+    - title: "Cryptocurrency Lending: How to Earn Passive Income"
+      desc: "Cryptocurrency lending has become a popular way for investors to earn passive income. This process involves lending your digital assets to borrowers through special platforms. In return, you earn interest on your crypto assets"
+    - title: "Investment Strategies for the Cryptocurrency Market"
+      desc: "The cryptocurrency market is highly volatile, making it both potentially profitable and risky. Successful investors use a variety of strategies to achieve their goals."
+    - title: "Cryptocurrency Lending: Benefits and Risks"
+      desc: "Cryptocurrency lending offers attractive opportunities for investors looking to earn passive income. The main benefit is the ability to earn without selling your assets."
+    - title: "Cryptocurrency Market Trends in 2024"
+      desc: "The cryptocurrency market continues to grow rapidly, and 2024 promises new interesting trends. One of the key areas is decorative financing (DeFi), which provides users with new ...."
+
+section_str:
+  title: how it works?
+  steps:
+    - num: 1 
+      title: Registration
+      desc: Create an account in minutes
+    - num: 2 
+      title: Deposit Funds
+      desc: Easily fund your account with cryptocurrency
+    - num: 3 
+      title: Start Earning
+      desc: Lend your crypto assets and earn interest

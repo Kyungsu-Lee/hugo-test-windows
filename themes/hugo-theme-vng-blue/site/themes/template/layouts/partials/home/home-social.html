@@ -1,0 +1,23 @@
+<a href="{{ .Params.nextEventLink }}" target="_blank" class="vg-home-social">
+  <div class="vg-home-social__header">{{ .Params.nextEventHeading }}</div>
+
+  <div class="vg-home-social-content">
+    <div class="vg-home-social-content-item" style="background: url('{{ "home-content-background.svg" | relURL }}') no-repeat center;">
+      {{ .Params.nextEventDate }}
+    </div>
+
+    <div class="vg-home-social-content__center">
+      {{ with resources.Get .Params.nextEventIcon }}
+      {{ .Content | safeHTML }}
+      {{ end }}
+    </div>
+
+    <div class="vg-home-social-content-item" style="background: url('{{ "home-content-background.svg" | relURL }}') no-repeat center;">
+      {{ .Params.nextEventTime }}
+    </div>
+  </div>
+
+  <div class="vg-home-social__footer">
+    {{ .Params.nextEventTitle }}
+  </div>
+</a>

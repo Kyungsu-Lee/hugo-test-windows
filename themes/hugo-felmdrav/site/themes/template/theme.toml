@@ -1,0 +1,35 @@
+# Name       : Felmdrav
+# Version    : 0.2.0
+# Released   : 2026-01-12
+
+name = "Felmdrav"
+license = "MIT"
+licenselink = "https://github.com/geschke/hugo-felmdrav/blob/master/LICENSE.md"
+description = "Felmdrav is a clean and minimalistic Hugo theme built on the Bootstrap v5 CSS framework, focusing on flexibility and configurable layouts."
+homepage = "https://github.com/geschke/hugo-felmdrav/"
+demosite = "https://geschke.github.io/hugo-felmdrav/"
+
+tags = [
+  "bootstrap",
+  "minimal",
+  "blog",
+  "company",
+  "docs"
+]
+
+features = [
+  "bootstrap 5",
+  "flexible layout system",
+  "grid-based layout",
+  "two sidebars",
+  "multiple header layouts",
+  "highly configurable",
+  "reusable content blocks"
+]
+
+
+min_version = "0.146.0"
+
+[author]
+  name = "Ralf Geschke"
+  homepage = "https://www.kuerbis.org"

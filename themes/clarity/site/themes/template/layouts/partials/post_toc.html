@@ -1,0 +1,10 @@
+{{- if .Param "toc" }}
+{{- if gt (len .TableOfContents) 32 }}<!-- Issue #247 -->
+<aside class="post__toc-sidebar toc-sidebar">
+	<div class="toc toc--sticky">
+		<div class="toc__title">{{ T "toc_title" }}</div>
+		<nav class="toc__menu">{{ .TableOfContents }}</nav>
+	</div>
+</aside>
+{{- end }}
+{{- end }}

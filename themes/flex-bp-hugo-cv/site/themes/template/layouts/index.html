@@ -1,0 +1,20 @@
+{{ define "main" }}
+
+
+<div class="container">
+    <main>
+        {{- partial "_header.html" . -}}
+        {{- partial "_personaldata.html" . -}}
+        {{- partial "_briefprofile.html" . -}}
+        {{- partial "_experience.html" . -}}
+        {{- partial "_education.html" . -}}
+        {{- partial "_lists.html" . -}}
+        {{- partial "_contacts.html" . -}}
+        {{- partial "_footer.html" . -}}
+    </main>
+    <aside class="sidebar">
+        {{- partial "sidebar.html" . -}}
+    </aside>
+</div>
+
+{{ end }}

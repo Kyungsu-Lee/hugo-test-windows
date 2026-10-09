@@ -1,0 +1,61 @@
+{{- /*
+  "More" CTA linking to tag term page(s).
+  moreLink strategy (params.related.moreLink):
+    best  — tag on this post that appears on the most related pages (default)
+    first — first tag in front matter
+    all   — one button per tag on this post
+    none  — hide CTA
+*/ -}}
+
+{{- $page := .page -}}
+{{- $related := .related -}}
+{{- $cfg := .cfg | default dict -}}
+{{- $strategy := $cfg.moreLink | default "best" -}}
+{{- $label := $cfg.moreLabel | default "More in %s" -}}
+{{- $tags := $page.Params.tags | default slice -}}
+
+{{- if or (eq $strategy "none") (eq (len $tags) 0) -}}
+  {{- return -}}
+{{- end -}}
+
+{{- $terms := slice -}}
+
+{{- if eq $strategy "all" -}}
+  {{- $terms = $page.GetTerms "tags" -}}
+{{- else -}}
+  {{- $tagSlug := "" -}}
+  {{- if eq $strategy "first" -}}
+    {{- $tagSlug = index $tags 0 -}}
+  {{- else -}}
+    {{- $bestScore := -1 -}}
+    {{- range $tags -}}
+      {{- $slug := . -}}
+      {{- $score := 0 -}}
+      {{- range $related -}}
+        {{- if in .Params.tags $slug -}}
+          {{- $score = add $score 1 -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if gt $score $bestScore -}}
+        {{- $bestScore = $score -}}
+        {{- $tagSlug = $slug -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $tagSlug "" -}}
+      {{- $tagSlug = index $tags 0 -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with site.GetPage (printf "/tags/%s" $tagSlug) -}}
+    {{- $terms = slice . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if gt (len $terms) 0 -}}
+  <div class="related-more-cta">
+    {{- range $terms }}
+      <a class="btn btn-primary related-more-link" href="{{ .RelPermalink }}">
+        {{ printf $label .LinkTitle }}
+      </a>
+    {{- end }}
+  </div>
+{{- end -}}

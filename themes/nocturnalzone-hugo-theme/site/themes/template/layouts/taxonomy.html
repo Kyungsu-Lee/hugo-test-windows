@@ -1,0 +1,26 @@
+{{ define "main" }}
+  <section class="page-intro">
+    <p class="eyebrow">Taxonomy</p>
+    <h1 class="page-title">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="page-intro__body prose">{{ . }}</div>
+    {{ end }}
+  </section>
+
+  <section class="section-list">
+    <div class="entry-list">
+      {{ range .Pages }}
+        <article class="entry-item">
+          <div class="entry-item__meta">
+            <span>{{ .Data.Singular | default "Entry" }}</span>
+          </div>
+          <div class="entry-item__body">
+            <h2 class="entry-item__title">
+              <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+            </h2>
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

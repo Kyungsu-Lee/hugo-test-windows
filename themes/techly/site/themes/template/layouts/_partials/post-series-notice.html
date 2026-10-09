@@ -1,0 +1,7 @@
+{{- with .GetTerms "series" -}}
+  {{- $series := index . 0 -}}
+  <p class="post-series-notice">
+    This article is part of the series
+    <a href="{{ $series.RelPermalink }}">{{ $series.LinkTitle }}</a>.
+  </p>
+{{- end -}}

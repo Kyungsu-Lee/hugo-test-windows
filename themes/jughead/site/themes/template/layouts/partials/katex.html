@@ -1,0 +1,43 @@
+{{ range resources.Match "katex/fonts/*.woff2" }}
+  <link
+    rel="preload"
+    href="{{ .Permalink }}"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+{{ end }}
+
+{{ $katexCss := resources.Get "katex/katex.css" }}
+{{ if hugo.IsProduction }}
+  {{- $katexCss = $katexCss | minify | fingerprint }}
+  <link
+    rel="stylesheet"
+    href="{{ $katexCss.Permalink }}"
+    integrity="{{ $katexCss.Data.Integrity }}"
+  />
+{{ else }}
+  <link rel="stylesheet" href="{{ $katexCss.Permalink }}" />
+{{ end }}
+
+{{ $katexJs := resources.Get "katex/katex.mjs" }}
+{{ $katexAutoRenderJs := resources.Get "katex/contrib/auto-render.mjs" }}
+
+{{ if hugo.IsProduction }}
+  {{ $katexJs = $katexJs | minify | fingerprint }}
+  {{ $katexAutoRenderJs = $katexAutoRenderJs | minify | fingerprint }}
+{{ end }}
+
+<script type="module">
+  import katex from {{ $katexJs.RelPermalink }};
+  import renderMathInElement from {{ $katexAutoRenderJs.RelPermalink }};
+
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$", right: "$", display: false},
+      ],
+    });
+  });
+</script>

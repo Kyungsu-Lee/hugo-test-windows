@@ -1,0 +1,11 @@
+{{- $lang := .Get "lang" | default "text" -}}
+{{- $ui := site.Params.ui -}}
+<div class="lit-codeblock" data-lang="{{ lower $lang }}">
+  <div class="lit-codeblock__toolbar">
+    <span class="lit-codeblock__lang">{{ upper $lang }}</span>
+    <button class="lit-codeblock__copy" type="button" data-copy-code data-copy-default="{{ $ui.shortcodeCodeCopyLabel | default "Copy" }}" data-copy-success="{{ $ui.shortcodeCodeCopiedLabel | default "Copied" }}" data-copy-fail="{{ $ui.shortcodeCodeFailedLabel | default "Failed" }}">{{ $ui.shortcodeCodeCopyLabel | default "Copy" }}</button>
+  </div>
+  <div class="lit-codeblock__body">
+    {{ highlight (trim .Inner "\n\r") $lang "style=monokai,linenos=true" }}
+  </div>
+</div>

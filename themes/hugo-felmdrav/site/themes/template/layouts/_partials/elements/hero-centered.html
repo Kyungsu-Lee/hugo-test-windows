@@ -1,0 +1,80 @@
+{{- $root := .root -}}
+{{- $sec := .section -}}
+{{- $block := .block -}}
+
+{{- if not $block -}}
+  {{- return -}}
+{{- end -}}
+
+{{- $title := $block.Title | default "" -}}
+{{- $lead := $block.Params.lead | default "" -}}
+{{- $buttons := $block.Params.buttons | default (slice) -}}
+{{- $img := $block.Params.image -}}
+
+{{- /* image fields */ -}}
+{{- $src := "" -}}
+{{- $alt := "" -}}
+{{- if $img -}}
+  {{- $src = $img.src | default "" -}}
+  {{- $alt = $img.alt | default "" -}}
+{{- end -}}
+
+<section class="mb-5 py-3 text-center">
+  <div class="row py-lg-3">
+    <div class="col-lg-8 col-md-10 mx-auto">
+
+      {{- if $title -}}
+        <h1 class="display-5 fw-bold mb-3">{{ $title }}</h1>
+      {{- end -}}
+
+      {{- if $lead -}}
+        <p class="lead text-body-secondary mb-4">{{ $lead }}</p>
+      {{- end -}}
+
+      {{- if gt (len $buttons) 0 -}}
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-4">
+          {{- range $btn := $buttons -}}
+            {{- $text := $btn.text | default "" -}}
+            {{- $style := $btn.style | default "primary" -}}
+
+            {{- $href := "" -}}
+            {{- with $btn.ref -}}
+              {{- $href = relref $root . -}}
+            {{- else -}}
+              {{- with $btn.url -}}
+                {{- $href = . -}}
+              {{- end -}}
+            {{- end -}}
+
+            {{- if and $text $href -}}
+              <a class="btn btn-{{ $style }} btn-lg px-4{{ if eq $style "primary" }} gap-3{{ end }}" href="{{ $href }}">
+                {{ $text }}
+              </a>
+            {{- end -}}
+          {{- end -}}
+        </div>
+      {{- end -}}
+
+      {{- /* Optional image below */ -}}
+      {{- if $src -}}
+        {{- $res := $block.Resources.GetMatch $src -}}
+        <div class="mt-4">
+          {{- if $res -}}
+            <img
+              src="{{ $res.RelPermalink }}"
+              class="img-fluid rounded-3 border"
+              alt="{{ $alt }}"
+              loading="lazy">
+          {{- else -}}
+            <img
+              src="{{ $src }}"
+              class="img-fluid rounded-3 border"
+              alt="{{ $alt }}"
+              loading="lazy">
+          {{- end -}}
+        </div>
+      {{- end -}}
+
+    </div>
+  </div>
+</section>

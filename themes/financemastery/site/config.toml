@@ -1,0 +1,116 @@
+baseURL = "/"
+# canonifyURLs = true
+defaultContentLanguage = "en"
+disableLanguages = ["ru"]
+paginate = "6"
+relativeURLs = true
+summaryLength = "50"
+title = "FinanceMastery"
+
+
+[Languages.en]
+contentDir = "content/en"
+home = "Home"
+languageCode = "en"
+languageName = "ENG"
+weight = 1
+
+
+
+[outputs]
+home = ["HTML"]
+
+
+[params]
+CIO_site_id = "XXX"
+GTM = "GTM-WHBQ3BV"
+develop = ""
+author = "FinanceMastery"
+
+logo = "./images/logo.svg"
+logo_dark = "./images/logo-w.svg"
+logo_description = "FinanceMastery"
+
+site_name = "FinanceMastery"
+site_url = "#"
+
+description = "Is a simple ecnosystem of interconnected crypto products designed for the mass adoption of cryptocurrencies."
+
+# search
+search = false
+
+# soc
+
+[[params.plugins.js]]
+link = "plugins/js/jquery.min.js"
+#[[params.plugins.js]]
+#link = "plugins/js/slick.js"
+
+
+[params.preloader]
+enable = true
+preloader = ""
+
+
+############################# socials #################################
+[[params.soc]]
+icon = "fb"
+link = "#"
+[[params.soc]]
+icon = "im"
+link = "#"
+[[params.soc]]
+icon = "tm"
+link = "#"
+[[params.soc]]
+icon = "ytb"
+link = "#"
+[[params.soc]]
+icon = "email"
+link = "#"
+
+############################# contacts #################################
+[[params.contact]]
+title = "Address"
+contact = "148 Cromwell Rd, Hounslow TW3 3QS, United Kingdom"
+[[params.contact]]
+title = "Phone"
+contact = "+448006442907"
+link = "tel:+448006442907"
+[[params.contact]]
+title = "Email"
+contact = "FinanceMastery@gmail.com"
+link = "mailto:FinanceMastery@gmail.com"
+
+
+############################# footer #################################
+[params.footer]
+    copyright = "&copy; 2024 SiteName Foundation. All rights reserved"
+    note = "Disclaimer: Finance Phantom is a promotional website and does not offer trading, brokerage, or investment services or products directly. By registering, you will be connected with a service provider who may contact you to provide general information, trading opportunities, or market research on financial instruments, commodities, crypto assets, and other related topics. Please note that utilizing this service may involve fees. It is important to carefully review the Terms and Conditions and information provided on the service provider's website. The website and its operator do not verify the regulatory status of their clients or their compliance with applicable laws and regulations. Consequently, they cannot be held liable for any legal violations or damages resulting from interactions with the service provider. Remember that all investments carry the risk of potentially losing your entire investment amount."
+
+[[menu.footer]]
+weight = 1
+name = "Our services"
+URL = "/services"
+[[menu.footer]]
+weight = 2
+name = "Terms of Service"
+URL = "/terms"
+[[menu.footer]]
+weight = 3
+name = "Privacy Policy"
+URL = "/policy"
+
+############################# header #################################
+[[menu.header]]
+weight = 1
+name = "Our services"
+URL = "/services"
+[[menu.header]]
+weight = 2
+name = "Terms of Service"
+URL = "/terms"
+[[menu.header]]
+weight = 3
+name = "Privacy Policy"
+URL = "/policy"

@@ -1,0 +1,49 @@
+{{- $featured := .featured | default false -}}
+{{- $cover := partial "post-cover.html" .page -}}
+<article class="blog-post{{ if $featured }} featured-post{{ end }}{{ if not $cover.has }} blog-post--no-image{{ end }}">
+  <a href="{{ .page.RelPermalink }}" class="post-link">
+    {{- if $cover.has }}
+      <div class="post-image">
+        <img src="{{ $cover.src }}" alt="{{ $cover.alt }}" loading="lazy">
+      </div>
+    {{- end }}
+    <div class="post-content">
+      <div class="post-meta">
+        {{- if and .page.Params.pinned .page.Params.pinnedIndicator -}}
+          <span class="post-pinned" title="Pinned" aria-label="Pinned post">
+            {{ partialCached "pin-icon.html" . }}
+          </span>
+        {{- end -}}
+        <time datetime="{{ .page.Date.Format "2006-01-02" }}" title="{{ .page.Date.Format "January 2, 2006" }}">
+          {{ .page.Date.Format "January 2, 2006" }}
+        </time>
+      </div>
+      {{- if $featured }}
+        <h2 class="post-title">{{ .page.LinkTitle }}</h2>
+      {{- else }}
+        <h3 class="post-title">{{ .page.LinkTitle }}</h3>
+      {{- end }}
+      <p class="post-excerpt">
+        {{- with .page.Params.description -}}
+          {{ . }}
+        {{- else -}}
+          {{ .page.Summary | plainify | truncate 200 }}
+        {{- end -}}
+      </p>
+      {{- if $featured }}
+        <div class="post-footer">
+          {{ partial "post-author.html" .page }}
+          <span class="read-more">
+            Read more
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </div>
+      {{- else }}
+        <span class="read-more">
+          Read more
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+      {{- end }}
+    </div>
+  </a>
+</article>

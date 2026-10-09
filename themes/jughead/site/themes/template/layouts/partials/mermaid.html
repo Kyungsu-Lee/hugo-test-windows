@@ -1,0 +1,29 @@
+{{ $mermaidJs := resources.Get "mermaid/mermaid.esm.mjs" }}
+{{ $mermaidChunks := resources.Match "mermaid/chunks/mermaid.esm/*.mjs" }}
+
+{{ if hugo.IsProduction }}
+  {{ $mermaidJs = resources.Get "mermaid/mermaid.esm.min.mjs" }}
+  {{ $mermaidChunks = resources.Match "mermaid/chunks/mermaid.esm.min/*.mjs" }}
+{{ end }}
+
+<script type="module">
+  import mermaid from {{ $mermaidJs.RelPermalink }};
+  {{ range $mermaidChunks }}
+  import "{{ .RelPermalink }}";
+  {{ end }}
+
+  let theme = "default";
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    // dark mode
+    theme = "dark";
+  }
+  const config = {
+    startOnLoad: true,
+    align: "center",
+    theme: theme,
+  };
+  mermaid.initialize(config);
+</script>

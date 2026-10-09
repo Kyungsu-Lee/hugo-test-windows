@@ -1,0 +1,30 @@
+{{- $href := .Get "href" | default "#" -}}
+{{- $target := .Get "target" | default "_self" -}}
+{{- $class := .Get "class" | default "" -}}
+{{- $width := "" -}}
+{{- with .Get "width" -}}
+  {{- $width = strings.TrimSpace (printf "%v" .) -}}
+{{- end -}}
+{{- if and (ne $width "") (gt (len (findRE `^[0-9]+(?:\.[0-9]+)?$` $width)) 0) -}}
+  {{- $width = printf "%spx" $width -}}
+{{- end -}}
+{{- $height := "" -}}
+{{- with .Get "height" -}}
+  {{- $height = strings.TrimSpace (printf "%v" .) -}}
+{{- end -}}
+{{- if and (ne $height "") (gt (len (findRE `^[0-9]+(?:\.[0-9]+)?$` $height)) 0) -}}
+  {{- $height = printf "%spx" $height -}}
+{{- end -}}
+{{- $styles := slice -}}
+{{- if ne $width "" -}}
+  {{- $styles = $styles | append (printf "width: %s;" $width) -}}
+{{- end -}}
+{{- if ne $height "" -}}
+  {{- $styles = $styles | append (printf "height: %s;" $height) -}}
+{{- end -}}
+{{- $style := delimit $styles " " -}}
+{{- $rel := "" -}}
+{{- if eq $target "_blank" -}}
+  {{- $rel = "noopener noreferrer" -}}
+{{- end -}}
+<a class="lit-inline-button{{ if ne (strings.TrimSpace $class) "" }} {{ $class }}{{ end }}" href="{{ $href }}" target="{{ $target }}"{{ with $rel }} rel="{{ . }}"{{ end }}{{ if ne $style "" }} style="{{ $style | safeCSS }}"{{ end }}>{{ .Inner }}</a>

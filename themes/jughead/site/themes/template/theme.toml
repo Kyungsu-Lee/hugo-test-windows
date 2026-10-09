@@ -1,0 +1,28 @@
+name = "Jughead"
+license = "GPL-3.0-only"
+licenselink = "https://github.com/ananthb/jughead/blob/main/LICENSE"
+description = """Jughead is a simple and powerful blog theme for Hugo.
+It features Giscus comments, Mermaid diagrams, and KaTeX formulae."""
+homepage = "https://github.com/ananthb/jughead"
+demosite = "https://ananthb.github.io/jughead/"
+tags = [
+  "portfolio",
+  "blog",
+  "simple",
+  "responsive",
+  "minimal",
+  "personal",
+  "clean",
+  "shortcodes",
+]
+features = ["blog", "responsive", "comments", "Syntax highlighting"]
+min_version = "0.120.0"
+
+[author]
+name = "Ananth Bhaskararaman"
+homepage = "https://github.com/ananthb"
+
+[original]
+name = "Archie"
+homepage = "https://athul.github.io/archie"
+repo = "https://github.com/athul/archie"

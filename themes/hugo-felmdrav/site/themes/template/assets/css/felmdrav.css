@@ -1,0 +1,202 @@
+
+
+.footer-container {
+  background-color: var(--felmdrav-footer-bg, var(--bs-secondary-bg));
+  color: var(--felmdrav-footer-fg, var(--bs-body-color));
+}
+
+.footer-container a {
+  color: var(--felmdrav-footer-link, var(--bs-link-color));
+}
+
+.footer-container a:hover {
+  color: var(--felmdrav-footer-link, var(--bs-link-hover-color));
+}
+
+
+.subfooter-container {
+  background-color: var(--felmdrav-subfooter-bg, var(--bs-tertiary-bg));
+  color: var(--felmdrav-subfooter-fg, var(--bs-body-color));
+}
+
+.subfooter-container a {
+  color: var(--felmdrav-subfooter-link, var(--bs-link-color));
+}
+
+.subfooter-container a:hover {
+  color: var(--felmdrav-subfooter-link, var(--bs-link-hover-color));
+}
+
+
+
+/* Hero image: keep it clean */
+.hero-img{
+  display: block;
+  height: auto;
+}
+
+/* Overlay padding and readable text box */
+.hero-overlay{
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+/* Text box: prevent "overlap" by limiting line length */
+.hero-text{
+  max-width: min(60ch, 100%);
+  text-shadow: 0 1px 12px rgba(0,0,0,0.35);
+}
+
+
+/* Modern responsive type (no media queries needed) */
+.hero-title{
+  font-weight: 800;
+  line-height: 1.05;
+   font-size: clamp(1.15rem, 2.2vw + 0.65rem, 3.0rem);
+
+   white-space: nowrap;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-wrap: normal;
+}
+
+.hero-subtitle{
+  margin-top: clamp(0.25rem, 0.7vw, 0.6rem);
+  font-weight: 450;
+  line-height: 1.2;
+    font-size: clamp(0.9rem, 1.1vw + 0.5rem, 1.55rem);
+
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  
+    text-wrap: pretty;
+}
+
+.hero,
+.hero:hover,
+.hero:focus {
+  color: inherit;
+  text-decoration: none;
+}
+
+.header-url.hero-link,
+.header-url.hero-link:hover,
+.header-url.hero-link:focus{
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* Assistive text */
+
+.screen-reader-text {
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+  overflow: hidden;
+  max-height:0px;
+}
+
+
+
+/* Menu Settings - later... maybe... */
+.main-nav ul {
+  text-align: center;
+  letter-spacing: -1em;
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav ul li {
+  display: inline-block;
+  letter-spacing: normal;
+}
+
+.main-nav ul li a {
+  position: relative;
+  display: block;
+  line-height: 45px;
+  color: #fff;
+  padding: 0 20px;
+  white-space: nowrap;
+}
+
+.main-nav > ul > li > a {
+  border-radius: 2px;
+}
+
+/*Active dropdown nav item */
+.main-nav ul li:hover > a {
+  background-color: #175e91;
+}
+
+/* Selected Dropdown nav item */
+.main-nav ul li.selected > a {
+  background-color: #fff;
+  color: #175e91;
+}
+
+/* Dropdown CSS */
+.main-nav ul li {
+  position: relative;
+}
+
+.main-nav ul li ul {
+  position: absolute;
+  background-color: #1f8dd6;
+  min-width: 100%;
+  text-align: left;
+  z-index: 999;
+
+  display: none;
+}
+.main-nav ul li ul li {
+  display: block;
+}
+
+/* Dropdown CSS */
+.main-nav ul li ul ul {
+  left: 100%;
+  top: 0;
+}
+
+/* Active on Hover */
+.main-nav li:hover > ul {
+  display: block;
+}
+
+/* Child Indicator */
+.main-nav .has-children > a {
+  padding-right: 30px;
+}
+.main-nav .has-children > a:after {
+  font-family: FontAwesome;
+  content: "\f107";
+  position: absolute;
+  display: inline-block;
+  right: 8px;
+  top: 0;
+}
+
+.main-nav .has-children .has-children > a:after {
+  content: "\f105";
+}
+
+
+.feature-icon {
+  width: 4rem;
+  height: 4rem;
+}
+
+.feature-hanging-icon {
+  width: 3rem;
+  height: 3rem;
+}
+
+.card-cover {
+  background-size: cover;
+  background-position: center;
+}
+
+.text-shadow-1 {
+  text-shadow: 0 .125rem .25rem rgba(0, 0, 0, .45);
+}

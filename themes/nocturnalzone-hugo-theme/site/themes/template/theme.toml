@@ -1,0 +1,13 @@
+name = "NocturnalZone"
+version = "1.0.0"
+license = "MIT"
+licenselink = "https://github.com/noxyzone/nocturnalzone-hugo-theme/blob/main/LICENSE"
+description = "A dark Hugo theme for quiet journals, technical notes, and editorial writing."
+homepage = "https://github.com/noxyzone/nocturnalzone-hugo-theme"
+demosite = "https://www.nocturnalzone.com/"
+tags = ["blog", "journal", "editorial", "dark", "minimal"]
+features = ["responsive", "tags", "editorial layout", "thumbnails"]
+
+[author]
+name = "NocturnalZone"
+homepage = "https://www.nocturnalzone.com/"

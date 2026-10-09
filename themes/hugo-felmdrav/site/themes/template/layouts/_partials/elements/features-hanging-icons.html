@@ -1,0 +1,73 @@
+{{- $root := .root -}}
+{{- $sec := .section -}}
+
+{{- with .block -}}
+  {{- $block := . -}}
+
+  {{- $title := $block.Title | default "" -}}
+  {{- $items := $block.Params.items | default (slice) -}}
+
+  {{- /* columns: section override wins, block can provide default, otherwise 3 */ -}}
+  {{- $cols := $sec.columns | default ($block.Params.columns | default 3) -}}
+  {{- if lt $cols 1 -}}{{- $cols = 1 -}}{{- end -}}
+  {{- if gt $cols 12 -}}{{- $cols = 12 -}}{{- end -}}
+
+  {{- $showTitle := $sec.show_title | default true -}}
+
+  <section class="mb-1 py-3">
+    <div class="container-fluid px-0">
+
+      {{- if and $showTitle $title -}}
+        <h2 class="pb-2 border-bottom">{{ $title }}</h2>
+      {{- end -}}
+
+      <div class="row g-4 py-3 row-cols-1 row-cols-lg-{{ $cols }}">
+
+        {{- range $it := $items -}}
+          {{- $icon := $it.icon | default "" -}}
+          {{- $itTitle := $it.title | default "" -}}
+          {{- $text := $it.text | default "" -}}
+          {{- $link := $it.link -}}
+
+          <div class="col d-flex align-items-start">
+            {{- if $icon -}}
+              <div class="feature-hanging-icon icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-3 flex-shrink-0 me-3 rounded-3">
+                <i class="{{ $icon }}" aria-hidden="true"></i>
+              </div>
+            {{- end -}}
+
+            <div>
+              {{- if $itTitle -}}
+                <h3 class="fs-2 text-body">{{ $itTitle }}</h3>
+              {{- end -}}
+
+              {{- if $text -}}
+                <p>{{ $text }}</p>
+              {{- end -}}
+
+              {{- if $link -}}
+                {{- $lt := $link.text | default "" -}}
+                {{- $style := $link.style | default "primary" -}}
+
+                {{- $href := "" -}}
+                {{- with $link.ref -}}
+                  {{- $href = relref $root . -}}
+                {{- else -}}
+                  {{- with $link.url -}}
+                    {{- $href = . -}}
+                  {{- end -}}
+                {{- end -}}
+
+                {{- if and $lt $href -}}
+                  <a href="{{ $href }}" class="btn btn-{{ $style }} btn-sm">{{ $lt }}</a>
+                {{- end -}}
+              {{- end -}}
+            </div>
+          </div>
+        {{- end -}}
+
+      </div>
+    </div>
+  </section>
+
+{{- end -}}

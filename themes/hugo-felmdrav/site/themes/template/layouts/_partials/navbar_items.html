@@ -1,0 +1,29 @@
+{{ $currentPage := . }}
+{{ range .Site.Menus.main }}
+  {{ if .HasChildren }}
+   {{- $ddID := printf "navbarDropdown-%s" (.Identifier | default .Name | urlize) -}}
+  <li class="nav-item dropdown">
+
+<a class="nav-link dropdown-toggle {{ if or ($currentPage.IsMenuCurrent "main" .) ($currentPage.HasMenuCurrent "main" .) }}active{{ end }}"
+   href="#" id="{{ $ddID }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  {{ .Pre }}{{ .Name }}
+</a>
+
+
+    <div class="sub-menu dropdown-menu" aria-labelledby="{{ $ddID }}">
+      {{ range .Children }}
+
+      <a class="dropdown-item" href="{{ .URL }}">{{ .Name }}</a>
+      {{ end }}
+    </div>
+  </li>
+  {{ else }}
+  <li class="nav-item me-2">
+    <a class="nav-link {{ if eq $currentPage.RelPermalink .URL }}active{{ end }}" href="{{ .URL }}">
+      {{ .Pre }}
+      {{ .Name }}
+    </a>
+  </li>
+
+  {{ end }}
+{{ end }}

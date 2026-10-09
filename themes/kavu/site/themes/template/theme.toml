@@ -1,0 +1,22 @@
+# theme.toml template for a Hugo theme
+# See https://github.com/gohugoio/hugoThemes#themetoml for an example
+
+name = "Kavu"
+license = "MIT"
+licenselink = "https://github.com/stultus/kavu/blob/main/LICENSE"
+description = "A Hugo theme for digital gardens, named after the sacred groves of Kerala. Monospace, terminal-inspired, with note maturity stages, backlinks, and an interactive network graph."
+homepage = "https://github.com/stultus/kavu"
+tags = ["digital-garden", "zettelkasten", "knowledge-base", "monospace", "dark", "responsive", "minimal"]
+features = ["blog", "highlighting", "responsive", "search"]
+min_version = "0.128.0"
+demosite = "https://stultus.in/notes"
+
+[author]
+  name = "Hrishikesh Bhaskaran"
+  homepage = "https://stultus.in"
+
+# If porting an existing theme
+[original]
+  author = "Paul Martins"
+  homepage = "https://github.com/paulmartins/hugo-digital-garden-theme"
+  repo = "https://github.com/paulmartins/hugo-digital-garden-theme"

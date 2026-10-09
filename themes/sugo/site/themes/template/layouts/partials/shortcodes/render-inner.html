@@ -1,0 +1,15 @@
+{{- $ctx := .ctx -}}
+{{- $content := .content | default "" -}}
+{{- $display := .display | default "block" -}}
+{{- $trim := .trim | default false -}}
+{{- $rendered := "" -}}
+{{- if $trim -}}
+  {{- $content = strings.TrimSpace $content -}}
+{{- end -}}
+{{- if and $ctx $ctx.Page -}}
+  {{- $rendered = printf "%s" ($ctx.Page.RenderString (dict "display" $display) $content) -}}
+{{- else -}}
+  {{- $rendered = printf "%s" ($content | markdownify) -}}
+{{- end -}}
+{{- $rendered = replaceRE `\[\^([^\]]+)\]` `<sup id="fnref:$1"><a href="#fn:$1" class="footnote-ref" role="doc-noteref">$1</a></sup>` $rendered -}}
+{{- $rendered | safeHTML -}}

@@ -1,0 +1,4 @@
+{{- /* Icons for params.social, see data/bpsocial.yaml */ -}}
+{{- range partial "social_links.html" . }}
+  <li class="list-inline-item"><a href="{{ .url }}"{{ if not (strings.HasPrefix .url "mailto:") }} target="_blank" rel="{{ if .profile }}me {{ end }}noopener noreferrer"{{ end }} title="{{ .title }}" class="social-icon">{{ partial "icon.html" .icon }}</a></li>
+{{- end }}

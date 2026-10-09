@@ -1,0 +1,199 @@
+.header
+	padding-top: $gap2
+	padding-bottom: $gap2
+	+maw($xs)
+		.logo img
+			width: 80%
+
+.drawer
+	+ps(fixed, (t, 0), (l, 0))
+	z-index: 100500
+	+sz(100%, 100%)
+	background: $black
+	color: $white
+	padding: $gap3
+	height: 0
+	visibility: hidden
+	transform: translateX(-100%)
+	transition: transform 0.3s linear
+	overflow: hidden
+	.container
+		display: flex
+		flex-direction: column
+	&__header
+		+flex(flex, center, space-between, nowrap)
+		padding-bottom: $gap3
+	&__content
+		display: flex
+		flex-direction: column
+		justify-content: space-between
+		height: 100%
+	&__nav
+		display: flex
+		flex-direction: column
+		margin-bottom: $gap3
+		a
+			padding: $gap3 0
+			+flex(flex, center, space-between, nowrap)
+			+ft(22, 22, 400)
+			text-transform: uppercase
+			border: 1px solid $white
+			border-width: 1px 0 0
+			&:first-child
+				border-top: 0
+			svg
+				color: $main
+	.btn
+		margin-left: auto
+		margin-right: auto
+		max-width: 100%
+		width: 100%
+	&.show
+		display: flex
+		visibility: visible
+		height: 100%
+		transform: translateX(0)
+
+	+maw($xs)
+		.contacts
+			text-align: center
+		.logo img
+			width: 80%
+		&__nav a
+			+ft(16, 16, 500)
+
+
+.navbar
+	+flex(flex, center, space-between, nowrap)
+	gap: 2em
+	row-gap: $gap2
+
+	&__btns
+		+flex(inline-flex, center, center, nowrap)
+		gap: $gap2
+	&-toggler
+		border: none
+		padding: 0
+		color: inherit
+		background: transparent
+		&:hover, &:active, &:focus
+			box-shadow: none
+	&__nav
+		+flex(inline-flex, center, center, nowrap)
+		gap: 2em
+		margin-left: auto
+		margin-right: auto
+		a
+			position: relative
+			transition: $trs
+			text-transform: uppercase
+			//+ft(18, 18, 400)
+			+ft(16, 16, 400, $ffHeading)
+			margin-top: 4px
+			&::after 
+				content: ''
+				display: block
+				margin-top: 2px
+				+sz(0, 2px)
+				background: $main
+				transition: width .3s
+			&:hover
+				color: $main
+				&::after
+					width: 100%
+
+	+miw($md)
+		&-toggler
+			display: none
+	+maw($md)
+		&__nav
+			display: none
+
+	+maw($sm)
+		gap: 0
+		.btn
+			display: none
+	
+		
+
+.hero
+	position: relative
+	&__wrap
+		color: $white
+		background-color: $dark
+		background-repeat: no-repeat
+		background-size: contain
+		background-position: bottom right
+		background-image: url('../images/bg/bg1.svg'),
+	&__container
+		position: relative
+		z-index: 2
+		display: grid
+		grid-template-columns: 1fr 1fr
+		align-items: center
+		gap: $gap6
+		hgroup
+			position: relative
+			z-index: 2
+	&__sub
+		margin-top: $gap2 
+		margin-bottom: $gap4
+		+ft(22, 22, 500)
+		color: $main
+		em
+			font-style: normal
+			text-decoration: line-through 
+	+maw($md)
+		&__container
+			grid-template-columns: 1fr
+			justify-content: center
+			text-align: center
+			gap: 0
+
+
+	+maw($sm)
+		&__wrap
+			background-size: cover, cover
+	+maw($xs)
+		&__sub
+			+ft(15, 15*1.2, 400)
+
+
+.footer
+	+theme(dark)
+	text-align: center
+	+ft(16, 16*1.4, 400)
+	.container
+		+flex(flex, center, space-between, nowrap)
+		gap: $gap4
+		row-gap: $gap2
+	&__divider
+		opacity: 0.5
+		border-width: 1px 0 0
+	&__btm
+		padding: $gap4 0 $gap4
+		.container
+			text-align: center
+			justify-content: center
+	&__top
+		padding: $gap4 0 $gap4
+	+maw($md)
+		.navbar__nav
+			display: flex
+			flex-wrap: wrap
+			gap: 2em
+		.container
+			flex-direction: column
+			align-items: center
+			text-align: center
+	+maw($xs)
+		.navbar__nav
+			row-gap: $gap1
+
+
+
+.logo
+	+flex(inline-flex, center, flex-start, nowrap)
+	margin: 0
+	&::after
+		display: none

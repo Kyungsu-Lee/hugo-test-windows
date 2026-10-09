@@ -1,0 +1,12 @@
+{{- $author := .Get "author" -}}
+{{- $source := .Get "source" -}}
+<blockquote class="lit-author-quote">
+  <div class="lit-author-quote__content">
+    {{ partial "shortcodes/render-inner.html" (dict "ctx" . "content" .Inner "display" "block" "trim" true) }}
+  </div>
+  {{- if $author -}}
+    <footer class="lit-author-quote__footer">
+      <span class="lit-author-quote__author">{{ $author }}</span>{{ if $source }}<cite>{{ $source }}</cite>{{ end }}
+    </footer>
+  {{- end -}}
+</blockquote>

@@ -1,0 +1,90 @@
+{{- /* Page grid orchestrator (1-3 columns), supports 2-column layouts (0 allowed). */ -}}
+{{- /* Page grid orchestrator */ -}}
+
+{{- $page := .page -}}
+{{- $site := $page.Site -}}
+{{- $contentPartial := .content_partial | default "" -}}
+
+
+{{- /* Resolve sidebar IDs: page params override site defaults. */ -}}
+{{- $sidebar := $page.Params.sidebar -}}
+
+
+{{- $leftSidebarID := "" -}}
+{{- $rightSidebarID := "" -}}
+
+{{- if and $sidebar (ne $sidebar false) -}}
+  {{- $leftSidebarID = index $sidebar "left" | default "" -}}
+  {{- $rightSidebarID = index $sidebar "right" | default "" -}}
+{{- else -}}
+{{- $leftSidebarID = $site.Params.sidebar.left | default "" -}}
+  {{- $rightSidebarID = $site.Params.sidebar.right | default "" -}}
+{{- end -}}
+
+{{- $hasLeftSidebar := ne $leftSidebarID "" -}}
+{{- $hasRightSidebar := ne $rightSidebarID "" -}}
+
+{{- /* Determine columns: use valid per-page grid; otherwise fallback. */ -}}
+{{- $grid := $page.Params.grid -}}
+
+{{- $leftCols := 0 -}}
+{{- $mainCols := 12 -}}
+{{- $rightCols := 0 -}}
+
+{{- $gridIsValid := false -}}
+
+{{- if $grid -}}
+  {{- $leftCols = int (index $grid "left" | default 0) -}}
+  {{- $mainCols = int (index $grid "main" | default 0) -}}
+  {{- $rightCols = int (index $grid "right" | default 0) -}}
+
+  {{- /* Validation: main > 0, left/right >= 0, sum must be 12. */ -}}
+  {{- if and (gt $mainCols 0) (ge $leftCols 0) (ge $rightCols 0) (eq (add (add $leftCols $mainCols) $rightCols) 12) -}}
+    {{- $gridIsValid = true -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if not $gridIsValid -}}
+  {{- if or $hasLeftSidebar $hasRightSidebar -}}
+    {{- /* Sidebars active: use site default grid. */ -}}
+    {{- $leftCols = int ($site.Params.grid.left | default 3) -}}
+    {{- $mainCols = int ($site.Params.grid.main | default 6) -}}
+    {{- $rightCols = int ($site.Params.grid.right | default 3) -}}
+
+    {{- /* Validate defaults; if invalid, fall back to full width. */ -}}
+    {{- if not (and (gt $mainCols 0) (ge $leftCols 0) (ge $rightCols 0) (eq (add (add $leftCols $mainCols) $rightCols) 12)) -}}
+      {{- $leftCols = 0 -}}{{- $mainCols = 12 -}}{{- $rightCols = 0 -}}
+    {{- end -}}
+  {{- else -}}
+    {{- /* No sidebars and no valid grid: full width. */ -}}
+    {{- $leftCols = 0 -}}{{- $mainCols = 12 -}}{{- $rightCols = 0 -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="container">
+  <div class="row">
+
+    {{- if gt $leftCols 0 -}}
+      <div class="col-md-{{ $leftCols }}">
+        {{- if $hasLeftSidebar -}}
+          {{- partial "sidebar/container.html" (dict "id" $leftSidebarID "class" "felmdrav-sidebar") -}}
+        {{- end -}}
+      </div>
+    {{- end -}}
+
+    <main class="col-md-{{ $mainCols }}" id="content">
+      {{- if $contentPartial -}}
+        {{- partial $contentPartial $page -}}
+      {{- end -}}
+    </main>
+
+    {{- if gt $rightCols 0 -}}
+      <div class="col-md-{{ $rightCols }}">
+        {{- if $hasRightSidebar -}}
+          {{- partial "sidebar/container.html" (dict "id" $rightSidebarID "class" "felmdrav-sidebar") -}}
+        {{- end -}}
+      </div>
+    {{- end -}}
+
+  </div>
+</div>

@@ -1,0 +1,19 @@
+{{- $pctx := . }}
+<div id="footer">
+
+{{- range $i, $m := .Site.Menus.footer }}
+    {{ if ne $i 0 }}&nbsp;{{ end }}
+    {{ if eq $m.Params.type "plain" }}
+    <span class="post-meta">{{- $m.Name }}</span>
+    {{ else }}
+    {{ $url := partial "functions/get-menu-url.html" (dict "pctx" $pctx "entry" $m) }}
+    <a href="{{- $url -}}"
+       title="{{- or (i18n (upper $m.Identifier)) $m.Name | safeHTML -}}"
+        {{ with $m.Params.targetBlank }}target="_blank"{{ end -}}
+    >
+        {{- or (i18n (upper $m.Identifier)) $m.Name | safeHTML -}}
+    </a>
+    {{- end }}
+{{- end }}
+
+</div>

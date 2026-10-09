@@ -1,0 +1,31 @@
+{{- if lt hugo.Version "0.158.0" }}
+{{- errorf "No Fate requires Hugo v0.158.0 or later" }}
+{{- end -}}
+{{- partial "validate-content-model.html" . -}}
+{{- $style := partial "style-resolver.html" . -}}
+{{- .Store.Set "noFateStyle" $style -}}
+
+<!DOCTYPE html>
+{{- $theme := site.Params.defaultTheme | default "auto" }}
+<html lang="{{ site.Language.Locale }}" dir="{{ .Language.Direction | default "auto" }}"
+    data-theme="{{ $theme }}" data-nf-style="{{ $style }}">
+
+<head>
+    {{- partial "head.html" . }}
+</head>
+
+{{- $bodyClass := printf "nf-page nf-kind-%s" .Kind -}}
+{{- if or (ne .Kind "page") (eq .Layout "archives") (eq .Layout "search") -}}
+    {{- $bodyClass = printf "%s list" $bodyClass -}}
+{{- end }}
+<body class="{{ $bodyClass }}" id="top">
+    <a class="nf-skip-link" href="#nf-main">{{ i18n "nf_skip_to_content" | default "Skip to content" }}</a>
+    {{ partial "header.html" . -}}
+    <main class="main" id="nf-main" tabindex="-1">
+        {{- block "main" . }}{{ end }}
+    </main>
+    {{ partial "footer.html" . -}}
+    {{ partial "hooks/body-end.html" . -}}
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+{{/* Generic block shortcode for felmdrav (theme) */}}
+
+{{- $type := .Get "type" | default "" -}}
+{{- $contentPath := .Get "content" | default "" -}}
+
+{{- if not $type -}}
+  {{- errorf "block shortcode: missing required param 'type' on page %q" .Page.Path -}}
+{{- end -}}
+{{- if not $contentPath -}}
+  {{- errorf "block shortcode: missing required param 'content' on page %q" .Page.Path -}}
+{{- end -}}
+
+{{/* Resolve content page (e.g. content/blocks/hero-a/index.md) */}}
+{{- $block := site.GetPage $contentPath -}}
+{{- if not $block -}}
+  {{- $block = site.GetPage (printf "/%s" $contentPath) -}}
+{{- end -}}
+{{- if not $block -}}
+  {{- errorf "block shortcode: cannot find content page %q on page %q" $contentPath .Page.Path -}}
+{{- end -}}
+
+{{/* Base section object (matches home: sections entries) */}}
+{{- $section := dict "type" $type "content" $contentPath -}}
+
+{{/* Pass through ALL shortcode params (except type/content) into section */}}
+{{- range $k, $v := .Params -}}
+  {{- if and (ne $k "type") (ne $k "content") -}}
+    {{- $section = merge $section (dict $k $v) -}}
+  {{- end -}}
+{{- end -}}
+
+{{/* Payload identical to home renderer */}}
+{{- $payload := dict
+  "root" .Page
+  "section" $section
+  "block" $block
+-}}
+
+{{- $partialPath := printf "elements/%s.html" $type -}}
+{{- partial $partialPath $payload -}}
