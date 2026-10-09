@@ -1,0 +1,40 @@
+{{ if $.Param "enableSearch" }}
+
+
+{{- $pages := slice -}}
+{{- $pages = $pages | append .Site.Pages -}}
+{{- $pages = $pages | append .Site.Taxonomies.categories -}}
+{{- $pages = $pages | append .Site.Taxonomies.tags -}}
+{{- $pages = where $pages "Kind" "in" (slice "page" "section" "home" "taxonomy" "term") -}}
+{{- $invisibleSections := $.Param "invisibleSections" -}}
+{{- if and $invisibleSections (gt (len $invisibleSections) 0) -}}
+    {{- $pages = where $pages "Section" "not in" $invisibleSections -}}
+{{- end -}}
+{{- $pages = where $pages "Params.noindex" "!=" true -}}
+{{- /* warnf "INFO: search index page count: %v" (len $pages) */ -}}
+
+{{- $index := slice -}}
+
+{{- range $pages -}}
+	{{- $page := . -}}
+	{{- $entry := dict "permalink" .RelPermalink "lang" .Language.Lang "title" .Title "contents" .Plain -}}
+
+	{{- if eq .Kind "term" -}}
+		{{- if eq .Data.Singular "category" -}}
+			{{- $entry = merge $entry (dict "category" .Title) -}}
+		{{- else if eq .Data.Singular "tag" -}}
+			{{- $entry = merge $entry (dict "tag" .Title) -}}
+		{{- end -}}
+	{{- end -}}
+
+	{{- range ($.Param "search.searchableParams") -}}
+		{{- $entry = merge $entry (dict . ($page.Param .)) }}
+	{{- end -}}
+
+    {{- $index = $index | append $entry -}}
+{{- end -}}
+
+{{- $index | jsonify -}}
+
+
+{{- end -}}

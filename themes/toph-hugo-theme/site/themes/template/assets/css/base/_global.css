@@ -1,0 +1,71 @@
+/* ===[ Global styling ]=== */
+
+body {
+  background-color: var(--background);
+  color: var(--text-body);
+  font-family: var(--default-font), sans-serif;
+  font-weight: var(--default-font-weight, normal);
+}
+
+h1 {
+  font-family: var(--title-font), serif;
+  font-weight: var(--title-font-weight, inherit);
+}
+
+/* Offset anchor scroll targets so they clear the fixed navbar */
+h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Heading anchor links — hidden until the heading is hovered */
+.hanchor {
+  font-size: 0.75em;
+  opacity: 0;
+  color: var(--text-anchor);
+  vertical-align: middle;
+  transition: opacity 0.15s ease;
+}
+
+h1 .hanchor,
+h2 .hanchor,
+h3 .hanchor,
+h4 .hanchor,
+h5 .hanchor,
+h6 .hanchor {
+  text-decoration: none;
+}
+
+h1:hover .hanchor,
+h2:hover .hanchor,
+h3:hover .hanchor,
+h4:hover .hanchor,
+h5:hover .hanchor,
+h6:hover .hanchor {
+  opacity: 1;
+}
+
+.hanchor:hover {
+  color: var(--primary-text);
+}
+
+h2, h3, h4, h5, h6, #toctitle {
+  font-family: var(--header-font), serif;
+  font-weight: var(--header-font-weight, inherit);
+  line-height: 1.25;
+}
+
+h1 {
+  color: var(--primary-text);
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  padding-bottom: 3rem;
+  padding-top: 7rem;
+}
+
+h2, h4, #toctitle { color: var(--accent-text); }
+
+/* Fluid heading sizes — balanced scale across all viewport widths. */
+h1 { font-size: clamp(2.25rem, 3.5vw + 0.5rem, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 2.2vw + 0.5rem, 2.25rem); }
+h3, #toctitle { font-size: clamp(1.25rem, 1.5vw + 0.35rem, 1.75rem); }
+h4 { font-size: clamp(1.1rem, 1.2vw + 0.25rem, 1.4rem); }

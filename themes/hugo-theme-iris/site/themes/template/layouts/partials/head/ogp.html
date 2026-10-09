@@ -1,0 +1,63 @@
+{{ $imagePath := "" }}
+{{ if $.Params.eyecatch }}
+  {{ with try (resources.Get $.Params.eyecatch) }}
+    {{ with .Err }}
+      {{ warnf "%s" . }}
+      {{ $imagePath = $.Params.eyecatch }}
+    {{ else with .Value }}
+      {{ $image := . }}
+      {{ $imagePath = ($image | resources.Fingerprint "sha512").Permalink }}
+    {{ else }}
+      {{ $imagePath = $.Params.eyecatch }}
+    {{ end }}
+  {{ end }}
+{{ else }}
+  {{ $imagePath = $.Site.Params.ogp.image | absURL }}
+{{ end }}
+
+{{ $description := "" }}
+{{ if $.IsHome }}
+  {{ $description = $.Site.Params.description | safeHTMLAttr }}
+{{ else }}
+  {{ $description = $.Description | safeHTMLAttr }}
+{{ end }}
+
+{{ $title := "" }}
+{{ with $.Title }}
+  {{ $title = . }}
+{{ else }}
+  {{ $firstH1 := findRE "<h1.*?>(.|\n)*?</h1>" $.Content 1 }}
+  {{ range first 1 $firstH1 }}
+    {{ $title = . | plainify }}
+  {{ end }}
+{{ end }}
+
+{{ if $.IsHome }}
+  {{ $title = $.Site.Params.Title | safeHTMLAttr }}
+{{ else }}
+  {{ $title = $title | safeHTMLAttr }}
+{{ end }}
+
+<!-- OGP: Open Graph Protocol -->
+<meta property="og:url" content="{{ $.Permalink }}" />
+<meta property="og:site_name" content="{{ $.Site.Params.ogp.siteName }}" />
+<meta property="og:title" content="{{ $title }}" />
+<meta property="og:description" content="{{ $description }}" />
+<meta property="og:image" content="{{ $imagePath }}" />
+<meta property="og:type" content="article" />
+<meta property="og:locale" content="{{ $.Site.Params.ogp.locale }}" />
+
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary_large_image" />
+
+{{ with $.Site.Params.twitter.username }}
+  <meta name="twitter:site" content="@{{ . }}" />
+  <meta name="twitter:creator" content="@{{ . }}" />
+{{ else }}
+  <meta name="twitter:site" content="@{{ $.Site.Params.twitter.username }}" />
+{{ end }}
+
+<meta property="twitter:url" content="{{ $.Permalink }}" />
+<meta property="twitter:title" content="{{ $title }}" />
+<meta property="twitter:description" content="{{ $description }}" />
+<meta property="twitter:image" content="{{ $imagePath }}" />

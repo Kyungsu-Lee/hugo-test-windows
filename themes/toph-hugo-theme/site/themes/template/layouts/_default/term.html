@@ -1,0 +1,41 @@
+{{/*
+    term.html — DEFAULT single taxonomy term page (fallback)
+
+    This template renders the page for a SINGLE term within a taxonomy.
+    For example, /categories/activism/ or /tags/history/ — it lists all
+    content pages that are tagged with that specific term.
+
+    Hugo will use this when no taxonomy-specific template exists in
+    layouts/<taxonomy-name>/term.html.
+
+    Key Hugo concepts used here:
+      .Content            — any custom content from the term's _index.md (if it exists)
+      .Paginator.Pages    — paginated subset of content pages for the current page
+      .Title              — the post title; falls back to the filename if no title is set
+      .Data.Singular      — the singular form of the taxonomy name (e.g., "tag", "category")
+      .Date               — the publish date of the content page
+      .File.BaseFileName  — the filename without extension (used as title fallback)
+      .Params.description — optional front-matter field for a hand-written summary
+      .Plain              — the full page content stripped of all HTML tags
+      truncate            — Hugo function that trims a string to N characters + "…"
+*/}}
+{{ define "main" }}
+{{- .Content }}
+
+{{ if .Paginator.Pages }}
+<ul class="list-group" role="list">
+{{ range .Paginator.Pages }}
+    {{ .Render "li" }}
+{{ end }}
+</ul>
+
+{{- partial "pagination.html" . -}}
+
+{{ else }}
+{{/*
+    Empty state — shown when no content pages use this term.
+    .Data.Singular gives the taxonomy name (e.g., "tag") for a natural message.
+*/}}
+<p class="text-muted">No posts found for this {{ .Data.Singular }}.</p>
+{{ end }}
+{{ end }}

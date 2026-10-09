@@ -1,0 +1,99 @@
+{{- /* tweet-archive: embed an archived tweet by its tweet_id param */ -}}
+{{- $id := .Get "id" -}}
+{{- $pages := where site.RegularPages "Params.tweet_id" $id -}}
+{{- if eq (len $pages) 0 -}}
+    {{- errorf "tweet-archive: no content page found with tweet_id=%q" $id -}}
+{{- else -}}
+{{- $tweet := index $pages 0 -}}
+{{- $author := $tweet.Params.author | default "unknown" -}}
+{{- $authorName := $tweet.Params.author_name | default site.Params.biography.name -}}
+{{- $avatar := $tweet.Params.avatar -}}
+{{- if $avatar }}{{ $avatar = partial "resolve-image-path.html" (dict "src" $avatar "file" $tweet.File) }}{{ else }}{{ with site.Params.images }}{{ $avatar = index . 0 }}{{ end }}{{ end -}}
+{{- $date := $tweet.Date -}}
+{{- $allImages := $tweet.Resources.ByType "image" -}}
+{{- $images := slice -}}
+{{- range $allImages }}{{ if not (strings.HasPrefix .Name "avatar") }}{{ $images = $images | append . }}{{ end }}{{ end -}}
+{{- $imageCount := len $images -}}
+{{- $modalId := printf "tweet-modal-%s" $id -}}
+<figure class="tweet-archive" role="figure" aria-label="Archived tweet by @{{ $author }}">
+    <div class="tweet-archive-body">
+        <div class="tweet-archive-header">
+            {{- with $avatar }}
+            <img class="tweet-archive-avatar" src="{{ . }}" alt="{{ $authorName }} avatar">
+            {{- end }}
+            <div class="tweet-archive-author">
+                <span class="tweet-archive-name">{{ $authorName }}</span>
+                <span class="tweet-archive-handle">@{{ $author }}</span>
+            </div>
+            <span class="tweet-archive-badge" aria-label="{{ i18n "tweet_archive.archived_label" }}"><i class="bi bi-archive" aria-hidden="true"></i> {{ i18n "tweet_archive.archived" }}</span>
+        </div>
+        <blockquote class="tweet-archive-text" cite="{{ $tweet.RelPermalink }}">{{ $tweet.Content }}</blockquote>
+        {{- if gt $imageCount 0 }}
+        <div class="tweet-archive-images grid-{{ cond (gt $imageCount 4) "4" (printf "%d" $imageCount) }}">
+            {{- range $i, $img := $images }}
+            {{- if lt $i 4 }}
+            <button type="button" class="tweet-archive-image-btn" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}" data-bs-slide-to="{{ $i }}" aria-label="{{ printf (i18n "tweet_archive.view_photo") (add $i 1) $imageCount }}">
+                <img src="{{ $img.RelPermalink }}" alt="{{ i18n "tweet_archive.photo_label" }} {{ add $i 1 }}" loading="lazy">
+            </button>
+            {{- end }}
+            {{- end }}
+        </div>
+        {{- end }}
+    </div>
+    <figcaption class="tweet-archive-footer">
+        <time class="tweet-archive-date" datetime="{{ $date.Format "2006-01-02T15:04:05Z07:00" }}">{{ time.Format "January 2, 2006 · 15:04" $date }} UTC</time>
+        <a href="{{ $tweet.RelPermalink }}" class="tweet-archive-link">{{ i18n "tweet_archive.view_archived_tweet" }} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </figcaption>
+</figure>
+{{- if gt $imageCount 0 }}
+<div class="modal fade tweet-archive-modal" id="{{ $modalId }}" tabindex="-1" aria-label="{{ i18n "tweet_archive.viewer_label" }}" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="{{ i18n "tweet_archive.close_viewer" }}"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="{{ $modalId }}-carousel" class="carousel slide">
+                    <div class="carousel-inner">
+                        {{- range $i, $img := $images }}
+                        <div class="carousel-item{{ if eq $i 0 }} active{{ end }}">
+                            <img src="{{ $img.RelPermalink }}" class="d-block mx-auto" alt="{{ i18n "tweet_archive.photo_label" }} {{ add $i 1 }}">
+                        </div>
+                        {{- end }}
+                    </div>
+                    {{- if gt $imageCount 1 }}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#{{ $modalId }}-carousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">{{ i18n "tweet_archive.previous_photo" }}</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#{{ $modalId }}-carousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">{{ i18n "tweet_archive.next_photo" }}</span>
+                    </button>
+                    <div class="carousel-indicators">
+                        {{- range $i, $img := $images }}
+                        <button type="button" data-bs-target="#{{ $modalId }}-carousel" data-bs-slide-to="{{ $i }}"{{ if eq $i 0 }} class="active" aria-current="true"{{ end }} aria-label="{{ i18n "tweet_archive.photo_label" }} {{ add $i 1 }}"></button>
+                        {{- end }}
+                    </div>
+                    {{- end }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{- if not (.Page.Store.Get "tweet-archive-script") }}{{ .Page.Store.Set "tweet-archive-script" true }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('show.bs.modal', function(e) {
+        if (!e.target.classList.contains('tweet-archive-modal')) return;
+        const trigger = e.relatedTarget;
+        const slide = trigger ? trigger.getAttribute('data-bs-slide-to') : '0';
+        const carouselEl = e.target.querySelector('.carousel');
+        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+        carousel.to(parseInt(slide, 10));
+    });
+});
+</script>
+{{- end }}
+{{- end }}
+{{- end -}}

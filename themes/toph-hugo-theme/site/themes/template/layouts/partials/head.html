@@ -1,0 +1,170 @@
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    {{ hugo.Generator }}
+
+    {{/* Bootstrap Icons is the only third-party origin left on the critical
+         path; warm the connection before the parser reaches its stylesheet.
+         Google Fonts needs no hint — fonts.html self-hosts it, and a preconnect
+         to an origin we never contact just wastes a connection slot. */}}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    {{- $color_mode := site.Params.color_mode | default "auto" -}}
+    {{- if eq $color_mode "auto" }}
+    {{ "<!-- dark-mode: set data-bs-theme before first paint to prevent FOUC -->" | safeHTML }}
+    <script>
+    (function() {
+        try {
+            var stored = localStorage.getItem('theme');
+            var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        } catch (e) {}
+    })();
+    </script>
+    {{- end }}
+
+    {{ if .IsHome }}
+    <title>{{ site.Title }}{{ with site.Params.biography.tagline }} — {{ . }}{{ end }}</title>
+    {{ else }}
+    <title>{{ .Title }} | {{ site.Title }}</title>
+    {{ end }}
+
+    {{ "<!-- Theme SEO template -->" | safeHTML }}
+    {{ partial "seo-meta.html" . }}
+
+    {{ "<!-- Google Analytics template -->" | safeHTML }}
+    {{ template "_internal/google_analytics.html" . }}
+
+    {{ "<!-- OpenGraph template -->" | safeHTML }}
+    {{ template "_internal/opengraph.html" . }}
+
+    {{ "<!-- Twitter Cards template -->" | safeHTML }}
+    {{ template "_internal/twitter_cards.html" . }}
+
+    {{ "<!-- favicon -->" | safeHTML }}
+    {{- $favicon := $.Param "favicon" | default "/favicon.ico" }}
+    <link rel="shortcut icon" href="{{ $favicon }}" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="{{ $favicon }}" type="image/x-icon">
+
+    {{- with .OutputFormats.Get "rss" }}
+    {{ "<!-- RSS feed discovery -->" | safeHTML }}
+    <link rel="{{ .Rel }}" type="{{ .MediaType }}" href="{{ .Permalink }}" title="{{ if $.IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" $.Title site.Title }}{{ end }}">
+    {{- end }}
+
+    {{ "<!-- colors and fonts from Hugo config -->" | safeHTML }}
+    {{- $color_primary := $.Param "colors.light.primary" -}}
+    {{- $color_secondary := $.Param "colors.light.secondary" -}}
+    {{- $color_accent := $.Param "colors.light.accent" -}}
+    {{- $color_background := $.Param "colors.light.background" | default $color_secondary -}}
+    {{- $font_default := $.Param "fonts.default" -}}
+    {{- $font_default_weight := $.Param "fonts.default_weight" -}}
+    {{/* Keep the raw param separate from the CSS fallback: "Arial" is a sane
+         local default for --title-font, but it is not a Google Fonts family and
+         requesting it returns HTTP 400. Only the raw value reaches fonts.html. */}}
+    {{- $font_title_param := $.Param "fonts.title" -}}
+    {{- $font_title := $font_title_param | default "Arial" -}}
+    {{- $font_title_weight := $.Param "fonts.title_weight" -}}
+    {{- $font_header := $.Param "fonts.header" -}}
+    {{- $font_header_weight := $.Param "fonts.header_weight" -}}
+
+    {{/* Normalize font weights for CSS binding and Google Fonts CDN queries */}}
+    {{- $default_weight_info := partial "font-weight.html" (dict "weight" $font_default_weight "default" "normal") -}}
+    {{- $title_weight_info := partial "font-weight.html" (dict "weight" $font_title_weight "default" "500") -}}
+    {{- $header_weight_info := partial "font-weight.html" (dict "weight" $font_header_weight "default" "500") }}
+
+    {{ "<!-- stylesheets -->" | safeHTML }}
+    {{- $brand := dict
+        "primary" $color_primary
+        "secondary" $color_secondary
+        "accent-color" $color_accent
+        "background" $color_background
+        "primary-text" $color_primary
+        "accent-text" $color_accent
+        "default-font" (css.Quoted $font_default)
+        "default-font-weight" $default_weight_info.css
+        "title-font" (css.Quoted $font_title)
+        "title-font-weight" $title_weight_info.css
+        "header-font" (css.Quoted $font_header)
+        "header-font-weight" $header_weight_info.css
+    -}}
+    {{- $neutral := dict -}}
+    {{- range $group, $entries := hugo.Data.style -}}
+        {{- range $key, $val := (index $entries "light") -}}
+            {{- $neutral = merge $neutral (dict (printf "%s-%s" $group $key) $val) -}}
+        {{- end -}}
+    {{- end -}}
+    {{- $vars := merge $brand $neutral -}}
+    {{- $css := resources.Get "css/main.css" | css.Build (dict "vars" $vars) | fingerprint }}
+    {{/* Bootstrap is vendored and served from our own origin so it is not a
+         cross-origin connection on the critical render path (toph#79). Load
+         order is load-bearing: main.css must come after Bootstrap so the
+         theme's :root block outranks [data-bs-theme=dark] at equal
+         specificity — see the dark-mode notes in AGENTS.md. */}}
+    {{- $bootstrap := resources.Get "vendor/bootstrap/bootstrap.min.css" | fingerprint }}
+    {{/* The vendored CSS is kept byte-for-byte pristine so its SHA384 can be
+         re-checked against upstream on the next bump, which means it still
+         carries Bootstrap's sourceMappingURL comment. Hugo only publishes an
+         asset that a template touches, so publish the map explicitly or
+         DevTools 404s resolving it. Assign to $_ to suppress resources.Publish's
+         return value from printing in <head>. */}}
+    {{- with resources.Get "vendor/bootstrap/bootstrap.min.css.map" }}{{ $_ := resources.Publish . }}{{ end -}}
+    <link rel="stylesheet" type="text/css" href="{{ $bootstrap.Permalink }}" integrity="{{ $bootstrap.Data.Integrity }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ $css.Permalink }}" integrity="{{ $css.Data.Integrity }}">
+
+    {{- if ne $color_mode "light" }}
+    {{ "<!-- dark mode overrides -->" | safeHTML }}
+    {{- $color_primary_dark := $.Param "colors.dark.primary" | default $color_primary -}}
+    {{- $color_secondary_dark := $.Param "colors.dark.secondary" | default $color_secondary -}}
+    {{- $color_accent_dark := $.Param "colors.dark.accent" | default $color_accent -}}
+    {{- $color_background_dark := $.Param "colors.dark.background" | default "#121212" -}}
+    {{/* -text roles reference var(--primary)/var(--accent-color) so they track the
+         dark brand color at runtime (color-mix is resolved by the browser, not Hugo). */}}
+    {{- $brand_dark := dict
+        "primary" $color_primary_dark
+        "secondary" $color_secondary_dark
+        "accent-color" $color_accent_dark
+        "background" $color_background_dark
+        "primary-text" "color-mix(in srgb, var(--primary) 60%, white)"
+        "accent-text" "color-mix(in srgb, var(--accent-color) 60%, white)"
+    -}}
+    {{- $neutral_dark := dict -}}
+    {{- range $group, $entries := hugo.Data.style -}}
+        {{- range $key, $val := (index $entries "dark") -}}
+            {{- $neutral_dark = merge $neutral_dark (dict (printf "%s-%s" $group $key) $val) -}}
+        {{- end -}}
+    {{- end -}}
+    {{- $vars_dark := merge $brand_dark $neutral_dark -}}
+    {{/* Flatten the dark vars once so both the attribute block and the no-JS
+         media-query fallback below emit an identical declaration list. */}}
+    {{- $decls := "" -}}
+    {{- range $key, $val := $vars_dark -}}
+        {{- $decls = printf "%s\n      --%s: %s;" $decls $key $val -}}
+    {{- end -}}
+    <style>:root[data-bs-theme="dark"] {
+{{- $decls | safeCSS }}
+    }</style>
+    {{- if eq $color_mode "auto" }}
+    {{ "<!-- no-JS fallback: honor OS dark preference when the FOUC script never set data-bs-theme -->" | safeHTML }}
+    <style>@media (prefers-color-scheme: dark) {
+      :root:not([data-bs-theme]) {
+{{- $decls | safeCSS }}
+      }
+    }</style>
+    {{- end }}
+    {{- end }}
+
+    {{ "<!-- fonts: self-hosted at build time, see partials/fonts.html -->" | safeHTML }}
+    {{/* partialCached: the output depends only on the font specs, but the
+         partial walks the fetched stylesheet and rewrites every URL in it,
+         which is wasted work on all but the first of a site's pages. Keyed on
+         the specs so a site whose fonts vary by page still renders correctly,
+         and on the language because resource permalinks may be localized. */}}
+    {{- $font_specs := slice
+        (dict "family" $font_default "cdn" $default_weight_info.cdn)
+        (dict "family" $font_title_param "cdn" $title_weight_info.cdn)
+        (dict "family" $font_header "cdn" $header_weight_info.cdn)
+    -}}
+    {{- partialCached "fonts.html" $font_specs (print $font_specs site.Language.Lang) }}
+</head>

@@ -1,0 +1,31 @@
+[tools]
+go = "latest"
+hugo = "latest"
+node = "latest"
+npm = "latest"
+
+[env]
+_.path = ["./node_modules/.bin"]
+
+[tasks.install]
+description = "Install dependencies"
+run = "npm install"
+
+[tasks.build]
+description = "Build example site"
+run = "hugo --source exampleSite --renderToMemory && hugo --source exampleSite --minify --gc --cleanDestinationDir"
+depends = ["install"]
+
+[tasks.server]
+description = "Run example site server through portless"
+run = "npm run server"
+depends = ["install"]
+
+[tasks.server-local]
+description = "Run example site server directly on localhost:1313"
+run = "npm run server:local"
+depends = ["install"]
+
+[tasks.update]
+description = "Update node dependencies"
+run = "npm update"

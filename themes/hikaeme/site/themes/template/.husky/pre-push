@@ -1,0 +1,2 @@
+# Run unit tests locally before pushing. E2E tests run in CI only.
+npm test

@@ -1,0 +1,98 @@
+@layer components {
+  /* Scale SVG icons to text size */
+  .icon svg {
+    height: 1.25em;
+    width: 1.25em;
+  }
+
+  body {
+    @apply bg-neutral-50 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300;
+  }
+  /* Pagination */
+  .pagination {
+    @apply flex justify-center;
+  }
+
+  .pagination .page-item {
+    @apply flex items-center;
+  }
+
+  .pagination .page-item .page-link {
+    @apply m-2 p-2;
+  }
+
+  .pagination .active {
+    @apply text-primary-700 dark:text-primary-400;
+  }
+
+  .pagination .page-item:not(.disabled):hover {
+    @apply text-primary-700 dark:text-primary-400;
+  }
+
+  /* Article pagination */
+  .article-pagination {
+    @apply pt-8;
+  }
+
+  .article-pagination > div {
+    @apply flex justify-between pt-3;
+  }
+
+  .article-pagination hr {
+    @apply border-dotted border-neutral-300 dark:border-neutral-600;
+  }
+
+  .article-pagination .article-pagination-date {
+    @apply -mt-0 text-sm text-neutral-500 dark:text-neutral-400;
+  }
+
+  .article-pagination a:hover .article-pagination-title {
+    @apply text-primary-700 underline decoration-primary-700 dark:text-primary-400;
+  }
+
+  .article-pagination a:hover .article-pagination-direction {
+    @apply text-primary-700 dark:text-primary-400;
+  }
+
+  #TableOfContents ul {
+    @apply list-none pt-2 pl-0;
+  }
+
+  #TableOfContents ul ul {
+    @apply pt-0 pl-4;
+  }
+
+  #TableOfContents li {
+    @apply my-1;
+  }
+
+  #TableOfContents li a {
+    @apply block border-l-2 border-transparent pl-2;
+  }
+
+  #TableOfContents li.active > a {
+    @apply block border-l-2 border-primary-500 pl-2;
+  }
+
+  /* Tabs shortcode (todo: use peer-checked if hugo support jit-mode directly ) */
+  .tabs {
+    @apply my-4 flex flex-wrap overflow-hidden rounded-md border border-neutral-500;
+  }
+
+  .tab-label {
+    @apply inline-block cursor-pointer border-b-2 border-transparent px-4 py-1 hover:text-primary-500;
+  }
+
+  .tab-content {
+    @apply order-last w-full border-t border-neutral-500 p-4;
+    display: none;
+  }
+
+  .tab-control:checked + .tab-label {
+    @apply border-primary-500 text-primary-500;
+  }
+
+  .tab-control:checked + .tab-label + .tab-content {
+    display: block;
+  }
+}

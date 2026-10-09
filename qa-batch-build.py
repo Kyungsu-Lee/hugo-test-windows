@@ -1,6 +1,7 @@
 """Linux Actions harness. Inputs are exported from actual Windows Git commits."""
 import hashlib, json, os, shutil, subprocess, sys, tarfile, time, urllib.request
 from pathlib import Path
+from qa_asset_audit import audit
 
 ROOT=Path.cwd()
 SHARD=int(sys.argv[1]); SHARDS=int(sys.argv[2])
@@ -39,7 +40,9 @@ for row in ROWS:
         public=cwd/'public'; assert (public/'index.html').is_file()
         files={p.relative_to(public).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in public.rglob('*') if p.is_file()}
         (logs/'public-hashes.json').write_text(json.dumps(files))
-        result.update(build_status='passed',html_sha256=files['index.html'],public_file_count=len(files),public_bytes=sum(p.stat().st_size for p in public.rglob('*') if p.is_file()),hugo_version=state['version'])
+        asset_check=audit(public,BASE+slug+'/')
+        (logs/'asset-check.json').write_text(json.dumps(asset_check,indent=2))
+        result.update(build_status='passed',html_sha256=files['index.html'],public_file_count=len(files),public_bytes=sum(p.stat().st_size for p in public.rglob('*') if p.is_file()),hugo_version=state['version'],asset_check_status=asset_check['status'])
         shutil.copytree(public,PUBLIC/slug)
         shutil.rmtree(public)
     except Exception as e: result['error']=str(e)

@@ -1,0 +1,22 @@
+{
+  "config": "hugo.toml,pages.json",
+  "theme": null,
+  "sample": ".",
+  "version": "0.167.0",
+  "slug": "adritian-free-hugo-theme",
+  "npm": [
+    "."
+  ],
+  "asset_build": [
+    [
+      ".",
+      "node",
+      "-e",
+      "const fs=require('fs');fs.mkdirSync('static/js',{recursive:true});fs.copyFileSync('node_modules/fuse.js/dist/fuse.min.js','static/js/fuse.min.js')"
+    ]
+  ],
+  "generator": "3.1",
+  "repo": "https://github.com/windows-hugo-test/course-site.git",
+  "baseURL": "https://windows-hugo-test.github.io/course-site/",
+  "audited": true
+}

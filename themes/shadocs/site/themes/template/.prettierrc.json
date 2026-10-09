@@ -1,0 +1,14 @@
+{
+  "endOfLine": "lf",
+  "plugins": ["prettier-plugin-go-template"],
+  "overrides": [
+    {
+      "files": ["*.html"],
+      "options": {
+        "parser": "go-template"
+      }
+    }
+  ],
+  "singleQuote": true,
+  "tabWidth": 2
+}

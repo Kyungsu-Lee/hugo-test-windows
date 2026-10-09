@@ -1,0 +1,16 @@
+{{ define "main" }}
+
+    {{ partial "main-island.html" . }}
+
+    <div class="island">
+        <div class="island-body prose dark:prose-invert">
+            {{ .Content }}
+        </div>
+    </div>
+
+{{ end }}
+
+{{ define "side" }}
+    {{ partial "toc.html" . }}
+    {{ partial "translations.html" . }}
+{{ end }}

@@ -1,0 +1,39 @@
+{{ $paginator := .Paginator }}
+{{ if gt $paginator.TotalPages 1 }}
+  <ul class="mt-8 flex flex-row">
+    {{ if $paginator.HasPrev }}
+      <li>
+        <a
+          href="{{ $paginator.Prev.URL }}"
+          class="mx-1 block min-w-[1.8rem] rounded-sm text-center hover:bg-primary-600 hover:text-neutral-50"
+          rel="prev"
+        >
+          &larr;
+        </a>
+      </li>
+    {{ end }}
+    {{ range $paginator.Pagers }}
+      <li>
+        <a
+          href="{{ .URL }}"
+          class="{{ if eq . $paginator }}
+            bg-primary-200 dark:bg-primary-400 dark:text-neutral-800
+          {{ end }} mx-1 block min-w-[1.8rem] rounded-sm text-center hover:bg-primary-600 hover:text-neutral-50"
+        >
+          {{ .PageNumber }}
+        </a>
+      </li>
+    {{ end }}
+    {{ if $paginator.HasNext }}
+      <li>
+        <a
+          href="{{ $paginator.Next.URL }}"
+          class="mx-1 block min-w-[1.8rem] rounded-sm text-center hover:bg-primary-600 hover:text-neutral-50"
+          rel="next"
+        >
+          &rarr;
+        </a>
+      </li>
+    {{ end }}
+  </ul>
+{{ end }}

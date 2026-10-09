@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <div class="container mx-auto px-4 py-8 max-w-4xl bg-white dark:bg-gray-800 rounded-lg">
+    {{ partial "post-header.html" . }}
+<article class="mx-auto prose dark:prose-invert prose-xl">
+  {{ .Content }}
+</article>
+  </div>
+  {{- if and (reflect.IsMap .Params.author) .Params.author.name .Params.author.email }}
+    {{ partial "post-author.html" (dict "author" .Params.author) }}
+  {{- else if and (reflect.IsMap site.Params.author) site.Params.author.name site.Params.author.email }}
+    {{ partial "post-author.html" (dict "author" site.Params.author) }}
+  {{- end }}
+  {{ partial "post-related.html" . }}
+{{ end }}

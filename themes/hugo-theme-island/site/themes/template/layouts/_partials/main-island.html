@@ -1,0 +1,21 @@
+<div class="island mb-4">
+
+    {{- partial "post-figure.html" . -}}
+
+    <header class="island-header relative">
+        <h2 class="text-2xl flex items-center justify-start gap-2">
+            {{- if .Params.icon -}}
+                <i class="block size-6">
+                    {{- partial "icon" .Params.icon -}}
+                </i>
+            {{- end -}}
+            <span>{{- .Title -}}</span>
+        </h2>
+    </header>
+
+    {{- with .Params.description -}}
+        <div class="island-body text-muted">
+            {{ . }}
+        </div>
+    {{- end -}}
+</div>

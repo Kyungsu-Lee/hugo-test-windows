@@ -1,0 +1,27 @@
+{
+  "config": "hugo.toml,pages.json",
+  "theme": "template",
+  "sample": null,
+  "version": "0.167.0",
+  "slug": "henry-hugo",
+  "npm": [
+    "."
+  ],
+  "asset_build": [
+    [
+      ".",
+      "npx",
+      "--no-install",
+      "tailwindcss",
+      "-i",
+      "assets/css/pages-input.css",
+      "-o",
+      "assets/css/output.css",
+      "--minify"
+    ]
+  ],
+  "generator": "3.1",
+  "repo": "https://github.com/windows-hugo-test/course-site.git",
+  "baseURL": "https://windows-hugo-test.github.io/course-site/",
+  "audited": true
+}

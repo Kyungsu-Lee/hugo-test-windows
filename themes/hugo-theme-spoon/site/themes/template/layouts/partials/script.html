@@ -1,0 +1,19 @@
+{{- $enableImgZooming := site.Params.article.imageZoom | default site.Params.options.enableImgZooming -}}
+{{- if isset .Params "imagezoom" }}{{ $enableImgZooming = index .Params "imagezoom" }}{{ end -}}
+{{ if $enableImgZooming -}}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.0.6/medium-zoom.min.js" integrity="sha512-N9IJRoc3LaP3NDoiGkcPa4gG94kapGpaA5Zq9/Dr04uf5TbLFU5q0o8AbRhLKUUlp8QFS2u7S+Yti0U7QtuZvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{{ end -}}
+
+{{ $appParams := dict "copyLabel" (i18n "copy") "copiedLabel" (i18n "copied") -}}
+{{ $app := resources.Get "js/app.js" | js.Build (dict "params" $appParams) -}}
+{{ $slice := slice $app -}}
+
+{{ if .Site.Params.options.showDarkMode -}}
+  {{ $darkMode := resources.Get "js/darkmode.js" | js.Build (dict "params" (dict "darkModeTheme" (site.Params.darkModeTheme | default "data-dark-mode"))) }}
+  {{ $slice = $slice | append $darkMode -}}
+{{ end -}}
+
+{{ $js := $slice | resources.Concat "main.js" -}}
+
+{{ $js := $js | minify | fingerprint "sha512" -}}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" crossorigin="anonymous" defer></script>

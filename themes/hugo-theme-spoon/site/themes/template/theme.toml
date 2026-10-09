@@ -1,0 +1,18 @@
+name = "Spoon"
+license = "MIT"
+licenselink = "https://github.com/noneback/hugo-theme-spoon/blob/master/LICENSE"
+description = "A modern, fast Hugo theme focused on reading experience."
+homepage = "https://github.com/noneback/hugo-theme-spoon"
+demosite = "https://hugo-theme-spoon.vercel.app"
+tags = ["blog", "responsive", "dark mode", "multilingual", "minimal"]
+features = ["dark mode", "multilingual", "KaTeX", "Mermaid", "comments", "RSS"]
+min_version = "0.140.0"
+
+[author]
+name = "NoneBack"
+homepage = "https://github.com/noneback"
+
+[original]
+author = "guangzhengli"
+homepage = "https://github.com/guangzhengli"
+repo = "https://github.com/guangzhengli/hugo-theme-ladder"

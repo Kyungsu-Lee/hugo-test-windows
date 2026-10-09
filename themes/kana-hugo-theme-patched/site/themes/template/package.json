@@ -1,0 +1,37 @@
+{
+  "name": "kana-hugo-theme",
+  "version": "2.11.0",
+  "description": "Developer tooling for the Hugo theme for chriswiegman.com",
+  "keywords": [
+    "Hugo",
+    "Changie",
+    "Changelog",
+    "Tools"
+  ],
+  "homepage": "https://github.com/ChrisWiegman/kana-hugo-theme#readme",
+  "bugs": {
+    "url": "https://github.com/ChrisWiegman/kana-hugo-theme/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChrisWiegman/kana-hugo-theme.git"
+  },
+  "license": "MIT",
+  "author": "Chris Wiegman",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "e2e": "playwright test",
+    "e2e:ci": "playwright test --reporter=dot",
+    "lint": "eslint ./assets/scripts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "changie": "^1.26.0",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.9.1",
+    "globals": "^17.11.0"
+  }
+}

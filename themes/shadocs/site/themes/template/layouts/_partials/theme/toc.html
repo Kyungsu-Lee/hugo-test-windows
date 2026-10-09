@@ -1,0 +1,57 @@
+<div class="column is-flex paddingless" id="tocWrapper">
+  <div class="is-flex is-flex-direction-column paddingless" id="tocContainer">
+    <div
+      class="toc-header is-flex is-justify-content-space-between is-align-items-center"
+    >
+      <h6 class="toc-title has-text-weight-bold">{{- i18n "toc_title" -}}</h6>
+      <i
+        title="{{- i18n "toc_backtotop" -}}"
+        id="tocBackToTop"
+        class="fa-solid fa-circle-arrow-up"
+      ></i>
+    </div>
+    <div
+      class="is-flex is-flex-direction-column is-justify-content-space-between is-overflow-y has-text-weight-bold"
+      id="tocContent"
+    >
+      <div id="toc">
+        {{- if in (string .TableOfContents) "<ul>" -}}
+          {{- .TableOfContents -}}
+        {{- else -}}
+          <nav id="TableOfContents">
+            <p><strong>{{- i18n "no_data" -}}</strong></p>
+          </nav>
+        {{- end -}}
+      </div>
+      <div id="taxonomies">
+        {{- with .Site.Taxonomies -}}
+          {{- range $taxonomy, $pages := . -}}
+            <div class="taxonomy-wrapper is-flex is-flex-wrap-wrap">
+              {{- with ($.GetTerms $taxonomy) -}}
+                <div class="toc-header">
+                  <h6 class="toc-title has-text-weight-bold">
+                    {{- humanize $taxonomy -}}
+                  </h6>
+                </div>
+                {{- range . -}}
+                  <a
+                    href="{{- .RelPermalink | safeURL -}}"
+                    class="taxonomy is-flex is-justify-content-center is-align-items-center"
+                    ><i class="fa-solid fa-circle-dot"></i>{{- .Title -}}</a
+                  >
+                {{- end -}}
+              {{- end -}}
+            </div>
+          {{- end -}}
+        {{- end -}}
+      </div>
+    </div>
+  </div>
+  <div
+    class="is-flex is-justify-content-center is-align-items-center paddingless"
+    id="tocCollapsible"
+    title="{{- i18n "6_toggletoc_wording" -}}"
+  >
+    <i class="fa-solid fa-angles-right fa-lg"></i>
+  </div>
+</div>

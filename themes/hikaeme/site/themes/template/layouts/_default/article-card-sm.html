@@ -1,0 +1,18 @@
+<div class="card border-0">
+  <a href="{{ .RelPermalink }}">
+    <div class="text-body px-4">
+      <p class="fs-6 pt-1 ">{{ .Title }}</p>
+      <ul class="facts p-0 my-2 mx-0">
+        <li class="d-inline me-3 text-muted">
+          <i class="bi bi-clock me-1" aria-hidden="true"></i>
+          <time datetime="{{ .Date.Format " 2006-01-02T15:04:05JST" }}"
+            >{{ .Date.Format (
+              .Site.Params.dateformat |
+              default "2006/01/02")
+            }}</time
+          >
+        </li>
+      </ul>
+    </div>
+  </a>
+</div>

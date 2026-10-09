@@ -1,0 +1,101 @@
+---
+title: Includes
+date: 2021-05-23T20:00:00+01:00
+authors:
+  - john-doe
+tags:
+  - Documentation
+  - Shortcodes
+---
+
+Include shortcode can include files of different types. By specifying a language, the included file will have syntax highlighting.
+
+<!--more-->
+
+{{< toc >}}
+
+## Usage
+
+<!-- prettier-ignore-start -->
+```tpl
+{{</* include file="relative/path/from/hugo/root" language="go" */>}}
+```
+<!-- prettier-ignore-end -->
+
+## Attributes
+
+<!-- prettier-ignore-start -->
+<!-- cSpell:disable -->
+{{< propertylist name=shortcode-includes sort=name order=asc >}}
+<!-- cSpell:enable -->
+<!-- prettier-ignore-end -->
+
+## Examples
+
+### Markdown files (default)
+
+If no other options are specified, files will be rendered as Markdown using the `RenderString` [function](https://gohugo.io/methods/page/renderstring/).
+
+{{< hint type=important >}}
+**Location of markdown files**\
+If you include markdown files that should not get a menu entry, place them outside the content folder or exclude them otherwise.
+{{< /hint >}}
+
+<!-- prettier-ignore -->
+```tpl
+{{</* include file="/static/_includes/example.md.part" */>}}
+```
+
+<!-- prettier-ignore-start -->
+<!-- cSpell:disable -->
+{{< include file="/static/_includes/example.md.part" >}}
+<!-- cSpell:enable -->
+<!-- prettier-ignore-end -->
+
+### Language files
+
+This method can be used to include source code files and keep them automatically up to date.
+
+<!-- prettier-ignore -->
+```tpl
+{{</* include file="hugo.yaml" language="yaml" options="linenos=table,hl_lines=5-6,linenostart=100" */>}}
+```
+
+Result:
+
+<!-- prettier-ignore-start -->
+<!-- cSpell:disable -->
+{{< include file="config/_default/hugo.yaml" language="yaml" options="linenos=table,hl_lines=5-6,linenostart=100" >}}
+<!-- cSpell:enable -->
+<!-- prettier-ignore-end -->
+
+## Special include types
+
+### HTML
+
+HTML content will be filtered by the `safeHTML` filter and added to the rendered page output.
+
+<!-- prettier-ignore -->
+```tpl
+{{</* include file="/static/_includes/example.html.part" type="html" */>}}
+```
+
+{{< include file="/static/_includes/example.html.part" type="html" >}}
+
+### Pages
+
+In some situations, it can be helpful to include Markdown files that also contain shortcodes. While the [default method](#markdown-files-default) works fine to render plain Markdown, shortcodes are not parsed. The only way to get this to work is to use Hugo pages. There are several ways to structure these include pages, so whatever you do, keep in mind that Hugo needs to be able to render and serve these files as regular pages! How it works:
+
+1. First you need to create a directory **within** your content directory. For this example site `_includes` is used.
+2. Place your Markdown files within the `_includes` folder e.g. `/_includes/include-page.md`. Make sure to name it `*.md`.
+3. Include the page using `{{</* include file="/_includes/include-page.md" type="page" */>}}`.
+
+Resulting structure should look like this:
+
+```shell
+_includes/
+ ├── include-page.md
+ └── _index.md
+```
+
+{{< include file="/_includes/include-page.md" type="page" >}}

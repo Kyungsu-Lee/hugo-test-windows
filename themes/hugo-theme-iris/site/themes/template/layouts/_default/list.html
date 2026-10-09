@@ -1,0 +1,84 @@
+{{ define "main" }}
+
+{{ $math := false }}
+{{ $hasDollar := false }}
+
+<main>
+  <article>
+    <section class="section">
+      {{ partial "content" . }}
+    </section>
+  </article>
+
+  {{ $paginator := .Paginate .Pages }}
+
+  <div class="columns is-multiline">
+    {{ range $paginator.Pages }}
+      <div class="column is-half">
+        <a href="{{ .Permalink }}" class="normal-link">
+          <div class="card">
+            {{ partial "eyecatch" . }}
+            <div class="card-content">
+              {{ $title := "" }}
+              {{ with .Title }}
+                {{ $title = . }}
+              {{ else }}
+                {{ $firstH1 := findRE "<h1.*?>(.|\n)*?</h1>" .Content 1 }}
+                {{ range first 1 $firstH1 }}
+                  {{ $title = . | plainify }}
+                {{ end }}
+              {{ end }}
+              <h2 class="title">{{ $title }}</h2>
+              {{ if (findRE "$$" $title) }}
+                {{ $hasDollar = true }}
+              {{ end }}
+              <p>{{ .Description }}</p>
+              {{ if (findRE "$$" .Description) }}
+                {{ $hasDollar = true }}
+              {{ end }}
+              {{ if .Params.math }}
+                {{ $math = true }}
+              {{ end }}
+              <p>
+                {{ .Date.Format "2006-01-02" }}
+                {{ partial "badges/badges" . }}
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    {{ end }}
+  </div>
+
+  <section class="section">
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+      {{ if $paginator.HasPrev }}
+        <a class="pagination-previous" href="{{ $paginator.Prev.URL | relLangURL }}">Previous</a>
+      {{ end }}
+      {{ if $paginator.HasNext }}
+        <a class="pagination-next" href="{{ $paginator.Next.URL | relLangURL }}">Next</a>
+      {{ end }}
+      <ul class="pagination-list">
+        {{ if ne $paginator.PageNumber 1 }}
+          <li><a href="{{ $paginator.First.URL | relLangURL }}" class="pagination-link" aria-label="Goto page 1">{{ $paginator.First.PageNumber }}</a></li>
+          {{ if gt $paginator.PageNumber 2 }}
+            <li><span class="pagination-ellipsis">&hellip;</span></li>
+          {{ end }}
+        {{ end }}
+        <li><a href="#!" class="pagination-link is-current" aria-label="Page {{ $paginator.PageNumber }}" aria-current="page">{{ $paginator.PageNumber }}</a></li>
+        {{ if ne $paginator.PageNumber $paginator.TotalPages }}
+          {{ if ne (sub $paginator.TotalPages 1) $paginator.PageNumber }}
+            <li><span class="pagination-ellipsis">&hellip;</span></li>
+          {{ end }}
+          <li><a href="{{ $paginator.Last.URL | relLangURL }}" class="pagination-link" aria-label="Goto page {{ $paginator.Last.PageNumber }}">{{ $paginator.Last.PageNumber }}</a></li>
+        {{ end }}
+      </ul>
+    </nav>
+  </section>
+</main>
+
+{{ if and $math $hasDollar }}
+  {{ partialCached "mathjax" . }}
+{{ end }}
+
+{{ end }}

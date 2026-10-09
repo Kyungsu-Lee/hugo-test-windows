@@ -1,0 +1,285 @@
+---
+###############################################################################
+#                                                                             #
+#                            WEBSITE CONFIGURATION                            #
+#                                                                             #
+###############################################################################
+
+
+# --- base website settings ---
+
+title: Example Hugo site with Toph theme
+baseURL: https://justwheel.github.io/toph-hugo-theme/
+
+locale: en-us
+enableEmoji: true
+enableGitInfo: true
+enableRobotsTXT: false
+googleAnalytics: ""
+
+
+# --- taxonomy and pagination settings ---
+
+taxonomies:
+  tag: tags
+  category: categories
+pagination:
+  pagerSize: 10
+
+
+# --- module mounts ---
+module:
+  mounts:
+    - source: static
+      target: static
+    # Serve page assets statically
+    - source: assets/pages
+      target: static/pages
+
+
+# --- security settings ---
+
+security:
+  exec:
+    allow: ['^dart-sass-embedded$', '^git$', '^go$', '^npx$', '^postcss$', '^asciidoctor$']
+
+
+# --- markup settings ---
+
+markup:
+  asciidocExt:
+    preserveTOC: true
+  highlight:
+    style: github
+
+
+# --- privacy settings ---
+
+privacy:
+  googleAnalytics:
+    anonymizeIP: true
+    respectDoNotTrack: true
+  vimeo:
+    enableDNT: true
+  x:
+    enableDNT: true
+  youtube:
+    privacyEnhanced: true
+
+
+# --- navigation menu ---
+
+menu:
+  nav:
+    - identifier: home
+      name: home
+      pageRef: /
+      weight: 10
+    - identifier: about
+      name: about me
+      url: https://kinginstitute.stanford.edu/encyclopedia/clark-septima-poinsette
+      weight: 20
+    - identifier: team
+      name: fellow leaders
+      pageRef: /team
+      weight: 30
+    - identifier: blog
+      name: blog
+      pageRef: /blog
+      weight: 40
+    - identifier: categories
+      name: categories
+      pageRef: /categories
+      parent: blog
+      weight: 10
+    - identifier: tags
+      name: tags
+      pageRef: /tags
+      parent: blog
+      weight: 20
+
+
+# --- custom settings ---
+
+params:
+  biography:
+    name: Septima Poinsette Clark
+    tagline: "The mother of the Civil Rights Movement who taught a nation to read, write, and rise"
+    gender: Female
+    email: septima@example.com
+    blog: https://kinginstitute.stanford.edu/encyclopedia/clark-septima-poinsette
+    first_online: 1898
+    job_title: "Citizenship Teacher"
+    employer: "Highlander Folk School"
+    knows_about: [
+      "activism",
+      "Civil Rights Movement",
+      "Martin Luther King Jr.",
+      "United States"
+    ]
+  colors:
+    light:
+      primary: "#8c1515"
+      secondary: "#ffffff"
+      accent: "#696349"
+      background: "#ffffff"
+  description: Honorary biography page of Septima Clark, a Civil Rights Movement pioneer and activist.
+  fonts:
+    default: Lato
+    title: Lobster Two
+    header: Patua One
+  images:
+    - pages/septima.jpg
+  hero:
+    shape: circle
+  favicon: /toph-hugo-theme/favicon.ico
+  git_repo: https://github.com/justwheel/toph-hugo-theme
+  team:
+    page_title: "Fellow Leaders"
+  taxonomy_exclude: ["footer", "projects", "team"]
+  # Are you looking for new opportunities? Set hire_me to "true" if you want your LinkedIn to show on the nav bar and
+  # for boilerplate text on how to get in touch.
+  hire_me: false
+  social:
+    # --- Active social media profiles ---
+    facebook: KingInstitute
+    linkedin: company/the-king-center-for-nonviolent-social-change
+    x: MLKInstitute
+    # --- Uncomment and set a username/URL to enable ---
+    # github: ""
+    # gitlab: ""
+    # instagram: ""
+    # lastfm: ""
+    # mastodon: ""       # Use full profile URL (e.g., https://mastodon.social/@user)
+    # threads: ""
+    # tiktok: ""
+    # youtube: ""
+
+  # Footer legal information displayed at the bottom of every page.
+  # Override to match your site's license.
+  legal:
+    license:
+      name: "CC BY 4.0"
+      url: "https://creativecommons.org/licenses/by/4.0/"
+      title: "Creative Commons Attribution 4.0 International"
+
+  # Human-readable date format used across all templates.
+  # Uses Go time formatting (https://gohugo.io/functions/time/format/).
+  # Default: "2006 January 02" (e.g., "2023 May 09").
+  # Other examples: "January 2, 2006", "02 Jan 2006", "2006-01-02".
+  date_format: "2006 January 02"
+
+  # --- layout configuration ---
+  # These values control how much content appears in specific page layouts.
+  # Defaults are tuned for sites with many categories to keep pages scannable
+  # without excessive scrolling. Sites with fewer categories or less content
+  # may benefit from higher values.
+  layouts:
+    categories:
+      # Number of recent posts shown under each category card. Default: 3.
+      recent_posts: 3
+      # Maximum character length for plaintext post excerpts. Default: 250.
+      excerpt_length: 250
+
+
+# --- internationalization settings ---
+
+defaultContentLang: en
+languages:
+  ar:
+    weight: 2
+    direction: rtl
+    label: عربي
+    menu:
+      nav:
+        - identifier: home
+          name: الرئيسية
+          pageRef: /
+          weight: 10
+        - identifier: about
+          name: نبذة عني
+          url: https://kinginstitute.stanford.edu/encyclopedia/clark-septima-poinsette
+          weight: 20
+        - identifier: team
+          name: قادة رفاق
+          pageRef: /team
+          weight: 30
+        - identifier: blog
+          name: المدونة
+          pageRef: /blog
+          weight: 40
+        - identifier: categories
+          name: الفئات
+          pageRef: /categories
+          parent: blog
+          weight: 10
+        - identifier: tags
+          name: الوسوم
+          pageRef: /tags
+          parent: blog
+          weight: 20
+  en:
+    weight: 1
+    label: English
+  es:
+    weight: 4
+    label: español
+    menu:
+      nav:
+        - identifier: home
+          name: inicio
+          pageRef: /
+          weight: 10
+        - identifier: about
+          name: sobre mí
+          url: https://kinginstitute.stanford.edu/encyclopedia/clark-septima-poinsette
+          weight: 20
+        - identifier: team
+          name: compañeros líderes
+          pageRef: /team
+          weight: 30
+        - identifier: blog
+          name: blog
+          pageRef: /blog
+          weight: 40
+        - identifier: categories
+          name: categorías
+          pageRef: /categories
+          parent: blog
+          weight: 10
+        - identifier: tags
+          name: etiquetas
+          pageRef: /tags
+          parent: blog
+          weight: 20
+  hi:
+    weight: 3
+    label: हिन्दी
+    menu:
+      nav:
+        - identifier: home
+          name: होम
+          pageRef: /
+          weight: 10
+        - identifier: about
+          name: मेरे बारे में
+          url: https://kinginstitute.stanford.edu/encyclopedia/clark-septima-poinsette
+          weight: 20
+        - identifier: team
+          name: साथी नेता
+          pageRef: /team
+          weight: 30
+        - identifier: blog
+          name: ब्लॉग
+          pageRef: /blog
+          weight: 40
+        - identifier: categories
+          name: श्रेणियां
+          pageRef: /categories
+          parent: blog
+          weight: 10
+        - identifier: tags
+          name: टैग
+          pageRef: /tags
+          parent: blog
+          weight: 20

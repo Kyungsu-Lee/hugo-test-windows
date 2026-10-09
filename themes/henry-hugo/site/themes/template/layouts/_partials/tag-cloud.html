@@ -1,0 +1,29 @@
+{{ if .Site.Taxonomies.tags }}
+<div class="tag-cloud flex flex-wrap gap-1.5">
+  {{ $tagCount := .count | default (.Site.Params.tagCloudCount | default 20) }}
+  {{ $sortMode := .sort | default "popular" }}
+  {{ $frequentTags := .Site.Taxonomies.tags.ByCount }}
+
+  {{/* If tagCount is -1, show all tags */}}
+  {{ $topTags := $frequentTags }}
+  {{ if gt $tagCount 0 }}
+    {{ $topTags = first $tagCount $frequentTags }}
+  {{ end }}
+
+  {{/* Allow callers to request alphabetical ordering (e.g. taxonomy page) */}}
+  {{ if eq $sortMode "alphabetical" }}
+    {{ $topTags = sort $topTags "Name" }}
+  {{ end }}
+
+  {{ range $topTags }}
+    {{ $tagCount := len .Pages }}
+
+    <a href="/tags/{{ .Name | urlize }}/"
+       class="pill-slate
+              transition-colors duration-200"
+       title="{{ $tagCount }} {{ if eq $tagCount 1 }}post{{ else }}posts{{ end }}">
+      {{ .Name }}
+    </a>
+  {{ end }}
+</div>
+{{ end }}

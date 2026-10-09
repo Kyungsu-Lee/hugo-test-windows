@@ -1,0 +1,19 @@
+{{- .Page.Store.Set "needsChroma" true -}}
+{{- $file := or .Attributes.file "" -}}
+{{- $details := false -}}
+{{- $open := "" -}}
+{{- $summary := or .Attributes.summary "Details" | .Page.RenderString -}}
+{{- $trim := true -}}
+{{- $ext := strings.TrimPrefix "." (path.Ext $file) -}}
+{{- $lang := or .Type $ext "text" -}}
+{{- if in (slice "html" "gotmpl") $lang -}}{{- $lang = "go-html-template" -}}{{- end -}}
+{{- if eq $lang "md" -}}{{- $lang = "text" -}}{{- end -}}
+{{- with .Attributes.details -}}{{- $details = in (slice true "true" 1) . -}}{{- end -}}
+{{- with .Attributes.open -}}{{- if in (slice true "true" 1) . -}}{{- $open = "open" -}}{{- end -}}{{- end -}}
+{{- with .Attributes.trim -}}{{- $trim = in (slice true "true" 1) . -}}{{- end -}}
+{{- $content := .Inner -}}
+{{- if $trim -}}{{- $content = strings.TrimSpace .Inner -}}{{- end -}}
+{{- if $details }}<details{{ with $open }} open{{ end }}><summary>{{ $summary }}</summary>{{ end -}}
+{{- with $file }}<div class="code-file">{{ . }}</div>{{ end -}}
+{{- transform.Highlight $content $lang .Options -}}
+{{- if $details }}</details>{{ end -}}

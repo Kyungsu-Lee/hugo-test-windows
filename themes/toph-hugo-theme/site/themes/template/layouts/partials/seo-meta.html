@@ -1,0 +1,137 @@
+    {{- $description := .Description | default site.Params.description -}}
+    {{- with $description }}
+    <meta name="description" content="{{ . }}" />
+    {{- end }}
+    <link rel="canonical" href="{{ .Permalink }}" />
+    {{- if .IsTranslated }}
+    {{- range .AllTranslations }}
+    <link rel="alternate" hreflang="{{ .Lang }}" href="{{ .Permalink }}" />
+    {{- end }}
+    {{- end }}
+    <meta property="og:site_name" content="{{ site.Title }}" />
+    <meta name="application-name" content="{{ site.Title }}" />
+    {{ with site.Params.social.x }}<meta name="twitter:site" content="@{{ . }}" />{{ end }}
+
+    {{- $exclude := site.Params.taxonomy_exclude | default slice -}}
+    {{- $is_structural_by_category := and .Params.categories (gt (len (intersect $exclude .Params.categories)) 0) -}}
+    {{- $is_structural := or (.Params.hide_sitemap | default false) $is_structural_by_category -}}
+    {{- $is_blog_post := and (not .Date.IsZero) (not $is_structural) -}}
+    {{- $author := .Param "author" | default site.Params.biography.name }}
+
+    <meta name="author" content="{{ $author }}" />
+    {{- if $is_blog_post }}
+    <meta property="article:author" content="{{ $author }}" />
+    {{- end }}
+
+    {{- if and $is_blog_post (isset .Params "tags") }}
+        {{- range .Params.tags }}
+    <meta property="article:tag" content="{{ . }}" />
+        {{- end }}
+    {{- end }}
+
+    {{- if .IsHome }}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": {{ site.Title | jsonify | safeJS }},
+        "url": {{ site.BaseURL | jsonify | safeJS }},
+        "description": {{ site.Params.description | jsonify | safeJS }}
+    }
+    </script>
+    {{- end }}
+
+    {{- $sameAs := slice -}}
+    {{- range $key, $value := site.Params.social -}}
+        {{- with index hugo.Data.social $key -}}
+            {{- $sameAs = $sameAs | append (printf .url $value) -}}
+        {{- end -}}
+    {{- end }}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": {{ site.Params.biography.name | jsonify | safeJS }},
+        "familyName": {{ index (findRE "(\\w|[-])+$" site.Params.biography.name) 0 | jsonify | safeJS }},
+        "gender": {{ site.Params.biography.gender | jsonify | safeJS }},
+        "image": {{ index site.Params.images 0 | jsonify | safeJS }},
+        "email": {{ printf "mailto:%s" site.Params.biography.email | jsonify | safeJS }},
+        "url": {{ site.BaseURL | jsonify | safeJS }},
+        "sameAs": {{ $sameAs | jsonify | safeJS }},
+        "knowsAbout": {{ site.Params.biography.knows_about | jsonify | safeJS }}{{- with site.Params.biography.job_title }},
+        "jobTitle": {{ . | jsonify | safeJS }}{{- end }}{{- with site.Params.biography.employer }},
+        "worksFor": {
+            "@type": "Organization",
+            "name": {{ . | jsonify | safeJS }}
+        }{{- end }}
+    }
+    </script>
+
+    {{- if $is_blog_post }}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": {{ .Title | jsonify | safeJS }},
+        "datePublished": {{ .Date.Format "2006-01-02T15:04:05-07:00" | jsonify | safeJS }},
+        "dateModified": {{ .Lastmod.Format "2006-01-02T15:04:05-07:00" | jsonify | safeJS }},
+        "author": {
+            "@type": "Person",
+            "name": {{ $author | jsonify | safeJS }},
+            "url": {{ site.BaseURL | jsonify | safeJS }}
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": {{ site.Params.biography.name | jsonify | safeJS }}
+        },
+        {{- with $description }}
+        "description": {{ . | jsonify | safeJS }},
+        {{- end }}
+        {{- with .Params.images }}
+        {{- $img := index . 0 }}
+        {{- if $img }}
+        "image": {{ (cond (urls.Parse $img).IsAbs $img ($img | absURL)) | jsonify | safeJS }},
+        {{- end }}
+        {{- end }}
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": {{ .Permalink | jsonify | safeJS }}
+        }
+    }
+    </script>
+    {{- end }}
+
+    {{- if and (not .IsHome) (ne .Kind "404") }}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": {{ site.Title | jsonify | safeJS }},
+                "item": {{ site.Home.Permalink | jsonify | safeJS }}
+            }{{- if and .IsPage .Section (ne .Section "") }},
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": {{ .CurrentSection.Title | jsonify | safeJS }},
+                "item": {{ .CurrentSection.Permalink | jsonify | safeJS }}
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": {{ .Title | jsonify | safeJS }},
+                "item": {{ .Permalink | jsonify | safeJS }}
+            }{{- else }},
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": {{ .Title | jsonify | safeJS }},
+                "item": {{ .Permalink | jsonify | safeJS }}
+            }{{- end }}
+        ]
+    }
+    </script>
+    {{- end }}

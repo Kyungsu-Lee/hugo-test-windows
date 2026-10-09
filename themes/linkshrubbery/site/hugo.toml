@@ -1,0 +1,18 @@
+baseURL = "https://example.org"
+title = "Linkshrubbery"
+locale = "en-us"
+
+relativeURLs = true
+enableEmoji = true
+enableRobotsTXT = true
+copyright = "&copy; Year, Your Name"
+disableKinds = ["taxonomy", "term"]
+
+# Configuration Features
+[params]
+  description = "Your meta description"  # Your meta description of the site
+  avatar = "/images/avatar.png"          # Path to avatar image starting from the static directory
+  logo = "/images/logo.png"              # Path to logo image starting from the static directory
+  [params.style]                         # CSS style overrides
+    backgroundColor = "#f8f9fa"
+    fontColor = "#212529"

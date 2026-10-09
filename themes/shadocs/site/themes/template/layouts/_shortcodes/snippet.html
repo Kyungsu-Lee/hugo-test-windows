@@ -1,0 +1,55 @@
+{{- with .Parent -}}
+  {{- .Scratch.Set "isNestedShortcode" true -}}
+{{- else -}}
+  {{- .Scratch.Set "isNestedShortcode" false -}}
+{{- end -}}
+{{- $snippetContent := slice -}}
+{{- $optMd := dict "markup" "goldmark" -}}
+{{- $type := .Get "type" | default "code" -}}
+{{- $caption := .Get "caption" -}}
+{{- $codelang := .Get "codelang" -}}
+{{- $codeparam := .Get "codeparam" -}}
+{{- with .Get "file" -}}
+  {{- $snippetContent = $snippetContent | append (readFile .) -}}
+{{- else -}}
+  {{- with (trim .Inner "\r\n ") -}}
+    {{- $snippetContent = $snippetContent | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- with $snippetContent -}}
+  <div class="sc-snippet-wrapper is-flex is-flex-wrap-wrap my-4">
+    {{- range $key, $value := . -}}
+      {{- template "getSnippetContentWrapper" dict "content" $value "type" $type "caption" $caption "codelang" $codelang "codeparam" $codeparam "optMd" $optMd "context" $ -}}
+    {{- end -}}
+  </div>
+{{- end -}}
+<!-- TEMPLATES -->
+{{- define "getSnippetContentWrapper" -}}
+  <div class="sc-snippet-container">
+    {{- with .caption -}}
+      <div class="sc-snippet">
+        <div class="sc-snippet-caption">{{- . -}}</div>
+        {{- template "getSnippetContent" dict "content" $.content "type" $.type "codelang" $.codelang "codeparam" $.codeparam "optMd" $.optMd "context" $.context -}}
+      </div>
+    {{- else -}}
+      {{- template "getSnippetContent" dict "content" $.content "type" $.type "codelang" $.codelang "codeparam" $.codeparam "optMd" $.optMd "context" $.context -}}
+    {{- end -}}
+  </div>
+{{- end -}}
+{{- define "getSnippetContent" -}}
+  {{- if (eq .type "code") -}}
+    {{- $computedCodeParam := "" -}}
+    {{- with .codeparam -}}
+      {{- $computedCodeParam = (printf "{%s}" .) -}}
+    {{- end -}}
+    {{- printf "%s%s %s\n%s\n%s\n" "~~~" .codelang $computedCodeParam .content "~~~" | .context.Page.RenderString .optMd -}}
+  {{- else if (eq .type "md") -}}
+    <div class="sc-snippet-md">
+      {{- .content | .context.Page.RenderString .optMd -}}
+    </div>
+  {{- else if (eq .type "plaintext") -}}
+    <div class="sc-snippet-plaintext">{{- .content | safeHTML -}}</div>
+  {{- else -}}
+    {{- errorf "wrong value for parameter type in snippet shortcode: %s" .type -}}
+  {{- end -}}
+{{- end -}}

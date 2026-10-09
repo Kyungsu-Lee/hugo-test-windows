@@ -1,0 +1,25 @@
+{{- $siteAuthors := .Site.Params.authors -}}
+{{- $pageAuthors := .Params.authors -}}
+
+<!-- if page authors is empty, use first entry from site authors -->
+{{- if (or (not $pageAuthors) (eq (len $pageAuthors) 0)) -}}
+    {{- $pageAuthors = slice (index $siteAuthors 0).name -}}
+{{- else if not (reflect.IsSlice $pageAuthors) -}}
+    {{- $pageAuthors = slice $pageAuthors -}}
+{{- end -}}
+
+<!-- create a slice to store author anchor links -->
+{{- $authorLinks := slice -}}
+
+<!-- lookup authorLinks for the same name, and attach anchorlink -->
+{{- range $pageAuthors -}}
+    {{- $matchedAuthor := index (where $siteAuthors "name" .) 0 -}}
+    {{- if $matchedAuthor -}}
+        {{- $authorLink := printf "<a href=\"%s\" class=\"decoration-ht-lightest\">%s</a>" $matchedAuthor.url $matchedAuthor.name -}}
+        {{- $authorLinks = $authorLinks | append $authorLink -}}
+    {{- else -}}
+        {{- $authorLinks = $authorLinks | append . -}}
+    {{- end -}}
+{{- end -}}
+
+{{- delimit $authorLinks ", " | safeHTML -}}

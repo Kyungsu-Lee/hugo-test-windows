@@ -1,0 +1,167 @@
+<meta charset="utf-8" />
+<title>{{ .Site.Title }}</title>
+{{ partial "meta.html" . }}
+{{ block "meta" . }}{{ end }}
+
+
+<link rel="canonical" href="{{ .Permalink }}" />
+
+<!-- load Google Fonts -->
+{{ $fonts := .Site.Params.googlefonts | default .Site.Params.defaultGoogleFonts }}
+{{ if $fonts }}
+  <link
+    href="{{ $fonts }}"
+    rel="preload stylesheet"
+    as="style"
+    media="print"
+    onload="this.media='all'"
+  />
+{{ end }}
+
+
+<!-- load Mathjax -->
+{{ if .Page.Params.mathPosts | default false }}
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [
+          ["$", "$"],
+          ["\\(", "\\)"],
+        ],
+        tags: "ams",
+        processEscapes: true,
+      },
+      svg: {
+        fontCache: "global",
+      },
+    };
+  </script>
+  <script
+    id="MathJax-script"
+    async
+    src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"
+  ></script>
+{{ end }}
+
+
+<!-- icons from bootstrap-icons -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+/>
+
+{{/* Color theme settings with Bootstrap */}}
+<script>
+  (function () {
+    var getStoredTheme = function () {
+      return localStorage.getItem("theme");
+    };
+    var getPreferredTheme = function () {
+      var storedTheme = getStoredTheme();
+      if (storedTheme) {
+        return storedTheme;
+      }
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    };
+    var theme = getPreferredTheme();
+    document.documentElement.setAttribute("data-bs-theme", theme);
+  })();
+</script>
+
+{{/* Color theme settings with Bootstrap */}}
+{{ $tsCommonOpt := dict "minify" "true" }}
+{{ with resources.Get "ts/bootstrap.ts" | js.Build $tsCommonOpt }}
+  <script defer type="text/javascript" src="{{ .RelPermalink }}"></script>
+{{ end }}
+{{ with resources.Get "ts/color-module.ts" | js.Build $tsCommonOpt }}
+  <script defer type="text/javascript" src="{{ .RelPermalink }}"></script>
+{{ end }}
+
+{{/* load Instant search for Algolia */}}
+{{ if .Site.Params.EnableAlgolia | default false }}
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/instantsearch.css@8.5.1/themes/satellite-min.css"
+    integrity="sha256-woeV7a4SRDsjDc395qjBJ4+ZhDdFn8AqswN1rlTO64E="
+    crossorigin="anonymous"
+  />
+
+  {{ with .Site.Params.Algolia }}
+    {{ $tsCommonOpt :=
+      dict "params" (dict
+      "indexName" .indexName
+      "appId" .appId
+      "algoliaSearchApiKey" .searchOnlyApiKey
+      "searchPlaceholder" (T "search.placeholder")
+      "searchNoResults" (T "search.noResults")
+      "searchReadMore" (T "search.readMore"))
+    }}
+
+    {{ $langTargetPath := printf "ts/algolia.%s.js" $.Lang }}
+    {{ $tsLangOpt := merge $tsCommonOpt (dict "targetPath" $langTargetPath) }}
+    {{ $compiledJs := resources.Get "ts/algolia.ts" | js.Build $tsLangOpt | resources.Minify }}
+    <script defer type="text/javascript" src="{{ $compiledJs.RelPermalink }}"></script>
+  {{ end }}
+{{ end }}
+
+{{/* syntax highlight */}}
+{{ if and (.Site.Params.EnableHighlight | default true) .IsPage }}
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/espresso.min.css"
+    integrity="sha512-Alf9gBIx7O9Pn9+n7HJXcwZK6uXCaGDNj5ScAAtNsQ5OpUHBaXLEAaX00Z9N8S9o9lTG7FKgnRB5eXwUQKNu6g=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+    integrity="sha512-EBLzUL8XLl+va/zAsmXwS7Z2B1F9HUHkZwyS/VKwh3S7T/U0nF4BaU29EP/ZSf6zgiIxYAnKLu6bJ8dqpmX5uw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.6.0/highlightjs-line-numbers.min.js"
+    integrity="sha512-nkjLcPbHjdAof51b8uUd+6q4YH7YrMwh+kfTwSBrg5T/yMKrz8GUxM4uJJ1xAL7Q1lfAMIEowDsTzfWskZ5RcQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script>
+    window.addEventListener("load", function () {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad(); // Initialize line numbers.
+    });
+  </script>
+{{ end }}
+
+
+<!-- load custom and main css files -->
+{{ $mainStyle := resources.Get "css/styles.scss" }}
+{{ $options := dict
+  "outputStyle"
+  "compressed"
+  "transpiler"
+  "dartsass"
+  "includePaths"
+  (slice "node_modules")
+}}
+
+{{ $files := slice $mainStyle }}
+{{ $custom := resources.Match "css/_custom.scss" }}
+{{ if gt (len $custom) 0 }}
+  {{ $files = $files | append (index $custom 0) }}
+{{ end }}
+
+{{ $result := $files | resources.Concat "css/bundle.css" | toCSS $options }}
+
+{{ if hugo.IsDevelopment }}
+  <link rel="stylesheet" href="{{ $result.RelPermalink }}" />
+{{ else }}
+  {{ with $result | postCSS | minify | fingerprint | resources.PostProcess }}
+    <link
+      rel="stylesheet"
+      href="{{ .RelPermalink }}"
+      integrity="{{ .Data.Integrity }}"
+      crossorigin="anonymous"
+    />
+  {{ end }}
+{{ end }}

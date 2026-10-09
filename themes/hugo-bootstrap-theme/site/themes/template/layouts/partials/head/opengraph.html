@@ -1,0 +1,126 @@
+<!-- The Open Graph protocol -->
+<!-- https://ogp.me/ -->
+
+<!-- Test with Facebook Object Debugger: https://developers.facebook.com/tools/debug/ -->
+<!-- Or with Google Rich Snippets Testing Tool: https://developers.google.com/search/docs/appearance/structured-data -->
+
+{{ $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}">
+{{- $isArticle := partial "head/is-article.html" . -}}
+{{- /* `profile` is Open Graph's own type for a page about a person, so an author page says so
+       rather than falling back to `website`. The profile:first_name / profile:last_name tags
+       are deliberately not emitted: splitting a personal name into given and family parts is
+       wrong often enough across locales that the type alone is the safer claim. */ -}}
+{{- $isAuthorPage := partial "head/is-author-page.html" . -}}
+<meta property="og:type" content="{{ if $isArticle }}article{{ else if $isAuthorPage }}profile{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+
+{{- /* Only raster formats every OG consumer supports; SVG is rejected by all of them.
+       WebP is not dropped but converted: several consumers - LinkedIn among them - do
+       not render it, and skipping it silently costs the page its own image. */ -}}
+{{- /* 1200px is the width LinkedIn needs to render a large link preview card; below it the
+       image is demoted to a small thumbnail beside the text. Facebook and X accept the same
+       width, so one number serves all three. */ -}}
+{{- $ogWidth := 1200 -}}
+{{- $ogFormats := slice "png" "jpeg" -}}
+{{- $ogImages := slice -}}
+{{- range $.Params.images -}}
+  {{- with $.Resources.GetMatch . -}}
+    {{- /* $ogWidth is a cap, not a target: never upscale a source narrower than it. .Width
+           is read inside each branch because it exists only on raster resources, and an
+           unsupported format such as SVG must fall through untouched. */ -}}
+    {{- $img := "" -}}
+    {{- if in $ogFormats .MediaType.SubType -}}
+      {{- $w := cond (gt .Width $ogWidth) $ogWidth .Width -}}
+      {{- $img = .Resize (printf "%dx" $w) -}}
+    {{- else if eq .MediaType.SubType "webp" -}}
+      {{- $w := cond (gt .Width $ogWidth) $ogWidth .Width -}}
+      {{- $img = .Resize (printf "%dx jpeg q85" $w) -}}
+    {{- end -}}
+    {{- with $img -}}
+      {{- /* .Params survives image processing while .Title does not, so alt text attached to
+             the page resource in front matter reaches Open Graph from here. */ -}}
+      {{- $ogImages = $ogImages | append (dict "src" .Permalink "w" .Width "h" .Height "alt" .Params.alt) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Site-level images are a fallback, not an addition. Without the emptiness check both
+       ranges append, so any page carrying its own image emitted that image *and* the site
+       logo. Consumers differ on which of several og:image tags they use - some take the
+       first, some the last - so the page was effectively sharing a random one of the two. */ -}}
+{{- if not $ogImages -}}
+  {{- range $.Site.Params.images -}}
+    {{- with resources.GetMatch . -}}
+      {{- $img := "" -}}
+      {{- if in $ogFormats .MediaType.SubType -}}
+        {{- $w := cond (gt .Width $ogWidth) $ogWidth .Width -}}
+        {{- $img = .Resize (printf "%dx" $w) -}}
+      {{- else if eq .MediaType.SubType "webp" -}}
+        {{- $w := cond (gt .Width $ogWidth) $ogWidth .Width -}}
+        {{- $img = .Resize (printf "%dx jpeg q85" $w) -}}
+      {{- end -}}
+      {{- with $img -}}
+        {{- /* No alt: a site-wide fallback image describes the brand, not this page. */ -}}
+        {{- $ogImages = $ogImages | append (dict "src" .Permalink "w" .Width "h" .Height) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end }}
+{{- /* width and height let a consumer lay the card out before it has fetched the image, and
+       are what stop LinkedIn and WhatsApp guessing wrong on a slow first scrape. alt is
+       emitted only when the page actually supplied one: an empty alt says nothing and is
+       worse than its absence. */ -}}
+{{ range first 6 $ogImages }}
+<meta property="og:image" content="{{ .src }}">
+<meta property="og:image:width" content="{{ .w }}">
+<meta property="og:image:height" content="{{ .h }}">
+{{- with .alt }}
+<meta property="og:image:alt" content="{{ . }}">
+{{- end }}
+{{- end }}
+
+{{- if $isArticle }}
+  {{- /* Only when there is a section to name: a page outside one would emit an empty
+         article:section, which says nothing. */}}
+  {{ with .Section }}
+    <meta property="article:section" content="{{ . }}">
+  {{ end }}
+  {{ with .PublishDate }}
+    <meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }}>
+  {{ end }}
+  {{ with .Lastmod }}
+    <meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }}>
+  {{ end }}
+{{- end -}}
+
+{{- with .Params.audio }}
+  <meta property="og:audio" content="{{ . }}">
+{{ end }}
+
+{{- /* Falls back to the page's own language. Open Graph wants the underscore form
+       (pt_PT), while Hugo reports the locale with a hyphen. */ -}}
+{{- with .Params.locale | default (replace (.Language.Locale | default .Site.Language.Lang) "-" "_") }}
+  <meta property="og:locale" content="{{ . }}">
+{{ end }}
+
+{{- with .Site.Title }}
+  <meta property="og:site_name" content="{{ . }}">
+{{ end }}
+
+{{- with .Params.videos }}
+  {{- range . }}
+    <meta property="og:video" content="{{ . | absURL }}">
+  {{ end }}
+{{ end }}
+
+{{- /* If it is part of a series, link to related articles */}}
+{{- $permalink := .Permalink }}
+{{- range .GetTerms "series" }}
+  {{- range first 6 .Pages }}
+    {{- if ne .Permalink $permalink }}
+      <meta property="og:see_also" content="{{ .Permalink }}">
+    {{- end }}
+  {{- end }}
+{{- end }}

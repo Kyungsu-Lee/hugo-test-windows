@@ -1,0 +1,30 @@
+<div class="columns is-multiline is-centered">
+  {{ range first 2 (shuffle ($.Site.RegularPages | complement (slice $.Page))) }}
+    <div class="column is-half">
+      <a href="{{ .RelPermalink }}" rel="nofollow">
+
+        <div class="card">
+          {{ partial "eyecatch" . }}
+
+          <header class="card-header">
+            <p class="card-header-title">
+              {{ .Title }}
+            </p>
+          </header>
+
+          <div class="card-content">
+            <div class="content">
+              {{ .Description }}
+            </div>
+
+            <p>
+              {{ .Date.Format "2006-01-02" }}
+              {{ partial "badges/badges" . }}
+            </p>
+          </div>
+        </div>
+
+      </a>
+    </div>
+  {{ end }}
+</div>

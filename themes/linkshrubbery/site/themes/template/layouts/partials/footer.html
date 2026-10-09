@@ -1,0 +1,16 @@
+<footer class="text-center pb-3 pt-3">
+  <a href="/">
+  <img id="logo-small" class="rounded-circle"
+                    {{ if (and (isset .Site.Params "logo") (fileExists (printf "static/%s" (strings.TrimPrefix "/" .Site.Params.logo)))) }}
+                        {{ if hasPrefix .Site.Params.logo "/" }}
+                            src="{{ .Site.Params.logo }}"
+                        {{ else }}
+                            src="{{ printf "/%s" .Site.Params.logo }}"
+                        {{ end }}
+                    {{ else }}
+                        src="/images/logo.png"
+                    {{ end }}
+                />
+  Linkshrubbery
+  </a>
+</footer>

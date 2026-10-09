@@ -1,0 +1,95 @@
+{{- $color_mode := site.Params.color_mode | default "auto" -}}
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                {{ $currentPage := . }}
+                {{ range site.Menus.nav }}
+                    {{ if .HasChildren }}
+                    <li class="nav-item dropdown nav-hover-dropdown">
+                        <a class="nav-link dropdown-toggle{{ if eq .URL $currentPage.RelPermalink }} active" aria-current="page"{{ else }}"{{ end }} href="{{ .URL }}">{{ .Name }}</a>
+                        <ul class="dropdown-menu">
+                            {{ range .Children }}
+                            <li><a class="dropdown-item" href="{{ .URL }}">{{ .Name }}</a></li>
+                            {{ end }}
+                        </ul>
+                    </li>
+                    {{ else }}
+                    <li class="nav-item">
+                        <a class="nav-link{{ if eq .URL $currentPage.RelPermalink }} active" aria-current="page"{{ else }}"{{ end }} href="{{ .URL }}">{{ .Name }}</a>
+                    </li>
+                    {{ end }}
+                {{ end }}
+                {{- with site.Params.social }}
+                <li class="nav-item dropdown nav-hover-dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false">{{ i18n "nav.social" }}</a>
+                    <ul class="dropdown-menu">
+                    {{ range $key, $value := . }}
+                        {{ with index hugo.Data.social $key }}
+                        <li><a class="dropdown-item" href="{{ printf .url $value }}">{{ .name }}</a></li>
+                        {{ end }}
+                    {{ end }}
+                    </ul>
+                </li>
+                {{- end }}
+                {{- if .IsTranslated }}
+                    {{ "<!-- language selector -->" | safeHTML }}
+                    <li class="nav-item dropdown nav-hover-dropdown ms-lg-auto">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" aria-expanded="false" aria-label="{{ i18n "nav.translations" }}"><i class="bi bi-translate" aria-hidden="true"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {{ range .AllTranslations }}
+                            <li><a class="dropdown-item{{ if eq .Lang $currentPage.Lang }} active" aria-current="page"{{ else }}"{{ end }} href="{{ .Permalink }}">{{ .Language.Label }}</a></li>
+                            {{ end }}
+                        </ul>
+                    </li>
+                    {{ "<!-- /language selector -->" | safeHTML }}
+                {{ end }}
+                {{- if eq $color_mode "auto" }}
+                {{ "<!-- theme toggle -->" | safeHTML }}
+                <li class="nav-item{{ if not .IsTranslated }} ms-lg-auto{{ end }}">
+                    {{/* Rendered hidden: the toggle only works with JS, and the
+                         no-JS @media fallback already honors the OS preference,
+                         so an inert button would only mislead. The script below
+                         unhides it. aria-pressed reflects the active theme and is
+                         kept in sync by syncIcon(), since the icon is aria-hidden. */}}
+                    <button id="theme-toggle" class="btn nav-link" type="button" hidden aria-pressed="false" aria-label="{{ i18n "nav.toggle_theme" }}">
+                        <i class="bi bi-moon-stars-fill" aria-hidden="true"></i>
+                    </button>
+                </li>
+                {{- end }}
+            </ul>
+        </div>
+    </div>
+</nav>
+{{- if eq $color_mode "auto" }}
+<script>
+(function() {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    var icon = btn.querySelector('i');
+    function syncState() {
+        var isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+        btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    }
+    // JS is present, so the toggle is now functional — reveal it.
+    btn.hidden = false;
+    syncState();
+    btn.addEventListener('click', function() {
+        var isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', next);
+        syncState();
+        // Persist last, guarded like the FOUC script in head.html: a storage
+        // failure (private mode, quota, sandbox) must not leave the icon or
+        // aria-pressed stale, so the visual toggle already happened above.
+        try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+})();
+</script>
+{{- end }}

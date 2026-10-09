@@ -1,0 +1,17 @@
+{{ with .GetTerms "tags" }}
+    <ul class="flex flex-wrap items-center gap-2">
+        {{ range . }}
+            <li>
+                <a href="{{ .RelPermalink }}" class="text-muted flex items-center hover:underline">
+                    <i class="block size-4">
+                        {{- partial "icon" "hashtag" -}}
+                    </i>
+
+                    <span>
+                        {{ .LinkTitle }}
+                    </span>
+                </a>
+            </li>
+        {{ end}}
+    </ul>
+{{ end }}

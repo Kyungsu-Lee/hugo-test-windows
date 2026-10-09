@@ -1,0 +1,20 @@
+{{ define "sidebar"}}<!-- hide sdebar -->{{ end }}
+{{ define "main" }}
+<h1>
+  {{ with partial "helpers/get-icon.html" (dict "type" "terms" "name" .Data.Singular) -}}
+    <span data-visual-sign="{{ . }}"></span>
+  {{- end }}
+  {{- .Title -}}
+</h1>
+<ul class="section-tree">
+  {{ range .Pages -}}
+  <li>
+    <a href="{{ .Permalink }}">
+      <span data-visual-sign="article"></span>
+      {{ .LinkTitle }}
+    </a>
+    <p>{{ .Description | markdownify }}</p>
+  </li>
+  {{- end }}
+</ul>
+{{- end }}

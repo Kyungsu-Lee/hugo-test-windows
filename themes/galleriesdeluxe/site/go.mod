@@ -1,0 +1,11 @@
+module github.com/bep/galleriesdeluxe/exampleSite
+
+go 1.20
+
+replace github.com/bep/galleriesdeluxe => ./themes/template
+
+require (
+	github.com/bep/galleriesdeluxe v0.0.0-20230703155916-942ecbaaea2f // indirect
+	github.com/bep/gallerydeluxe v0.15.0 // indirect
+	github.com/bep/hugo-mod-misc/common-partials v0.2.0 // indirect
+)

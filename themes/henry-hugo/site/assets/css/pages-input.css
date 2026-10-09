@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./theme.css";
+@import "./henry.css";
+@source "../../content";
+@source "../../themes/template/layouts";
+
+@theme { --color-hbg-lightest: #34444e; --color-hbg-lighter: #2c3b45; --color-hbg-light: #24343e; --color-hbg-darkest: #0f1c23; --color-ht-darkest: #f8fafc; }

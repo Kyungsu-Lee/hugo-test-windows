@@ -1,0 +1,10 @@
+baseURL: "https://example.org"
+title: "HUGO Site"
+defaultContentLanguage: "ja"
+defaultContentLanguageInSubdir: false
+disableDefaultLanguageRedirect: false
+enableEmoji: true
+enableGitInfo: true
+enableRobotsTXT: true
+timeZone: "Asia/Tokyo"
+locale: "ja-JP"

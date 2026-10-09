@@ -1,0 +1,12 @@
+[build]
+  publish = "exampleSite/public"
+  command = "cd exampleSite && hugo --themesDir ../.. --gc --minify"
+
+[build.environment]
+  HUGO_VERSION = "0.163.3"
+
+[context.production.environment]
+  HUGO_BASEURL = "https://hugo-theme-spoon.netlify.app/"
+
+[context.deploy-preview]
+  command = "cd exampleSite && hugo --themesDir ../.. --gc --minify -b $DEPLOY_PRIME_URL"

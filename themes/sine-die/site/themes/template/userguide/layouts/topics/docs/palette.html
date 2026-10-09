@@ -1,0 +1,215 @@
+{{ define "head-addition" }}
+  {{ partial "helpers/css-link.html" (dict "asset" "css/docs/palette.css") }}
+{{ end }}
+{{ define "main" }}
+  <article class="theme-palette-example">
+    {{- with .Params.Title -}}
+    <h1>{{ . }}</h1>
+    {{- end -}}
+    {{ .Content }}
+    <table class="base-palette">
+      <caption>Base Palette</caption>
+      <thead>
+        <tr>
+          <th class="title">name</th>
+          <th>main</th>
+          <th>lightest</th>
+          <th>lighter</th>
+          <th>light</th>
+          <th>medium-light</th>
+          <th>medium</th>
+          <th>medium-dark</th>
+          <th>dark</th>
+          <th>darker</th>
+          <th>darkest</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="primary">
+          <th>primary</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+        <tr class="secondary-left">
+          <th class="color-name">secondary-left</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+        <tr class="secondary-right">
+          <th class="color-name">secondary-right</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+        <tr class="warning">
+          <th class="color-name">warning</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+        <tr class="success">
+          <th class="color-name">success</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+        <tr class="error">
+          <th class="color-name">error</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+        <tr class="neutral">
+          <th class="color-name">neutral</th>
+          <td class="color-main"></td>
+          <td class="color-lightest"></td>
+          <td class="color-lighter"></td>
+          <td class="color-light"></td>
+          <td class="color-medium-light"></td>
+          <td class="color-medium"></td>
+          <td class="color-medium-dark"></td>
+          <td class="color-dark"></td>
+          <td class="color-darker"></td>
+          <td class="color-darkest"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="use">
+      The CSS colors variables are defined as <code>--palette-[row name]-[column name]</code>, for example <code>--palette-secondary-left-medium-dark</code>.
+    </div>
+    <table class="neutral-palette">
+      <caption>Neutral Palette Extended</caption>
+      <thead>
+        <tr>
+          <th class="title">name</th>
+          <th class="title">color</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>neutral0</th>
+          <td class="neutral0"></td>
+        </tr>
+        <tr>
+          <th>neutral5</th>
+          <td class="neutral5"></td>
+        </tr>
+        <tr>
+          <th>neutral10</th>
+          <td class="neutral10"></td>
+        </tr>
+        <tr>
+          <th>neutral15</th>
+          <td class="neutral15"></td>
+        </tr>
+        <tr>
+          <th>neutral20</th>
+          <td class="neutral20"></td>
+        </tr>
+        <tr>
+          <th>neutral25</th>
+          <td class="neutral25"></td>
+        </tr>
+        <tr>
+          <th>neutral30</th>
+          <td class="neutral30"></td>
+        </tr>
+        <tr>
+          <th>neutral35</th>
+          <td class="neutral35"></td>
+        </tr>
+        <tr>
+          <th>neutral40</th>
+          <td class="neutral40"></td>
+        </tr>
+        <tr>
+          <th>neutral50</th>
+          <td class="neutral50"></td>
+        </tr>
+        <tr>
+          <th>neutral60</th>
+          <td class="neutral60"></td>
+        </tr>
+        <tr>
+          <th>neutral65</th>
+          <td class="neutral65"></td>
+        </tr>
+        <tr>
+          <th>neutral70</th>
+          <td class="neutral70"></td>
+        </tr>
+        <tr>
+          <th>neutral75</th>
+          <td class="neutral75"></td>
+        </tr>
+        <tr>
+          <th>neutral80</th>
+          <td class="neutral80"></td>
+        </tr>
+        <tr>
+          <th>neutral85</th>
+          <td class="neutral85"></td>
+        </tr>
+        <tr>
+          <th>neutral90</th>
+          <td class="neutral90"></td>
+        </tr>
+        <tr>
+          <th>neutral95</th>
+          <td class="neutral95"></td>
+        </tr>
+        <tr>
+          <th>neutral100</th>
+          <td class="neutral100"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="use">
+      The CSS colors variables are defined as <code>--palette-[row name]</code>, for example <code>--palette-neutral0</code>.
+    </div>
+  </article>
+{{ end }}

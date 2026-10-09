@@ -1,0 +1,117 @@
+---
+title: sine-die
+baseURL: https://sinetris.github.io/sine-die/
+defaultContentLanguage: en
+theme:
+  - sine-die
+themesDir: ../..
+enableGitInfo: true
+
+module:
+  hugoVersion:
+    extended: true
+    min: '0.158.0'
+
+params:
+  author:
+    email: duilio@sinetris.info
+    name: Duilio Ruggiero
+  enableFavicons: true
+  showSearchUI: true
+  logo: images/sine-die-logo.svg
+  # logo:
+  #   asset: images/sine-die-logo.svg
+  #   imageTag: img
+  #   attributes:
+  #     fragment: logo
+  #     viewBox: 0 0 1024 1024
+  license: CC-BY-4.0
+  licenselink: https://github.com/sinetris/sinetris-website/blob/main/LICENSE-DOCS
+  # Theme configuration
+  SineDie:
+    SidebarMenu:
+      PagesSortBy: Weight
+      PagesSortOrder: asc
+markup:
+  highlight:
+    # We need classes to be able to have different colors for Light/Dark mode
+    noClasses: false
+    # We want line numbers to easily recognize line-wraps
+    lineNos: true
+    # Line wrapping don't work properly with line numbers in a separate table
+    lineNumbersInTable: false
+  tableOfContents:
+    endLevel: 3
+    ordered: false
+    startLevel: 2
+  goldmark:
+    parser:
+      attribute:
+        block: true
+        title: true
+    renderer:
+      unsafe: true
+
+menus:
+  main:
+    - name: GitHub
+      url: 'https://github.com/sinetris/sine-die'
+      weight: 60
+      params:
+        isExternalLink: true
+        onlyVisualSign: true
+        visualSign: github
+        visualSignType: brand
+    - name: Special subsection
+      parent: examples
+      identifier: special-subsection
+      weight: 1
+    - name: Example Domain
+      # External link text (no visual sign)
+      url: 'https://example.com/'
+      parent: special-subsection
+      weight: 80
+      params:
+        isExternalLink: true
+    - name: The Octocat
+      # External link with text and brand image
+      url: 'https://github.com/octocat'
+      parent: special-subsection
+      weight: 82
+      params:
+        isExternalLink: true
+        visualSign: github
+        visualSignType: brand
+    - name: Glossary
+      # Internal link with text and icon
+      pageRef: '/glossary'
+      parent: special-subsection
+      weight: 90
+      params:
+        visualSign: glossary
+    - name: Same Glossary icon only
+      # Internal link with only icon
+      pageRef: '/glossary'
+      parent: special-subsection
+      weight: 90
+      params:
+        visualSign: glossary
+        onlyVisualSign: true
+
+languages:
+  en:
+    title: Sine Die
+    params:
+      tagline: Semantic HTML theme for Hugo
+      description: Sine Die a semantic HTML theme for Hugo
+
+taxonomies:
+  category: categories
+  context: contexts
+  tag: tags
+
+permalinks:
+  taxonomy:
+    contexts: /glossary-contexts/
+  term:
+    contexts: /glossary-contexts/:slug/

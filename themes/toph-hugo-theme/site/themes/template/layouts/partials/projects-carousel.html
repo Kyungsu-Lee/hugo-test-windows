@@ -1,0 +1,57 @@
+{{/*
+    projects-carousel.html — Image carousel header for project profiles
+
+    Displays a Bootstrap fade carousel highlighting project logos or titles
+    above the project profiles section. Each slide links to the matching
+    project section anchor on the page.
+
+    Receives the filtered project page collection from the caller (e.g., biography.html).
+    Each page exposes:
+      - .Param "icon"                              — project logo or icon
+      - .Param "title"                             — text fallback if no icon
+      - .Slug                                      — target section anchor
+
+    Icon rendering:
+      - Asset path (e.g., pages/projects/logo.png) — processed to WebP (height 160px)
+      - Remote URL (https://) or SVG              — rendered as-is (remote URLs bypass
+        asset processing to avoid build-time network dependencies)
+*/}}
+
+<div id="projects-carousel" class="carousel carousel-dark slide carousel-fade" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    {{ range $index, $value := . }}
+    <button type="button" data-bs-target="#projects-carousel" data-bs-slide-to="{{ $index }}"{{ if eq $index 0 }} class="active" aria-current="true"{{ end }} aria-label="{{ $value.Title }}"></button>
+    {{ end }}
+  </div>
+  <div class="carousel-inner">
+      {{ range $index, $value := . }}
+      <div class="carousel-item{{ if eq $index 0 }} active{{ end }}">
+        <a href="#{{ .Slug }}">
+          {{/* Render optimized logo if icon provided, otherwise show title heading */}}
+          {{ with .Param "icon" }}
+            {{- $src := printf "%s" . -}}
+            {{- $resource := resources.Get $src -}}
+            {{- $loading := cond (eq $index 0) "eager" "lazy" -}}
+            {{- $altText := (i18n "misc.logo" $value) | default $value.Title -}}
+            {{- if and $resource (reflect.IsImageResourceProcessable $resource) -}}
+              {{- $processed := $resource.Resize "x160 webp" -}}
+              <img src="{{ $processed.RelPermalink }}" width="{{ $processed.Width }}" height="{{ $processed.Height }}" class="img-fluid d-block my-5 mx-auto pc-fixed-height" alt="{{ $altText }}" title="{{ $altText }}" loading="{{ $loading }}">
+            {{- else -}}
+              <img src="{{ $src }}" class="img-fluid d-block my-5 mx-auto pc-fixed-height" alt="{{ $altText }}" title="{{ $altText }}" loading="{{ $loading }}">
+            {{- end -}}
+          {{ else }}
+            <h3 class="d-flex align-items-center justify-content-center my-5 pc-fixed-height">{{ $value.Param "title" }}</h3>
+          {{ end }}
+        </a>
+      </div>
+      {{ end }}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#projects-carousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">{{ i18n "misc.previous" }}</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#projects-carousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">{{ i18n "misc.next" }}</span>
+  </button>
+</div>

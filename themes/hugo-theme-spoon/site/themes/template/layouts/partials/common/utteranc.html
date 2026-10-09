@@ -1,0 +1,22 @@
+{{ if .Site.Params.comments.utteranc.enable }}
+<div class="comments" id="utterances-comments">
+  <script>
+    (() => {
+      const config = {{ dict
+        "repo" .Site.Params.comments.utteranc.repo
+        "issueTerm" (.Site.Params.comments.utteranc.issueTerm | default "pathname")
+        "darkModeTheme" (.Site.Params.darkModeTheme | default "data-dark-mode")
+        | jsonify | safeJS }};
+      const isDark = document.documentElement.hasAttribute(config.darkModeTheme);
+      const script = document.createElement('script');
+      script.src = 'https://utteranc.es/client.js';
+      script.setAttribute('repo', config.repo);
+      script.setAttribute('issue-term', config.issueTerm);
+      script.setAttribute('theme', isDark ? 'github-dark' : 'github-light');
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      document.getElementById('utterances-comments').appendChild(script);
+    })();
+  </script>
+</div>
+{{ end }}

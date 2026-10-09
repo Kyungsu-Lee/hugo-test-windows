@@ -1,0 +1,12 @@
+.shortcut-example {
+  background-color: white;
+  border: 0.25rem solid steelblue;
+  padding: 1rem;
+}
+.shortcut-example::first-letter {
+  color: steelblue;
+  float: left;
+  font-size: 3rem;
+  font-weight: bold;
+  padding-right: 0.25rem;
+}

@@ -1,0 +1,16 @@
+{{- $showTOC := site.Params.article.toc -}}
+{{- if isset .Params "toc" }}{{ $showTOC = .Params.toc }}{{ end -}}
+
+{{- $imageZoom := site.Params.article.imageZoom | default site.Params.options.enableImgZooming -}}
+{{- if isset .Params "imagezoom" }}{{ $imageZoom = index .Params "imagezoom" }}{{ end -}}
+
+{{- $hasTOC := and $showTOC .TableOfContents -}}
+<div class="article-layout{{ if $hasTOC }} has-toc{{ end }}">
+  {{ if $hasTOC }}
+  <aside class="blog-toc" aria-label="{{ i18n "toc_title" }}">
+    {{ partial "blog/toc.html" . }}
+  </aside>
+  {{ end }}
+
+  <section class="blog-content" data-enable-image-zoom="{{ $imageZoom }}">{{ .Content }}</section>
+</div>

@@ -1,0 +1,32 @@
+{{ define "main" }}
+  {{ if gt .Pages 0 }}
+    <section class="mx-auto max-w-2xl min-w-0 grow lg:max-w-3xl">
+      {{ partial "section-header.html" . }}
+      {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
+        {{ if $.Params.groupByYear | default ($.Site.Params.list.groupByYear | default true) }}
+          <h2 class="mt-12 text-2xl font-bold text-neutral-700 first:mt-8 dark:text-neutral-300">
+            {{ .Key }}
+          </h2>
+          <hr class="max-w-none border-double border-neutral-400" />
+        {{ end }}
+        <div class="divide-y divide-neutral-300 overflow-hidden dark:divide-neutral-600">
+          {{ range .Pages }}
+            {{ partial "article-link.html" . }}
+          {{ end }}
+        </div>
+      {{ end }}
+      {{ partial "pagination.html" . }}
+    </section>
+    {{ partial "aside.html" . }}
+  {{ else }}
+    <section class="mx-auto max-w-2xl min-w-0 grow lg:max-w-3xl">
+      {{ partial "section-header.html" . }}
+      <section class="prose mt-10 max-w-none dark:prose-invert">
+        <p class="border-t border-neutral-300 py-8 dark:border-neutral-600">
+          <em>{{ i18n "list.no_articles" | emojify }}</em>
+        </p>
+      </section>
+    </section>
+    {{ partial "aside.html" . }}
+  {{ end }}
+{{ end }}

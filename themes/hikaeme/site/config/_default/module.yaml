@@ -1,0 +1,5 @@
+imports:
+  - path: github.com/htnabe/HikaeMe/v2
+
+replacements:
+  - github.com/htnabe/HikaeMe/v2 -> github.com/htnabe/HikaeMe/v2

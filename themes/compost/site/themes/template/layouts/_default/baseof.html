@@ -1,0 +1,13 @@
+<!doctype html>
+<html dir="{{ .Site.Language.Direction | default "ltr" }}" lang="{{ .Site.Language.Locale | default "en" }}">
+  {{ partial "head.html" . }}
+  <body class="min-h-full w-full" x-data="{ up: false }">
+    {{ partial "dev-size-indicator.html" . }}
+    {{ partial "header.html" . }}
+    <main class="container mx-auto my-6 flex max-w-7xl flex-row px-6 lg:px-8 xl:px-12">
+      {{ block "main" . }}{{ end }}
+    </main>
+    {{ partial "footer.html" . }}
+    {{ partial "dev-parameters.html" . }}
+  </body>
+</html>

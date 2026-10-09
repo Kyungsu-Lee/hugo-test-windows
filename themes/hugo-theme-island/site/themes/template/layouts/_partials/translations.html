@@ -1,0 +1,27 @@
+{{ if .IsTranslated }}
+    <div class="island mb-4">
+        <header class="island-header flex items-center justify-start gap-2 text-muted">
+            <i class="icon">
+                {{- partial "icon" "language" -}}
+            </i>
+            
+            {{ i18n "article.translations" }}
+        </header>
+
+        <ul>
+            {{ range .Translations }}
+                <li>
+                    <a 
+                        class="flex items-center justify-between p-4 action"
+                        href="{{ .RelPermalink }}" 
+                        hreflang="{{ .Language.Locale }}">
+                        <span>{{ .Title }}</span>
+                        <span class="text-muted">
+                            ({{ .Language.Label }})
+                        </span>
+                    </a>
+                </li>
+            {{ end }}
+        </ul>
+    </div>
+{{ end }}

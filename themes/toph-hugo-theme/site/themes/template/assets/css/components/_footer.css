@@ -1,0 +1,30 @@
+/* ===[ Footer styling ]=== */
+
+footer { overflow: hidden; }
+
+footer .imageblock {
+  display: inline-block;
+  padding: 0.5rem;
+}
+
+footer #footer-box {
+  background-color: var(--primary);
+  color: var(--secondary);
+  font-size: 0.8rem;
+}
+
+/* Prevent Bootstrap's element rule code { color: var(--bs-code-color) } from
+   overriding inherited --secondary text color on the --primary background */
+footer #footer-box code {
+  color: inherit;
+}
+
+footer #footer-box a {
+  color: var(--secondary);
+  text-decoration-style: dotted;
+}
+
+footer #footer-box a:hover {
+  color: var(--nav-hover-decoration);
+  text-decoration-style: dashed;
+}

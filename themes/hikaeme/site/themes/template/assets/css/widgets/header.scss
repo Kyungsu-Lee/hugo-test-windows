@@ -1,0 +1,26 @@
+@use "../_variables" as v;
+@use "sass:map";
+
+// show underline when hovering
+.hover-with-ul {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: v.$underline-bottom;
+    left: v.$underline-left;
+    width: v.$underline-width;
+    height: map.get(v.$line-heights, sm);
+    background: map.get(v.$colors, blue, light);
+    display: block;
+    transform-origin: center;
+    transform: scaleX(0);
+    transition: transform v.$transition-duration v.$transition-timing;
+  }
+
+  &:hover::before {
+    transform-origin: center;
+    transform: scaleX(1);
+  }
+}

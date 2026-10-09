@@ -1,0 +1,54 @@
+[[options]]
+title = "eBook (PDF)"
+description = "Available Worldwide"
+icon = "fa-solid fa-file-pdf"
+price = "₹299"
+originalPrice = "₹499"
+url = "https://topmate.io/debashishc/1471769"
+highlighted = true
+features = [
+    "Multiple formats",
+    "No DRM restrictions",
+   "Lifetime access"
+]
+
+[[options]]
+title = "Amazon Kindle"
+description = "Available Worldwide"
+icon = "fa-brands fa-amazon"
+price = "₹299"
+originalPrice = "₹499"
+url = "https://www.amazon.in/dp/B0G35V389J"
+highlighted = false
+features = [
+    "Instant download",
+    "Read on any device",
+    "Whispersync enabled"
+]
+
+[[options]]
+title = "Paperback"
+description = "Available Worldwide on Amazon (except India)"
+icon = "fa-brands fa-amazon"
+price = "$8.25"
+originalPrice = ""
+url = "https://a.co/d/8b9gwP5"
+highlighted = false
+features = [
+    "Free shipping eligible (Prime)",
+    "Premium paper quality",
+    "Perfect binding"
+]
+
+[[options]]
+title = "Paperback"
+description = "Available via Pothi.com in India"
+icon = "fa-solid fa-book-open"
+price = "₹399"
+originalPrice = ""
+url = "https://store.pothi.com/book/debashish-chakrabarty-agile-field-guide/"
+highlighted = false
+features = [
+    "Premium paper quality",
+    "Perfect binding"
+]

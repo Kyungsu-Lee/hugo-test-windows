@@ -1,0 +1,17 @@
+{{ define "main" }}
+
+    {{ partial "main-island.html" . }}
+
+    <div class="main-content">
+        <ul>
+            {{ range .Paginator.Pages }}
+                <li>
+                    {{ partial "post-card.html" . }}
+                </li>
+            {{ end }}
+        </ul>
+
+        {{ partial "page-nav.html" .Paginator }}
+    </div>
+    
+{{ end }}

@@ -1,0 +1,10 @@
+<script type="module">
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js');
+</script>
+
+{{ $sidenotes := resources.Get "js/sidenotes.js" }}
+{{ if not hugo.IsServer }}
+{{ $sidenotes = $sidenotes | minify | fingerprint }}
+{{ end }}
+<script src="{{ $sidenotes.RelPermalink }}"></script>

@@ -1,0 +1,22 @@
+services:
+  hugo:
+    container_name: hugo_theme_iris
+    image: ghcr.io/gohugoio/hugo:${HUGO_VERSION}
+    ports:
+      - 1313:1313
+    volumes:
+      - ${PWD}:/project
+      - ${HUGO_GIT_COMMON_DIR:-.git}:${HUGO_GIT_COMMON_DIR:-/project/.git}:ro
+      - hugo-cache:/cache
+    environment:
+      - HUGO_CACHEDIR=/cache
+    stdin_open: true
+    tty: true
+    working_dir: /project/exampleSite
+    entrypoint: sh
+    command:
+      - -c
+      - tail -f /dev/null
+
+volumes:
+  hugo-cache:

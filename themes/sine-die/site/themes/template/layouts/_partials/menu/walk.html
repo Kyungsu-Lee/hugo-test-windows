@@ -1,0 +1,50 @@
+{{- $page := .page }}
+{{- $menuID := .menuID }}
+{{- $level := .indentLevel }}
+{{- range .menuEntries }}
+  {{- $attributes := dict "href" .URL "role" "menuitem" }}
+  {{- $classes := slice }}
+  {{- if $page.IsMenuCurrent $menuID . }}
+    {{- $attributes = merge $attributes (dict "aria-current" "page") }}
+  {{- end }}
+  {{- $name := .Name }}
+  <li {{- with $classes }}{{ printf " class=%q" (delimit $classes " ") | safeHTMLAttr }}{{- end }} role="none">
+    {{- $innerLinkText := $name }}
+    {{- $preInnerLink := "" }}
+    {{- if .Params.isExternalLink }}
+      {{- $attributes = merge $attributes (dict "rel" "external") }}
+    {{- end }}
+    {{- if .Params.visualSign }}
+      {{- $preInnerLinkAttributes := dict "data-visual-sign" .Params.visualSign "data-visual-sign-type" (.Params.visualSignType | default false) }}
+      {{- if .Params.onlyVisualSign }}
+        {{- $preInnerLinkAttributes = merge $preInnerLinkAttributes (dict "aria-label" $name "title" $name) }}
+        {{- $innerLinkText = "" }}
+      {{- else }}
+        {{- $preInnerLinkAttributes = merge $preInnerLinkAttributes (dict "aria-hidden" "true") }}
+      {{- end }}
+      {{- $renderedAttributes := partial "helpers/render-attributes.html" (dict "attributes" $preInnerLinkAttributes) }}
+      {{- $preInnerLink = printf "<span %s /></span>" $renderedAttributes }}
+    {{- end }}
+    <a {{ partial "helpers/render-attributes.html" (dict "attributes" $attributes) }}>{{ $preInnerLink | safeHTML }}{{ $innerLinkText }}</a>
+    {{- if .HasChildren }}
+      {{- $ariaLabel := printf "%s submenu" $name }}
+      {{- $baseID := printf "%s-%s" ($menuID | anchorize) ($name | anchorize) }}
+      {{- $ariaSubmenuID := printf "%s-submenu" $baseID }}
+      {{- $ariaButtonID := printf "%s-button" $baseID }}
+      <button
+        id="{{ $ariaButtonID }}"
+        role="menuitem"
+        data-visual-sign
+        aria-controls="{{ $ariaSubmenuID }}"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-label="{{ $ariaLabel }}"
+      ></button>
+      {{- with .Children }}
+        <ul role="menu" aria-hidden="true" id="{{ $ariaSubmenuID }}" aria-labelledby="{{ $ariaButtonID }}">
+          {{- partial "menu/walk.html" (dict "page" $page "menuID" $menuID "indentLevel" (add $level 1) "menuEntries" .) }}
+        </ul>
+      {{- end }}
+    {{- end }}
+  </li>
+{{- end }}

@@ -1,0 +1,57 @@
+---
+- 404_page:
+    back_home: Return to homepage
+    body: The requested page could not be found.
+    header: Page not found
+
+- footer:
+    find_this_site: source code
+
+- hero:
+    about: About
+    photo: Picture of
+
+- hire_me:
+    body: >
+      <strong>I'm currently seeking new opportunities.</strong>
+      Please reach out to me if you are interested in working together.
+      Find me over <a href="mailto:{{ $.Site.Params.biography.email }}">email</a> or <a href="https://www.linkedin.com/in/{{ $.Site.Params.social.linkedin_url }}" target="_blank">LinkedIn</a> to get in touch.
+    header: Hire me
+
+- index:
+    default:
+      body: >
+        The site is working.
+        Start customizing this homepage to your liking.
+        You have three ways to change this index page:
+      customize_step1: >
+        Create an <code>_index.en.md</code> or <code>_index.en.adoc</code> document in the <code><b>content/</b></code> folder.
+        Fill it with Markdown or AsciiDoc content.
+      customize_step2: >
+        Create an <b>index.html</b> file in the <b>static</b> folder.
+        Fill it with HTML content.
+      customize_step3: Configure your web server to automatically redirect home page traffic to a specific page.
+      header: Customize your home page
+    rounded_profile_image: Picture of
+
+- misc:
+    logo: "{{ .Title }} logo"
+    next: Next
+    page_navigation: Page navigation
+    previous: Previous
+
+- nav:
+    social: Social
+    toggle_theme: Toggle theme
+    translations: Translations
+
+- tweet_archive:
+    archived: Archived
+    archived_label: This tweet has been archived
+    close_viewer: Close photo viewer
+    next_photo: Next photo
+    photo_label: Photo
+    previous_photo: Previous photo
+    view_archived_tweet: View archived tweet
+    view_photo: "View photo %d of %d in full screen"
+    viewer_label: Tweet photo viewer

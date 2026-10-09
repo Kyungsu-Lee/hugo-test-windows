@@ -1,0 +1,63 @@
+{{ if ne hugo.Environment "production" }}
+  {{ block "checkTools" . }}
+  {{ end }}
+{{ end }}
+
+{{ define "checkTools" }}
+<div class="dropdown" id="checkTools">
+  <div class="dropdown-trigger">
+    <button class="button is-warning" aria-haspopup="true" aria-controls="dropdown-menu" onclick="toggleDropdownCheckTools();">
+      <span>Check Tools ↓</span>
+    </button>
+  </div>
+  <div class="dropdown-menu" id="dropdown-menu" role="menu">
+    <div class="dropdown-content">
+      <button class="button dropdown-item" onclick="openCheckToolPage('pagespeedInsights');">
+        <span>Page Speed Insights</span>
+      </button>
+      <button class="button dropdown-item" onclick="openCheckToolPage('richResults');">
+        <span>Rich Result</span>
+      </button>
+      <button class="button dropdown-item" onclick="openCheckToolPage('mobileFriendly');">
+        <span>Mobile Friendly</span>
+      </button>
+      <button class="button dropdown-item" onclick="openCheckToolPage('w3Validator');">
+        <span>Validate Markup</span>
+      </button>
+      <button class="button dropdown-item" onclick="openCheckToolPage('facebook');">
+        <span>Facebook Sharing Debugger</span>
+      </button>
+      <a
+        href="https://cards-dev.twitter.com/validator"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="button dropdown-item"
+        >Twitter Card Validator</a
+      >
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleDropdownCheckTools() {
+    const obj = document.getElementById("checkTools");
+    obj.classList.toggle("is-active");
+  }
+
+  function openCheckToolPage(toolName) {
+    const toolsTable = {
+      pagespeedInsights: 'https://pagespeed.web.dev/report?url=',
+      richResults: 'https://search.google.com/test/rich-results?url=',
+      mobileFriendly: 'https://search.google.com/test/mobile-friendly?url=',
+      w3Validator: 'https://validator.w3.org/nu/?doc=',
+      facebook: 'https://developers.facebook.com/tools/debug/?q=',
+    }
+    {{ if hugo.IsServer }}
+      const toolURL = toolsTable[toolName] + '{{ $.Site.Params.productionBaseURL | safeURL }}{{ .RelPermalink }}';
+    {{ else }}
+      const toolURL = toolsTable[toolName] + window.location.href;
+    {{ end }}
+    window.open(toolURL, '_blank', 'noreferrer');
+  }
+</script>
+{{ end }}

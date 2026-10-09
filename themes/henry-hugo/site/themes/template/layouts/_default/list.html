@@ -1,0 +1,188 @@
+{{ define "content" }}
+<div class="list-page flex flex-col
+            blog-content-width
+            pt-20 md:pt-30 pb-12">
+
+
+    {{ $pages := partial "get-posts.html" . }}
+
+    <!-- On /blog/, exclude the featured post from the archive to avoid duplication -->
+    {{ $latestBlogPostPermalink := "" }}
+    {{ if eq .RelPermalink "/blog/" }}
+        {{ $latestBlogPostPermalink = (index (where .Site.RegularPages "Section" "blog" | first 1) 0).Permalink }}
+        {{ $pages = where $pages "Permalink" "ne" $latestBlogPostPermalink }}
+    {{ end }}
+
+    {{ $groupedPages := slice }}
+    {{ $isListType := in (slice "home" "section" "taxonomy" "term") .Kind }}
+    {{ $shouldPaginate := and $isListType (.Site.Params.enablePagination | default false) }}
+    {{ $isTaxonomy := false }}
+
+    {{ if $shouldPaginate }}
+    {{ $paginator := .Paginate $pages }}
+    {{ $groupedPages = $paginator.Pages.GroupByDate "2006" }}
+    {{ else if .Data.Terms }}
+    {{ $groupedPages = .Data.Terms.Alphabetical }}
+    {{ $isTaxonomy = true }}
+    {{ else if eq .Kind "page" }}
+    <!-- For single pages, just render the content without pagination -->
+    <!-- The single.html template should handle these pages normally -->
+    {{ else }}
+    {{ $groupedPages = $pages.GroupByDate "2006" }}
+    {{ end }}
+
+
+    {{ if eq hugo.Environment "development" }}
+    <div class="text-sm text-ht-light mt-5 mb-5">
+    Total: {{len $pages}} posts <br>
+    GroupedPage count: {{ len $groupedPages }} <br>
+    isTaxonomy: {{ $isTaxonomy }} <br>
+    shouldPaginate: {{ $shouldPaginate }} <br>
+    Kind: {{ .Kind }} <br>
+    isListType: {{ $isListType }} <br>
+    Name: {{ .Name }} <br>
+    </div>
+    {{ end }}
+
+    <!-- custom content included in header page -->
+    {{ if .Content }}
+        <h1 class="
+            text-3xl font-title font-semibold">
+            {{ .Title }}
+        </h1>
+
+        <article class="post-content mt-6 mb-12">
+            {{ .Content }}
+        </article>
+    {{ end }}
+
+    <!-- Show tag cloud for main tags taxonomy page -->
+    {{ if and (eq .Kind "taxonomy") (eq .Type "tags") }}
+        <div class = "mb-10">
+            {{ partial "tag-cloud.html" (dict "Site" .Site "count" -1 "sort" "alphabetical") }}
+        </div>
+    {{ end }}
+
+    <!-- Writing page: featured latest post + topics -->
+    {{ if eq .RelPermalink "/blog/" }}
+        {{ $latestBlogPost := index (where .Site.RegularPages "Section" "blog" | first 1) 0 }}
+        {{ if $latestBlogPost }}
+        {{ $latestTitle := strings.TrimSpace $latestBlogPost.Title }}
+        {{ $latestIsUntitledShort := and (eq $latestBlogPost.Type "shorts") (eq $latestTitle "") }}
+        <div class="featured-post pb-10">
+            <p class="text-xs uppercase tracking-widest text-ht-lighter mb-2">latest</p>
+            {{ if $latestIsUntitledShort }}
+            <h2 class="font-title text-2xl leading-tight mb-2 flex justify-center">
+                <a class="no-underline hover:text-hc" href="{{ $latestBlogPost.RelPermalink }}" aria-label="Read latest short">
+                    <svg
+                        class="w-15 h-15 text-ht-lighter opacity-20 dark:opacity-80 pointer-events-none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    >
+                        <path d="M21 11.5a8.38 8.38 0 0 1-1.9 5.4A8.5 8.5 0 0 1 12 21a8.38 8.38 0 0 1-5.4-1.9L3 21l1.9-5.4A8.38 8.38 0 0 1 3 11.5 8.5 8.5 0 1 1 21 11.5z"></path>
+                    </svg>
+                </a>
+            </h2>
+            {{ else }}
+            <h2 class="font-title font-semibold text-2xl leading-tight mb-2">
+                <a class="no-underline hover:text-hc" href="{{ $latestBlogPost.RelPermalink }}">
+                    {{ $latestBlogPost.Title }}
+                </a>
+            </h2>
+            {{ end }}
+            <div class="text-ht-lighter text-base leading-snug mb-3 space-y-3">
+                {{ if $latestBlogPost.Params.summary }}{{ $latestBlogPost.Params.summary }}{{ else }}{{ $latestBlogPost.Summary }}{{ end }}
+            </div>
+            <a class="text-ht-lighter text-sm underline" href="{{ $latestBlogPost.RelPermalink }}">Keep reading →</a>
+        </div>
+        <hr class="mb-10" />
+        {{ end }}
+
+        <div class="topics pb-10">
+            <h2 class="text-xs uppercase tracking-widest text-ht-lighter mb-3">topics</h2>
+            {{ partial "tag-cloud.html" (dict "Site" .Site "count" 20 "sort" "popular") }}
+        </div>
+
+        <hr class="mb-10" />
+
+        <h2 class="text-xs uppercase tracking-widest text-ht-lighter mb-3">writing</h2>
+    {{ end }}
+
+    {{ if ne .Kind "page" }}
+    {{ range $groupedPages }}
+
+
+        {{ if $isTaxonomy }} <!-- inside a taxonomy page | no pagination-->
+        {{ $key := .Name }}
+        {{ $groupPages := .Pages }}
+            <h2 class="
+                    post-list-key term
+                    mt-10 font-bold" id="{{ $key }}">
+                <a class="pill-slate" href="{{ $key }}/">#{{ $key }}</a>
+            </h2>
+            <div class="post-list-content">
+                {{ range $groupPages }}
+                {{ .Render "li" }}
+                {{ end }}
+            </div>
+
+
+        {{ else if $shouldPaginate }} <!-- inside a regular list page | pagination -->
+            {{ if ne .Key "0001" }} <!-- if key is 0001 skip h2 -->
+            <h2 class="
+                    post-list-key year
+                    mt-4
+                    text-ht-light font-bold
+                    " id="{{ .Key }}">
+                {{ .Key }}
+                {{ if eq hugo.Environment "development" }} - {{len .Pages}} posts{{ end }}
+            </h2>
+            {{ end }}
+
+            <div class="post-list-content">
+                {{ range .Pages }}
+                {{ .Render "li" }}
+                {{ end }}
+            </div>
+
+        {{ else }} <!-- inside a regular list page | no pagination -->
+        {{ $key := .Key }}
+        {{ $groupPages := .Pages }}
+
+            <h2 class="
+                post-list-key group
+                not-first:mt-10
+                font-bold text-ht-lighter
+                " id="{{ $key }}">
+                #{{ $key }}
+            </h2>
+            <div class="post-list-content">
+                {{ range $groupPages }}
+                {{ if and (eq $.RelPermalink "/blog/") (eq .Permalink $latestBlogPostPermalink) }}
+                <!-- Skip: latest post already shown in featured section above -->
+                {{ else if eq $.RelPermalink "/blog/" }}
+                {{ .Render "li-no-summary" }}
+                {{ else }}
+                {{ .Render "li" }}
+                {{ end }}
+                {{ end }}
+            </div>
+        {{ end }}
+
+
+    {{ end }} <!-- range end $groupedPages -->
+    {{ end }} <!-- if ne .Kind "page" -->
+
+
+    {{ if and (not $isTaxonomy) $shouldPaginate }}
+    <div class="pagination">{{ template "_internal/pagination.html" . }}</div>
+    {{ end }}
+
+
+    <!-- show RHS navbar content -->
+    {{- partial "nav.html" . -}}
+
+</div>
+{{ end }}

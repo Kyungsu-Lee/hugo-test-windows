@@ -1,0 +1,29 @@
+defaultContentLanguage = "en"
+
+summaryLength = 128
+
+[pagination]
+    disableAliases = false
+    pagerSize = 5
+    path = "page"
+
+[Taxonomies]
+    tag = "tags"
+    category = "categories"
+
+[markup]
+    [markup.goldmark]
+        [markup.goldmark.parser]
+            wrapStandAloneImageWithinParagraph = false
+            [markup.goldmark.parser.attribute]
+                block = true
+    [markup.highlight]
+        style = "github"
+        noClasses = false
+
+# https://github.com/gohugoio/hugoThemesSiteBuilder?tab=readme-ov-file
+# https://gohugo.io/hugo-modules/configuration/#module-configuration-hugoversion
+[module]
+    [module.hugoVersion]
+        extended = true
+        min = "0.128.0"

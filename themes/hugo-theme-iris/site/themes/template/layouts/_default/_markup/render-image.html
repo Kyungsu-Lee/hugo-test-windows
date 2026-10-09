@@ -1,0 +1,88 @@
+{{ $caption := "" }}
+{{ with $.Text }}
+  {{ $caption = . | safeHTMLAttr }}
+{{ end }}
+
+{{ $imageSrc := $.Destination }}
+{{ $imageURL := urls.Parse $imageSrc }}
+{{ $imageLookupPath := $imageURL.Path }}
+{{ if not $imageLookupPath }}
+  {{ $imageLookupPath = $imageSrc }}
+{{ end }}
+{{ $imageLookupPath = replaceRE "^\\./" "" $imageLookupPath }}
+{{ $imageSuffix := "" }}
+{{ with $imageURL.RawQuery }}
+  {{ $imageSuffix = printf "?%s" . }}
+{{ end }}
+{{ with $imageURL.Fragment }}
+  {{ $imageSuffix = printf "%s#%s" $imageSuffix . }}
+{{ end }}
+{{ $hashedDestination := sha256 $imageSrc }}
+{{ $extension := path.Ext $imageLookupPath }}
+{{ $localPath := delimit (slice "images/" $hashedDestination $extension) "" }}
+{{ $assetPath := delimit (slice "assets/" $localPath) "" }}
+{{ $imagePath := $imageLookupPath }}
+{{ if (fileExists $assetPath) }}
+  {{ $imagePath = $localPath }}
+{{ end }}
+
+{{ with try (resources.Get $imagePath) }}
+  {{ with .Err }}
+    {{ warnf "%s" . }}
+  {{ else with .Value }}
+    {{ $image := . }}
+
+    {{ $smallJPG := $image }}
+    {{ $mediumJPG := $image }}
+    {{ $largeJPG := $image }}
+
+    {{ $smallWebP := $image }}
+    {{ $mediumWebP := $image }}
+    {{ $largeWebP := $image }}
+
+    {{ $smallJPG = $image.Resize "480x jpg" }}
+    {{ $mediumJPG = $image.Resize "768x jpg" }}
+    {{ $largeJPG = $image.Resize "1024x jpg" }}
+
+    {{ if hugo.IsExtended }}
+      {{ $smallWebP = $image.Resize "480x webp" }}
+      {{ $mediumWebP = $image.Resize "768x webp" }}
+      {{ $largeWebP = $image.Resize "1024x webp" }}
+    {{ end }}
+
+    <figure class="image container">
+      <picture>
+        {{ if hugo.IsExtended }}
+        <source type="image/webp" media="(max-width: 480px)" srcset="{{ printf "%s%s" $smallWebP.RelPermalink $imageSuffix | safeURL }} 480w">
+        <source type="image/webp" media="(max-width: 768px)" srcset="{{ printf "%s%s" $mediumWebP.RelPermalink $imageSuffix | safeURL }} 768w">
+        <source type="image/webp" media="(max-width: 1024px)" srcset="{{ printf "%s%s" $largeWebP.RelPermalink $imageSuffix | safeURL }} 1024w">
+        {{ end }}
+
+        <source type="image/jpeg" media="(max-width: 480px)" srcset="{{ printf "%s%s" $smallJPG.RelPermalink $imageSuffix | safeURL }} 480w">
+        <source type="image/jpeg" media="(max-width: 768px)" srcset="{{ printf "%s%s" $mediumJPG.RelPermalink $imageSuffix | safeURL }} 768w">
+        <source type="image/jpeg" media="(max-width: 1024px)" srcset="{{ printf "%s%s" $largeJPG.RelPermalink $imageSuffix | safeURL }} 1024w">
+        <img
+          src="{{ printf "%s%s" $largeJPG.RelPermalink $imageSuffix | safeURL }}"
+          alt="{{ $caption }}"
+          decoding="async"
+          loading="lazy"
+        />
+      </picture>
+      {{ with $caption }}
+        <figcaption class="has-text-centered mt-2">{{ . }}</figcaption>
+      {{ end }}
+    </figure>
+  {{ else }}
+    <figure class="image container">
+      <img
+        src="{{ $imageSrc | safeURL }}"
+        alt="{{ $caption }}"
+        decoding="async"
+        loading="lazy"
+      />
+      {{ with $caption }}
+        <figcaption class="has-text-centered mt-2">{{ . }}</figcaption>
+      {{ end }}
+    </figure>
+  {{ end }}
+{{ end }}

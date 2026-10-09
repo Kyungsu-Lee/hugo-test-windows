@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+/* for Hugo css.TailwindCSS, relative path failed to read class names */
+@source "../../layouts";
+
+/* Hugo css.TailwindCSS requires this to read classnames. */
+/* @source "layouts"; */
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* chroma highlights */
+@import "./code.css";
+
+.true-grid {
+    @apply px-2;
+    @apply max-w-6xl mx-auto grid grid-cols-12 gap-4;
+}
+.true-grid-main {
+    @apply col-span-full;
+    @apply md:col-span-8;
+    @apply lg:col-start-4 lg:col-span-6;
+}
+.true-grid-left {
+    @apply col-span-full;
+    @apply md:col-span-full;
+    @apply lg:col-start-1 lg:col-span-3;
+}
+.true-grid-right {
+    @apply col-span-full;
+    @apply md:col-start-9 md:col-span-4;
+    @apply lg:col-start-10 lg:col-span-3;
+}
+
+.pagination,
+.island,
+.button {
+    @apply border-t border-x-1 border-b-6;
+    @apply rounded-sm;
+}
+.island-head,
+.island-header {
+    @apply p-4;
+    @apply border-b;
+}
+.island-img,
+.island-image {
+    @apply object-contain;
+}
+.island-body {
+    @apply p-4;
+}
+.island-foot,
+.island-footer {
+    @apply p-4;
+    @apply border-t;
+}
+
+.button {
+    @apply p-4;
+}
+
+.disabled {
+    @apply pointer-events-none;
+    @apply cursor-not-allowed;
+    @apply opacity-50;
+}
+
+.avatar {
+    @apply block;
+    @apply border;
+    @apply rounded-sm;
+    @apply overflow-hidden;
+    @apply h-12 w-12 md:h-16 md:w-16;
+}
+.avatar-2x {
+    @apply h-20 w-20 md:h-32 md:w-32;
+}
+.avatar img {
+    @apply block max-w-full;
+}
+.avatar-list {
+    @apply flex flex-row-reverse;
+}
+.avatar-list-item {
+    @apply -ms-1 md:-ms-2;
+}
+.avatar-list-top-end {
+    @apply absolute -top-6 md:-top-8 end-4;
+}
+.avatar-list-bottom-end {
+    @apply absolute -bottom-4 md:-bottom-4 end-4;
+}
+.theme-item {
+    @apply size-7;
+    @apply p-1;
+    @apply rounded-full;
+}
+
+/******************** COLOR ********************/
+
+.island,
+.button,
+.avatar {
+    @apply bg-gray-100;
+    @apply dark:bg-slate-700;
+}
+.button:not(.disabled),
+.menu-item:not(.active),
+.page-item:not(.active),
+.theme-item,
+.action {
+    @apply transition-colors;
+    @apply hover:bg-gray-200;
+    @apply dark:hover:bg-slate-600;
+}
+.island,
+.island-head,
+.island-header,
+.island-body,
+.island-foot,
+.island-footer,
+.island-img,
+.island-image,
+.button,
+.page-item-prev,
+.page-item-next,
+.avatar {
+    @apply border-gray-400;
+    @apply dark:border-slate-900;
+}
+
+.alert-tip {
+    @apply bg-green-200 text-green-600 border-green-800;
+    @apply dark:bg-green-900 dark:text-green-300 dark:border-green-950;
+}
+.alert-note {
+    @apply bg-cyan-200 text-cyan-600 border-cyan-800;
+    @apply dark:bg-cyan-900 dark:text-cyan-300 dark:border-cyan-950;
+}
+.alert-important {
+    @apply bg-purple-200 text-purple-600 border-purple-800;
+    @apply dark:bg-purple-900 dark:text-purple-300 dark:border-purple-950;
+}
+.alert-warning {
+    @apply bg-yellow-200 text-yellow-600 border-yellow-800;
+    @apply dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-950;
+}
+.alert-caution {
+    @apply bg-red-200 text-red-600 border-red-800;
+    @apply dark:bg-red-900 dark:text-red-300 dark:border-red-950;
+}
+
+body,
+.text-default {
+    @apply text-gray-800;
+    @apply dark:text-gray-200;
+}
+.summary,
+.text-muted {
+    @apply text-gray-600;
+    @apply dark:text-gray-400;
+}
+.border-muted {
+    @apply border-gray-400;
+    @apply dark:border-slate-600;
+}
+
+body {
+    @apply bg-gray-200;
+    @apply dark:bg-slate-800;
+}
+
+.no-image {
+    /* @apply  aspect-video bg-slate-400 bg-linear-to-r/oklch from-indigo-500 to-teal-400; */
+    @apply aspect-video;
+    @apply bg-slate-200 dark:bg-slate-700;
+    @apply bg-linear-to-br/oklch;
+    @apply from-blue-500 to-purple-400;
+    @apply dark:from-blue-700 dark:to-purple-700;
+}
+
+.menu-item {
+    @apply my-2;
+    @apply px-3 py-2 rounded-full;
+    @apply flex items-center justify-start gap-1;
+    /* @apply transition-colors; */
+    /* @apply hover:bg-slate-200 dark:hover:bg-slate-600; */
+}
+.menu-item.active {
+    @apply outline-1;
+    @apply outline-slate-400 dark:outline-slate-500;
+}
+.icon {
+    @apply block size-5;
+}

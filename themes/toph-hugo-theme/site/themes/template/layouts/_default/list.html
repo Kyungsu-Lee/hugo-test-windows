@@ -1,0 +1,32 @@
+{{/*
+    list.html — Paginated content list
+
+    This template renders paginated listing pages (e.g., /blog/).
+    Uses Hugo's built-in .Paginator to split content across pages.
+    The page size is controlled by the "paginate" setting in config.yaml
+    (defaults to 10 if not set).
+
+    Key Hugo variables used:
+      .Content              — any custom content from the section's _index.md
+      .Paginator.Pages      — the subset of pages for the current page
+      .Title                — the section title
+      .Date                 — the publish date of each content page
+      .Params.description   — optional front-matter summary
+      .Plain                — full page content stripped of HTML
+*/}}
+{{ define "main" }}
+{{- .Content }}
+
+{{ if .Paginator.Pages }}
+<ul class="list-group" role="list">
+{{ range .Paginator.Pages }}
+    {{ .Render "li" }}
+{{ end }}
+</ul>
+
+{{- partial "pagination.html" . -}}
+
+{{ else }}
+<p class="text-muted">No posts found.</p>
+{{ end }}
+{{ end }}

@@ -1,0 +1,63 @@
+{{- with .Parent -}}
+  {{- .Scratch.Set "isNestedShortcode" true -}}
+{{- else -}}
+  {{- .Scratch.Set "isNestedShortcode" false -}}
+{{- end -}}
+{{- $optMd := dict "markup" "goldmark" -}}
+{{- $tabContent := slice -}}
+{{- with (trim .Inner "\r\n ") -}}
+  {{- $tabContent = $tabContent | append . -}}
+{{- end -}}
+{{- with $.Scratch.Get "tabsContent" -}}
+  {{- $tempSlice := slice -}}
+  {{- range . -}}
+    {{- with . -}}
+      {{- $tempSlice = $tempSlice | append . -}}
+    {{- else -}}
+      {{- with (index $tabContent 0) -}}
+        {{- $tempSlice = $tempSlice | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $.Scratch.Set "contentArray" $tempSlice -}}
+{{- end -}}
+{{- with $.Scratch.Get "contentArray" -}}
+  {{- $.Page.Scratch.Add "tabGroupUid" 1 -}}
+  {{- $tabGroupId := (printf "%s%s" "tab-group-" (string ($.Page.Scratch.Get "tabGroupUid"))) -}}
+  <div class="sc-tab-container-wrapper is-flex is-flex-wrap-wrap my-4">
+    {{- range $key, $value := . -}}
+      {{- $.Page.Scratch.Add "tabUid" 1 -}}
+      {{- $tabId := (printf "%s%s" "tab-" (string ($.Page.Scratch.Get "tabUid"))) -}}
+      {{- $tempTitle := "" -}}
+      {{- with $.Scratch.Get "tabsTitle" -}}
+        {{- if ne (index . $key) "null" -}}
+          {{- $tempTitle = index . $key -}}
+        {{- end -}}
+      {{- end -}}
+      {{- template "getTabContentWrapper" dict "groupId" $tabGroupId "tabId" $tabId "key" $key "content" $value "title" $tempTitle "optMd" $optMd "context" $ -}}
+    {{- end -}}
+  </div>
+{{- end -}}
+<!-- TEMPLATES -->
+{{- define "getTabContentWrapper" -}}
+  {{- $isChecked := "" -}}
+  {{- if eq $.key 0 -}}{{- $isChecked = "checked" -}}{{- end -}}
+  {{- with .title -}}
+    <input
+      id="{{- $.tabId -}}"
+      class="sc-tab-input"
+      type="radio"
+      name="{{- $.groupId -}}"
+      {{ $isChecked }}
+    />
+    <label class="sc-tab-label" for="{{- $.tabId -}}">{{- . -}}</label>
+  {{- end -}}
+  <div
+    class="sc-tab-container"
+    {{- with .title -}}
+      id='{{- $.tabId -}}-content'
+    {{- end -}}
+  >
+    {{- $.content | $.context.Page.RenderString $.optMd -}}
+  </div>
+{{- end -}}

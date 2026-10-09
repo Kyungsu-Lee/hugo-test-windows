@@ -1,0 +1,101 @@
+{{ define "content" }} {{ partial "single-before.html" . }}
+
+<section
+  class="post section-{{ .Section }} relative flex flex-col items-center md:pt-10 pb-10 md:pb-12 {{ if eq .Section "blog" }}lg:-left-24{{ end }}"
+>
+  <header class="post-header blog-content-width mb-8 md:mb-14">
+    <h1 class="post-title
+                    font-title font-black text-ht-dark
+                    text-[2em] md:text-5xl xl:text-6xl
+                    md:mt-8 text-center md:text-left">
+      <!-- Handle external links differently -->
+      {{ if .Params.externalLink }}
+      <a
+        href="{{ .Params.externalLink }}"
+        class="external-link no-underline"
+      >
+        {{ .Title }}
+      </a>
+      {{ else }}
+
+      <!-- Title -->
+      {{ if eq .Section "log" }} {{ .Date.Format "January 2006" }} {{ else }} {{
+      .Title }} {{ end }} {{- partial "postimoji.html" . -}} {{ end }} {{ if
+      .Draft }}
+      <span class="draft pill-hc2-solid text-lg text-center">Draft</span>
+      {{ end }}
+    </h1>
+
+    {{ if or (eq .Section "log") (.Params.timeless) }}
+    <h4
+      class="post-author pt-3 text-ht-lighter font-bold text-sm md:text-base"
+    >
+      {{ partial "get-authors.html" . }}
+    </h4>
+    {{ end }}
+  </header>
+
+  {{/* Preserve the adjacent-sibling hook that sizes long-form post content. */}}
+  <div class="blog-content-width contents">
+    {{- partial "table-of-contents.html" . -}}
+  </div>
+
+  {{ if eq .Type "shorts" }}
+  <!-- Shorts layout -->
+  <article class="post-content flex flex-col items-center w-full">
+    <svg
+      class="w-15 h-15 mb-2 text-ht-lighter opacity-20 dark:opacity-80 -translate-y-1/2 -translate-x-2 pointer-events-none"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path
+        d="M21 11.5a8.38 8.38 0 0 1-1.9 5.4A8.5 8.5 0 0 1 12 21a8.38 8.38 0 0 1-5.4-1.9L3 21l1.9-5.4A8.38 8.38 0 0 1 3 11.5 8.5 8.5 0 1 1 21 11.5z"
+      ></path>
+    </svg>
+
+    {{ .Content }}
+
+    <div class="text-left text-ht-lighter font-sans font-normal">
+      - {{ .Date.Format "January 2, 2006" }}
+    </div>
+  </article>
+
+  {{ else }}
+  <!-- Regular post layout -->
+  <!-- to accommodate full-bleed we apply the width constraints differently input.css -->
+  <article class="post-content flex flex-col items-center w-full">
+    {{ .Content }}
+  </article>
+  {{ end }}
+
+  {{ if and (not (eq .Section "log")) (not .Params.timeless) (not (eq .Type "shorts")) }}
+  <footer
+    class="post-published-date blog-content-width pt-[3em] text-left text-ht-lightest font-medium text-sm md:text-base"
+  >
+    {{ .Date.Format "January 2, 2006" }}
+  </footer>
+  {{ end }}
+
+  {{- partial "nav.html" . -}}
+</section>
+
+{{- partial "meta.html" . -}}
+
+<section class="blog-content-width">
+    {{- partial "related-posts.html" . -}}
+</section>
+
+{{ $headingAnchors := resources.Get "js/heading-anchors.js" }} {{ if not
+hugo.IsServer }} {{ $headingAnchors = $headingAnchors | minify | fingerprint }}
+{{ end }}
+<script src="{{ $headingAnchors.RelPermalink }}"></script>
+{{ if eq .Section "episodes" }}{{ partial "simplecast-deeplink.html" . }}{{ end }}
+
+{{end}}

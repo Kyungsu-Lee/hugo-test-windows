@@ -1,0 +1,45 @@
+    <!-- Site -->
+    <meta property="og:site_name" content="{{ site.Title }}" />
+
+<!-- Title -->
+{{- if .IsHome -}}
+    <title>{{ site.Title }}</title>
+    <meta name="og:title" content="{{ site.Title }}" />
+{{- else -}}
+    <title>{{ .Title }} - {{ site.Title }}</title>
+    <meta name="og:title" content="{{ .Title }} - {{ site.Title }}" />
+{{- end -}}
+
+<!-- Description -->
+{{- if .IsHome -}}
+    <meta name="description" content="{{ site.Params.description }}" />
+    <meta property="og:description" content="{{ site.Params.description }}" />
+{{- else if .Params.description -}}
+    <meta name="description" content="{{ .Params.description }}" />
+    <meta property="og:description" content="{{ .Params.description }}" />
+{{- else -}}
+    <meta name="description" content="{{ .Summary | plainify | strings.Truncate site.Params.summaryLength }}" />
+    <meta property="og:description" content="{{ .Summary | plainify | strings.Truncate site.Params.summaryLength }}" />
+{{- end -}}
+
+    <!-- URL -->
+    <link rel="canonical" href="{{ .Permalink }}" />
+    <meta property="og:url" content="{{ .Permalink }}" />
+
+{{- if .IsHome -}}
+    <meta property="og:type" content="website" />
+{{- end -}}
+
+    <link rel="alternate" type="application/rss+xml" href="{{ `/index.xml` | absLangURL }}">
+    {{/*  <link rel="alternate" type="application/json" href="">  */}}
+    <meta property="og:locale" content="{{ .Language.Locale }}" />
+{{- range .Translations }}
+    <link rel="alternate" hreflang="{{ .Language.Locale }}" href="{{ .Permalink }}">
+    <meta property="og:locale:alternate" content="{{ .Language.Locale }}" />
+{{- end }}
+
+{{- hugo.Generator -}}
+
+{{- partial "head-image.html" . -}}
+
+{{- partial "head-icon.html" . -}}

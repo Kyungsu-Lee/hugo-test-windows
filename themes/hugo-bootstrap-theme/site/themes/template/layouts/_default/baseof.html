@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="{{ .Language.Locale | default site.Language.Locale }}">
+{{ partial "head/head.html" . }}
+{{ $bodyClasses := slice }}
+
+{{ if eq .Kind "home" -}}
+  {{ $bodyClasses = $bodyClasses | append "home" -}}
+{{ else if eq .Kind "404" -}}
+  {{ $bodyClasses = $bodyClasses | append "error404" -}}
+{{ else if eq .Kind "page" -}}
+  {{ $bodyClasses = $bodyClasses | append .Type "single" -}}
+{{ else -}}
+  {{ $bodyClasses = $bodyClasses | append .Type "list" -}}
+{{ end -}}
+
+<body class="{{ delimit $bodyClasses " " }} d-flex flex-column min-vh-100">
+    {{- partial "header/header.html" . -}}
+    <main id="content">
+        {{ if and (.Site.Params.options.breadCrumb) (ne .Kind "home") -}}
+            {{- partial "header/breadcrumb.html" . -}}
+        {{ end }}
+        {{- block "main" . }}{{- end }}
+    </main>
+    {{ partial "footer/footer.html" . }}
+    {{ partial "footer/script-footer.html" . }}
+</body>
+</html>

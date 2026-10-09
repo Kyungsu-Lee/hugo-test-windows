@@ -1,0 +1,13 @@
+<div id="navbarInfo" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content marginless is-flex">
+    <div class="message is-flex is-flex-direction-column is-flex-grow-1">
+      <div class="message-header is-justify-content-center">
+        <p>{{- i18n "navbarinfo_title" -}}</p>
+      </div>
+      <div class="message-body is-overflow-y">
+        {{- partial "custom/custom-info.html" . -}}
+      </div>
+    </div>
+  </div>
+</div>

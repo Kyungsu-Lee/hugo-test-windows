@@ -1,0 +1,31 @@
+name = "Sine Die"
+license = "MIT"
+licenselink = "https://github.com/sinetris/sine-die/blob/master/LICENSE"
+description = "Semantic HTML theme for Hugo"
+homepage = "https://github.com/sinetris/sine-die"
+demosite = "https://sinetris.github.io/sine-die/"
+tags = [
+  "accessibility friendly",
+  "customizable palette",
+  "dark mode",
+  "docs",
+  "minimal",
+  "minimalist",
+  "responsive",
+  "search",
+]
+features = [
+  "Accessibility friendly",
+  "Breadcrumbs",
+  "Customizable color palette",
+  "Light/Dark mode",
+  "Navigation Menubar",
+  "Responsive Design",
+  "Search functionality",
+  "Semantic HTML",
+  "Table of Contents",
+]
+
+[author]
+name = "Duilio Ruggiero"
+homepage = "https://sinetris.info"

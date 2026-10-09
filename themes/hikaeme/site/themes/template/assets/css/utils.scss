@@ -1,0 +1,26 @@
+// 機能
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.height-20rem {
+  height: 20rem;
+
+  @media screen and (max-width: 768px) {
+    height: 12rem;
+  }
+}
+
+.height-100px {
+  height: 100px;
+}
+
+.thumb-sm-height {
+  height: 180px;
+
+  @media (max-width: 575.98px) {
+    height: 110px;
+  }
+}

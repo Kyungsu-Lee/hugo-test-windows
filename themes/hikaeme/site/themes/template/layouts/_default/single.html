@@ -1,0 +1,23 @@
+{{ define "title" }}{{ .Title }} -{{ end }}
+
+{{ define "main" }}
+  {{ .Render "summary" }}
+
+  {{ if .Page.Params.PostsPage | default true }}
+    <div class="row gy-3">
+      <div class="col-md-6">
+        <header class="mb-2">{{ T "article.next" }}</header>
+        {{ with .NextInSection }}
+          {{ .Render "article-card-sm" }}
+        {{ end }}
+      </div>
+      <div class="col-md-6">
+        <header class="mb-2">{{ T "article.previous" }}</header>
+        {{ with .PrevInSection }}
+          {{ .Render "article-card-sm" }}
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+
+{{ end }}

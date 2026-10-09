@@ -1,0 +1,218 @@
+(function () {
+  "use strict";
+
+  const aside = document.querySelector(".table-of-contents-desktop");
+  const postTitle = document.querySelector(".post-title");
+  const post = document.querySelector(".post");
+  const postContent = document.querySelector(".post-content");
+  const headings = Array.from(
+    document.querySelectorAll(".post-content :is(h1,h2,h3)[id]")
+  );
+
+  if (!aside || !postTitle || !headings.length) return;
+
+  const links = Array.from(aside.querySelectorAll('a[href^="#"]'));
+  const scrollArea = aside.querySelector(".table-of-contents-scroll");
+  const desktopQuery = window.matchMedia(
+    post.classList.contains("section-blog")
+      ? "(min-width: 1024px)"
+      : "(min-width: 1280px)"
+  );
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const activationLine = 100;
+  const activationTolerance = 12;
+  const normalTop = 80;
+  const viewportGap = 24;
+  const railGap = 48;
+  const collisionGap = 12;
+  const minimumListHeight = 96;
+  let titlePassed = false;
+  let collisionHidden = false;
+  let frameRequested = false;
+  let activeHeading = null;
+
+  const linkById = new Map();
+  links.forEach(function (link) {
+    const hash = link.getAttribute("href").slice(1);
+    try {
+      linkById.set(decodeURIComponent(hash), link);
+    } catch (_) {
+      linkById.set(hash, link);
+    }
+  });
+
+  function setActive(heading) {
+    if (!heading || heading === activeHeading) return;
+    activeHeading = heading;
+
+    links.forEach(function (link) {
+      link.classList.remove("text-hc");
+      link.removeAttribute("aria-current");
+    });
+
+    const activeLink = linkById.get(heading.id);
+    if (activeLink) {
+      activeLink.classList.add("text-hc");
+      activeLink.setAttribute("aria-current", "location");
+      // Scroll the active link into view within the TOC's own scroll area
+      // only. Never use scrollIntoView — it can scroll the window when the
+      // TOC is positioned off-screen, creating a feedback loop.
+      if (scrollArea) {
+        const linkTop = activeLink.offsetTop;
+        const linkBottom = linkTop + activeLink.offsetHeight;
+        const viewTop = scrollArea.scrollTop;
+        const viewBottom = viewTop + scrollArea.clientHeight;
+        if (linkTop < viewTop) {
+          scrollArea.scrollTop = linkTop;
+        } else if (linkBottom > viewBottom) {
+          scrollArea.scrollTop = linkBottom - scrollArea.clientHeight;
+        }
+      }
+    }
+  }
+
+  function closestHeadingToActivationLine() {
+    let candidate = headings[0];
+    for (const heading of headings) {
+      if (heading.getBoundingClientRect().top <= activationLine + activationTolerance) candidate = heading;
+      else break;
+    }
+    return candidate;
+  }
+
+  const headingObserver = new IntersectionObserver(
+    scheduleUpdate,
+    { rootMargin: "-100px 0px -66% 0px", threshold: [0, 1] }
+  );
+  headings.forEach(function (heading) { headingObserver.observe(heading); });
+
+  function rectanglesOverlap(a, b) {
+    return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  }
+
+  function readingColumnRight() {
+    const content = document.querySelector(".post-content");
+    const firstContentChild = content && content.querySelector(
+      "p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote"
+    );
+    return firstContentChild ? firstContentChild.getBoundingClientRect().right : null;
+  }
+
+  function placeAside() {
+    if (!desktopQuery.matches) return;
+
+    const contentRight = readingColumnRight();
+    if (contentRight !== null) {
+      aside.style.setProperty("--toc-left", contentRight + railGap + "px");
+    }
+
+    titlePassed = postTitle.getBoundingClientRect().bottom <= 100;
+    let top = normalTop;
+    let usableListHeight = 0;
+    let hasRoom = true;
+    // Collision elements: sidenotes + full-bleed figures (both occupy the rail)
+    const collisionElements = Array.from(post.querySelectorAll(".sidenote, figure.full-bleed"));
+    const maxPasses = Math.min(collisionElements.length + 1, 100);
+
+    for (let pass = 0; pass < maxPasses; pass += 1) {
+      const panelChrome = Math.max(0, aside.offsetHeight - scrollArea.offsetHeight);
+      usableListHeight = window.innerHeight - top - viewportGap - panelChrome;
+      hasRoom = usableListHeight >= minimumListHeight;
+      aside.style.setProperty("--toc-top", top + "px");
+      aside.style.setProperty("--toc-max-height", Math.max(0, usableListHeight) + "px");
+
+      if (!hasRoom) break;
+
+      const panelRect = aside.getBoundingClientRect();
+      const collidingBottom = collisionElements
+        .map(function (el) { return el.getBoundingClientRect(); })
+        .filter(function (rect) { return rectanglesOverlap(panelRect, rect); })
+        .reduce(function (bottom, rect) { return Math.max(bottom, rect.bottom); }, 0);
+
+      if (!collidingBottom) break;
+      const nextTop = Math.ceil(collidingBottom + collisionGap);
+      if (nextTop <= top) break;
+      top = nextTop;
+    }
+
+    collisionHidden = !hasRoom;
+    // Anchor the rail to the bottom of the post content so it never floats
+    // past the post into the date/nav/metadata below. As the content end
+    // scrolls into view, pin the TOC's bottom edge to the content's bottom
+    // edge; it then rides up with the content instead of fading or drifting
+    // past the end.
+    if (postContent && hasRoom) {
+      const maxTop = postContent.getBoundingClientRect().bottom - aside.offsetHeight;
+      if (top > maxTop) {
+        top = maxTop;
+        aside.style.setProperty("--toc-top", top + "px");
+      }
+    }
+    // After bottom-anchor clamping, re-check for collisions. The clamp can
+    // pull the TOC back up into a sidenote or full-bleed figure that the
+    // collision loop had previously pushed it past. If so, hide the TOC —
+    // there's no room at the end of the post.
+    if (hasRoom) {
+      const panelRect = aside.getBoundingClientRect();
+      const stillColliding = collisionElements.some(function (el) {
+        return rectanglesOverlap(panelRect, el.getBoundingClientRect());
+      });
+      if (stillColliding) {
+        collisionHidden = true;
+      }
+    }
+    const visible = titlePassed && !collisionHidden;
+    aside.classList.toggle("opacity-0", !visible);
+    aside.classList.toggle("pointer-events-none", !visible);
+    aside.classList.toggle("opacity-100", visible);
+    aside.classList.toggle("pointer-events-auto", visible);
+  }
+
+  function update() {
+    frameRequested = false;
+    setActive(closestHeadingToActivationLine());
+    placeAside();
+  }
+
+  function scheduleUpdate() {
+    if (frameRequested) return;
+    frameRequested = true;
+    window.requestAnimationFrame(update);
+  }
+
+  links.forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      const rawId = link.getAttribute("href").slice(1);
+      let id = rawId;
+      try { id = decodeURIComponent(rawId); } catch (_) {}
+      const heading = document.getElementById(id);
+      if (!heading) return;
+
+      event.preventDefault();
+      const top = window.scrollY + heading.getBoundingClientRect().top - 100;
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior: reducedMotionQuery.matches ? "auto" : "smooth"
+      });
+      window.history.pushState(null, "", link.hash);
+      setActive(heading);
+    });
+  });
+
+  const initialHash = window.location.hash.slice(1);
+  let initialHeading = null;
+  if (initialHash) {
+    try { initialHeading = document.getElementById(decodeURIComponent(initialHash)); } catch (_) {}
+  }
+  setActive(initialHeading || closestHeadingToActivationLine());
+
+  window.addEventListener("scroll", scheduleUpdate, { passive: true });
+  window.addEventListener("resize", scheduleUpdate, { passive: true });
+  window.addEventListener("load", scheduleUpdate, { once: true });
+  desktopQuery.addEventListener("change", scheduleUpdate);
+
+  const sidenoteObserver = new MutationObserver(scheduleUpdate);
+  sidenoteObserver.observe(post, { childList: true });
+
+  scheduleUpdate();
+})();

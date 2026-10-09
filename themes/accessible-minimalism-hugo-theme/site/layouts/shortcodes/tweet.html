@@ -1,0 +1,2 @@
+{{- $id := "" -}}{{- if .IsNamedParams -}}{{- $id = .Get "id" -}}{{- else -}}{{- $id = .Get 0 -}}{{- end -}}
+<blockquote class="twitter-tweet"><a href="https://twitter.com/i/web/status/{{ $id }}">View post</a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

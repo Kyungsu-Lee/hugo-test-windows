@@ -1,0 +1,24 @@
+{{ define "sidebar"}}<!-- hide sdebar -->{{ end }}
+{{ define "main" }}
+  {{ $taxonomy := index site.Taxonomies .Data.Plural }}
+  <h1 class="title-header">
+    {{ with partial "helpers/get-icon.html" (dict "type" "taxonomies" "name" .Data.Plural) -}}
+      <span data-visual-sign="{{ . }}"></span>
+    {{- end }}
+    {{- .Title -}}
+  </h1>
+  {{- with .Pages }}
+  <ul class="taxonomies">
+    {{ range . }}
+    <li>
+      <a href="{{ .Permalink }}">
+        {{ with partial "helpers/get-icon.html" (dict "type" "terms" "name" .Data.Singular) -}}
+          <span data-visual-sign="{{ . }}"></span>
+        {{- end }}
+        {{ .Title }} <span class="count">{{ $taxonomy.Count .Data.Term }}</span>
+      </a>
+    </li>
+    {{ end }}
+  </ul>
+  {{ end }}
+{{ end }}

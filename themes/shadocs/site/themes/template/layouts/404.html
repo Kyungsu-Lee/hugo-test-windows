@@ -1,0 +1,45 @@
+<!doctype html>
+<html
+  class="{{- with .Site.Params.darkMode -}}
+    theme-dark
+  {{- else -}}
+    theme-light
+  {{- end -}}"
+>
+  <script type='text/javascript'>
+    let text404 = '{{- with .Site.Params.text404 -}}{{- . -}}{{- else -}}404{{- end -}}';
+  </script>
+  {{- partial "theme/meta.html" . -}}
+  {{- $options := dict
+    "outputStyle" "compressed"
+    "targetPath" "css/404.css"
+    "transpiler" "dartsass"
+  -}}
+  {{- $main := (resources.Get "scss/theme/404.scss") | resources.ExecuteAsTemplate "css/404.scss" . | css.Sass $options -}}
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{{- $main.RelPermalink | safeURL -}}"
+  />
+  <body>
+    <div id="content404">
+      <div id="errorCode404" data-text="404"><span>404</span></div>
+      <p id="title404">{{- i18n "404_title" -}}</p>
+      <img
+        id="image404"
+        alt="{{- i18n "404_title" -}}"
+        src="{{- with .Site.Params.image404 -}}
+          {{- . | relURL -}}
+        {{- else -}}
+          {{- "images/404.gif" | relURL -}}
+        {{- end -}}"
+      />
+      <a
+        id="footer404"
+        href="{{- urls.JoinPath (.Site.BaseURL | relLangURL) "/" -}}"
+      >
+        {{- i18n "404_footer" -}}
+      </a>
+    </div>
+  </body>
+</html>

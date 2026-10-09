@@ -1,0 +1,37 @@
+{{- $alt := .PlainText | default "" -}}
+{{- $resolvedImageURL := partial "image-url.html" (dict
+  "site" .Page.Site
+  "url" .Destination
+  "keepRelative" true
+  "width" 1200
+  )
+-}}
+<img
+  src="{{- $resolvedImageURL | safeURL -}}"
+  loading="lazy"
+  alt="{{ $alt }}"
+  {{- with .Title }}title="{{ . }}"{{ end -}}
+  {{- if not (urls.Parse .Destination).Scheme -}}
+    {{- with
+      .Page.Resources.GetMatch .Destination
+    -}}
+      {{- if eq .MediaType.SubType "svg" -}}
+        {{/* For SVG files, parse as XML and set height/width attributes. */}}
+        {{- with .Content | transform.Unmarshal -}}
+          {{- with index . "-width" -}}width="{{ . }}"{{ end -}}
+          {{- with index . "-height" -}}height="{{ . }}"{{ end -}}
+        {{- end -}}
+      {{- else -}}
+        {{- with . }}width="{{ .Width }}" height="{{ .Height }}"{{ end -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $path :=path.Clean .Destination -}}
+      {{- if and (not
+        (hasPrefix $path "/" )) (not (hasPrefix $path "../" ))
+      -}}
+        {{/* Raise an error when the file does not exist. */}}
+        {{- errorf "Not Found Image: %s in page %s" .Destination .Page.Path -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end }}
+/>

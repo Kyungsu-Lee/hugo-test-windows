@@ -1,0 +1,64 @@
+{{- $imgSrc := "" -}}
+{{- $imgWidth := 750 -}}
+{{- $imgHeight := 500 -}}
+{{- $imgAlt := "" -}}
+{{- $imgTitle := "" -}}
+
+{{- if .Params.cover.image -}}
+    
+    {{- $imgSrc := .Params.cover.image -}}
+    {{- $imgWidth := .Params.cover.width | default 750 -}}
+    {{- $imgHeight := .Params.cover.height | default 500 -}}
+    {{- $imgAlt := .Params.cover.height | default .Title -}}
+    {{- $imgTitle := "" -}}
+
+    {{/* URL */}}
+    {{- if or (strings.HasPrefix .Params.cover.image "http://") (strings.HasPrefix .Params.cover.image "https://") -}}
+        {{/* nothing to do */}}
+
+    {{/* ABSOLUTE PATH */}}
+    {{- else if strings.HasPrefix .Params.cover.image "/" -}}
+        {{/* nothing to do */}}
+
+    {{/* FILENAME */}}
+    {{- else -}}
+
+        {{- $cover := .Resources.Get $imgSrc -}}
+        {{- if not $cover -}}
+            {{/* FIND IN assets DIR */}}
+            {{- $cover = resources.GetMatch $imgSrc -}}
+        {{- end -}}
+
+        {{- if $cover -}}
+            {{- $imgSrc = $cover.RelPermalink -}}
+            {{- if reflect.IsImageResourceWithMeta $cover -}}
+                {{- $imgWidth = $cover.Width -}}
+                {{- $imgHeight = $cover.Height -}}
+            {{- end -}}
+            {{/* COULD BE SVG */}}
+        {{- end -}}
+
+    {{- end -}}
+
+    <figure class="island-img relative border-b">
+        <a href="{{ .RelPermalink }}" title="{{ .Title }}" class="block">
+            <img 
+                src="{{ $imgSrc }}" 
+                alt="{{ $imgAlt }}" 
+                width="{{ $imgWidth }}"
+                height="{{ $imgHeight }}"
+                class="block mx-auto w-full object-cover">
+        </a>
+
+        {{- partial "post-figure-authors.html" . -}}
+    </figure>
+
+{{- else -}}
+    <figure class="island-img min-h-20 relative border-b">
+        <a 
+            href="{{ .RelPermalink }}"
+            title="{{ .Title }}"
+            class="block w-full no-image"></a>
+        {{- partial "post-figure-authors.html" . -}}
+    </figure>
+{{- end -}}

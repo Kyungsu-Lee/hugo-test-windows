@@ -1,0 +1,16 @@
+name = 'Foto'
+license = 'MIT'
+licenselink = 'https://github.com/nux-li/hugo-foto-theme/blob/main/LICENSE'
+description = 'A simple theme for photo galleries that uses almost no javascript'
+
+homepage = 'https://github.com/nux-li/hugo-foto-theme'
+demosite = 'https://c3n.es/'
+
+tags = ["gallery", "responsive", "minimal", "dark", "exif", "metadata"]
+features = ['albums', 'keywords', 'exposure details', 'metadata extraction']
+
+min_version = "0.123.0"
+
+[author]
+  name = 'Vegard Sætrenes'
+  homepage = 'https://c3n.es/'

@@ -1,0 +1,83 @@
+<!-- SCSS includes -->
+{{- $scssFiles := slice -}}
+{{- with hugo.Data.themeParams.includes.scss -}}
+  {{- range . -}}{{- $scssFiles = $scssFiles | append . -}}{{- end -}}
+{{- end -}}
+{{- with .Site.Params.includes.scss -}}
+  {{- range . -}}{{- $scssFiles = $scssFiles | append . -}}{{- end -}}
+{{- end -}}
+{{- with .Page.Params.includes.scss -}}
+  {{- range . -}}{{- $scssFiles = $scssFiles | append . -}}{{- end -}}
+{{- end -}}
+{{- if gt (len $scssFiles) 0 -}}
+  {{- template "includeScss" dict "this" $scssFiles -}}
+{{- end -}}
+<!-- CSS includes -->
+{{- $cssFiles := slice -}}
+{{- with hugo.Data.themeParams.includes.css -}}
+  {{- range . -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+{{- end -}}
+{{- with .Site.Params.includes.css -}}
+  {{- range . -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+{{- end -}}
+{{- with .Page.Params.includes.css -}}
+  {{- range . -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+{{- end -}}
+{{- range $key, $value := hugo.Data.themeParams.includes.shortcodes.css -}}
+  {{- with $.Page.HasShortcode $key -}}
+    {{- range $value -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range $key, $value := .Site.Params.includes.shortcodes.css -}}
+  {{- with $.Page.HasShortcode $key -}}
+    {{- range $value -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range $key, $value := hugo.Data.themeParams.includes.fencedcodes.css -}}
+  {{- with len (findRE (printf "%s%s" "[[:space:]]*(```)?" $key) $.Page.RawContent) -}}
+    {{- range $value -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range $key, $value := .Site.Params.includes.fencedcodes.css -}}
+  {{- with len (findRE (printf "%s%s" "[[:space:]]*(```)?" $key) $.Page.RawContent) -}}
+    {{- range $value -}}{{- $cssFiles = $cssFiles | append . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if gt (len $cssFiles) 0 -}}
+  {{- template "includeCss" dict "this" $cssFiles -}}
+{{- end -}}
+<!-- TEMPLATES -->
+{{- define "includeCss" -}}
+  {{- $scratch := newScratch -}}
+  {{- range .this | uniq -}}
+    {{- if in . ".min." -}}
+      {{- $scratch.Set "script" (resources.Get .) -}}
+    {{- else -}}
+      {{- $scratch.Set "script" (resources.Get . | minify) -}}
+    {{- end -}}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{- ($scratch.Get "script").RelPermalink | safeURL -}}"
+    />
+  {{- end -}}
+{{- end -}}
+{{- define "includeScss" -}}
+  {{- $filesArray := slice -}}
+  {{- range .this | uniq -}}
+    {{- $filesArray = $filesArray | append (resources.Get .) -}}
+  {{- end -}}
+  {{- $options := dict
+    "outputStyle" "compressed"
+    "includePaths" (slice "assets/bulma" "assets/scss/theme")
+    "targetPath" "css/main.css"
+    "transpiler" "dartsass"
+  -}}
+  {{- $cssFile := $filesArray | resources.Concat "scss/theme/bundle.scss" | resources.ExecuteAsTemplate "css/main.scss" . | css.Sass $options -}}
+  <link
+    rel="stylesheet"
+    rel="preload"
+    type="text/css"
+    href="{{- $cssFile.RelPermalink | safeURL -}}"
+  />
+{{- end -}}

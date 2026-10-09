@@ -1,0 +1,27 @@
+[build]
+    publish = "exampleSite/public"
+
+[build.environment]
+    HUGO_VERSION = "0.165.0"
+    HUGO_THEME = "repo"
+    DART_SASS_VERSION = "1.77.8"
+
+[context.production]
+    command = "curl -fLJO --proto '=https' --tlsv1.2 https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && tar -xf dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && export PATH=${PWD}/dart-sass:${PATH} && cd exampleSite && hugo --minify --gc --themesDir ../.. -b ${URL}"
+    [context.production.environment]
+        HUGO_ENV = "production"
+
+[context.branch-deploy]
+    command = "curl -fLJO --proto '=https' --tlsv1.2 https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && tar -xf dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && export PATH=${PWD}/dart-sass:${PATH} && cd exampleSite && hugo --minify --gc --themesDir ../.. -b ${DEPLOY_PRIME_URL}"
+
+[context.deploy-preview]
+    command = "curl -fLJO --proto '=https' --tlsv1.2 https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && tar -xf dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz && export PATH=${PWD}/dart-sass:${PATH} && cd exampleSite && hugo --minify --gc --themesDir ../.. -b ${DEPLOY_PRIME_URL}"
+
+[[plugins]]
+    package = "netlify-plugin-hugo-cache-resources"
+
+        [plugins.inputs]
+            # If it should show more verbose logs (optional, default = true)
+            debug = true
+            # Relative path to source directory in case you use Hugo's "--s" option
+            srcdir = "exampleSite"

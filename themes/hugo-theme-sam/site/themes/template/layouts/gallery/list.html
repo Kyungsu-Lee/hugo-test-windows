@@ -1,0 +1,29 @@
+{{ define "section_content" }}
+<article class="flex-container">{{ .Content }}</article>
+{{ $keepAspectRatio := default false .Params.keepAspectRatio }}
+{{ $maxWidth := .Params.maxWidth | default "800x" }}
+{{ if not (findRE `^[1-9][0-9]*x$` (printf "%v" $maxWidth)) }}
+  {{ errorf "Gallery %s: maxWidth must be a width such as 800x (got %v)" .RelPermalink $maxWidth }}
+{{ end }}
+<div class="grid {{ cond $keepAspectRatio "keep-aspect-ratio" "" }}"{{ if .Params.clickablePhotos }} data-gallery="1" data-gallery-title="{{ .Title }}"{{ end }}>
+{{ range shuffle (.Resources.ByType "image") }}
+  {{ if ne .MediaType.SubType "svg" }}
+    {{ $resized := .Resize $maxWidth }}
+    {{ $alt := .Params.alt | default .Title }}
+    <div>
+    {{ if $.Params.clickablePhotos }}
+      <a href="{{ .RelPermalink }}" data-photo-id="{{ .Name }}" data-pswp-width="{{ .Width }}" data-pswp-height="{{ .Height }}"{{ if not $keepAspectRatio }} data-cropped="true"{{ end }} aria-haspopup="dialog">
+    {{ end }}
+        <img src="{{ $resized.RelPermalink }}" alt="{{ $alt }}" width="{{ $resized.Width }}" height="{{ $resized.Height }}" loading="lazy" decoding="async">
+    {{ if $.Params.clickablePhotos }}</a>{{ end }}
+    </div>
+  {{ else }}
+    <div><img src="{{ .RelPermalink }}" alt="{{ .Params.alt | default .Title }}" loading="lazy" decoding="async"></div>
+  {{ end }}
+{{ end }}
+</div>
+{{ if .Params.clickablePhotos }}
+  {{ $script := resources.Get "js/gallery.js" | js.Build (dict "targetPath" "js/gallery.js" "minify" true "target" "es2018") | fingerprint }}
+  <script type="module" src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+{{ end }}
+{{ end }}

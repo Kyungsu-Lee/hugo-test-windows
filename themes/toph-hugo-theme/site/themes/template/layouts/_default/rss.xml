@@ -1,0 +1,60 @@
+{{- /* Custom RSS template for the Toph theme.
+    Produces a standard RSS 2.0 feed with full post content,
+    cover images, and proper date formatting.
+*/ -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ if .IsHome }}{{ site.Title | htmlEscape }}{{ else }}{{ .Title | htmlEscape }} | {{ site.Title | htmlEscape }}{{ end }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>{{ with .Site.Params.description }}{{ . }}{{ end }}</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>{{ .Site.Language.Locale }}</language>{{ with .Site.Params.biography.name }}
+    <managingEditor>{{ . }}</managingEditor>{{ end }}
+    <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
+    {{- with .OutputFormats.Get "rss" }}<atom:link href="{{ .Permalink }}" rel="self" type="{{ .MediaType }}" />{{ end }}
+    {{- $mimeTypes := dict ".jpg" "image/jpeg" ".jpeg" "image/jpeg" ".png" "image/png" ".gif" "image/gif" ".svg" "image/svg+xml" ".webp" "image/webp" -}}
+    {{- range .RegularPages }}
+    {{- $page := . -}}
+    {{- $absUrl := "" -}}
+    {{- $encLength := 0 -}}
+    {{- $encMime := "" -}}
+    {{- with .Params.images -}}
+      {{- $src := index . 0 -}}
+      {{- $src = partial "resolve-image-path.html" (dict "src" $src "file" $page.File) -}}
+      {{- if not (findRE "^(https?:)?//" $src) -}}
+        {{- $absUrl = $src | absURL -}}
+        {{- $trimmed := strings.TrimPrefix "/" $src -}}
+        {{- $fileInfo := false -}}
+        {{- if fileExists (path.Join "content" $trimmed) -}}
+          {{- $fileInfo = os.Stat (path.Join "content" $trimmed) -}}
+        {{- else if fileExists (path.Join "static" $trimmed) -}}
+          {{- $fileInfo = os.Stat (path.Join "static" $trimmed) -}}
+        {{- else if fileExists (path.Join "assets" $trimmed) -}}
+          {{- $fileInfo = os.Stat (path.Join "assets" $trimmed) -}}
+        {{- end -}}
+        {{- with $fileInfo -}}
+          {{- $encLength = .Size -}}
+          {{- $encMime = index $mimeTypes (path.Ext $src | strings.ToLower) | default "image/jpeg" -}}
+        {{- end -}}
+      {{- else -}}
+        {{- $absUrl = $src | absURL -}}
+      {{- end -}}
+    {{- end }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      <guid>{{ .Permalink }}</guid>
+      {{- if $encLength }}
+      <enclosure url="{{ $absUrl }}" length="{{ $encLength }}" type="{{ $encMime }}" />
+      {{- end }}
+      <description>{{ "<![CDATA[" | safeHTML }}
+      {{- if $absUrl -}}
+        <img src="{{ $absUrl }}" alt="{{ .Title | plainify | htmlEscape }}">
+      {{- end -}}
+      {{ .Content | safeHTML }}{{ "]]>" | safeHTML }}</description>
+    </item>
+    {{- end }}
+  </channel>
+</rss>

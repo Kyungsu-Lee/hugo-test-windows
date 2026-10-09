@@ -1,0 +1,128 @@
+languages:
+    en:
+        languageName: English
+        disabled: false
+        params:
+            themes:
+                event:
+                    slogan: A Hugo Theme for Conferences
+                    description: |
+                        This is a placeholder for your event description. You can customize it,
+                        together with all other settings, in your Hugo configuration file.
+                        We hope you enjoy using this theme! 🎉
+                    directions: |
+                        Directions for getting to the location using public transportation. 
+                        Customize this placeholder text in your Hugo configuration file or remove it if not needed.
+                    # 👇 This field provides an introduction or overview about the event or organization.
+                    # You can customize it to describe the event, highlight key aspects, or leave any important message.
+                    # Markdown formatting is supported, allowing you to add links, bold text, and more.
+                    aboutUs: |
+                        More information about the event will be added soon. Stay tuned! 🎉
+    de:
+        languageName: Deutsch
+        disabled: false
+        params:
+            themes:
+                event:
+                    slogan: Ein Hugo-Theme für Konferenzen
+                    description: |
+                        Dies ist ein Platzhalter für die Beschreibung Ihrer Veranstaltung.
+                        Sie können ihn zusammen mit allen anderen Einstellungen in Ihrer
+                        Hugo-Konfigurationsdatei anpassen. Wir wünschen Ihnen viel Spaß mit
+                        diesem Theme! 🎉
+                    directions: |
+                        Wegbeschreibung zum Veranstaltungsort mit öffentlichen Verkehrsmitteln.
+                        Passen Sie diesen Platzhaltertext in Ihrer Hugo-Konfigurationsdatei an oder entfernen Sie ihn,
+                        wenn er nicht benötigt wird.
+                    # 👇 This field provides an introduction or overview about the event or organization.
+                    # You can customize it to describe the event, highlight key aspects, or leave any important message.
+                    # Markdown formatting is supported, allowing you to add links, bold text, and more.
+                    aboutUs: |
+                        Weitere Informationen über die Veranstaltung werden bald hinzugefügt. Bleiben Sie dran! 🎉
+
+params:
+    themes:
+        event:
+            # 👇 Fetch the ID of your event's API endpoint from
+            # 👇 https://sessionize.com/app/organizer/schedule/api/0
+            # 👇 and enter it here.
+            sessionizeId:
+            title: Your Event Title
+            # 👇 An optional short version of your event's title. Only use it if
+            # 👇 your event title is very long. The short title may be used in
+            # 👇 places where space is limited, such as on mobile devices or in the header menu.
+            shortTitle:
+            startDate: 2026-06-01
+            endDate: 2026-06-03
+            location: City, Country
+            address:
+                - Building
+                - Street
+                - City
+                - Country
+            map:
+                # 👇 Get an embeddable map URL from OpenStreetMap
+                # 👇 https://wiki.openstreetmap.org/wiki/Export#Embeddable_HTML
+                # 👇 or Google Maps
+                # 👇 https://developers.google.com/maps/documentation/embed/embedding-map
+                # 👇 and enter it here.
+                embeddableMapUrl:
+                # 👇 Enter a URL of a larger map representation (not required for Google Maps).
+                viewLargerMapUrl:
+            callToAction:
+                eventbrite:
+                    # 👇 Get your Eventbrite event ID from the URL of your event page
+                    # 👇 and enter it here.
+                    eventId:
+                other:
+                    # 👇 Enter the URL of your ticket shop here.
+                    url:
+                enableBanner: true
+            callToActionSecondary:
+                # 👇 Enter a secondary CTA link, e.g., for "Call for Speakers", "Join Newsletter", "Giveaway", etc.
+                url:
+                # 👇 Label text for the secondary CTA button.
+                label:
+            socialLinks:
+                xUrl:
+                facebookUrl:
+                linkedinUrl:
+            favicon: favicon.ico
+            images:
+                logo: logos/medialesson-rgb.svg
+                titleBackground: images/pexels-scottwebb-1048039.webp
+                # 👇 Image showcasing the building or venue where the event will take place.
+                location:
+            sponsors:
+                - logo:
+                  url:
+                  # 👇 This name is used as the alt text for the logo
+                  name:
+            partners:
+                - logo:
+                  url:
+                  # 👇 This name is used as the alt text for the logo
+                  name:
+            # 👇 List of Sessionize speaker IDs of speakers that organize the event.
+            organizers:
+            # 👇 List of Sessionize session IDs of highlight sessions.
+            featuredSessions:
+            colors:
+                primaryLighter: '#d7fb4d'
+                primary: '#c6eb4d'
+                primaryDarker: '#015a57'
+                primaryDarkest: '#111928'
+                secondary: '#f7f8fa'
+                secondaryDarker: '#637381'
+                track: '#015a57'
+                shadow: '#a6afc366'
+            # 👇 Name of the category in Sessionize that is used to group sessions.
+            trackCategoryTitle: Track
+            # 👇 Automatically redirects first-time visitors to the correct language version of the site
+            # 👇 based on their browser preferences (requires JavaScript).
+            # 👇 Set to false to disable (e.g., for demos, testing, or non-JS environments).
+            redirectBasedOnBrowserLang: false
+            # 👇 Controls whether a <meta name="generator"> tag is included in rendered HTML.
+            # 👇 This tag allows the theme to be discovered via search-engine queries without
+            # 👇 any telemetry, cookies, or remote beacons. Set to true to opt out.
+            disableGenerator: false

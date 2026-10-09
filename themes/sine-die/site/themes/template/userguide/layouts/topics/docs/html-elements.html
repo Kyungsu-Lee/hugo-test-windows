@@ -1,0 +1,11 @@
+{{ define "main" }}
+  {{- with .Params.Title -}}
+  <h1>{{ . }}</h1>
+  {{- end -}}
+  <details>
+    <summary>Expand to see the html code used to render this content</summary>
+    {{- transform.Highlight .RawContent "html" -}}
+  </details>
+  <hr/>
+  {{ .Content }}
+{{ end }}

@@ -1,0 +1,9 @@
+{{ define "main" }}
+    {{- partial "post-full" . -}}
+    {{- partial "comments.html" . -}}
+{{ end }}
+
+{{ define "side" }}
+    {{ partial "toc.html" . }}
+    {{ partial "translations.html" . }}
+{{ end }}

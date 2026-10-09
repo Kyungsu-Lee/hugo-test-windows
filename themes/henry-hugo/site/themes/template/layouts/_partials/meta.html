@@ -1,0 +1,25 @@
+<div class="post-meta bg-hbg-dark flex flex-col items-center py-10 md:py-12">
+  <section class="blog-content-width">
+
+{{/* 
+{{ if not (eq .Layout "page") }}
+<div class="post-date mt-2 text-sm text-ht-lighter">
+  {{ .Date.Format "Jan 2006" }}
+</div>
+{{ end }} 
+*/}} 
+
+{{/* 
+{{ if .Params.externalLink }}
+<div class="post-permalink mt-1">
+  <a class="text-sm text-ht-lighter" href="{{ .RelPermalink }}">Permalink</a>
+</div>
+{{ end }} 
+*/}} 
+
+{{- partial "comments.html" . -}}
+{{- partial "social-reshare.html" . -}}
+{{- partial "meta-custom.html" . -}}
+
+  </section>
+</div>

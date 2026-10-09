@@ -1,0 +1,6 @@
+---
+site: public
+showEmptyFilters: true
+root_selector: 'body>main'
+exclude_selectors:
+  - '[data-visual-sign]'

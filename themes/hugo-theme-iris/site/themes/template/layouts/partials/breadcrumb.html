@@ -1,0 +1,12 @@
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    {{- range .Ancestors.Reverse -}}
+      <li>
+        <a href="{{- .Permalink -}}">{{- .LinkTitle -}}</a>
+      </li>
+    {{- end -}}
+    <li class="is-active">
+      <a href="#" aria-current="page" class="normal-link">{{- .LinkTitle | truncate 20 -}}</a>
+    </li>
+  </ul>
+</nav>

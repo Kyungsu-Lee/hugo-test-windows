@@ -1,0 +1,21 @@
+<div class="sc-highcharts-wrapper is-loading loader-container">
+  {{- with not (.Get "id") -}}
+    {{- errorf "Highcharts id must be set in highcharts shortcode in %q" $.Page.RelPermalink -}}
+  {{- end -}}
+  {{- with .Get "assets" -}}
+    {{- $.Page.Scratch.Add "highchartsAssets" (split . ",") -}}
+  {{- else -}}
+    {{- errorf "Highcharts assets must be set in highcharts shortcode in %q" $.Page.RelPermalink -}}
+  {{- end -}}
+  {{- with try resources.GetRemote ($.Get "source") -}}
+    {{- with .Err -}}
+      {{- with resources.Get ($.Get "source") -}}
+        {{- $.Page.Scratch.Add "highchartsContent" (slice .Content) -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $.Page.Scratch.Add "highchartsContent" (slice .Content) -}}
+    {{- end -}}
+  {{- end -}}
+  <div class="sc-highcharts-container" id="{{- .Get "id" -}}"></div>
+  {{- partial "theme/loader.html" -}}
+</div>

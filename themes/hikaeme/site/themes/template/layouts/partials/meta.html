@@ -1,0 +1,123 @@
+{{/* not allow bing ai to use site contents */}}
+<meta name="bingbot" content="noarchive" />
+<meta name="msnbot" content="noarchive" />
+<meta name="pinterest" content="nopin" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="dns-prefetch preconnect" href="//fonts.googleapis.com/" crossorigin />
+<link rel="dns-prefetch preconnect" href="https://cdn.jsdelivr.net/" crossorigin />
+<link rel="dns-prefetch preconnect" href="https://cdnjs.cloudflare.com/" crossorigin />
+{{ with .Site.Params.contact }}
+  <meta name="contact" content="{{ . }}" />
+{{ end }}
+{{ hugo.Generator }}
+
+{{/* icon */}}
+{{ with .Site.Params.favicon }}
+  <link rel="icon" href="{{ .defaultUrl }}" sizes="16x16 32x32 48x48" />
+  <link rel="icon" href="{{ .svgUrl }}" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="{{ .appleUrl }}" sizes="180x180" />
+{{ end }}
+
+{{ range .AlternativeOutputFormats }}
+  <link
+    rel="{{ .Rel }}"
+    type="{{ .MediaType.Type | html }}"
+    href="{{ .Permalink | safeURL }}"
+    title="{{ $.Site.Title | safeHTML }}"
+  />
+{{ end }}
+
+{{/* add noindex in particular urls */}}
+{{ if and (or (eq .Kind "taxonomy") (eq .Kind "term")) (or (eq .Data.Plural "tags") (eq .Data.Plural "categories")) }}
+  <meta name="robots" content="noindex, nofollow" />
+{{ end }}
+
+{{ $title := "title" }}
+{{ $description := "description" }}
+{{ $shortDescription := "shortDescription" }}
+{{- $metaImage := .Params.thumbnail | default .Site.Params.defaultThumbnailUrl -}}
+{{- $metaImageURL := partial "image-url.html" (dict "site" .Site "url" $metaImage "width" 1200) -}}
+
+{{ if .IsPage }}
+  {{ .Scratch.Set $title .Title }}
+  {{ .Scratch.Set $description .Summary }}
+{{ else }}
+  {{ .Scratch.Set $title .Site.Title }}
+  {{ .Scratch.Set $description .Site.Params.description }}
+{{ end }}
+{{ .Scratch.Set $shortDescription .Content | plainify | truncate 200 }}
+
+
+<meta name="description" content="{{ .Scratch.Get $description }}" />
+
+{{/* Open Graph Protocol */}}
+{{ $ogLocale := replace (.Site.Language.Locale | default .Site.Language.Lang) "-" "_" }}
+<meta property="og:locale" content="{{ $ogLocale }}" />
+<meta property="og:title" content="{{ .Scratch.Get $title }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:site_name" content="{{ .Site.Title }}" />
+<meta property="og:image" content="{{ $metaImageURL }}" />
+<meta
+  property="og:type"
+  content="
+    {{- if .IsPage -}}
+    article
+  {{- else -}}
+    website
+  {{- end -}}
+"
+/>
+
+{{- if .IsPage -}}
+  <meta property="og:description" content="{{ .Scratch.Get $shortDescription }}" />
+
+  <meta property="article:section" content="{{ .Section | title }}" />
+  {{- range .Params.tags -}}
+    <meta property="article:tag" content="{{ . }}" />
+  {{- end -}}
+
+  {{- if not .Date.IsZero -}}
+    <meta
+      property="article:published_time"
+      content="{{ .Date.Format (
+        .Site.Params.dateformat |
+        default "2006/01/02") | safeHTML
+      }}"
+    />
+  {{- end -}}
+  {{- if not .Lastmod.IsZero -}}
+    <meta
+      property="article:modified_time"
+      content="{{ .Lastmod.Format (
+        .Site.Params.dateformat |
+        default "2006/01/02")| safeHTML
+      }}"
+    />
+  {{- end -}}
+{{- else -}}
+  <meta property="og:description" content="{{ .Scratch.Get $description }}" />
+
+  {{- if not .Site.Lastmod.IsZero -}}
+    <meta
+      property="og:updated_time"
+      content="{{ .Site.Lastmod.Format (
+        .Site.Params.dateformat |
+        default "2006/01/02") | safeHTML
+      }}"
+    />
+  {{- end -}}
+{{- end -}}
+
+{{/* twitter card setting */}}
+<meta name="twitter:card" content="summary_large_image" />
+{{ with .Site.Params.twitterXId }}
+  <meta name="twitter:site" content="{{ . }}" />
+{{ end }}
+<meta name="twitter:url" content="{{ .Permalink }}" />
+<meta name="twitter:title" content="{{ .Title }} - {{ .Site.Title }}" />
+{{- if .IsPage -}}
+  <meta name="twitter:description" content="{{ .Scratch.Get $shortDescription }}" />
+{{ else }}
+  <meta name="twitter:description" content="{{ .Scratch.Get $description }}" />
+{{ end }}
+<meta name="twitter:image" content="{{ $metaImageURL }}" />

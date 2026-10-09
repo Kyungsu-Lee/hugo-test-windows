@@ -1,0 +1,5 @@
+# Config for staging
+baseURL: "/"
+
+minify:
+  minifyOutput: true

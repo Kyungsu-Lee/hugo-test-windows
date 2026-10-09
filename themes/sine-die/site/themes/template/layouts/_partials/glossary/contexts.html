@@ -1,0 +1,15 @@
+{{- with .contexts }}
+  <section class="contexts">
+    <h2>Contexts</h2>
+    <ul>
+    {{ range . }}
+      <li>
+        <a href="{{ .RelPermalink }}">
+          <span data-visual-sign="glossary-context"></span>
+          {{ .LinkTitle }}
+        </a>
+      </li>
+    {{ end }}
+    </ul>
+  </section>
+{{ end -}}

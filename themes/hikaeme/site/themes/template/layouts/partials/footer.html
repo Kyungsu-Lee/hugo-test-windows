@@ -1,0 +1,24 @@
+<footer class="px-0 pt-4 pb-3 w-100 my-0 mx-auto text-center bg-body">
+  <div class="container">
+    <p class="fw-semibold m-0">
+      &copy;
+      {{ $since := .Site.Params.Since }}
+      {{ if $since }}
+        {{ $since }} ~
+      {{ end }}
+      {{ now.Year }}
+      {{ with .Site.Params.Copyright }}{{ . | safeHTML }}{{ end }} | Powered by
+      <a href="https://gohugo.io/" target="_blank">HUGO</a> |
+      {{ with site.GetPage "/privacy" }}
+        <a href="{{ .RelPermalink }}">{{ T "footer.privacy" }}</a>
+      {{ else }}
+        <a href="{{ "privacy/" | relLangURL }}">{{ T "footer.privacy" }}</a>
+      {{ end }}
+      {{ $url := .Site.Params.contactUrl }}
+      {{ if $url }}
+        |
+        <a href="{{ $url | safeURL }}" target="_blank" rel="noreferrer">{{ T "footer.contact" }}</a>
+      {{ end }}
+    </p>
+  </div>
+</footer>

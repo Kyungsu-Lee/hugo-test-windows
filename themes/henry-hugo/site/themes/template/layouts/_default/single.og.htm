@@ -1,0 +1,131 @@
+{{- $host := (urls.Parse .Site.BaseURL).Host | replaceRE ":\\d+$" "" -}}
+{{- $slug := .Slug | strings.TrimPrefix "/" | strings.TrimSuffix "/" -}}
+{{- $label := printf "%s/%s/%s" $host .Section $slug -}}
+<!doctype html>
+<html lang="{{ .Language.Lang }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{ partial "styles.html" . }}
+    <style>
+      html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #000; }
+      body.font-mono {
+        font-family: "Code Saver VF", "Geist Mono", ui-monospace, "Cascadia Code", "Menlo", "Consolas", "DejaVu Sans Mono", monospace;
+        font-feature-settings: "ss02" 1;
+        font-weight: 400;
+      }
+      #og-root h1 {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body class="font-mono">
+    <div id="og-root" class="w-[1200px] h-[630px] bg-black text-white flex flex-col">
+
+      {{/* ── terminal chrome ── */}}
+      <div class="h-[58px] flex items-center px-6 border-b border-white/5 shrink-0 bg-[#151515]">
+        <div class="flex gap-2.5">
+          <span class="w-4 h-4 rounded-full bg-[#ff5f57]"></span>
+          <span class="w-4 h-4 rounded-full bg-[#febc2e]"></span>
+          <span class="w-4 h-4 rounded-full bg-[#28c840]"></span>
+        </div>
+        <span class="flex-1 text-center text-[20px] text-white/80 tracking-wide">{{ $label }}</span>
+        <div class="w-[62px]"></div> {{/* balance the dots */}}
+      </div>
+
+      {{/* ── content area ── */}}
+      <div class="flex flex-1 px-10 py-6 gap-8 items-center overflow-hidden">
+
+        {{/* left column: title + optional summary */}}
+        <div class="flex flex-col justify-center flex-1 min-w-0">
+          <h1 class="text-[64px] leading-[1.08] font-bold tracking-tight text-white m-0 line-clamp-4">
+            {{ with .Params.og_title }}{{ . }}{{ else }}{{ .Title }}{{ end }}
+          </h1>
+          {{ if .Site.Params.og_show_desc }}
+          <p class="text-slate-400 text-[22px] leading-[1.5] mt-6 max-w-[640px] line-clamp-5 m-0">
+            {{ partial "get-first-paragraph-ellipsised.html" .Content }}
+          </p>
+          {{ end }}
+          {{/* ── fish prompt ── */}}
+          <div class="mt-8 text-[22px] flex items-center gap-[6px]">
+            <span class="text-[#5af78e]">&gt;</span>
+            <span class="inline-block w-[12px] h-[24px] bg-[#b8336a]"></span>
+          </div>
+        </div>
+
+        {{/* right column: halftone portrait */}}
+        <div class="shrink-0 flex items-center justify-center">
+          <canvas id="og-portrait" width="420" height="420"
+                  class="w-[400px] h-[400px] rounded-lg"></canvas>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      (async () => {
+        await document.fonts.ready;
+
+        const canvas = document.getElementById('og-portrait');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width;
+        const H = canvas.height;
+
+        // load avatar
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = '{{ .Site.Params.avatar }}';
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+
+        // draw image scaled to fill canvas
+        const scale = Math.max(W / img.width, H / img.height);
+        const sw = img.width * scale;
+        const sh = img.height * scale;
+        ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh);
+
+        // halftone dot effect: round dots on a grid, size = brightness, color preserved
+        // og_dot_grid controls density: higher = more dots (default 48)
+        const GRID = {{ .Site.Params.og_dot_grid | default 48 }};
+        const spacing = W / GRID;
+        const maxR = spacing * 0.48;
+
+        // sample pixel colors before clearing
+        const imageData = ctx.getImageData(0, 0, W, H);
+        const d = imageData.data;
+
+        // clear to black
+        ctx.clearRect(0, 0, W, H);
+
+        // draw halftone dots
+        for (let row = 0; row < GRID; row++) {
+          for (let col = 0; col < GRID; col++) {
+            const cx = (col + 0.5) * spacing;
+            const cy = (row + 0.5) * spacing;
+
+            // sample color at grid center
+            const sx = Math.min(Math.floor(cx), W - 1);
+            const sy = Math.min(Math.floor(cy), H - 1);
+            const i = (sy * W + sx) * 4;
+            const r = d[i], g = d[i + 1], b = d[i + 2];
+
+            // luminance → dot radius
+            const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            const radius = lum * maxR;
+
+            if (radius > 0.5) {
+              ctx.beginPath();
+              ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+              ctx.fillStyle = `rgb(${r},${g},${b})`;
+              ctx.fill();
+            }
+          }
+        }
+
+        window.__OG_READY = true;
+      })();
+    </script>
+  </body>
+</html>

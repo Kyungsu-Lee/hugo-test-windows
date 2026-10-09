@@ -1,0 +1,62 @@
+<!doctype html>
+
+<!-- prettier-ignore -->
+{{- "<!--" | safeHTML -}}
+
+    　　　　　  ,-､　　　 　 　 　　　　..-､
+    　　　　 ./:::::＼　　　　 　 　 ／:::::ヽ
+    　　　　/::::::::;ゝ--──-- ､._/:::::::::ヽ
+    　　　 /,.-‐''"′ 　　　　　　　　＼:::::::|
+    　　／　 　　　　　　　　　　　　　　ヽ､:::|
+    　/　　　　●　　　 　 　 　 　 　 　 　ヽ|
+     l　　　､､､　　 　 　 　 　 　 ●　　 　   l
+     .|　　　 　　　　(_人__丿　　､､､　 　　　 1
+     l　　　　　　　　　　　　　　　　 　 　　l
+    　` ､　　　　　　　　 　 　 　　 　 　  /
+    　　　`ｰ ､__　　　 　 　 　　　 　　.／
+    　　　　　　/`'''ｰ‐‐──‐‐‐-┬／
+
+               Sup DUUUUDE
+               Take it ez
+
+{{- "-->" | safeHTML -}}
+
+
+<html lang="{{ .Site.Language.Locale | default .Site.Language.Lang }}" data-bs-theme="auto">
+  <head>
+    {{ partial "head.html" . }}
+    {{ if templates.Exists "partials/custom-head.html" }}
+      {{ partial "custom-head.html" . }}
+    {{ end }}
+  </head>
+
+  <body class="p-0 min-vh-100 bg-body-tertiary">
+    <header class="py-1 px-2 bg-body">
+      {{ partial "header.html" . }}
+    </header>
+
+    <div class="container-xl">
+      <main class="px-0 py-3 m-auto">
+        <div class="row justify-content-md-center">
+          <div class="col-lg-9">
+            {{ block "main" . }}{{ end }}
+          </div>
+          <div class="col-lg-3">
+            {{ if .Page.Params.authorSection | default false }}
+              {{ partial "author.html" . }}
+            {{ end }}
+            {{ partial "categories.html" . }}
+            <div class="sticky mt-1 d-block top-0">
+              {{ partial "support-url.html" . }}
+              {{ partial "sidebar-toc.html" . }}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    {{ partial "footer.html" . }}
+    {{ if .Site.Params.enableAlgolia }}
+      {{ partial "search-modal.html" . }}
+    {{ end }}
+  </body>
+</html>

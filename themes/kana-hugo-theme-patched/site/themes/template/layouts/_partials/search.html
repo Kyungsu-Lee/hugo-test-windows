@@ -1,0 +1,10 @@
+<script id="search-result-template" type="text/x-js-template">
+    <div id="summary-${key}">
+        <a class="post" href="${link}">
+            <h3 class="post-title">${title}</h3> <span class="post-day">${date}</span>
+        </a>
+    </div>
+</script>
+{{ $search := resources.Get "scripts/search.js" }}
+{{ $js := $search | resources.Minify | fingerprint }}
+<script defer src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>

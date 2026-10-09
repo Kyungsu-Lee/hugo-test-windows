@@ -1,0 +1,52 @@
+[data-visual-sign] {
+  aspect-ratio: 1;
+  direction: ltr;
+  display: inline-block;
+  font-family: var(--font-family-icons, 'Material Symbols Outlined');
+  font-feature-settings: 'liga';
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  text-rendering: auto;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+
+  &::after {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    content: attr(data-visual-sign);
+  }
+
+  button&,
+  [role="menuitem"] & {
+    &::after {
+      position: absolute;
+    }
+  }
+}
+
+[data-visual-sign="calendar"]::after {
+  content: "calendar_month";
+}
+
+[data-visual-sign="copy"]::after {
+  content: "content_copy";
+}
+
+[data-visual-sign="copied"]::after {
+  content: "done";
+}
+
+[data-visual-sign="glossary"]::after {
+  content: "dictionary";
+}

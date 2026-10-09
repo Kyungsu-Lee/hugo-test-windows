@@ -1,0 +1,174 @@
+---
+title: Advanced Images
+date: 2020-06-22T20:00:00+02:00
+authors:
+  - john-doe
+tags:
+  - Documentation
+  - Shortcodes
+resources:
+  - name: feature
+    src: "images/feature.jpg"
+    params:
+      credits: "[Angelina Litvin](https://unsplash.com/@linalitvina) on [Unsplash](https://unsplash.com/s/photos/writing)"
+  - name: forest-1
+    src: "images/forest-1.jpg"
+    title: Forest (1)
+    params:
+      credits: "[Jay Mantri](https://unsplash.com/@jaymantri) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-2
+    src: "images/forest-2.jpg"
+    title: Forest (2)
+    params:
+      credits: "[Jay Mantri](https://unsplash.com/@jaymantri) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-3
+    src: "images/forest-3.jpg"
+    title: Forest (3)
+    params:
+      credits: "[Jay Mantri](https://unsplash.com/@jaymantri) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-4
+    src: "images/forest-4.jpg"
+    title: Forest (4)
+    params:
+      credits: "[Jay Mantri](https://unsplash.com/@jaymantri) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-5
+    src: "images/forest-5.jpg"
+    title: Forest (5)
+    params:
+      credits: "[Jay Mantri](https://unsplash.com/@jaymantri) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-6
+    src: "images/forest-6.jpg"
+    title: Forest (6)
+    params:
+      credits: "[Asher Ward](https://unsplash.com/@the_asher_ward) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-7
+    src: "images/forest-7.jpg"
+    title: Forest (7)
+    params:
+      credits: "[Asher Ward](https://unsplash.com/@the_asher_ward) on [Unsplash](https://unsplash.com/s/photos/forest)"
+  - name: forest-8
+    src: "images/forest-8.svg"
+    title: Forest (8)
+    params:
+      credits: "SVG Repo"
+# cspell:ignore Litvin Mantri
+---
+
+If you need more flexibility for your embedded images, you could use the `img` shortcode. It is using Hugo's
+[page resources](https://gohugo.io/content-management/page-resources/) and supports lazy loading of your images.
+
+<!--more-->
+
+## Usage
+
+Define your resources in the page front matter, custom parameter `params.credits` is optional.
+
+<!-- cSpell:disable -->
+
+```md
+---
+resources:
+  - name: forest-1
+    src: "images/forest-1.jpg"
+    title: Forest (1)
+    params:
+      credits: "[Jay Mantri](https://unsplash.com/@jaymantri) on [Unsplash](https://unsplash.com/s/photos/forest)"
+---
+
+{{</* img name="forest-1" lazy=false */>}}
+```
+
+<!-- cSpell:enable -->
+
+## Attributes
+
+<!-- prettier-ignore-start -->
+<!-- cSpell:disable -->
+{{< propertylist name=shortcode-images sort=name order=asc >}}
+<!-- cSpell:enable -->
+<!-- prettier-ignore-end -->
+
+## Example
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-1" lazy=false >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-2" lazy=true >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-3" lazy=true >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-4" lazy=true >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-5" lazy=true >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-6" lazy=true >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-7" lazy=true >}}
+
+<!-- cSpell:enable -->
+
+Dolor sit, sumo unique argument um no. Gracie nominal id xiv. Romanesque acclimates
+investiture. Ornateness bland it ex enc, est yeti am bongo detract re. Pro ad prompts
+feud gait, quid exercise emeritus bis e. In pro quints consequent, denim fastidious
+copious quo ad. Stet probates in duo.
+
+<!-- cSpell:disable -->
+
+{{< img name="forest-8" size=small lazy=true >}}
+
+<!-- cSpell:enable -->

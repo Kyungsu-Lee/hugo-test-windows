@@ -1,0 +1,25 @@
+<head>
+  {{ partial "head/general" . }}
+  {{ partial "head/json-ld" . }}
+
+  {{ if $.Params.slide }}
+  <style>
+    {{ $cssMain := resources.Get "reveal.js/dist/reveal.css" | toCSS | minify }}
+    {{ $cssMain.Content | safeCSS }}
+    {{ $cssTheme := resources.Get "reveal.js/dist/theme/white.css" | toCSS | minify }}
+    {{ $cssTheme.Content | safeCSS }}
+  </style>
+  {{ else }}
+  <style>
+    {{ $bulmaOps := (dict "includePaths" (slice "node_modules")) }}
+    {{ $bulmaCSS := resources.Get "theme/scss/bulma.scss" | toCSS $bulmaOps | minify }}
+    {{ $bulmaCSS.Content | safeCSS }}
+
+    {{ $syntaxCSS := resources.Get "theme/css/syntax.css" | toCSS | minify }}
+    {{ $syntaxCSS.Content | safeCSS }}
+
+    {{ $themeCSS := resources.Get "theme/scss/style.scss" | toCSS | minify }}
+    {{ $themeCSS.Content | safeCSS }}
+  </style>
+  {{ end }}
+</head>

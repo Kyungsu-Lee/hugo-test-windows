@@ -1,0 +1,23 @@
+{
+  "config": "pages.json",
+  "theme": "template",
+  "sample": "exampleSite",
+  "version": "0.167.0",
+  "slug": "hugo-geekdoc",
+  "npm": [
+    ".",
+    "themes/template"
+  ],
+  "asset_build": [
+    [
+      "themes/template",
+      "npm",
+      "run",
+      "build"
+    ]
+  ],
+  "generator": "3.1",
+  "repo": "https://github.com/windows-hugo-test/course-site.git",
+  "baseURL": "https://windows-hugo-test.github.io/course-site/",
+  "audited": true
+}

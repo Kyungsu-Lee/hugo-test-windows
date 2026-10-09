@@ -1,0 +1,16 @@
+{{- $defaultDateFormat := "01/02" -}}
+<time datetime='{{ .Date.Format $defaultDateFormat }}' class="text-muted flex items-center">
+
+    <i class="icon">
+        {{- partial "icon" "calendar" -}}
+    </i>
+
+    <span class="ms-1">
+        {{- if site.Params.dateFormat -}}
+            {{ .Date.Format site.Params.dateFormat }}
+        {{- else -}}
+            {{ .Date.Format $defaultDateFormat }}
+        {{- end -}}
+    </span>
+
+</time>

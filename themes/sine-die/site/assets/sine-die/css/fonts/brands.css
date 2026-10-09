@@ -1,0 +1,48 @@
+@font-face {
+  font-family: 'Font Awesome 6 Brands';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-brands-400.woff2") format("woff2"),
+    url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-brands-400.ttf") format("truetype");
+}
+
+[data-visual-sign-type="brand"] {
+  font-family: 'Font Awesome 6 Brands'; /* stylelint-disable-line font-family-no-missing-generic-family-keyword */
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="app-store"]::after {
+  content: "\f36f";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="aws"]::after {
+  content: "\f375";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="discord"]::after {
+  content: "\f392";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="github"]::after {
+  content: "\f09b";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="gitlab"]::after {
+  content: "\f296";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="linkedin"]::after {
+  content: "\f08c";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="openid"]::after {
+  content: "\f19b";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="steam"]::after {
+  content: "\f1b6";
+}
+
+[data-visual-sign-type="brand"][data-visual-sign="xing"]::after {
+  content: "\f168";
+}

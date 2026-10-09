@@ -1,0 +1,15 @@
+# See https://github.com/gohugoio/hugoThemes#themetoml for an example
+
+name = "Toph"
+license = "MPL-2.0"
+licenselink = "https://github.com/justwheel/toph-hugo-theme/blob/main/LICENSE.txt"
+description = "a lightweight, responsive Bootstrap 5 theme for a biography site and blog with RSS feed"
+homepage = "https://jwheel.org"
+demosite = "https://justwheel.github.io/toph-hugo-theme/"
+tags = ["a11y-friendly", "biography", "blog", "bootstrap5", "minimal", "rss"]
+features = ["asciidoc", "localization", "markdown", "right-to-left"]
+min_version = "0.166.0"
+
+[author]
+  name = "Justin Wheeler"
+  homepage = "https://jwheel.org"

@@ -1,0 +1,42 @@
+{
+  "name": "hugo-theme-iris",
+  "version": "0.43.2",
+  "private": true,
+  "description": "Hugo IRIS Theme - Portfolio and Blog",
+  "homepage": "https://github.com/peaceiris/hugo-theme-iris#readme",
+  "bugs": {
+    "url": "https://github.com/peaceiris/hugo-theme-iris/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://peaceiris@github.com/peaceiris/hugo-theme-iris.git"
+  },
+  "license": "MIT",
+  "author": "peaceiris",
+  "scripts": {
+    "prepare": "husky",
+    "start": "make dev",
+    "server": "make dev",
+    "dev": "make dev",
+    "build": "make build-prod",
+    "test": "make test",
+    "test:renovate": "renovate-config-validator"
+  },
+  "lint-staged": {
+    "**/*": [
+      "npm test"
+    ],
+    "{README,CONTRIBUTING}.md": [
+      "npx doctoc@2.1.0 --github"
+    ]
+  },
+  "devDependencies": {
+    "husky": "9.1.7",
+    "lint-staged": "17.0.4",
+    "renovate": "43.150.0"
+  },
+  "engines": {
+    "node": "24.x",
+    "npm": "11.x"
+  }
+}

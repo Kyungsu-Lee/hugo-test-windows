@@ -1,0 +1,60 @@
+baseURL = 'https://filipecarneiro.github.io/hugo-bootstrap-theme/'
+title = "Hugo Bootstrap Theme"
+author = "Filipe Carneiro"
+copyright = "Open-source <a class=\"text-muted text-decoration-none\" href=\"https://github.com/filipecarneiro/hugo-bootstrap-theme/blob/main/LICENSE\">MIT</a> Licensed."
+
+timeZone = 'Europe/London'
+
+# Multilingual
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
+
+
+
+disableHugoGeneratorInject = true
+enableRobotsTXT = true
+#enableGitInfo = true
+enableEmoji = true
+#sectionPagesMenu = "main"
+#googleAnalytics = "UA-1511XXXX-X"
+
+[frontmatter]
+  date = ["date", "publishDate", "lastmod"]
+  lastmod = ["lastmod", ":fileModTime", ":default"]
+
+# Writes public/_headers from layouts/index.headers. The theme declares the
+# HEADERS output format and its media type; Hugo merges those from a theme but
+# not outputs, so the home page opts in below. Netlify and Cloudflare Pages turn
+# the file into response headers; GitHub Pages, where this demo is published,
+# ignores it, so here the meta CSP is the only policy that reaches the browser.
+[outputs]
+  # HTML and RSS are Hugo's defaults for the home page and have to be repeated,
+  # or declaring HEADERS would replace them.
+  home = ["HTML", "RSS", "HEADERS"]
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  series = 'series'
+  author = "authors"
+
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
+
+[permalinks]
+#  post = "/post/:title/"
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.99.1"
+    max = ""
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "static"
+    target = "static"

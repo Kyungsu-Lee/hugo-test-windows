@@ -1,0 +1,64 @@
+{{- /*
+  Favicons by convention: each well-known filename is linked if it exists in static/.
+  Drop the files in and they are picked up - there is nothing to configure.
+
+  The names are the ones favicon generators produce, so a standard icon set works
+  as-is: https://realfavicongenerator.net
+
+  themeColor keeps reading the long-standing top-level param.
+
+  A site whose icons are named differently can override this partial.
+
+  What Google asks of a favicon, which is what shapes the decisions here
+  (https://developers.google.com/search/docs/appearance/favicon-in-search):
+
+    - It reads the favicon from the HOME PAGE only, so at least one rel="icon" has to
+      exist there. That is why the warning at the foot of this file fires on the home
+      page alone: warning on every page would say nothing extra.
+    - The icon should be square, ideally a multiple of 48px (48, 96, 144...).
+    - It must be crawlable, so do not block it in robots.txt.
+    - Its URL should stay STABLE, because Google caches it.
+
+  That last point is why there is deliberately no fingerprint and no ?v= query here. A
+  URL that moved with the bytes would defeat the caching Google is doing on purpose.
+
+  It also has a consequence beyond this file, for whoever configures caching. Because
+  these filenames carry no content hash, a long `immutable` Cache-Control would pin a
+  replaced icon in visitors' caches indefinitely. Something short, a week or so, is the
+  right choice for them, unlike the fingerprinted assets under /css/ and /js/. This
+  theme sets no Cache-Control itself, so that is a decision for the site.
+*/ -}}
+{{- $icons := slice
+      (dict "file" "favicon.svg"          "rel" "icon"             "type" "image/svg+xml")
+      (dict "file" "favicon.png"          "rel" "icon"             "type" "image/png")
+      (dict "file" "favicon-96x96.png"    "rel" "icon"             "type" "image/png" "sizes" "96x96")
+      (dict "file" "favicon.ico"          "rel" "shortcut icon")
+      (dict "file" "apple-touch-icon.png" "rel" "apple-touch-icon" "sizes" "180x180")
+-}}
+{{- $found := 0 -}}
+{{- range $icons -}}
+  {{- if os.FileExists (printf "static/%s" .file) -}}
+    {{- $found = add $found 1 }}
+  {{- /* type through safeHTMLAttr, as in head/opengraph.html: interpolated into a plain
+         attribute, the "+" of image/svg+xml comes out as &#43;. */ -}}
+  <link rel="{{ .rel }}"{{ with .type }} {{ printf "type=%q" . | safeHTMLAttr }}{{ end }}{{ with .sizes }} sizes="{{ . }}"{{ end }} href="{{ .file | absURL }}">
+  {{- end -}}
+{{- end }}
+
+{{- if os.FileExists "static/apple-touch-icon.png" }}
+  <meta name="apple-mobile-web-app-title" content="{{ site.Title }}">
+{{- end }}
+
+{{- if os.FileExists "static/site.webmanifest" }}
+  <link rel="manifest" href="{{ `site.webmanifest` | absURL }}">
+{{- end }}
+
+{{- with site.Params.themeColor }}
+  <meta name="theme-color" content="{{ . }}">
+{{- end }}
+
+{{- /* Google reads the favicon from the home page, so that is the only page worth
+       warning about, and once is enough. */ -}}
+{{- if and .IsHome (eq $found 0) -}}
+  {{- warnf "head/favicons: no favicon found in static/ - search engines will show none. Expected one of favicon.svg, favicon.png, favicon-96x96.png, favicon.ico." -}}
+{{- end -}}

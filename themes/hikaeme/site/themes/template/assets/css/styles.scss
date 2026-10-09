@@ -1,0 +1,144 @@
+@use "bootstrap/scss/bootstrap.scss";
+@use "./widgets/toc";
+@use "./widgets/author";
+@use "./utils";
+@use "./widgets/header";
+@use "./widgets/math-jax";
+@use "./widgets/sidebar";
+@use "./widgets/algolia";
+@use "./widgets/code";
+@use "./widgets/timeline";
+@use "./widgets/skill-set-chart";
+@use "./_variables" as v;
+@use "sass:map";
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family:
+    /* macOS / iOS */
+    "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN",
+    /* Windows 10+ / Vista+ */ "Yu Gothic UI",
+    "Yu Gothic",
+    "Meiryo",
+    /* Linux / Android  */ "Noto Sans CJK JP",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  letter-spacing: 0.05em;
+  font-feature-settings: "palt";
+
+  a {
+    text-decoration: none;
+  }
+
+  main {
+    // h1 ~ h6 size when big screen
+    @media (min-width: 768px) {
+      @each $level, $size in v.$heading-sizes {
+        .h#{$level},
+        h#{$level} {
+          font-size: $size;
+        }
+      }
+    }
+  }
+}
+
+/* Layouts */
+main {
+  max-width: 80rem;
+}
+
+// 記事下部のページネーションの表示
+ul.facts {
+  li {
+    font-size: 0.9rem;
+  }
+}
+
+// underline of each tag/category title
+.page-title {
+  &::after {
+    content: "";
+    display: block;
+    border-bottom: 0.25rem solid map.get(v.$colors, gray, dark);
+    width: 3rem;
+    margin: 1.5rem auto;
+  }
+}
+
+// 記事内部の画像、レイアウト、フォントについて
+article.card-wrapper img,
+article.card-wrapper figure img {
+  box-shadow: v.$card-image-box-shadow;
+  max-width: 100%;
+}
+
+article.card-wrapper figcaption {
+  color: map.get(v.$colors, gray, light);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+article.card-wrapper div.card-body {
+  padding-left: 4%;
+  padding-right: 4%;
+
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    border-bottom: 0.1rem solid map.get(v.$colors, gray, light);
+    margin: 1.5rem 0;
+    padding: 0.5rem 0;
+  }
+
+  h3 {
+    border-left: 0.45rem solid map.get(v.$colors, gray, extra-dark);
+    margin: 1.5rem 0;
+    padding: 0.125rem 0.5rem;
+  }
+
+  p {
+    margin: 1rem 0;
+    line-height: 1.75rem;
+  }
+
+  blockquote {
+    position: relative;
+    padding: 0.2rem 1rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid map.get(v.$colors, blue, light);
+    font-style: italic;
+
+    /* “引用符” アイコンとしての decorative line */
+    &::before {
+      content: "";
+      position: absolute;
+      height: map.get($map: v.$line-heights, $key: sm);
+    }
+  }
+
+  .summary-header {
+    font-size: 0.9rem;
+    i::before {
+      font-weight: 600 !important;
+    }
+  }
+
+  .article-footer {
+    padding: 2rem;
+  }
+}
+
+// thumbnails on the list
+.thumb {
+  background-size: cover;
+  background-position: center;
+}

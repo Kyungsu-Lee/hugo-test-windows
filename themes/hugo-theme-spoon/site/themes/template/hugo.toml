@@ -1,0 +1,11 @@
+[module]
+[module.hugoVersion]
+min = "0.140.0"
+
+[params.options]
+enableImgZooming = false
+
+[params.article]
+toc = true
+readingProgress = true
+# Leave imageZoom unset to inherit options.enableImgZooming.

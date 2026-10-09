@@ -1,0 +1,10 @@
+{{ if .TableOfContents }}
+<nav class="toc-container" aria-label="{{ i18n "toc_title" }}">
+    <details open>
+        <summary><strong>{{ i18n "toc_title" }}</strong></summary>
+        <div class="toc-content">
+            {{ .TableOfContents }}
+        </div>
+    </details>
+</nav>
+{{ end }}

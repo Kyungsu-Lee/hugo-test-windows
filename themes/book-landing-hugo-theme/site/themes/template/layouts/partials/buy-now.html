@@ -1,0 +1,50 @@
+{{ if .Site.Data.buyoptions }}
+<section class="buy-section" id="buy-now">
+    <div class="container">
+        <div class="section-header">
+            <h2>Get Your Copy Today</h2>
+            <p>Choose your preferred format and start reading</p>
+        </div>
+        
+        <div class="buy-grid">
+            {{ range $index, $option := .Site.Data.buyoptions.options }}
+            <div class="buy-card {{ if $option.highlighted }}buy-card-highlighted{{ end }}">
+                {{ if $option.highlighted }}
+                <div class="popular-badge">
+                    <i class="fas fa-star"></i> Popular
+                </div>
+                {{ end }}
+                
+                <div class="buy-card-icon">
+                    <i class="{{ $option.icon }}"></i>
+                </div>
+                
+                <h3 class="buy-card-title">{{ $option.title }}</h3>
+				{{ if $option.description }}
+                <p class="buy-card-description">{{ $option.description }}</p>
+				{{ end }}
+                
+                <div class="buy-card-price">
+                    {{ if $option.originalPrice }}
+                    <span class="original-price">{{ $option.originalPrice }}</span>
+                    {{ end }}
+                    <span class="current-price">{{ $option.price }}</span>
+                </div>
+                
+                <a href="{{ $option.url }}" class="buy-button" target="_blank" rel="noopener">
+                    <i class="fas fa-shopping-cart"></i> Buy Now
+                </a>
+                
+                {{ if $option.features }}
+                <ul class="buy-features">
+                    {{ range $option.features }}
+                    <li><i class="fas fa-check"></i> {{ . }}</li>
+                    {{ end }}
+                </ul>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</section>
+{{ end }}

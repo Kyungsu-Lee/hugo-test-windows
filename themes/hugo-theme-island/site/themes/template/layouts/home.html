@@ -1,0 +1,33 @@
+{{ define "head-append" }}
+
+    {{ $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+    {{ $paginator := .Paginate $pages.ByDate.Reverse }}
+
+    {{ with $paginator.Prev }}
+        <link rel="prev" href="{{ .URL }}">
+    {{ end }}
+
+    {{ with $paginator.Next }}
+        <link rel="next" href="{{ .URL }}">
+    {{ end }}
+
+{{ end }}
+
+{{ define "main" }}
+
+    {{ $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+    {{ $paginator := .Paginate $pages.ByDate.Reverse }}
+
+    {{ range $paginator.Pages }}
+        {{ partial "post-card.html" . }}
+    {{ end }}
+
+    {{ partial "page-nav.html" $paginator }}
+
+{{ end }}
+
+{{ define "side" }}
+
+    {{ partial "translations.html" . }}
+
+{{ end }}

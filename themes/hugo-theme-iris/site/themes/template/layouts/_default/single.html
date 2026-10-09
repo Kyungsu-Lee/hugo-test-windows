@@ -1,0 +1,32 @@
+{{ define "main" }}
+  {{ if $.Params.eyecatch }}
+    <section class="section">
+      {{ partial "eyecatch" . }}
+    </section>
+  {{ end }}
+
+  <section class="section">
+    {{ partial "content" . }}
+  </section>
+
+  <hr>
+
+  {{ if $.Site.Params.shareButtons }}
+    <section class="section">
+      {{ partial "share-buttons" . }}
+    </section>
+  {{ end }}
+
+  {{ if $.Site.Config.Services.Disqus.Shortname }}
+    <section class="section">
+      {{ template "_internal/disqus.html" . }}
+    </section>
+  {{ end }}
+
+  {{ if $.Site.Params.enableRandomRecommendedPosts }}
+    <section class="section">
+      <h2 class="title is-3">{{ i18n "random_recommended_posts" . }}</h2>
+      {{ partial "random-post-list" . }}
+    </section>
+  {{ end }}
+{{ end }}

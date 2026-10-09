@@ -1,0 +1,205 @@
+:root {
+  /****************************************************
+  Main Colors Definitions (simplified explanation)
+  We will use 'oklch' to calculate the color variations.
+  ****************************************************/
+
+  /*
+  Primary color
+  */
+
+  /* 'hue' is a value between 0 and 360 degrees and is the color itself */
+  --color-primary-hue: 250deg;
+
+  /* 'chroma' is a value between 0% and 100% and is the color vividity (saturation) */
+  --colors-primary-chroma: 20%;
+
+  /* 'lightness' is a value between 0% (black) and 100% (white) */
+  --color-primary-lightness: 50%;
+
+  /*
+  Color Palette
+  */
+
+  /*
+  Main colors 'chroma'
+  Preferred values: between 10% and 70%)
+  Default to: --colors-primary-chroma
+  */
+  --colors-chroma: var(--colors-primary-chroma);
+
+  /*
+  Use vivid colors for events (e.g. successes, warnings, errors)
+  Preferred values: between 30% and 80%
+  */
+  --color-event-chroma: 60%;
+
+  /*
+  Use less saturated colors for neutral palettes
+  Preferred values: between 0% and 10%
+  (0% gives us a gray scale neutral palette)
+  */
+  --color-neutral-chroma: 3%;
+
+  /*
+  Secondary colors hue angle (left and right from the primary)
+  Preferred values:
+    Analogous color scheme
+      - between 150 and 170 degrees
+      - between 190 and 210 degrees (left and right inverted)
+    Triadic color scheme
+      - 120 degrees
+      - 240 degrees (left and right inverted)
+    Split-Complementary color scheme
+      - between 150 and 170 degrees
+      - between 190 and 210 degrees (left and right inverted)
+    Complementary color scheme
+      - 180 degrees (left and right are the same)
+  */
+  --colors-secondary-hue-angle: 120deg;
+
+  /*
+  We want the warning colors to be yellow-ish
+  Preferred values: between 60 and 100 degrees
+  */
+  --color-warning-hue: 80deg;
+  --color-warning-chroma: var(--color-event-chroma);
+
+  /*
+  We want the warning colors to be green-ish
+  Preferred values: between 120 and 155 degrees
+  */
+  --color-success-hue: 140deg;
+  --color-success-chroma: var(--color-event-chroma);
+
+  /*
+  We want the warning colors to be red-ish
+  Preferred values: between 10 and 40 degrees
+  */
+  --color-error-hue: 25deg;
+  --color-error-chroma: var(--color-event-chroma);
+
+  /* Colors lightness variations */
+  --palette-lightest-lightness: 98%;
+  --palette-lighter-lightness: 91%;
+  --palette-light-lightness: 78%;
+  --palette-medium-light-lightness: 70%;
+  --palette-medium-lightness: 50%;
+  --palette-medium-dark-lightness: 33%;
+  --palette-dark-lightness: 26%;
+  --palette-darker-lightness: 20%;
+  --palette-darkest-lightness: 14%;
+
+  /*
+  Calculate Colors
+  */
+
+  /* Calculate hue for Secondary left and Secondary right */
+  --color-secondary-left-hue: calc(var(--color-primary-hue) - var(--colors-secondary-hue-angle));
+  --color-secondary-right-hue: calc(var(--color-primary-hue) + var(--colors-secondary-hue-angle));
+
+  /* Primary */
+  --palette-primary-main: oklch(var(--color-primary-lightness) var(--colors-primary-chroma) var(--color-primary-hue));
+  --palette-primary-lightest: oklch(var(--palette-lightest-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-lighter: oklch(var(--palette-lighter-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-light: oklch(var(--palette-light-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-medium-light: oklch(var(--palette-medium-light-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-medium: oklch(var(--palette-medium-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-dark: oklch(var(--palette-dark-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-darker: oklch(var(--palette-darker-lightness) var(--colors-chroma) var(--color-primary-hue));
+  --palette-primary-darkest: oklch(var(--palette-darkest-lightness) var(--colors-chroma) var(--color-primary-hue));
+
+  /* Secondary left */
+  --palette-secondary-left-main: oklch(var(--color-primary-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-lightest: oklch(var(--palette-lightest-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-lighter: oklch(var(--palette-lighter-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-light: oklch(var(--palette-light-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-medium-light: oklch(var(--palette-medium-light-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-medium: oklch(var(--palette-medium-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-dark: oklch(var(--palette-dark-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-darker: oklch(var(--palette-darker-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+  --palette-secondary-left-darkest: oklch(var(--palette-darkest-lightness) var(--colors-chroma) var(--color-secondary-left-hue));
+
+  /* Secondary right */
+  --palette-secondary-right-main: oklch(var(--color-primary-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-lightest: oklch(var(--palette-lightest-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-lighter: oklch(var(--palette-lighter-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-light: oklch(var(--palette-light-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-medium-light: oklch(var(--palette-medium-light-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-medium: oklch(var(--palette-medium-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-dark: oklch(var(--palette-dark-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-darker: oklch(var(--palette-darker-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+  --palette-secondary-right-darkest: oklch(var(--palette-darkest-lightness) var(--colors-chroma) var(--color-secondary-right-hue));
+
+  /* Warning */
+  --palette-warning-main: oklch(var(--color-primary-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-lightest: oklch(var(--palette-lightest-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-lighter: oklch(var(--palette-lighter-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-light: oklch(var(--palette-light-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-medium-light: oklch(var(--palette-medium-light-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-medium: oklch(var(--palette-medium-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-dark: oklch(var(--palette-dark-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-darker: oklch(var(--palette-darker-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+  --palette-warning-darkest: oklch(var(--palette-darkest-lightness) var(--color-warning-chroma) var(--color-warning-hue));
+
+  /* Success */
+  --palette-success-main: oklch(var(--color-primary-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-lightest: oklch(var(--palette-lightest-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-lighter: oklch(var(--palette-lighter-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-light: oklch(var(--palette-light-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-medium-light: oklch(var(--palette-medium-light-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-medium: oklch(var(--palette-medium-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-dark: oklch(var(--palette-dark-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-darker: oklch(var(--palette-darker-lightness) var(--color-success-chroma) var(--color-success-hue));
+  --palette-success-darkest: oklch(var(--palette-darkest-lightness) var(--color-success-chroma) var(--color-success-hue));
+
+  /* Error */
+  --palette-error-main: oklch(var(--color-primary-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-lightest: oklch(var(--palette-lightest-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-lighter: oklch(var(--palette-lighter-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-light: oklch(var(--palette-light-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-medium-light: oklch(var(--palette-medium-light-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-medium: oklch(var(--palette-medium-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-dark: oklch(var(--palette-dark-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-darker: oklch(var(--palette-darker-lightness) var(--color-error-chroma) var(--color-error-hue));
+  --palette-error-darkest: oklch(var(--palette-darkest-lightness) var(--color-error-chroma) var(--color-error-hue));
+
+  /* Neutral */
+  --palette-neutral-main: oklch(var(--color-primary-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-lightest: oklch(var(--palette-lightest-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-lighter: oklch(var(--palette-lighter-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-light: oklch(var(--palette-light-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-medium-light: oklch(var(--palette-medium-light-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-medium: oklch(var(--palette-medium-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-medium-dark: oklch(var(--palette-medium-dark-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-dark: oklch(var(--palette-dark-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-darker: oklch(var(--palette-darker-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral-darkest: oklch(var(--palette-darkest-lightness) var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral0: oklch(0% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral5: oklch(12% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral10: oklch(14% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral15: oklch(16% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral20: oklch(18% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral25: oklch(20% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral30: oklch(24% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral35: oklch(30% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral40: oklch(37% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral50: oklch(50% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral60: oklch(58% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral65: oklch(65% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral70: oklch(70% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral75: oklch(74% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral80: oklch(79% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral85: oklch(83% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral90: oklch(88% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral95: oklch(94% var(--color-neutral-chroma) var(--color-primary-hue));
+  --palette-neutral100: oklch(100% var(--color-neutral-chroma) var(--color-primary-hue));
+
+  color-scheme: light dark;
+}

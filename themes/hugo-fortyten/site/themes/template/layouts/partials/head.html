@@ -1,0 +1,28 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{{- /* Alpine.js cloak - prevents flash of unstyled content */ -}}
+<style>[x-cloak] { display: none !important; }</style>
+{{- /* Theme detection script - runs before any content renders to prevent FOUC */ -}}
+<script>
+  (function() {
+    var isDark = localStorage.theme === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.classList.toggle('dark', isDark);
+  })();
+</script>
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+{{ if fileExists "static/favicon-96x96.png" }}<link rel="icon" type="image/png" href="{{ `favicon-96x96.png` | absURL }}" sizes="96x96" />{{ end }}
+{{ if fileExists "static/favicon.svg" }}<link rel="icon" type="image/svg+xml" href="{{ `favicon.svg` | absURL }}" />{{ end }}
+{{ if fileExists "static/favicon.ico" }}<link rel="shortcut icon" href="{{ `favicon.ico` | absURL }}" />{{ end }}
+{{ if fileExists "static/apple-touch-icon.png" }}<link rel="apple-touch-icon" sizes="180x180" href="{{ `apple-touch-icon.png` | absURL }}" />{{ end }}
+<meta name="apple-mobile-web-app-title" content="{{ .Site.Title }}" />
+{{ if fileExists "static/site.webmanifest" }}<link rel="manifest" href="{{ `site.webmanifest` | absURL }}" />{{ end }}
+{{- if and (reflect.IsMap .Params.author) .Params.author.name .Params.author.email }}
+<meta name="author" content="{{ .Params.author.name }}">
+{{- else if and (reflect.IsMap site.Params.author) site.Params.author.name site.Params.author.email }}
+<meta name="author" content="{{ site.Params.author.name }}">
+{{- end }}
+{{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
+{{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
+{{ partialCached "head/css.html" . }}
+{{ partialCached "head/js.html" . }}

@@ -1,0 +1,5 @@
+{{ $url := urls.Parse $.Page.Params.canonicalURL }}
+{{ if $url.Host }}
+  {{ i18n "canonical_link" . }}
+  <a href="{{ $.Page.Params.canonicalURL | safeURL }}" rel="noopener noreferrer" target="_blank">{{ $url.Host }}</a>
+{{ end }}

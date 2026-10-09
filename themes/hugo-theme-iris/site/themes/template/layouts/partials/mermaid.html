@@ -1,0 +1,17 @@
+{{ $js := resources.Get "mermaid/dist/mermaid.min.js" }}
+{{ $secureJS := $js | resources.Fingerprint "sha512" }}
+<script src="{{ $secureJS.Permalink }}" integrity="{{ $secureJS.Data.Integrity }}"></script>
+<script>
+  const mermaidConfig = {
+    startOnLoad: true,
+    flowchart: {
+      useMaxWidth: true,
+      htmlLabels: true,
+      curve: "cardinal",
+    },
+    theme: "neutral",
+    securityLevel: "strict",
+  };
+
+  mermaid.initialize(mermaidConfig);
+</script>

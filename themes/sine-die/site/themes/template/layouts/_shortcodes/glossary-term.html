@@ -1,0 +1,42 @@
+{{- /*
+  Link to a glossary term.
+
+  @context {string} title The term title.
+  @context {string} context The term context (One of the 'contexts' associated with the term).
+  @context {string} linkTitle The text to show in the term link (default to the term 'linkTitle').
+  @context {string} fragment An URI fragment (without the #) linking to an header ID in the term page (optional).
+  @context {bool} linkAsAbbreviation Show the term link as abbreviation, if available (default: true).
+  @context {string} errorLevel The error level for missing/duplicated terms and invalid page fragments (one of: ignore, warning (default), error).
+*/}}
+
+{{- /* Initialize. */}}
+{{- $title := .Get "title" }}
+{{- $context := .Get "context" }}
+{{- $linkTitle := .Get "linkTitle" }}
+{{- $fragment := .Get "fragment" }}
+{{- $linkAsAbbreviation := .Get "linkAsAbbreviation" | default true }}
+{{- $errorLevel := .Get "errorLevel" | default "warning" }}
+
+{{- $caller := $.Position -}}
+
+{{- if $title }}
+  {{-
+    $attributes := dict
+      "title" $title
+      "context" $context
+      "linkTitle" $linkTitle
+      "fragment" $fragment
+      "linkAsAbbreviation" $linkAsAbbreviation
+      "errorLevel" $errorLevel
+      "caller" $caller
+  }}
+
+  {{- with partial "glossary/helpers/find-term.html" $attributes }}
+    {{- $attributes := merge $attributes (dict "page" .) }}
+    {{- partial "glossary/link-term.html" $attributes -}}
+  {{- else }}
+    {{- $linkTitle | default $title}}
+  {{- end }}
+{{- else }}
+  {{- errorf "The %q shortcode require a 'title'. See '%s'" $.Name $.Position }}
+{{- end -}}

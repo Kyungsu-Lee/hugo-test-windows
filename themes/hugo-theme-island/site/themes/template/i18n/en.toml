@@ -1,0 +1,36 @@
+[menu.home]
+other = "Home"
+
+[menu.archives]
+other = "Archives"
+
+[menu.tags]
+other = "Tags"
+
+[menu.categories]
+other = "Categories"
+
+[menu.about]
+other = "About"
+
+[menu.authors]
+other = "Authors"
+
+[page.info]
+other = "Page {{ .pageNum }} of {{ .pageCount }}"
+
+[page.prev]
+other = "Previous page"
+
+[page.next]
+other = "Next page"
+
+[article.toc]
+other = "Table of Contents"
+
+[article.translations]
+other = "Translations"
+
+[nav.goTop]
+other = "Back to Top"
+

@@ -1,0 +1,134 @@
+{{/*
+    blog/list.html — Blog archive with year/month grouping
+
+    This template overrides _default/list.html for the blog section,
+    rendering all visible blog posts in a nested Bootstrap accordion:
+    years at the top level, months nested within each year. The most
+    recent year and its most recent month are expanded by default;
+    everything else is collapsed.
+
+    Hugo template lookup prefers layouts/blog/list.html over
+    layouts/_default/list.html when rendering the blog section.
+
+    Uses Hugo's where for filtering and GroupBy for year/month
+    grouping, avoiding manual state tracking.
+
+    Key Hugo concepts used here:
+      .Content              — custom content from blog/_index.md
+      .Pages                — all pages in the blog section
+      where                 — filters pages by front matter values
+      .GroupBy "Date.Year"  — groups pages by year
+      .GroupBy "Date.Month" — groups pages by month within a year
+      .Params.hide_sitemap  — posts with this set are excluded
+      .Plain                — full page content stripped of HTML
+      htmlUnescape          — converts HTML entities to literal chars
+      truncate              — trims a string to N characters + "…"
+*/}}
+{{ define "main" }}
+{{- .Content }}
+
+{{/*
+    Filter visible posts using where. Posts with hide_sitemap: true
+    are excluded so hidden content never appears in the archive.
+*/}}
+{{- $posts := where .Pages.ByDate.Reverse "Params.hide_sitemap" "ne" true -}}
+
+{{ if $posts }}
+{{- $firstYear := true -}}
+
+<div class="accordion blog-archive" id="blog-archive">
+{{- range $posts.GroupByDate "2006" "desc" -}}
+    {{- $year := .Key -}}
+    {{- $yearPosts := .Pages -}}
+    {{- $postCount := len $yearPosts -}}
+    {{- $isYearExpanded := $firstYear -}}
+
+    <div class="accordion-item">
+    <h2 class="accordion-header" id="year-heading-{{ $year }}">
+        <button class="accordion-button{{ if not $isYearExpanded }} collapsed{{ end }}"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#year-{{ $year }}"
+                aria-expanded="{{ if $isYearExpanded }}true{{ else }}false{{ end }}"
+                aria-controls="year-{{ $year }}">
+            {{ $year }}
+            <span class="archive-year-count badge rounded-pill ms-2">
+                {{ $postCount }} {{ if eq $postCount 1 }}post{{ else }}posts{{ end }}
+            </span>
+        </button>
+    </h2>
+    <div id="year-{{ $year }}"
+         class="accordion-collapse collapse{{ if $isYearExpanded }} show{{ end }}"
+         aria-labelledby="year-heading-{{ $year }}"
+         data-bs-parent="#blog-archive">
+    <div class="accordion-body">
+
+        {{- $firstMonth := true -}}
+        {{- range $yearPosts.GroupByDate "January" "desc" -}}
+            {{- $month := .Key -}}
+            {{- $monthPosts := .Pages -}}
+            {{- $monthPostCount := len $monthPosts -}}
+            {{- $isMonthExpanded := and $isYearExpanded $firstMonth -}}
+
+            <div class="accordion-item archive-month-item">
+            <h3 class="accordion-header" id="month-heading-{{ $year }}-{{ $month }}">
+                <button class="accordion-button archive-month-button{{ if not $isMonthExpanded }} collapsed{{ end }}"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#month-{{ $year }}-{{ $month }}"
+                        aria-expanded="{{ if $isMonthExpanded }}true{{ else }}false{{ end }}"
+                        aria-controls="month-{{ $year }}-{{ $month }}">
+                    {{ $month }}
+                    <span class="archive-month-count badge rounded-pill ms-2">
+                        {{ $monthPostCount }}
+                    </span>
+                </button>
+            </h3>
+            <div id="month-{{ $year }}-{{ $month }}"
+                 class="accordion-collapse collapse{{ if $isMonthExpanded }} show{{ end }}"
+                 aria-labelledby="month-heading-{{ $year }}-{{ $month }}"
+                 data-bs-parent="#year-{{ $year }}">
+            <div class="accordion-body">
+            <ul class="list-group archive-posts">
+            {{- range $monthPosts -}}
+                <li class="list-group-item">
+                    {{/*
+                        htmlUnescape converts HTML entities (e.g., "&amp;" → "&",
+                        "&rsquo;" → "'") so titles render as plain text, not
+                        escaped strings.
+                    */}}
+                    <a href="{{ .Permalink }}">{{ .Title | default .File.BaseFileName | htmlUnescape }}</a>
+                    <br>
+                    <time class="text-muted" datetime="{{ .Date.Format "2006-01-02" }}">
+                        {{- .Date.Format (site.Params.date_format | default "2006 January 02") -}}
+                    </time>
+                    {{/*
+                        Excerpt: prefer hand-written description, fall back to
+                        truncated plaintext. htmlUnescape converts HTML entities
+                        so excerpts render cleanly.
+                    */}}
+                    {{ with .Params.description | default (.Plain | htmlUnescape | truncate 250) }}
+                    <p class="term-excerpt text-muted mb-0 mt-1">{{ . }}</p>
+                    {{ end }}
+                </li>
+            {{- end -}}
+            </ul>
+            </div>
+            </div>
+            </div>
+
+            {{- $firstMonth = false -}}
+        {{- end -}}
+
+    </div>
+    </div>
+    </div>
+
+    {{- $firstYear = false -}}
+{{- end -}}
+</div>
+
+{{ else }}
+<p class="text-muted">No posts found.</p>
+{{ end }}
+{{ end }}

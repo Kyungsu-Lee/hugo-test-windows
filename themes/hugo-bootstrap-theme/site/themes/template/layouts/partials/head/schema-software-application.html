@@ -1,0 +1,52 @@
+<!-- Software Application Schema.org Type -->
+<!-- https://schema.org/SoftwareApplication -->
+
+<!-- Revision based on Google guide https://developers.google.com/search/docs/appearance/structured-data/software-app -->
+
+{{/* Built as a map and emitted in one interpolation: Hugo serialises it as
+     JSON, so optional fields can never leave a dangling comma behind. */}}
+{{ with .Params.softwareApplication }}
+  {{ $type := slice "SoftwareApplication" }}
+  {{ with .subType }}{{ $type = $type | append . }}{{ end }}
+  {{ $d := dict "@context" "https://schema.org" "@type" $type
+                "name" .name "description" .description }}
+  {{ with .url }}{{ $d = merge $d (dict "url" .) }}{{ end }}
+  {{ with .screenshot }}
+    {{ with $.Resources.GetMatch . }}{{ $d = merge $d (dict "screenshot" .Permalink) }}{{ end }}
+  {{ end }}
+  {{/* Looked up in the page's own bundle first, then in assets/, so a page-specific
+       image wins and a shared one still resolves. */}}
+  {{ with .image }}
+    {{ with ($.Resources.GetMatch . | default (resources.GetMatch .)) }}
+      {{ $d = merge $d (dict "image" (. | fingerprint).Permalink) }}
+    {{ end }}
+  {{ end }}
+  {{ with .provider }}
+    {{ $provider := dict "@type" "Organization" "name" .name }}
+    {{ with .url }}{{ $provider = merge $provider (dict "url" .) }}{{ end }}
+    {{ $d = merge $d (dict "provider" $provider) }}
+  {{ end }}
+  {{ with .browserRequirements }}{{ $d = merge $d (dict "browserRequirements" .) }}{{ end }}
+  {{ with .applicationCategory }}{{ $d = merge $d (dict "applicationCategory" .) }}{{ end }}
+  {{ with .countriesSupported }}{{ $d = merge $d (dict "countriesSupported" .) }}{{ end }}
+  {{ with .operatingSystem }}{{ $d = merge $d (dict "operatingSystem" .) }}{{ end }}
+  {{ with .aggregateRating }}
+    {{ $d = merge $d (dict "aggregateRating" (dict
+      "@type" "AggregateRating"
+      "ratingValue" (trim .ratingValue " ")
+      "reviewCount" (trim .reviewCount " "))) }}
+  {{ end }}
+  {{ with .offer }}
+    {{ $offer := dict "@type" "Offer"
+                      "price" (trim .price " ")
+                      "priceCurrency" .priceCurrency
+                      "url" $.Permalink }}
+    {{ with .description }}{{ $offer = merge $offer (dict "description" .) }}{{ end }}
+    {{ with .validFrom }}{{ $offer = merge $offer (dict "validFrom" .) }}{{ end }}
+    {{ with .priceValidUntil }}{{ $offer = merge $offer (dict "priceValidUntil" .) }}{{ end }}
+    {{ $d = merge $d (dict "offers" $offer) }}
+  {{ end }}
+<script type="application/ld+json">
+{{ $d }}
+</script>
+{{ end }}

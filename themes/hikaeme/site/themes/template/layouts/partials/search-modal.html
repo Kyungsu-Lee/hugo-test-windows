@@ -1,0 +1,23 @@
+<!-- Modal for search-bar -->
+<div
+  class="modal fade"
+  id="globalSearchModal"
+  tabindex="-1"
+  aria-labelledby="globalSearchModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title visually-hidden" id="globalSearchModalLabel">
+          {{ T "search.ariaLabel" }}
+        </h5>
+        <section id="searchbox" class="w-100"></section>
+      </div>
+      <div class="modal-body overflow-y-auto" id="hits"></div>
+      <div class="modal-footer">
+        <span id="powered-by-algolia"></span>
+      </div>
+    </div>
+  </div>
+</div>

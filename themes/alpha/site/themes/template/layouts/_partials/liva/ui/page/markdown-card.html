@@ -1,0 +1,28 @@
+{{- $severity := .severity | default "liva-card-error" -}}
+{{- $livaIcon := cond (eq $severity "liva-card-error") "#liva-error-icon" "#liva-warning-icon" -}}
+{{- $code := .code -}}
+
+
+<div class="liva liva-card {{ $severity }} liva-shadow">
+  <header class="liva-card-header">
+    <h2 class="liva-title">{{ .title | markdownify }}</h2>
+    <svg aria-hidden="true" focusable="false" width="24" height="24">
+      <use href="{{ $livaIcon }}"></use>
+    </svg>
+  </header>
+  <div class="liva-card-content">
+    <div class="liva-card-content-reason">{{ .reason | markdownify }}</div>
+    {{- with .solution }}
+      <hr />
+      <div class="liva-card-content-solution">{{ .solution | markdownify }}</div>
+    {{ end -}}
+  </div>
+  <footer class="liva-card-footer">
+    <div class="liva-card-footer-meta">
+      {{- with .example }}{{ . | markdownify }}{{ end }}
+      {{- with .docURL }}
+        <a class="liva-mono" href="{{ . }}">{{ $code | safeHTML }}</a>
+      {{- end }}
+    </div>
+  </footer>
+</div>

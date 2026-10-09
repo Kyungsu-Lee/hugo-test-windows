@@ -1,0 +1,10 @@
+{{- $alertClassLevel := "info" -}}
+{{- $alertClasses := slice "notification" -}}
+{{- with .Get "type" -}}
+  {{- $alertClassLevel = . -}}
+{{- end -}}
+{{- $alertClasses = $alertClasses | append (printf "is-%s" $alertClassLevel) -}}
+<div class="{{- delimit $alertClasses " " -}}">
+  {{- $optMd := dict "markup" "goldmark" -}}
+  {{- .Inner | .Page.RenderString $optMd -}}
+</div>

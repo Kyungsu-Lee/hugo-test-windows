@@ -1,0 +1,34 @@
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="initial-scale=1, width=device-width" />
+{{- $title := .Site.Title }}
+{{- if .Params.Title }}
+  {{- $title = printf "%s | %s" .Params.Title $title }}
+{{- end }}
+<title>{{ $title }}</title>
+{{- with .Description }}
+  {{- $description := . | markdownify | plainify }}
+  <meta name="description" content="{{ $description }}" />
+{{- end }}
+
+{{- $keywords := .Keywords | default .Params.tags -}}
+{{- with $keywords -}}
+  <meta name="keywords" content='{{ delimit . ", " }}' />
+{{- end -}}
+
+{{- range .AlternativeOutputFormats }}
+  {{ printf `<link rel=%q type=%q href=%q title=%q>` .Rel .MediaType.Type .Permalink $title | safeHTML }}
+{{- end -}}
+<link rel="canonical" href="{{ .Permalink }}" />
+{{ partial "fonts-assets.html" . }}
+{{ partialCached "head/css.html" . }}
+{{ partialCached "head/js.html" . }}
+
+{{/* Adding templates.Defer to be able to use page.Store.Get in 'html>head' */}}
+{{ $pageData := dict "page" . -}}
+{{ with (templates.Defer (dict "data" $pageData)) -}}
+  {{ if page.Store.Get "hasMermaid" -}}
+    {{ partialCached "head/mermaid.html" . }}
+  {{- end }}
+{{ end }}
+{{- if .Site.Params.enableFavicons }}{{ partialCached "head/favicons.html" . }}{{ end -}}

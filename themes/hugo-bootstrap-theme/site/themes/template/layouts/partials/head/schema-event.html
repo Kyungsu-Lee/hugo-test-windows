@@ -1,0 +1,77 @@
+<!-- Event Schema.org Type -->
+<!-- https://schema.org/Event -->
+
+<!-- Revision based on Google guide https://developers.google.com/search/docs/appearance/structured-data/event -->
+
+{{/* Built as a map and emitted in one interpolation: Hugo serialises it as
+     JSON, so optional fields can never leave a dangling comma behind. */}}
+{{ with .Site.Params.event }}
+  {{ $d := dict "@context" "https://schema.org" "@type" "Event"
+                "name" .name "startDate" .startDate }}
+  {{ with .endDate }}{{ $d = merge $d (dict "endDate" .) }}{{ end }}
+  {{ with .description }}{{ $d = merge $d (dict "description" .) }}{{ end }}
+  {{ with .attendanceMode }}{{ $d = merge $d (dict "eventAttendanceMode" (printf "https://schema.org/%s" .)) }}{{ end }}
+  {{ with .status }}{{ $d = merge $d (dict "eventStatus" (printf "https://schema.org/%s" .)) }}{{ end }}
+
+  {{ $place := dict "@type" "Place" "name" .PlaceName }}
+  {{ with .address }}
+    {{ $a := dict "@type" "PostalAddress" }}
+    {{ with .streetAddress }}{{ $a = merge $a (dict "streetAddress" .) }}{{ end }}
+    {{ with .extendedAddress }}{{ $a = merge $a (dict "extendedAddress" .) }}{{ end }}
+    {{ with .locality }}{{ $a = merge $a (dict "addressLocality" .) }}{{ end }}
+    {{ with .region }}{{ $a = merge $a (dict "addressRegion" .) }}{{ end }}
+    {{ with .postalCode }}{{ $a = merge $a (dict "postalCode" .) }}{{ end }}
+    {{ with .country }}{{ $a = merge $a (dict "addressCountry" .) }}{{ end }}
+    {{ if gt (len $a) 1 }}{{ $place = merge $place (dict "address" $a) }}{{ end }}
+  {{ end }}
+  {{ $d = merge $d (dict "location" $place) }}
+
+  {{ with .image }}
+    {{ with resources.GetMatch . }}
+      {{ $image := . }}
+      {{ if ne $image.MediaType.SubType "svg" }}{{ $image = $image.Resize "960x" }}{{ end }}
+      {{ $d = merge $d (dict "image" $image.Permalink) }}
+    {{ end }}
+  {{ end }}
+
+  {{ with .offer }}
+    {{ $offer := dict "@type" "Offer" }}
+    {{ with .price }}{{ $offer = merge $offer (dict "price" .) }}{{ end }}
+    {{ with .priceCurrency }}{{ $offer = merge $offer (dict "priceCurrency" .) }}{{ end }}
+    {{/* Guarded like the rest: printf on an absent value published the literal
+         "https://schema.org/%!s(<nil>)" as the availability. */}}
+    {{ with .availability }}{{ $offer = merge $offer (dict "availability" (printf "https://schema.org/%s" .)) }}{{ end }}
+    {{ with .description }}{{ $offer = merge $offer (dict "description" .) }}{{ end }}
+    {{ with .url }}{{ $offer = merge $offer (dict "url" .) }}{{ end }}
+    {{ with .validFrom }}{{ $offer = merge $offer (dict "validFrom" .) }}{{ end }}
+    {{ $d = merge $d (dict "offers" $offer) }}
+  {{ end }}
+
+  {{/* Performers come from either a simple performers list on the event params
+       or, for sites that keep a schedule, data/event/*.{yaml,toml,json} shaped
+       as events[].speakers[]. Both are merged, de-duplicated and sorted. */}}
+  {{ $speakersList := slice }}
+  {{ range .performers }}{{ $speakersList = $speakersList | append . }}{{ end }}
+  {{ range hugo.Data.event }}{{ range .events }}{{ range .speakers }}{{ $speakersList = $speakersList | append . }}{{ end }}{{ end }}{{ end }}
+  {{ with $speakersList }}
+    {{ $performers := slice }}
+    {{ range ($speakersList | uniq | sort) }}
+      {{ $performers = $performers | append (dict "@type" "Person" "name" .) }}
+    {{ end }}
+    {{ $d = merge $d (dict "performer" $performers) }}
+  {{ end }}
+
+  {{ with $.Site.Params.organization }}
+    {{ $org := dict "@type" "Organization" "name" .name }}
+    {{ with .url }}{{ $org = merge $org (dict "url" .) }}{{ end }}
+    {{ with .logo }}
+      {{ with resources.GetMatch . }}
+        {{ $org = merge $org (dict "logo" (dict "@type" "ImageObject" "url" .Permalink)) }}
+      {{ end }}
+    {{ end }}
+    {{ $d = merge $d (dict "organizer" $org) }}
+  {{ end }}
+<script type="application/ld+json">
+{{ $d }}
+</script>
+{{ end }}

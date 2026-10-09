@@ -1,0 +1,10 @@
+{{- range .GroupByDate "2006" }}
+<div class="posts-group">
+    <h2 class="main-header">{{ .Key }}</h2>
+    <ul class="posts">
+        {{- range .Pages }}
+        <li>{{ partial "post-item.html" (dict "post" .) }}</li>
+        {{- end }}
+    </ul>
+</div>
+{{- end }}

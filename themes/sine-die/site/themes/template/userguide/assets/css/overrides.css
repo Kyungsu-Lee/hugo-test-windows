@@ -1,0 +1,89 @@
+.responsive-previews {
+  width: 100%;
+  margin: auto;
+}
+
+.responsive-previews svg{
+  width: 90%;
+  margin: auto;
+}
+
+body.homepage > main .logos img {
+  width: 40%;
+  margin: auto;
+  display: block;
+}
+
+body.homepage > main .logos {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+}
+
+body.homepage > main .logos svg {
+  width: 5em;
+  height: 5em;
+  margin: auto;
+  display: block;
+  border-radius: 50%;
+  padding: .2em;
+
+  --sinetris-color: #9499d0;
+  --color-primary: oklch(from var(--sinetris-color) var(--palette-medium-dark-lightness) c h);
+
+  background-color: oklch(from var(--sinetris-color) var(--palette-lighter-lightness) calc(c / 2) h);
+  border: 0.2em solid var(--color-primary);
+}
+
+@media print {
+  .print-background-color {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+@media only screen and (width <= 1024px) {
+  body.homepage > main .logos img {
+    width: 80%;
+  }
+}
+
+@media only screen and (width <= 480px) {
+  body.homepage > main .logos svg {
+    width: 2.5em;
+    height: 2.5em;
+  }
+
+  body.homepage > main .logos img {
+    width: 100%;
+  }
+}
+
+@media only screen and (width < 430px) {
+  nav.primary {
+    .brand {
+      img,
+      svg {
+        margin: 0;
+      }
+
+      .title {
+        p {
+          font-size: .75em;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (width < 375px) {
+  nav.primary {
+    .brand {
+      .title {
+        p {
+          font-size: .65em;
+        }
+      }
+    }
+  }
+}
