@@ -1,0 +1,57 @@
+{{ define "main" }}
+
+{{ if site.Params.dashboard.enabled }}
+
+<div align="center" style="margin-top: 2rem;">
+  {{ if site.Params.dashboard.ascii_art }}
+  <pre style="color: {{ site.Params.dashboard.ascii_color | default "#bb9af7" }}; font-weight: bold; background: transparent; border: none; font-size: 1.2rem; line-height: 1.2; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+{{ site.Params.dashboard.ascii_art | safeHTML }}
+  </pre>
+  {{ end }}
+</div>
+
+<div align="center" style="margin-top: 1rem; margin-bottom: 2rem; color: #9ece6a; font-family: monospace; font-size: 1rem;">
+  {{ if site.Params.dashboard.title }}
+  <p style="color: #c0caf5; margin-bottom: 0.5rem;">{{ site.Params.dashboard.title | safeHTML }}</p>
+  {{ end }}
+  {{ if site.Params.dashboard.subtitle }}
+  <p style="color: #7aa2f7; font-size: 0.95rem;">{{ site.Params.dashboard.subtitle | safeHTML }}</p>
+  {{ end }}
+  {{ if site.Params.dashboard.hint }}
+  <p style="color: #565f89; font-size: 0.9rem; margin-top: 1rem;">{{ site.Params.dashboard.hint | safeHTML }}</p>
+  {{ end }}
+</div>
+
+<div style="max-width: 350px; margin: 0 auto; font-family: monospace; font-size: 1.1rem; line-height: 2.2;">
+  {{ range site.Menus.main }}
+  <div style="display: flex; justify-content: space-between;">
+    <span>
+      {{ if .Params.icon }}<span style="color: #7dcfff; margin-right: 8px;">{{ .Params.icon }}</span>{{ end }}
+      <a href="{{ .URL }}" style="color: #c0caf5; text-decoration: none;" {{ if .Params.external }}target="_blank"{{ end }}>{{ .Name }}</a>
+    </span>
+    {{ if .Params.shortcut }}
+    <span style="color: #565f89; font-size: 0.95rem;">press <span style="color: #ff9e64;">{{ .Params.shortcut }}</span></span>
+    {{ end }}
+  </div>
+  {{ end }}
+</div>
+
+<div align="center" style="margin-top: 3.5rem; color: #565f89; font-family: monospace; font-size: 0.95rem;">
+  Tip: press <span style="color: #ff9e64;">b</span> or <span style="color: #ff9e64;">backspace</span> to go back
+</div>
+
+{{ else }}
+
+    {{ if site.Params.social }}
+    <div class="social-links">
+        {{ range site.Params.social }}
+        <a href="{{ .url }}" target="_blank">~/{{ .name }}</a>
+        {{ end }}
+    </div>
+    {{ end }}
+
+    {{ .Content }}
+
+{{ end }}
+
+{{ end }}

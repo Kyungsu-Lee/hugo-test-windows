@@ -1,0 +1,6 @@
+baseURL = "https://example.com"
+languageCode = "en-us"
+title = "Hugo Changelog"
+
+[pagination]
+  pagerSize = 4

@@ -1,0 +1,138 @@
+[archives]
+other = "Archives"
+[categories]
+other = "Categories"
+[category]
+other = "Category"
+[tags]
+other = "Tags"
+[tag]
+other = "Tag"
+[prev]
+other = "Prev"
+[next]
+other = "Next"
+[about]
+other = "About"
+[latest]
+other = "Latest"
+[now]
+other = "Now"
+[moments]
+other = "Moments"
+[moment]
+other = "Moment"
+[momentsIndex]
+other = "Months"
+[olderMoments]
+other = "Older moments"
+[newerMoments]
+other = "Newer moments"
+[viewAll]
+other = "View all"
+[month01]
+other = "January"
+[month02]
+other = "February"
+[month03]
+other = "March"
+[month04]
+other = "April"
+[month05]
+other = "May"
+[month06]
+other = "June"
+[month07]
+other = "July"
+[month08]
+other = "August"
+[month09]
+other = "September"
+[month10]
+other = "October"
+[month11]
+other = "November"
+[month12]
+other = "December"
+[monthShort01]
+other = "Jan"
+[monthShort02]
+other = "Feb"
+[monthShort03]
+other = "Mar"
+[monthShort04]
+other = "Apr"
+[monthShort05]
+other = "May"
+[monthShort06]
+other = "Jun"
+[monthShort07]
+other = "Jul"
+[monthShort08]
+other = "Aug"
+[monthShort09]
+other = "Sep"
+[monthShort10]
+other = "Oct"
+[monthShort11]
+other = "Nov"
+[monthShort12]
+other = "Dec"
+[posts]
+other = "Posts"
+[aboutThisSite]
+other = "About This Site"
+[approximately]
+other = "About"
+[photos]
+other = "Photos"
+[photo]
+other = "Photo"
+[words]
+other = "Words"
+[toc]
+other = "Table of Contents"
+[skipToContent]
+other = "Skip to content"
+[noMoments]
+other = "No moments yet."
+[undated]
+other = "Undated"
+[prevPost]
+other = "Prev"
+[nextPost]
+other = "Next"
+[copyright]
+other = "This site and its content are licensed under a Creative Commons Attribution-NonCommercial 4.0 International License."
+[relatedPosts]
+other = "Related Posts"
+[series]
+other = "Series"
+[donateToAuthor]
+other = "Buy Me a Coffee"
+[details]
+other = "Details"
+[copyrightDesc]
+other = "All text and images in this article are original. Please do not reproduce or use them for commercial purposes without permission."
+[reads]
+other = "Reads"
+[seriesPostCount]
+other = "articles"
+[total]
+other = "A total of"
+[age_notice]
+other = "This post was created <span class='days-value'></span> days ago, and the information may have changed."
+[minsRead]
+other = "min read"
+[switchTo]
+other = "Switch to "
+[renderedContent]
+other = "Rendered Content"
+[rawMarkdownContent]
+other = "Raw Markdown Content"
+[thanks]
+other = "Thanks to"
+[sponsored]
+other = "sponsored"
+[seriesPostCountShort]
+other = "articles"

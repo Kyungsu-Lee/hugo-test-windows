@@ -1,0 +1,104 @@
++++
+title = "Code und Terminalausgabe"
+date = 2026-03-27T09:15:00+01:00
+draft = false
+tags = ["code", "referenz"]
+summary = "Codeblöcke sind der eigentliche Inhalt eines technischen Beitrags, nicht sein Beiwerk — entsprechend werden sie gesetzt."
+translationKey = "code-and-terminal-output"
++++
+
+Die Lesespalte dieses Themes ist aus genau einem Grund 92 Zeichen breit: Eine aus einem 80 Zeichen
+breiten Terminal kopierte Zeile soll hineinpassen, ohne umzubrechen. Alles andere an der Behandlung
+von Code folgt aus dieser Entscheidung.
+
+## Syntaxhervorhebung
+
+Chroma gibt Klassennamen statt Inline-Styles aus. Nur deshalb lassen sich die Syntaxfarben über
+dieselben `light-dark()`-Tokens auflösen wie der Rest der Seite. Sich selbst überlassen würde Hugo
+stattdessen eine Palette fest ins Markup backen — standardmäßig Monokai, also ein dunkler Kasten auf
+hellem Blatt. Das Theme fordert die Klassennamen deshalb bei jedem Block selbst an, statt sie von
+der Konfiguration der Site zu verlangen:
+
+```go-html-template
+{{ $opts := merge .Options (dict "noClasses" false) }}
+{{ transform.Highlight (printf "%s\n" .Inner) .Type $opts }}
+```
+
+Einzustellen ist also nichts. Nicht abgedeckt ist einzig Hugos eingebauter
+`{{</* highlight */>}}`-Shortcode: Er umgeht Render-Hooks und folgt weiterhin dem, was
+`[markup.highlight]` der Site sagt.
+
+## Ein Beispiel
+
+{{< ai note="Kommentare im Beispiel maschinell entworfen, danach von Hand geschärft" >}}
+Der folgende Ausschnitt ist ein Beispiel, kein Auszug aus dem Theme — er zeigt, worauf es beim
+Fehlertext ankommt, nicht wie `tokens.html` tatsächlich gebaut ist. Diese Passage trägt deshalb
+einen Randstrich: Sie ist mit Unterstützung entstanden, und der Änderungsvermerk am Blattfuß sagt,
+womit.
+{{< /ai >}}
+
+```go
+// tokens.html liest sechs Werte zur Build-Zeit aus 00-tokens.css, weil ein
+// sizes-Attribut ohne Element-Kontext ausgewertet wird und kein var() kennt.
+func measure(css string) (int, error) {
+    m := regexp.MustCompile(`--content-width:\s*(\d+)px`).FindStringSubmatch(css)
+    if m == nil {
+        return 0, fmt.Errorf("--content-width fehlt: Layout und responsive "+
+            "Bilder wären sich stillschweigend uneinig")
+    }
+    return strconv.Atoi(m[1])
+}
+```
+
+Bemerkenswert ist weniger der Code als der Fehlertext. Ein fehlendes Token bringt hier nichts zum
+Absturz — es sorgt nur dafür, dass jedes Bild eine falsche `sizes`-Angabe ausliefert. Solche Fehler
+überleben Monate.
+
+## Diffs
+
+Ein `diff`-Block kommt aus derselben Palette: hinzugefügte und entfernte Zeilen werden hinterlegt,
+nicht eingefärbt.
+
+```diff
+--- a/assets/css/90-syntax.css
++++ b/assets/css/90-syntax.css
+@@ -6,7 +6,9 @@
+ .chroma .line {
+     display: flex;
+-}
++    width: max-content;
++    min-width: 100%;
++}
+```
+
+Die Flächen sind bewusst zurückhaltend, jeweils rund vier Helligkeitspunkte vom Block entfernt. Das
+reicht, um zusammenhängende Zeilen zu gruppieren, ohne den Block in ein Farbfeld zu verwandeln.
+Woran man erkennt, was hinzugefügt und was entfernt wurde, ist das `+` beziehungsweise das `-` am
+Zeilenanfang — genau deshalb bleibt ein Diff auch in einem Terminal ganz ohne Farbe lesbar.
+
+## Lange Ausgaben
+
+{{< collapse summary="Vollständige Build-Ausgabe" >}}
+```console
+$ hugo --source exampleSite --themesDir ../.. --printPathWarnings
+Start building sites …
+hugo v0.165.0+extended linux/amd64
+
+                   │ EN │ DE
+───────────────────┼────┼────
+  Pages            │ 24 │ 21
+  Paginator pages  │  2 │  1
+  Non-page files   │  4 │  2
+  Processed images │  6 │  6
+  Aliases          │  4 │  3
+
+Total in 284 ms
+```
+{{< /collapse >}}
+
+Wenn eine Ausgabe über hunderte Zeilen läuft, gehört sie in einen `collapse`-Shortcode — gefaltet,
+aber vollständig. Gekürzte Logs sind das Einzige, was Lesende nicht rekonstruieren können.
+
+> [!TIP]
+> `ShowCodeCopyButtons = true` setzt auf jeden Block eine Kopierschaltfläche. Sie erscheint bei
+> Hover *und* bei Tastaturfokus und wird im Druck unterdrückt — auf Papier gibt es nichts zu kopieren.

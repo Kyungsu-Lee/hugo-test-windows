@@ -1,0 +1,300 @@
+{{- define "main" }}
+    {{- $home := .IsHome }}
+    {{- $target := and .IsHome (or (not site.Params.home.disableListing) (not site.Params.home.disableSlide)) }}
+    {{- if not $target }}
+        {{ partial "hero.html" . }}
+    {{- end }}
+    {{- if and .IsHome site.Taxonomies (not site.Params.home.disableListing) }}
+        <hr class="hide">
+        <section id="taxonomy" {{ if $home }}class="target"{{ end }}>
+            <h1>{{ i18n "allTaxonomies" | title }} <a href="#{{ .Kind }}" class="hash">#</a></h1>
+            {{ template "block_taxonomy" . }}
+        </section>
+        <hr class="hide">
+    {{- end }}
+    {{- if or .Data.Pages (where site.RegularPages "Type" (or "post" "articles")) }}
+        {{- if ne .Kind "taxonomy" }}
+            <section id="feed" class="{{ if $target }}target{{ end }}">
+                {{- $title := .LinkTitle }}
+                {{- $subtitle :=  .Page.Params.Subtitle }}
+                {{- if .IsHome }}
+                    <h1>{{- i18n "allPosts" | title }} {{ if $target }}<a href="#{{ .Kind }}" class="hash">#</a>{{ end }}</h1>
+                {{- else if $subtitle }}
+                <hgroup>
+                    <h1 id="title">{{- $title -}}</h1>
+                    <i class="subtitle">{{ $subtitle }}</i>
+                </hgroup>
+                {{- else if not .Content }}
+                    <h1>
+                        {{- if eq .Data.Singular "author" }}
+                            {{- i18n "postsBy" }}: {{ $title }}
+                        {{- else }}
+                            {{- i18n "postsOn" }}: <span class="{{ .Data.Singular }}">{{ $title }}</span>
+                        {{- end }}
+                    </h1>
+                {{- end }}
+                {{ template "block_feed" . }}
+                <hr class="hide">
+            </section>
+        {{- else }}
+            {{- $title := .LinkTitle }}
+            <h1>{{ i18n "taxonomy" 1 }}: <span class="{{ .Data.Singular }}">{{ $title }}</span></h1>
+            {{- if eq .Data.Plural "tags" }}
+                <div id="list-tags">
+                {{ partial "taxonomies.html" (dict "taxonomy" "tags" "withPages" false ) }}
+                </div>
+            {{- else }}
+                <div id="list-{{ .Data.Plural }}">
+                {{ partial "taxonomies.html" (dict "taxonomy" .Data.Plural "withPages" true) }}
+                </div>
+            {{- end }}
+        {{- end }}
+    {{- end }}
+    {{- if $target }}
+        {{- if not site.Params.home.disableSlide }}
+        {{ template "block_slide" . }}
+        {{- end }}
+        <section class="target">
+            {{ partial "hero.html" . }}
+        </section>
+    {{- end }}
+{{- end }}
+
+{{- define "block_taxonomy" }}
+    {{- range $entry, $taxonomy := site.Taxonomies }}
+        {{- $hasEntry := index site.Taxonomies $entry }}
+        {{- if and $hasEntry (ne $entry "stage") (not (and (eq $entry "author") (eq (len $hasEntry) 1))) }}
+            <section id="list-{{ $entry }}" aria-label="{{ $entry }}">
+                <h2 class="ts">
+                    <a href="{{ absLangURL $entry }}">
+                        <span>{{ title $entry }}</span>
+                    </a>
+                </h2>
+                {{ partial "taxonomies.html" (dict "taxonomy" $entry "withPages" false ) }}
+            </section>
+        {{- end }}
+    {{- end }}
+{{- end }}
+
+{{- define "block_slide" -}}
+    {{- $slides := where .Site.RegularPages "Type" "slide" }}
+    {{- with $slides }}
+        {{- range $index, $slide := . }}
+            {{- $slideNum := add $index 1 }}
+            <section id="slide-{{ $slideNum }}" class="target"
+                aria-labelledby="slide-{{ $slideNum }}-heading">
+                {{- $hasCover := partial "page/cover.html" (dict "page" .Page) }}
+                {{- $alt := or .Page.Params.Alt .Page.Params.coverAlt .Page.Params.imagesAlt }}
+                {{- if or $hasCover }}
+                <div class="cover">
+                    <img src="{{ $hasCover }}"
+                        alt="{{ with $alt }}{{ . }}{{ end }}" {{ if ne $slideNum 1 }}loading="lazy"{{ end }}>
+                </div>
+                {{- end }}
+                <section class="content">
+                    {{- with .Title }}
+                        <h1 id="slide-{{ $slideNum }}-heading">{{ . }} <a href="#{{ $.Kind }}" class="hash">#</a></h1>
+                    {{- end }}
+                    {{ replace .Content "disabled=" "" | safeHTML }}
+                </section>
+                <hr class="hide">
+            </section>
+        {{- end }}
+    {{- end }}
+{{- end }}
+
+{{- define "block_feed" -}}
+    {{- $pages := .RegularPages }}
+    {{- if $.Params.Recursive }}
+        {{- $pages = .RegularPagesRecursive }}
+    {{- else if .IsHome }}
+        {{- $pages =  where site.RegularPages "Type" (or "post" "articles") }}
+    {{- end }}
+    {{- if not $pages }}
+        <center style="margin: 1in 0;">
+            <img src="https://i.pinimg.com/736x/bf/34/76/bf3476c1569c5af162779ecbb4134c3a.jpg"
+                alt="a cat that's unsure on what to do with his laptop and don't have five year goals"
+                title="a cat that's unsure on what to do with his laptop and don't have five year goals"
+                width="320px" height="320px">
+            <br>
+            <strong class="textssc" style="line-height:1;font-size:1.618pc">{{ i18n "noArticle" }}</strong>
+            <br>
+            <div style="max-width:320px">{{ i18n "noArticlePost" }}</div>
+        </center>
+    {{- end }}
+    {{- if .Sections }}
+        {{- template "group_bySection" . }}
+    {{- else if eq (lower .Page.Params.view) "none"  }}
+    {{- else }}
+        {{ $card := eq (lower .Page.Params.view) "card" }}
+        {{ $list := eq (lower .Page.Params.view) "list" }}
+        {{- with $pages }}
+            {{- if $card }}
+                <ul class="has-card presentation">
+                {{- range . }}
+                    {{- $stage := .GetTerms "stage" }}
+                    {{- $desc := or .Params.Subtitle .Params.Description .Description .Summary }}
+                    {{- $hasCover := partial "page/cover.html" (dict "page" .) }}
+                    <li>{{ template "view_card" (dict "page" . "desc" $desc "stage" $stage "hasCover" $hasCover) }}</li>
+                {{ end }}
+                </ul>
+            {{- else if $list }}
+                <ul class="has-list textwidth presentation">
+                {{- range . }}
+                    {{- $stage := .GetTerms "stage" }}
+                    {{- $desc := or .Params.Subtitle .Params.Description .Description .Summary }}
+                    <li>{{ template "view_list" (dict "page" . "desc" $desc "stage" $stage) }}</li>
+                {{ end }}
+                </ul>
+            {{- else }}
+                {{- template "group_byYear" (dict "pages" . ) }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+{{- end }}
+
+{{- define "group_bySection" }}
+    {{- range .Sections }}
+        {{ $secTitle := .Page.Title }}
+        {{ $secSubTitle := .Page.Params.Subtitle }}
+        {{ $secLink :=  .Page.Permalink }}
+        {{ $card := eq (lower .Page.Params.view) "card" }}
+        {{ $list := eq (lower .Page.Params.view) "list" }}
+        {{- with .RegularPages }}
+        <section id="list-{{ $secTitle }}" aria-label="{{ $secTitle }}">
+            {{- if $secSubTitle }}
+                <hgroup style="margin: 0;">
+                    <h2 class="textssc" style="margin-bottom:0;"><a href="{{ $secLink }}"><span>{{ $secTitle }}</span></a></h2>
+                    <p class="subtitle" style="color: var(--mid);">{{ $secSubTitle }}</p>
+                </hgroup>
+            {{- else }}
+                <h2 class="textssc"><a href="{{ $secLink }}"><span>{{ $secTitle }}</span></a></h2>
+            {{- end }}
+            <ul class="{{ if $card }}has-card{{ else if $list }}has-list{{ else }}list-day{{ end }} presentation">
+                {{- range .  | first 12 }}
+                    {{- $stage := .GetTerms "stage" }}
+                    {{- $desc := or .Params.Subtitle .Params.Description .Description .Summary }}
+                    {{- if $card }}
+                        {{- $hasCover := partial "page/cover.html" (dict "page" .) }}
+                        <li>{{ template "view_card" (dict "page" . "desc" $desc "stage" $stage "hasCover" $hasCover) }}</li>
+                    {{- else if $list }}
+                        <li>{{ template "view_list" (dict "page" . "desc" $desc "stage" $stage) }}</li>
+                    {{- else }}
+                        {{ $date := .Date.Format "2/01/06" }}
+                        <li>{{ template "view_li" (dict "page" . "date" $date) }}</li>
+                    {{- end }}
+                {{- end }}
+                {{- if gt (len . ) 12 }}
+                    <li>
+                        <a href="{{ $secLink }}"><span>{{ i18n "seeAll" }} {{ $secTitle }} ⟶</span></a>
+                    </li>
+                {{- end }}
+            </ul>
+        </section>
+        {{- end }}
+    {{- end }}
+{{- end }}
+
+{{- define "group_byYear" }}
+    {{- $pages := .pages }}
+    {{/*  {{- $active := eq (or .Params.Sitemap.ChangeFreq .Sitemap.ChangeFreq | lower) (or "always" "hourly" "daily" "weekly") }}  */}}
+    {{- $descending := or (not .IsHome) (eq $.Data.Plural "series") $.Params.descending }}
+    {{- $yearGroup := $pages.GroupByDate "2006" }}
+    {{- if $descending }}
+        {{- $yearGroup = $yearGroup.Reverse }}
+    {{- end }}
+    {{- range $yearGroup }}
+    {{- $year := .Key }}
+    <div class="list-year" role="listitem" aria-labelledby="y{{ .Key }}">        
+        <strong id="y{{ $year }}" role="heading" aria-level="1">{{ $year }}</strong>
+        <div role="list" aria-label="{{ $year }}">
+            {{- $monthGroup := .Pages.GroupByDate "January" }}
+            {{- if $descending }}
+                {{ $monthGroup = $monthGroup.Reverse }}
+            {{ end }}
+            {{- range $monthGroup }}
+            {{- $month := .Key }}
+            {{- $postCounter := printf "(%d %s)" (len .Pages) (i18n "posts" (len .Pages)) }}
+            <div role="listitem" aria-labelledby="{{ print "y" $year "-" $month }}">
+                <details aria-expanded="true" class="list-month" {{ if ne $.Data.Singular "author" }}open{{ end }}>
+                    <summary class="has-post" id="{{ print "y" $year "-" $month }}"
+                        role="heading" aria-level="2" aria-label="{{- $month }}" aria-description="{{ $postCounter }}">
+                        {{- $month }}
+                    </summary>
+                    {{- $pageGroup := .Pages }}
+                    {{- if $descending }}
+                        {{- $pageGroup = $pageGroup.Reverse }}
+                    {{- end }}
+                    {{- with $pageGroup }}
+                    <ul class="list-day presentation">
+                        {{- range . }}
+                            {{- $date := .Date.Format "2 Jan " }}
+                            <li>{{ template "view_li" (dict "page" . "date" $date) }}</li>
+                        {{- end }}
+                    </ul>
+                    {{- end }}
+                </details>
+            </div>
+            {{- end }}
+        </div>
+    </div>
+    {{- end }}
+{{- end }}
+
+{{- define "view_card" -}}
+    {{- $author := default site.Params.Author.name .page.Params.author }}
+    {{- $authors := or (.page.GetTerms "authors") (.page.GetTerms "author") }}
+    {{- $alt := or .page.Params.Alt .page.Params.coverAlt .page.Params.imagesAlt }}
+    <article class="card">
+        <header>
+            <div class="f textssc">
+                {{- with .stage }}
+                    {{- range . | first 1 }}
+                        <div class="st {{ lower .Name }}"></div>
+                    {{- end }}
+                {{- end }}
+                {{- if .page.Params.categories }}
+                    {{ partial "terms.html" (dict "taxonomy" "categories" "type" "delimiter" "tabindex" "-1" "page" .page ) }}
+                {{- end }}
+                <time>{{ .page.Date.Format "2 Jan 2006" }}</time>
+            </div>
+            <a href="{{ .page.RelPermalink }}" tabindex="-1"><h3>{{ .page.Title }}</h3></a>
+        </header>
+        <a href="{{ .page.RelPermalink }}" aria-label="{{ .page.Title }}"></a>
+        <section {{ if and .hasCover .desc }}class="has-cover"{{ end }}>
+            {{- if .hasCover }}
+                <img src={{ .hasCover }} alt="{{ if .alt }}{{ .alt }}{{ else }}{{ i18n "featuredImg"}}: {{ .page.Title }}{{ end }}" loading="lazy">
+            {{- end }}
+            {{- with .desc }}
+                <p>{{- plainify . }}</p>
+            {{- end }}
+        </section>
+        <footer class="f textssc">
+            <span>
+                {{- printf "%d %s" .page.ReadingTime (i18n "readingTime" .page.ReadingTime | lower ) }}
+            </span>
+            {{- if .page.Params.tags }}
+                {{ partial "terms.html" (dict "taxonomy" "tags" "type" "hashbang" "tabindex" "-1" "page" .page) }}
+            {{- end }}
+        </footer>
+    </article>
+{{- end -}}
+
+{{- define "view_list" -}}
+    <article class="list">
+        <h3 role="heading"><a href="{{ .page.RelPermalink }}">{{ .page.Title }}</a></h3>
+        <span role="contentinfo">
+            {{- if .page.Params.categories }}
+                {{ partial "terms.html" (dict "taxonomy" "categories" "class" "inline" "tabindex" "-1" "page" .page ) }}
+            {{ else if .page.Params.tags }}
+                {{ partial "terms.html" (dict "taxonomy" "tags" "class" "inline" "tabindex" "-1" "page" .page ) }}
+            {{- end }}
+        </span>
+    </article>
+{{- end }}
+
+{{- define "view_li" -}}
+        <a class="has-pre" href="{{ .page.RelPermalink }}" aria-label="{{ .page.Title }}" aria-description="{{ .date }}">
+            <h3>{{ .page.Title }}</h3>
+        </a>
+{{- end }}

@@ -1,0 +1,78 @@
+{{ define "main" }}
+{{- $isPost := and .Section (ne .Layout "search") }}
+<article class="post">
+    <header class="post-header">
+        {{- if and ($.Param "ShowBreadCrumbs") .Ancestors }}
+        {{- partial "breadcrumbs.html" . }}
+        {{- end }}
+
+        {{- /* The title and the sheet's AI stamp share one row: the stamp
+               qualifies the whole sheet, so it is set against the sheet's
+               name rather than filed inside the title block. The partial
+               renders nothing when there is nothing to disclose, and the row
+               then holds the title alone. */}}
+        <div class="post-titlerow">
+            <h1 class="post-title">{{ .Title }}</h1>
+            {{- partial "ai-stamp.html" . }}
+        </div>
+
+        {{- with .Description }}
+        <p class="post-standfirst">{{ . | markdownify }}</p>
+        {{- end }}
+
+        {{- /* The title block: a real ruled table of what this sheet is, rather
+               than a grey caption line. It replaces the usual meta row. */}}
+        {{- if not (.Param "hidemeta") }}
+        {{- partial "title-block.html" . }}
+        {{- end }}
+    </header>
+
+    {{- partial "cover.html" (dict "page" . "isSingle" true) }}
+
+    {{- partial "toc.html" . }}
+
+    <div class="content">
+        {{ .Content }}
+    </div>
+
+    {{- partial "extend-post-content.html" . }}
+
+    {{- /* The revision note resolves the change flags set in the content, so it
+           has to come after .Content has been rendered — and it is sheet
+           content, not footer furniture. */}}
+    {{- partial "ai-notes.html" . }}
+
+    {{- /* [taxonomies] is site config, not params, so the old
+           site.Language.Params.Taxonomies.tag lookup here was always nil and the
+           default always won. It read as a rename hook and was none — a site that
+           renamed the taxonomy lost this row silently either way. Named plainly
+           now; the theme's `tag` taxonomy is what the README documents. */}}
+    {{- $tags := .GetTerms "tags" }}
+    {{- $share := and ($.Param "ShowShareButtons") (not (.Param "disableShare")) $isPost }}
+    {{- $edit := and site.Params.editPost.URL (not site.Params.editPost.disabled) $isPost }}
+    {{- $nav := and (.Param "ShowPostNavLinks") $isPost }}
+
+    {{- if or $tags $share $edit }}
+    <footer class="post-footer">
+        {{- with $tags }}
+        <ul class="tag-list">
+            {{- range . }}
+            <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+            {{- end }}
+        </ul>
+        {{- end }}
+
+        {{- if or $share $edit }}
+        <div class="post-actions">
+            {{- if $share }}{{ partial "share-icons.html" . }}{{ end }}
+            {{- if $edit }}{{ partial "edit-post.html" . }}{{ end }}
+        </div>
+        {{- end }}
+    </footer>
+    {{- end }}
+
+    {{- if $nav }}{{ partial "post-nav-links.html" . }}{{ end }}
+
+    {{- if .Param "comments" }}{{ partial "comments.html" . }}{{ end }}
+</article>
+{{ end }}

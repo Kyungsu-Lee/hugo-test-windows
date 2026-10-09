@@ -1,0 +1,239 @@
+# Contributing
+
+Development happens on a self-hosted GitLab; `github.com/cebor/vellum` is a copy pushed by hand, and
+it is the address listed on themes.gohugo.io. **Open issues and pull requests on GitHub.** A pull
+request cannot be merged there — GitHub is not where `main` is written — so patches are applied on
+GitLab and reach GitHub with the next push, authorship intact. Treat the branch as the contribution
+rather than the merge button.
+
+## Working on the theme
+
+```bash
+hugo server -D --source exampleSite --themesDir ../..
+```
+
+`exampleSite/` is the only site in this repository, so it is what every change is tested against.
+Content a template needs in order to be exercised has to be added there.
+
+Before you commit:
+
+- **A param that isn't in `README.md` does nothing.** Add it there in the same commit that adds it to
+  a template.
+- **Dropping a path deletes a live page.** Static hosts are commonly deployed with `rsync --delete`,
+  so a path this build stops emitting is removed from every site that upgrades. The one you are most
+  likely to drop by accident is not a page: Hugo publishes a resource only where a template evaluates
+  its `RelPermalink`, so tidying up a loop like the font walk in `_partials/head-assets.html` stops
+  publishing files that only CSS references — and `hugo server`, reading from the source directory,
+  keeps serving them, so nothing looks wrong until production. Run `.parity/check.sh [ref]` and quote
+  the result in the commit body. Where a path goes because `exampleSite` changed its own content
+  rather than because a template moved a URL, name it with `--accept-lost <path>` for that one run
+  and say in the commit body why it is not a moved URL — the check compares built file lists and
+  cannot tell the two apart. A path named there that the run did not lose fails the run, so the
+  waiver cannot outlive its delta.
+- `assets/css/` is concatenated in filename order, so the numeric prefix *is* the cascade position.
+  Colors, sizes, spacings and durations belong in `00-tokens.css` and nowhere else.
+
+## Commit messages
+
+Commits are the changelog source. Each one is parsed, so the format is fixed:
+
+```
+<type>(<scope>)!: <summary>
+
+<body — only when the reason is not obvious from the diff>
+
+<footers>
+```
+
+### Subject
+
+- **Imperative mood**, lowercase after the colon, no trailing full stop: `fix(css): keep the zone
+  rail hidden below the collapse width`.
+- **≤ 72 characters** including type and scope; aim for 50.
+- Precise and technical. Name the thing that changed — the selector, the partial, the param — not the
+  area it lives in. `fix(search): debounce the index fetch` beats `fix: search improvements`.
+- One logical change per commit. Split refactors away from behaviour changes; a commit whose subject
+  needs an "and" is usually two commits.
+
+### Types
+
+Only these. The type decides whether and where the commit shows up in the changelog:
+
+| Type       | Use for                                                     | Changelog section |
+| ---------- | ----------------------------------------------------------- | ----------------- |
+| `feat`     | new template, partial, shortcode, param, icon, translation   | Added             |
+| `fix`      | wrong rendering, broken link, missing output, a11y defect    | Fixed             |
+| `perf`     | smaller payload, fewer requests, faster build                | Performance       |
+| `refactor` | same output, different implementation                        | —                 |
+| `docs`     | `README.md`, `CLAUDE.md`, `PRODUCT.md`, `DESIGN.md`, this file | —               |
+| `build`    | `hugo.toml`, `go.mod`, `theme.toml`, registry fixtures       | —                 |
+| `ci`       | `.gitlab-ci.yml`, `.release/`, `.parity/`, `.impeccable/`    | —                 |
+| `chore`    | anything else with no user-visible effect                    | —                 |
+| `revert`   | reverting a previous commit; name its hash in the body       | Reverted          |
+
+If a change is worth mentioning in the release notes, it is `feat`, `fix` or `perf`. Choose the type
+by what a *user of the theme* sees, not by which file you touched: a `README.md` edit that documents
+an existing param is `docs`; the param itself is `feat`.
+
+### Scopes
+
+Optional but expected. Use one of: `layouts`, `partials`, `shortcodes`, `markup`, `css`, `tokens`,
+`i18n`, `fonts`, `search`, `print`, `a11y`, `ai`, `exampleSite`, `registry`, `parity`, `release`, `ci`,
+`deps`.
+Omit the scope when a change genuinely spans the theme. Never invent a one-off scope: `changelog.sh`
+groups strictly by *type* and prints the scope as the entry's bold prefix, so an unfamiliar one does
+not land in the wrong group — it lands in the right group under a label no reader recognises, which
+is worse for being invisible in review.
+
+### Breaking changes
+
+A `!` before the colon **and** a `BREAKING CHANGE:` footer, always both:
+
+```
+feat(layouts)!: render archives from a dedicated output format
+
+BREAKING CHANGE: /archive/index.html moves to /archives/. Sites deploying with
+rsync --delete lose the old path. Set [outputs.section] or add an alias.
+```
+
+This is required for anything that changes the built URL surface, removes or renames a param or front
+matter key, drops a shortcode, or raises the minimum Hugo version. The footer must name the affected
+paths or keys and the upgrade step. Text contrast below 4.5:1 and a broken URL surface are the two
+commitments in `PRODUCT.md` that are not tradeable — if a change touches either, it does not ship as
+a quiet `fix`.
+
+### Body
+
+Optional, and usually absent. Add one only when the diff cannot answer *why*: a non-obvious browser
+or Hugo behaviour, a failure mode that will be re-introduced without a note, a trade-off that was
+weighed. Then keep it to a few sentences.
+
+- Wrap at 72 columns, blank line after the subject.
+- Explain the reason, not the change. Restating the diff in prose is noise.
+- Quote the evidence when there is any: the `.parity/check.sh` result, an error message, the measured
+  number.
+
+### Footers
+
+`Refs: #12` · `Closes: #12` · `Co-authored-by: Name <mail@example.org>` · `BREAKING CHANGE: …`
+
+Issue numbers refer to GitHub, since that is where they are filed.
+
+### Examples
+
+```
+feat(shortcodes): add a collapse shortcode for foldable sections
+fix(markup): wrap tables so a wide one stops pushing the page sideways
+fix(css): hide the zone rail in both states below the collapse width
+perf(fonts): subset Archivo to latin and latin-ext
+refactor(partials): fold title-block into sheet-stamp
+docs: document the search params in the README
+build(registry): add the 1500x1000 screenshot the theme gallery reads
+```
+
+Not this:
+
+```
+update styles                  → no type, no object, unparseable
+fix: bug                       → says nothing a changelog can print
+feat(css): tweak colors and also fix the mobile nav   → two commits
+Fixed the header.              → past tense, full stop, no type
+```
+
+History before this file predates these rules; it is not rewritten.
+
+## Releases
+
+One command, from a clean `main`:
+
+```bash
+.release/release.sh --dry-run   # every check, the changelog section, no writes
+.release/release.sh             # the real thing
+```
+
+It refuses more often than it runs, which is the point — each refusal is a way a release has gone
+wrong before:
+
+| Check                              | Why it stops the release                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| clean tree, on `main`, not behind   | a tag on a checkout that is not what `origin` has                           |
+| the ten `images/` fixtures present and correctly sized | the theme gallery shows a placeholder, and the README's hero and gallery go blank |
+| Hugo extended on `PATH`             | the standard edition builds green and silently drops the WebP ladder         |
+| every commit in range parseable     | a change that never appears in the changelog                                 |
+| at least one `feat`/`fix`/`perf`/`revert`, or anything breaking | a version bump nobody can be told the reason for         |
+| `.parity/check.sh` against the last tag | a path the build stopped emitting, deleted from every site on upgrade    |
+
+Then it derives the version, writes `CHANGELOG.md`, commits it as `chore(release): vX.Y.Z`, tags
+annotated with the changelog section as the tag message, pushes **both** remotes, and verifies with
+`git ls-remote` that the tag arrived. A release is not done until the tag is on GitHub — the registry
+reads the *latest tag* there, not `main`, and nothing is mirrored automatically.
+
+`--edit` opens the generated section in `$EDITOR` first — the one place to correct wording before it
+becomes both the changelog entry and the tag message. `--allow-unconventional` and `--allow-empty`
+override the two commit-quality checks; `--yes` skips the confirmation. There is no override for URL
+parity.
+
+### Versioning
+
+Below 1.0 the majors are free, so the signal moves down one place:
+
+| Range in the commits                | Bump    | Means                              |
+| ----------------------------------- | ------- | ---------------------------------- |
+| a `!` subject or a `BREAKING CHANGE:` footer | minor (`0.1.2` → `0.2.0`) | read the changelog before upgrading |
+| anything else                       | patch (`0.1.2` → `0.1.3`) | safe to take                        |
+
+From 1.0 on this becomes plain semver: breaking → major, `feat` → minor, rest → patch. Pass `major`,
+`minor`, `patch` or an explicit `0.3.0` to override. 1.0 is the point at which the params and the
+output paths are considered settled enough that breaking one deserves a major — not a maturity
+badge.
+
+### If something goes wrong
+
+The script writes nothing until every check has passed, and stops at the first failure, so a failed
+run leaves the repository untouched. After the tag exists it will tell you the exact command to
+re-run. To undo a tag that has not been pushed:
+
+```bash
+git tag -d vX.Y.Z && git reset --hard HEAD~1
+```
+
+Once it is pushed, it stays: the registry and anyone's `go.mod` may already have read it. Fix
+forward with the next patch.
+
+### Notes
+
+- The changelog can be previewed on its own at any time: `.release/changelog.sh 0.2.0`.
+- The `images/` fixtures are cut, not drawn: `npm install` once in `.parity/`, then start the dev
+  server and run `node .parity/shots.mjs --fixtures`. It writes all ten or none, so a run
+  interrupted halfway cannot leave nine fresh frames next to one stale one — which is
+  indistinguishable from ten fresh ones once the timestamps settle. Re-cut them whenever a change
+  moves what they show.
+
+  Two formats, and the line between them is the registry: themes.gohugo.io accepts only `.png` and
+  `.jpg`, so `screenshot.png` and `tn.png` stay PNG. Everything the README loads is lossless WebP —
+  same pixels, roughly a third of the bytes, and every one of those bytes is downloaded by every
+  site that runs `hugo mod get` on this theme.
+
+  `screenshot.png` and `tn.png` are one frame carrying both schemes, cut down the centre line: the
+  gallery shows a single image per theme, so a light-only preview never said the dark scheme
+  existed. The README hero and gallery stay real light/dark pairs — a `<picture>` already serves the
+  right one at full width, and two of the gallery frames could not be split anyway: a seam through
+  the icon grid bisects a cell, and the terminal is animated, so two loads are two different states.
+  The print frame is a third case: `95-print.css` forces a white ground in either scheme, so its
+  "pair" is a comparison — the page on screen at the left, on paper at the right — and the left half
+  is what carries the reader's scheme.
+  The composite is still assembled in the browser the script already drives, because the halves have
+  to line up on rules that browser laid out.
+
+  `sharp` is a **devDependency** of the harness and does the encoding only. Taking an ordinary
+  review shot still needs nothing but `playwright-core`, and nothing here reaches a consuming site:
+  `node_modules/` is ignored, so a module download takes `package.json` and `package-lock.json` and
+  no more.
+- `CHANGELOG.md` is generated. Editing prose in an old section is fine; new sections are the
+  script's.
+- `.parity/` is tracked, so any checkout can cut a release; the builds it regenerates each run are
+  the only part `.gitignore` keeps out. If `check.sh` is missing the script refuses rather than
+  skipping the check — which now means the checkout is broken, not that it is the wrong machine.
+- The commits between `v0.1.2` and the adoption of this format predate it. The first release after it
+  wants `.release/release.sh --allow-unconventional --edit`, so the six unparseable commits can be
+  written into the section by hand once.

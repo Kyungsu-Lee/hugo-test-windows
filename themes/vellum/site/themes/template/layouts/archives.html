@@ -1,0 +1,52 @@
+{{ define "main" }}
+{{- /* Opt-in via `layout = "archives"` in a page's front matter. Groups every
+       post by year, then by month, so a growing archive stays reachable without
+       paging through the section list. */ -}}
+<header class="page-header">
+    {{- if and ($.Param "ShowBreadCrumbs") .Ancestors }}
+    {{- partial "breadcrumbs.html" . }}
+    {{- end }}
+    <h1 class="page-title">{{ .Title }}</h1>
+    {{- with .Description }}<p class="page-standfirst">{{ . | markdownify }}</p>{{ end }}
+    {{- partial "sheet-stamp.html" . }}
+</header>
+
+{{- with .Content }}
+<div class="content sheet-note">{{ . }}</div>
+{{- end }}
+
+{{- /* ShowAllPagesInArchive means what it says: every regular page, not only
+       the ones in mainSections. It used to narrow to mainSections first and
+       then filter on a non-empty Section, which every page in a mainSection
+       already has — the toggle changed nothing. */}}
+{{- $pages := site.RegularPages }}
+{{- if not (.Param "ShowAllPagesInArchive") }}
+{{- $pages = where $pages "Type" "in" (site.Params.mainSections | default (slice "posts")) }}
+{{- end }}
+{{- $pages = where $pages "Params.searchHidden" "!=" true }}
+
+{{- with $pages.GroupByPublishDate "2006" }}
+{{- range . }}
+<section class="archive-year">
+    <h2 class="archive-year__label">{{ .Key }}<span class="archive-year__count">{{ len .Pages }}</span></h2>
+    {{- range .Pages.GroupByPublishDate "January" }}
+    <h3 class="archive-month">{{ .Key }}</h3>
+    <ul class="archive-list">
+        {{- range .Pages }}
+        <li class="archive-item">
+            {{- /* PublishDate, not Date: the grouping above is by publish date,
+                   and a post whose two differ was filed under one year and
+                   dated with the other. */}}
+            <time class="archive-item__date" datetime="{{ .PublishDate.Format "2006-01-02" }}">{{ .PublishDate.Format "02" }}</time>
+            <a class="archive-item__link" href="{{ .RelPermalink }}">{{ .Title }}</a>
+            {{- if .Draft }}<span class="draft-badge">{{ i18n "draft" }}</span>{{ end }}
+        </li>
+        {{- end }}
+    </ul>
+    {{- end }}
+</section>
+{{- end }}
+{{- else }}
+<p class="empty-note">{{ i18n "no_posts" }}</p>
+{{- end }}
+{{ end }}

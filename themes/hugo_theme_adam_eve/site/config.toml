@@ -1,0 +1,39 @@
+baseURL = "https://example.org"
+
+DefaultContentLanguage = "en"
+# Enable Emoji, regarding https://www.webfx.com/tools/emoji-cheat-sheet/
+enableEmoji = true
+disableKinds = ["taxonomy", "term", "section"]
+
+[params]
+    nohomebar = true
+    showthemetoggle = true
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.105.0"
+
+[Languages]
+[Languages.fr]
+locale = "fr"
+title = "À propos d'aquarium"
+
+[Languages.en]
+locale = "en"
+title = "About aquarium"
+
+[Languages.fr.params]
+description = "Des poissons et de l'eau"
+
+[Languages.en.params]
+description = "Fish and water"
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    style = "manni"
+  [markup.tableOfContents]
+    endLevel = 6
+    ordered = false
+    startLevel = 1

@@ -1,0 +1,249 @@
+#feed h3 {
+    margin: 0 !important;
+    color: var(--ac);
+    font-size: var(--large);
+}
+
+/* view_li */
+
+.list-year {
+    display: flex;
+    position: relative;
+    align-items: baseline;
+}
+
+.list-year > strong {
+    margin-right: 1rem;
+    background: var(--ac);
+    min-width: 5rem;
+    text-align: right;
+    color: var(--bg);
+}
+
+* + #i18n,
+.list-year.descending {
+    margin-left: auto;
+}
+
+.list-year > div {
+    flex: 1;
+    max-width: calc(100% - var(--void) - 5rem);
+    line-height: 2;
+}
+
+.list-month > summary {
+    padding: 1rem 0;
+    list-style: none;
+}
+
+.list-month > summary::after {
+    margin-left: 1ex;
+}
+
+.list-day a {
+    padding: 1ex 0 0;
+    display: inline-block;
+}
+
+.list-day a.has-pre::before {
+    position: absolute;
+    left: -5rem;
+    padding-top: 0.1em;
+    width: 4rem;
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-size: 0.7em;
+}
+
+/* view_list */
+
+.has-list {
+    padding: 0 !important;
+}
+
+.has-list > li {
+    margin: 1pc 0;
+    border-bottom: var(--border);
+}
+
+.list {
+    padding: 1ex 0;
+    line-height: 1.2;
+    position: relative;
+}
+
+.list > h3 > a {
+    display: block;
+    position: unset;
+    border-bottom: none;
+}
+
+.list time::after,
+.list ul > li + li::before {
+    content: '\a0•\a0';
+    color: #80808080;
+}
+
+.list ul.inline::before {
+    content: unset;
+}
+
+/* view_card */
+
+#feed li,
+#feed li > article {
+    break-inside: avoid;
+}
+
+article ul a {
+    color: var(--fg);
+}
+
+.list > h3 > a::before,
+li > article > a {
+    position: absolute;
+    right: 0;
+    left: 0;
+    transition: 0.2s;
+    z-index: 1;
+}
+
+.list > h3 > a::before {
+    content: '';
+    border-bottom: var(--l);
+}
+
+.list > h3 > a:hover::before,
+.list > h3 > a:focus::before,
+li > article > a:focus,
+li > article > a:hover {
+    --l: 2pt solid var(--ac);
+    top: 0;
+    bottom: 0;
+    background-color: #80808011;
+}
+
+
+.f {
+    display: inline-flex;
+    flex-flow: nowrap;
+    justify-content: space-between;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.f > ul,
+.f > span,
+.f > ul > li {
+    display: inline;
+    overflow-x: auto;
+    text-overflow: ellipsis;
+    scrollbar-width: none;
+    white-space: nowrap;
+}
+
+.f.textssc,
+.list ul a,
+.list time {
+    opacity: 62%;
+    font-size: var(--small);
+}
+
+.has-card {
+    gap: 2pc;
+    padding: 0 !important;
+    column-width: 21rem;
+}
+
+.has-card > li::after {
+    transform: translateY(-1.62rem);
+    display: block;
+    width: 100%;
+    height: 2ex;
+    text-align: center;
+    color: #80808011;
+    font-size: 3rem;
+    content: '…';
+}
+
+.has-card > li:last-child::after {
+    content: '';
+}
+
+.card {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    border: var(--border);
+    padding: 1rem 1rem 1ex;
+    font-size: 1.2rem;
+}
+
+.card > a {
+    top: 3rem;
+    bottom: 3.5rem;
+}
+
+.card > section {
+    margin: 0 0 9pt;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    gap: 1rem;
+    white-space: unset;
+    opacity: 0.7;
+}
+
+.card > .has-cover {
+    display: grid;
+    grid-template-columns: 6fr 4fr;
+}
+
+.card > .has-cover > img {
+    order: 2;
+    width: 100%;
+    height: auto;
+    max-height: 68.8vw;
+    aspect-ratio: 120/63;
+    object-fit: cover;
+}
+
+.card > section > p {
+    --grd: linear-gradient(#000 50%, transparent 100%);
+    margin: 0 auto 0 0;
+    max-height: 21ex;
+    overflow-y: hidden;
+    line-height: 1.618;
+    -webkit-mask-image: var(--grd);
+            mask-image: var(--grd);
+    clip-path: text;
+}
+
+.card > header,
+.card > header > .f {
+    margin-bottom: 2ex;
+}
+
+.card .f > ul > li,
+.card .st + * {
+    margin-left: 1ex;
+}
+
+.card time {
+    margin-left: auto;
+}
+
+@media (max-width: 412px) {
+
+    .card > .has-cover {
+        display: block;
+        aspect-ratio: unset;
+    }
+
+    .card > section > img {
+        max-height: unset;
+        aspect-ratio: unset;
+    }
+
+}

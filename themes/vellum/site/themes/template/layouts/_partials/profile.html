@@ -1,0 +1,79 @@
+{{- /* The landing page's identity block, set as the sheet's own title block:
+       the drawing office rather than the drawing. */ -}}
+{{- $profile := site.Params.profile }}
+{{- with $profile }}
+<div class="profile">
+    {{- with .image }}
+    {{- $img := resources.Get . }}
+    {{- if not $img }}
+    {{- errorf "profile.image %q was not found under assets/" . }}
+    {{- else }}
+    {{- $w := int ($profile.imageWidth | default 120) }}
+    {{- $alt := $profile.imageAlt | default $profile.title | default site.Title }}
+    {{- if eq $img.MediaType.SubType "svg" }}
+    {{- /* A vector is not resized — .Resize stops the build on one — but it is
+           measured, by the same viewBox parse image-set.html does for every other
+           image on the site. Worth accepting here rather than rejecting: a
+           portrait on this sheet is a drawn construction as often as it is a
+           photograph, and a drawing is the one kind of image that can carry its
+           own prefers-color-scheme rules and follow the sheet it sits on. A
+           raster cannot, which is why the demo's placeholder is one.
+
+           Both attributes, like every other caller of that partial, and scaled to
+           the requested width rather than taken as returned — it reports the
+           file's own size and imageWidth is what this block draws it at.
+
+           An aspect-ratio alone will not do here. The avatar spans two grid rows,
+           and a replaced element with no intrinsic size stretches to fill them:
+           a viewBox-only SVG came out 120×177 with the drawing squashed into it.
+           A stated pair gives it an intrinsic size and the stretch never starts. */}}
+    {{- $set := partial "image-set.html" (dict "resource" $img "measure" $w) }}
+    {{- $h := $w }}
+    {{- if and $set.width $set.height }}
+    {{- $h = int (math.Round (div (mul (float $w) (float $set.height)) (float $set.width))) }}
+    {{- end }}
+    <img class="profile__avatar" src="{{ $set.src }}" width="{{ $w }}" height="{{ $h }}"
+        alt="{{ $alt }}" draggable="false">
+    {{- else }}
+    {{- $x1 := $img.Resize (printf "%dx webp q90" $w) }}
+    {{- $x2 := $img.Resize (printf "%dx webp q90" (mul $w 2)) }}
+    {{- /* Both dimensions come off the resized variant, never $w twice. The
+           resize is width-constrained, so only $x1 knows the height that came
+           out of it — and writing $w into both declares every portrait square,
+           which crops nothing but reserves the wrong box and shifts the block as
+           it loads. header.html carries the same note over the same mistake; this
+           is the second place it was made. */}}
+    <img class="profile__avatar" src="{{ $x1.RelPermalink }}"
+        srcset="{{ $x1.RelPermalink }} 1x, {{ $x2.RelPermalink }} 2x"
+        width="{{ $x1.Width }}" height="{{ $x1.Height }}"
+        alt="{{ $alt }}" draggable="false">
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
+    <div class="profile__identity">
+        <h1 class="profile__name">{{ .title | default site.Title | markdownify }}</h1>
+        {{- with .subtitle }}
+        <p class="profile__subtitle">{{ . | markdownify }}</p>
+        {{- end }}
+    </div>
+
+    {{- partial "social-icons.html" . }}
+
+    {{- /* The status fields, set in the title block's own instrument rather than
+           in a second one invented for them: the profile block already is this
+           sheet's title block, and these are its rows. They stay open on every
+           view because they are what the sheet states about itself, not one of
+           the things you turn to. */}}
+    {{- with .fields }}
+    <dl class="title-block profile__fields">
+        {{- range . }}
+        <div class="title-block__row">
+            <dt class="title-block__label">{{ .label }}</dt>
+            <dd class="title-block__value">{{ .value | markdownify }}</dd>
+        </div>
+        {{- end }}
+    </dl>
+    {{- end }}
+</div>
+{{- end }}

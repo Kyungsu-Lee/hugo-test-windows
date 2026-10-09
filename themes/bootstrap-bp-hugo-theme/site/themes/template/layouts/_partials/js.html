@@ -1,0 +1,28 @@
+{{- /* The full Bootstrap bundle (~80 KB) is only loaded with params.bootstrapJS = true
+       (modals, tooltips, carousels ...). By default a small script handles navbar and dropdowns. */ -}}
+{{ $navjs := resources.Get "/js/navigation.js" }}
+{{ if .Site.Params.bootstrapJS }}
+    {{ $navjs = resources.Get "/js/bootstrap.bundle.min.js" }}
+{{ end }}
+{{ $youtubejs := resources.Get "/js/youtube.js" }}
+{{ $customjs := resources.Get "/js/custom.js" }}
+{{ $allscript := slice $navjs $youtubejs $customjs | resources.Concat "/js/vendor.js" | minify | fingerprint "sha512" }}
+<script src="{{ $allscript.RelPermalink }}" integrity="{{ $allscript.Data.Integrity }}"></script>
+
+{{- range .Site.Params.jscdn }}
+    <script src="{{ . }}"></script>
+{{- end }}
+
+{{- range .Params.jscdn }}
+    <script src="{{ . }}"></script>
+{{- end }}
+
+{{- range .Site.Params.js }}
+    {{ $pagescript := resources.Get . | minify | fingerprint "sha512" }}
+    <script src="{{ $pagescript.RelPermalink }}" integrity="{{ $pagescript.Data.Integrity }}"></script>
+{{- end }}
+
+{{- range .Params.js }}
+    {{ $pagescript := resources.Get . | minify | fingerprint "sha512" }}
+    <script src="{{ $pagescript.RelPermalink }}" integrity="{{ $pagescript.Data.Integrity }}"></script>
+{{- end }}

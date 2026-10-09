@@ -1,0 +1,362 @@
+- id: home
+  translation: "Home"
+
+- id: search
+  translation: "Search"
+
+- id: latest_posts
+  translation: "Latest"
+
+- id: all_posts
+  translation: "All posts"
+
+- id: rss
+  translation: "RSS"
+
+- id: table
+  translation: "Table"
+
+- id: toc
+  translation: "Contents"
+
+- id: draft
+  translation: "draft"
+
+# --- title block ------------------------------------------------------------
+# The ruled metadata block on a post, worded as a drawing sheet's title block.
+
+- id: tb_issued
+  translation: "Issued"
+
+- id: tb_revised
+  translation: "Revised"
+
+- id: tb_extent
+  translation: "Extent"
+
+- id: tb_drawn_by
+  translation: "By"
+
+- id: tb_subject
+  translation: "Subject"
+
+- id: tb_also_in
+  translation: "Also in"
+
+- id: tb_status
+  translation: "Status"
+
+# --- sheet stamp ------------------------------------------------------------
+
+- id: stamp_index
+  translation: "Subject index"
+
+- id: stamp_subject
+  translation: "Subject"
+
+- id: stamp_section
+  translation: "Section"
+
+- id: stamp_archive
+  translation: "Archive"
+
+- id: stamp_search
+  translation: "Search index"
+
+- id: stamp_office
+  translation: "Drawing office"
+
+- id: indexed_count
+  translation:
+    one: "1 sheet indexed"
+    other: "{{ .Count }} sheets indexed"
+
+- id: sheet_count
+  translation:
+    one: "1 sheet"
+    other: "{{ .Count }} sheets"
+
+- id: subject_count
+  translation:
+    one: "1 subject"
+    other: "{{ .Count }} subjects"
+
+- id: sheet_of
+  translation: "Sheet {{ .Current }} of {{ .Total }}"
+
+- id: tagged_with
+  translation: "Subject:"
+
+# --- the office sheet -------------------------------------------------------
+# The landing page's views. A drawing set indexes its sheets by number; the
+# home sheet indexes its views the same way. These are the view names — a site
+# that wants different words overrides these ids in its own i18n/ directory,
+# which is how every other label in the theme is changed.
+
+- id: view_index
+  translation: "Profile views"
+
+- id: view_about
+  translation: "About"
+
+- id: view_skills
+  translation: "Skills"
+
+- id: view_record
+  translation: "Record"
+
+- id: view_projects
+  translation: "Projects"
+
+- id: view_contact
+  translation: "Contact"
+
+# The band heading a view names the drawing instrument the view is set in, and
+# carries its count. Only the three views that have something to count get one:
+# a band over the prose that just repeats the tab above it is chrome.
+
+- id: band_schedule
+  translation: "Schedule"
+
+- id: band_record
+  translation: "Record"
+
+- id: band_references
+  translation: "References"
+
+- id: group_count
+  translation:
+    one: "1 group"
+    other: "{{ .Count }} groups"
+
+- id: entry_count
+  translation:
+    one: "1 entry"
+    other: "{{ .Count }} entries"
+
+- id: project_count
+  translation:
+    one: "1 project"
+    other: "{{ .Count }} projects"
+
+# --- the profile shell ------------------------------------------------------
+# The alternative presentation of the same profile params: a real terminal
+# session instead of the drawn view index. Shell output is deliberately left in
+# the shell's own wording — "command not found" is what zsh says, in every
+# locale a developer has ever read it in.
+
+- id: term_reopen
+  translation: "Profile shell"
+
+- id: term_close
+  translation: "Close"
+
+- id: term_min
+  translation: "Minimise"
+
+- id: term_zoom
+  translation: "Zoom"
+
+- id: term_input_label
+  translation: "Terminal command"
+
+- id: term_welcome
+  translation: "Last login:"
+
+- id: term_usage
+  translation: "Commands — type one, or click it:"
+
+- id: term_builtins
+  translation: "Also help, clear, whoami, date, ls. Arrow keys for history, Tab to complete, --json for the raw data."
+
+# {cmd} is replaced with what was typed.
+- id: term_not_found
+  translation: "zsh: command not found: {cmd}"
+
+- id: term_help_about
+  translation: "who this is"
+
+- id: term_help_skills
+  translation: "what they work in"
+
+- id: term_help_record
+  translation: "where they have worked"
+
+- id: term_help_projects
+  translation: "what they have built"
+
+- id: term_help_contact
+  translation: "how to reach them"
+
+# --- meta -------------------------------------------------------------------
+
+- id: read_time
+  translation:
+    one: "1 min read"
+    other: "{{ .Count }} min read"
+
+- id: words
+  translation:
+    one: "1 word"
+    other: "{{ .Count }} words"
+
+# --- navigation -------------------------------------------------------------
+
+- id: nav_primary
+  translation: "Primary"
+
+- id: nav_posts
+  translation: "Posts"
+
+- id: nav_pages
+  translation: "Pages"
+
+- id: zones
+  translation: "Zones"
+
+- id: breadcrumb
+  translation: "Breadcrumb"
+
+- id: prev_page
+  translation: "Newer"
+
+- id: next_page
+  translation: "Older"
+
+- id: prev_post
+  translation: "Previous"
+
+- id: next_post
+  translation: "Next"
+
+- id: anchor_link
+  translation: "Link to this section"
+
+# --- actions ----------------------------------------------------------------
+
+- id: code_copy
+  translation: "Copy"
+
+- id: code_copy_label
+  translation: "Copy code block {n}"
+
+- id: code_copied
+  translation: "Copied"
+
+- id: code_copy_failed
+  translation: "Copy failed"
+
+- id: share
+  translation: "Share"
+
+- id: share_on
+  translation: "Share on"
+
+- id: share_email
+  translation: "Email"
+
+- id: edit_post
+  translation: "Suggest an edit"
+
+# --- search -----------------------------------------------------------------
+
+- id: search_placeholder
+  translation: "Type to search…"
+
+- id: search_loading
+  translation: "Loading search…"
+
+- id: search_label
+  translation: "Search results"
+
+- id: search_no_results
+  translation: "Nothing found."
+
+# {n} is replaced with the result count.
+- id: search_results_one
+  translation: "1 result"
+
+- id: search_results_other
+  translation: "{n} results"
+
+- id: search_results_capped
+  translation: "{shown} of {n} results"
+
+- id: search_error
+  translation: "Search is unavailable right now."
+
+- id: search_nojs
+  translation: "Search needs JavaScript. Browse by section or subject instead:"
+
+# --- alerts -----------------------------------------------------------------
+
+- id: alert_note
+  translation: "Note"
+
+- id: alert_tip
+  translation: "Tip"
+
+- id: alert_important
+  translation: "Important"
+
+- id: alert_warning
+  translation: "Warning"
+
+- id: alert_caution
+  translation: "Caution"
+
+# --- AI disclosure ----------------------------------------------------------
+# Provenance, not decoration: what the sheet states about how it was drawn. The
+# level names are deliberately plain — a reader should not have to learn a
+# vocabulary to read a disclosure.
+
+- id: ai_stamp
+  translation: "AI use"
+
+- id: ai_assisted
+  translation: "With assistance"
+
+- id: ai_generated
+  translation: "Machine-generated"
+
+- id: ai_model
+  translation: "Model"
+
+# The revision note: the table a drawing carries to resolve its change flags.
+- id: ai_notes
+  translation: "Revision note"
+
+- id: ai_passage
+  translation: "AI-assisted passage"
+
+- id: ai_flag
+  translation: "Change flag {{ .Number }}"
+
+# --- chrome -----------------------------------------------------------------
+
+- id: theme_to_dark
+  translation: "Switch to dark mode"
+
+- id: theme_to_light
+  translation: "Switch to light mode"
+
+- id: theme_toggle
+  translation: "Toggle light and dark mode"
+
+- id: back_to_top
+  translation: "Back to top"
+
+- id: not_found
+  translation: "This page does not exist."
+
+- id: skip_to_content
+  translation: "Skip to content"
+
+- id: built_with
+  translation: "Built with"
+
+- id: no_posts
+  translation: "Nothing here yet."
+
+- id: opens_new_window
+  translation: "opens in a new window"

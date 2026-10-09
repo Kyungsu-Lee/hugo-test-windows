@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale | default "en" }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ site.Title }}</title>
+    
+    {{ $style := resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.Permalink }}" integrity="{{ $style.Data.Integrity }}">
+</head>
+<body>
+    <div class="terminal-container">
+        {{ if not (and .IsHome site.Params.dashboard.enabled) }}
+        <header>
+            <nav>
+                <div class="nav-logo">
+                    <a href="{{ site.Home.Permalink }}" class="prompt">{{ site.Params.prompt | default site.Title }}</a><span class="cursor">_</span>
+                </div>
+                <div class="nav-links">
+                    {{ range site.Menus.main }}
+                    <a href="{{ .URL }}">{{ .Name }}</a>
+                    {{ end }}
+                </div>
+            </nav>
+        </header>
+        {{ end }}
+
+        <main>
+            {{ block "main" . }}{{ end }}
+        </main>
+    </div>
+
+{{ if site.Params.dashboard.enabled }}
+<script>
+    document.addEventListener('keydown', function(event) {
+        // Ignore keypresses if the user is holding Ctrl/Cmd/Alt/Shift
+        if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+        
+        switch(event.key.toLowerCase()) {
+            {{ range site.Menus.main }}
+            {{ if .Params.shortcut }}
+            case '{{ .Params.shortcut }}': 
+                {{ if .Params.external }}
+                window.open('{{ .URL }}', '_blank');
+                {{ else }}
+                window.location.href = '{{ .URL }}';
+                {{ end }}
+                break;
+            {{ end }}
+            {{ end }}
+            case 'h': window.location.href = '/'; break;
+            case 'b':
+            case 'backspace':
+            case 'escape':
+                window.history.back();
+                break;
+        }
+    });
+</script>
+{{ end }}
+
+</body>
+</html>

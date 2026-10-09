@@ -1,0 +1,361 @@
+#! /usr/bin/env bash
+
+set -euo pipefail
+
+source script/env "$@"
+source script/lib/hugo-fixture.sh
+
+require_cmd hugo
+require_cmd grep
+require_cmd mktemp
+
+work_dir="$(mktemp -d "$TMP_DIR/hugo-fixture.XXXXXX")"
+site_dir="$work_dir/site"
+output_dir="$work_dir/public"
+
+cleanup() {
+  rm -rf "$work_dir"
+}
+trap cleanup EXIT
+
+create_hugo_fixture_site "$site_dir" "$DIR"
+
+echo -e "${BLUE}Building fixture site${OFF}"
+hugo \
+  --source "$site_dir" \
+  --destination "$output_dir" \
+  --panicOnWarning \
+  --printPathWarnings
+
+home_html="$output_dir/index.html"
+post_html="$output_dir/posts/first/index.html"
+posts_html="$output_dir/posts/index.html"
+absolute_og_html="$output_dir/posts/absolute-og/index.html"
+no_anchor_html="$output_dir/posts/no-anchors/index.html"
+template_literal_og_html="$output_dir/posts/template-literal-og/index.html"
+css_file="$(ls "$output_dir"/css/*.css | head -n1)"
+copy_markdown_js_file="$(ls "$output_dir"/js/copy-markdown*.js | head -n1)"
+
+[[ -f "$home_html" ]] || die "expected fixture homepage output at $home_html"
+[[ -f "$post_html" ]] || die "expected fixture post output at $post_html"
+[[ -f "$posts_html" ]] || die "expected fixture posts output at $posts_html"
+[[ -f "$absolute_og_html" ]] || die "expected fixture absolute-og output at $absolute_og_html"
+[[ -f "$no_anchor_html" ]] || die "expected fixture no-anchors output at $no_anchor_html"
+[[ -f "$template_literal_og_html" ]] || die "expected template-literal-og output at $template_literal_og_html"
+[[ -f "$css_file" ]] || die "expected processed CSS output under $output_dir/css"
+[[ -f "$copy_markdown_js_file" ]] || die "expected processed copy Markdown JavaScript under $output_dir/js"
+
+if ! grep -Fq "<h1>Home <em>Post</em></h1>" "$home_html"; then
+  die "homepage title markdown did not render as expected"
+fi
+
+if grep -Fq "First *Post*" "$home_html"; then
+  die "homepage post list title was not plainified as expected"
+fi
+
+if ! grep -Fq "First Post" "$home_html"; then
+  die "homepage post list title text missing expected plainified value"
+fi
+
+if ! grep -Fq "<h1>First <em>Post</em></h1>" "$post_html"; then
+  die "single post title markdown did not render as expected"
+fi
+
+if ! grep -Fq 'class="copy-markdown-button"' "$home_html" || ! grep -Fq 'class="copy-markdown-button"' "$post_html"; then
+  die "global copy Markdown configuration should enable the control on home and post pages"
+fi
+
+assert_date_before_copy_button() {
+  local page="$1"
+  local copy_line
+  local date_line
+
+  copy_line="$(grep -n -m1 'class="copy-markdown-button"' "$page")"
+  copy_line="${copy_line%%:*}"
+  date_line="$(grep -n -m1 'class="author-date"' "$page")"
+  date_line="${date_line%%:*}"
+
+  [[ "$date_line" -lt "$copy_line" ]] || die "copy Markdown control should render below the date in $page"
+}
+
+assert_date_before_copy_button "$home_html"
+assert_date_before_copy_button "$post_html"
+
+for page in "$home_html" "$post_html" "$posts_html"; do
+  if ! grep -Fq '<a class="header-posts-link" href="/blog/posts/">posts</a>' "$page"; then
+    die "enabled posts link should render in the header on $page"
+  fi
+done
+
+if ! grep -Fq '<span class="header-control-separator" aria-hidden="true"></span>' "$home_html"; then
+  die "posts header link should include a decorative separator before the theme toggle"
+fi
+
+if ! grep -Fq '<span class="copy-markdown-label" aria-live="polite">Copy Markdown</span>' "$post_html"; then
+  die "copy Markdown control should expose visible status text to assistive technology"
+fi
+
+if ! grep -Fq 'class="copy-markdown-icon"' "$post_html" || ! grep -Fq 'aria-hidden="true"' "$post_html"; then
+  die "copy Markdown icon should be decorative"
+fi
+
+if ! grep -Fq 'type="application/json" id="copy-markdown-source"' "$post_html"; then
+  die "copy Markdown control should include a JSON-encoded source payload"
+fi
+
+if ! grep -Fq '# First Post' "$post_html" || ! grep -Fq 'Hello from the fixture post.' "$post_html"; then
+  die "post copy payload should include the plain title and raw Markdown body"
+fi
+
+if ! grep -Fq '# Home Post' "$home_html" || ! grep -Fq '## Posts' "$home_html" || ! grep -Fq -- '- [First Post](https://example.org/blog/posts/first/)' "$home_html"; then
+  die "home copy payload should include its content and generated post links"
+fi
+
+if ! grep -Fq 'navigator.clipboard' "$copy_markdown_js_file" || ! grep -Fq 'execCommand("copy")' "$copy_markdown_js_file"; then
+  die "copy Markdown JavaScript should include Clipboard API and compatibility fallback paths"
+fi
+
+if ! grep -Fq '.copy-markdown-button:focus-visible' "$css_file"; then
+  die "copy Markdown control should expose a visible keyboard focus state"
+fi
+
+if ! grep -Fq -- '--control-border-color:#85827b' "$css_file" || ! grep -Fq -- '--control-bg-color:rgba(255, 255, 255, 0.35)' "$css_file"; then
+  die "copy Markdown control should have a distinct light-mode edge and surface"
+fi
+
+if ! grep -Fq '.page-meta{display:flex;flex-direction:column;align-items:flex-start;gap:1em;margin-block:1.5em}' "$css_file"; then
+  die "page metadata should use even vertical spacing"
+fi
+
+if ! grep -Fq '.header-posts-link:focus-visible' "$css_file"; then
+  die "posts header link should expose a visible keyboard focus state"
+fi
+
+if ! grep -Fq 'font-size:.85em' "$css_file" || ! grep -Fq '.header-control-separator' "$css_file"; then
+  die "posts header controls should include the larger label and separator styling"
+fi
+
+if ! grep -Fq 'href="#details"' "$post_html"; then
+  die "expected heading anchor link for rendered markdown heading"
+fi
+
+if ! grep -Fq 'aria-label="Permalink to Details"' "$post_html"; then
+  die "heading anchor should have an accessible name derived from the heading"
+fi
+
+if ! grep -Fq '<span aria-hidden="true">#</span>' "$post_html"; then
+  die "heading anchor marker should be hidden from assistive technology"
+fi
+
+if grep -Fq 'href="#without-anchor"' "$no_anchor_html"; then
+  die "disableAnchoredHeadings should disable heading anchor links"
+fi
+
+if ! grep -q "footnotes" "$post_html"; then
+  die "single post with footnotes should include footnotes script"
+fi
+
+if grep -q "footnotes" "$home_html"; then
+  die "homepage without footnotes should not include footnotes script"
+fi
+
+if [[ "$(grep -Fc 'rel="stylesheet"' "$home_html")" -ne 1 ]]; then
+  die "fixture should load one bundled theme stylesheet"
+fi
+
+if ! grep -Fq 'Inline <code>vendor/cache</code> code' "$post_html"; then
+  die "inline code should render independently from fenced code blocks"
+fi
+
+if ! grep -Fq 'class="chroma"' "$post_html"; then
+  die "fenced code blocks should use class-based Chroma output"
+fi
+
+if ! grep -Fq 'class="language-bash"' "$post_html"; then
+  die "Bash fence language metadata should be preserved"
+fi
+
+if ! grep -Fq 'class="language-yaml"' "$post_html"; then
+  die "YAML fence language metadata should be preserved"
+fi
+
+if ! grep -Fq 'class="ln"' "$post_html" || ! grep -Fq 'class="line hl"' "$post_html"; then
+  die "fenced code block highlighting options should be preserved"
+fi
+
+if grep -Eq '<(div|pre|code|span)[^>]* style=' "$post_html"; then
+  die "Chroma output should not contain inline styles"
+fi
+
+if ! grep -Fq 'deliberately_long_path' "$post_html"; then
+  die "fixture should contain a deliberately long highlighted line"
+fi
+
+if ! grep -Fq "fonts/Newsreader.woff2" "$home_html"; then
+  die "expected preload for primary Newsreader font on homepage"
+fi
+
+if grep -Fq "fonts/Newsreader-italic.woff2" "$home_html"; then
+  die "homepage should not preload italic Newsreader font by default"
+fi
+
+if grep -Fq "/default.png" "$home_html"; then
+  die "homepage still references missing default OG image fallback"
+fi
+
+if grep -Fq "https://example.org/blog/blog/" "$post_html"; then
+  die "OG URLs should not duplicate base path segments"
+fi
+
+if ! grep -Fq '<meta property="og:url" content="https://example.org/blog/posts/first/">' "$post_html"; then
+  die "single post should have a canonical og:url based on .Permalink"
+fi
+
+if ! grep -Eq '<meta property="og:image" content="https://example.org/blog/og/og-image-[^"]+\.svg">' "$post_html"; then
+  die "single post should reference generated OG image with a correct absolute URL"
+fi
+
+if ! grep -Fq '<meta property="og:image" content="https://cdn.example.com/og.png">' "$absolute_og_html"; then
+  die "absolute ogImage URL should be passed through without baseURL concatenation"
+fi
+
+if ! grep -Fq '<meta property="og:title" content="{{ .Site.Title }}">' "$template_literal_og_html"; then
+  die "template-like OG title should remain literal in HTML meta tags"
+fi
+
+if ! grep -Fq '<meta property="og:description" content="{{ now.Year }}">' "$template_literal_og_html"; then
+  die "template-like OG description should remain literal in HTML meta tags"
+fi
+
+if ! grep -Fq "{{ .Site.Title }}" "$output_dir"/og/*.svg; then
+  die "generated OG SVG should preserve literal template delimiters in the title"
+fi
+
+if ! grep -Fq "{{ now.Year }}" "$output_dir"/og/*.svg; then
+  die "generated OG SVG should preserve literal template delimiters in the description"
+fi
+
+if ! grep -Fq "url(../fonts/Newsreader.woff2)" "$css_file"; then
+  die "CSS should reference Newsreader regular font via relative URL"
+fi
+
+if ! grep -Fq "url(../fonts/Newsreader-italic.woff2)" "$css_file"; then
+  die "CSS should reference Newsreader italic font via relative URL"
+fi
+
+if grep -Fq "url(/fonts/" "$css_file"; then
+  die "CSS should not use root-absolute font URLs"
+fi
+
+if ! grep -Fq '.dark-mode-off:root' "$css_file" || ! grep -Fq '#cf222e' "$css_file"; then
+  die "bundled CSS should include the scoped GitHub light syntax palette"
+fi
+
+if ! grep -Fq '.dark-mode-on:root' "$css_file" || ! grep -Fq '#ff7b72' "$css_file"; then
+  die "bundled CSS should include the scoped GitHub dark syntax palette"
+fi
+
+if ! grep -Fq 'prefers-color-scheme:light' "$css_file" || ! grep -Fq 'prefers-color-scheme:dark' "$css_file"; then
+  die "bundled syntax palettes should follow the system color scheme"
+fi
+
+if ! grep -Fq 'overflow-x:auto' "$css_file" || ! grep -Fq 'white-space:pre' "$css_file"; then
+  die "code block panels should preserve long lines and scroll horizontally"
+fi
+
+if ! grep -Fq 'word-break:normal' "$css_file" || ! grep -Fq 'overflow-wrap:normal' "$css_file"; then
+  die "code block panels should not break highlighted tokens"
+fi
+
+if ! grep -Fq 'pre:focus-visible' "$css_file"; then
+  die "scrollable code blocks should expose a visible keyboard focus state"
+fi
+
+if ! grep -Fq "../fonts/Newsreader.woff2" "$output_dir"/og/*.svg; then
+  die "generated OG SVG should use a relative font URL"
+fi
+
+if grep -q "A & B" "$output_dir"/og/*.svg; then
+  die "OG SVG contains unescaped ampersand in description"
+fi
+
+if ! grep -q "A &amp; B" "$output_dir"/og/*.svg; then
+  die "OG SVG is missing escaped description content"
+fi
+
+assert_copy_markdown_mode() {
+  local mode="$1"
+  local expect_home="$2"
+  local expect_post="$3"
+  local mode_site="$work_dir/site-$mode"
+  local mode_output="$work_dir/public-$mode"
+
+  create_hugo_fixture_site "$mode_site" "$DIR" "$mode"
+  hugo --quiet --source "$mode_site" --destination "$mode_output" --panicOnWarning
+
+  if [[ "$expect_home" == "true" ]]; then
+    grep -Fq 'class="copy-markdown-button"' "$mode_output/index.html" || die "$mode mode should enable copy Markdown on the homepage"
+    grep -Fq '/js/copy-markdown.' "$mode_output/index.html" || die "$mode mode homepage should load copy Markdown JavaScript"
+  elif grep -Fq 'class="copy-markdown-button"' "$mode_output/index.html"; then
+    die "$mode mode should disable copy Markdown on the homepage"
+  elif grep -Fq '/js/copy-markdown.' "$mode_output/index.html"; then
+    die "$mode mode homepage should not load unused copy Markdown JavaScript"
+  fi
+
+  if [[ "$expect_post" == "true" ]]; then
+    grep -Fq 'class="copy-markdown-button"' "$mode_output/posts/first/index.html" || die "$mode mode should enable copy Markdown on post pages"
+    grep -Fq '/js/copy-markdown.' "$mode_output/posts/first/index.html" || die "$mode mode posts should load copy Markdown JavaScript"
+  elif grep -Fq 'class="copy-markdown-button"' "$mode_output/posts/first/index.html"; then
+    die "$mode mode should disable copy Markdown on post pages"
+  elif grep -Fq '/js/copy-markdown.' "$mode_output/posts/first/index.html"; then
+    die "$mode mode posts should not load unused copy Markdown JavaScript"
+  fi
+}
+
+assert_copy_markdown_mode home true false
+assert_copy_markdown_mode posts false true
+assert_copy_markdown_mode off false false
+
+landing_site="$work_dir/site-landing"
+landing_output="$work_dir/public-landing"
+create_hugo_fixture_site "$landing_site" "$DIR" global false
+hugo --quiet --source "$landing_site" --destination "$landing_output" --panicOnWarning
+grep -Fq 'class="page-meta page-meta-home"' "$landing_output/index.html" || die "standard landing page should render the copy Markdown control"
+grep -Fq '# Home Post' "$landing_output/index.html" || die "standard landing page should include its Markdown payload"
+
+posts_link_off_site="$work_dir/site-posts-link-off"
+posts_link_off_output="$work_dir/public-posts-link-off"
+create_hugo_fixture_site "$posts_link_off_site" "$DIR" global true false
+hugo --quiet --source "$posts_link_off_site" --destination "$posts_link_off_output" --panicOnWarning
+if grep -Rq 'class="header-posts-link"' "$posts_link_off_output" || grep -Rq 'class="header-control-separator"' "$posts_link_off_output"; then
+  die "disabled posts link and separator should not render on any page"
+fi
+
+multilingual_site="$work_dir/site-multilingual"
+multilingual_output="$work_dir/public-multilingual"
+create_hugo_fixture_site "$multilingual_site" "$DIR"
+cat >> "$multilingual_site/hugo.toml" <<'EOF'
+
+[languages.en]
+  languageCode = "en-us"
+  weight = 1
+
+[languages.fr]
+  languageCode = "fr-fr"
+  weight = 2
+EOF
+cat > "$multilingual_site/content/posts/first.fr.md" <<'EOF'
++++
+title = "Premier article"
+description = "Article de test"
+date = 2025-02-24T00:00:00Z
++++
+
+Contenu de test.
+EOF
+hugo --quiet --source "$multilingual_site" --destination "$multilingual_output" --panicOnWarning
+if ! grep -Fq '<a class="header-posts-link" href="/blog/fr/posts/">posts</a>' "$multilingual_output/fr/posts/first/index.html"; then
+  die "posts header link should include the active language path"
+fi
+
+echo -e "${GREEN}Fixture tests passed${OFF}"

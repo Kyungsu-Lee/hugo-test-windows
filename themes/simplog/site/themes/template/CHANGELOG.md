@@ -1,0 +1,93 @@
+# Changelog
+
+## [v1.2.0](https://github.com/michimani/simplog/compare/v1.1.4...v1.2.0) - 2026-09-23
+
+- chore(deps): update node.js to v24.20.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/117
+- chore(deps): update node.js to v24.21.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/119
+- chore(deps): update dependency hugo to v0.166.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/120
+- Fix toc insertion with empty toc by @alterNERDtive in https://github.com/michimani/simplog/pull/122
+- Fix some typos by @alterNERDtive in https://github.com/michimani/simplog/pull/123
+- Support custom comments partial by @alterNERDtive in https://github.com/michimani/simplog/pull/124
+- Feature: add `lastmod` date to posts by @alterNERDtive in https://github.com/michimani/simplog/pull/121
+
+## [v1.1.4](https://github.com/michimani/simplog/compare/v1.1.3...v1.1.4) - 2026-08-10
+
+- chore(deps): update node.js to v24.18.1 by @renovate[bot] in https://github.com/michimani/simplog/pull/114
+- chore(deps): update node.js to v24.19.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/116
+
+## [v1.1.3](https://github.com/michimani/simplog/compare/v1.1.2...v1.1.3) - 2026-06-30
+
+- chore(deps): update node.js to v24.17.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/108
+- chore(deps): update actions/checkout action to v7 by @renovate[bot] in https://github.com/michimani/simplog/pull/110
+- chore(deps): update node.js to v24.18.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/111
+
+## [v1.1.2](https://github.com/michimani/simplog/compare/v1.1.1...v1.1.2) - 2026-06-05
+
+- chore(deps): update node.js to v24.16.0 by @renovate[bot] in https://github.com/michimani/simplog/pull/104
+- chore(deps): update songmu/tagpr digest to e84001b by @renovate[bot] in https://github.com/michimani/simplog/pull/106
+- chore(deps): update actions/checkout digest to df4cb1c by @renovate[bot] in https://github.com/michimani/simplog/pull/107
+
+## [v1.1.1](https://github.com/michimani/simplog/compare/v1.1.0...v1.1.1) - 2026-05-15
+- chore(deps): update pnpm to v11.0.8 by @renovate[bot] in https://github.com/michimani/simplog/pull/100
+- chore: remove npm packages by @michimani in https://github.com/michimani/simplog/pull/102
+- fix: restore package.json as version file for tagpr by @michimani in https://github.com/michimani/simplog/pull/103
+
+## [v1.1.0](https://github.com/michimani/simplog/compare/v1.0.0...v1.1.0) - 2026-05-13
+- chore(deps): update actions/checkout action to v6 by @renovate[bot] in https://github.com/michimani/simplog/pull/89
+- chore(deps): update actions/setup-node action to v6 by @renovate[bot] in https://github.com/michimani/simplog/pull/90
+- chore(deps): update peaceiris/actions-gh-pages action to v4 by @renovate[bot] in https://github.com/michimani/simplog/pull/92
+- chore(deps): update pnpm/action-setup action to v6 by @renovate[bot] in https://github.com/michimani/simplog/pull/95
+- chore(deps): update peaceiris/actions-hugo action to v3 by @renovate[bot] in https://github.com/michimani/simplog/pull/93
+- chore(deps): update pnpm to v10.33.4 by @renovate[bot] in https://github.com/michimani/simplog/pull/96
+- chore(deps): update pnpm to v11 by @renovate[bot] in https://github.com/michimani/simplog/pull/94
+- migrate CSS compilation from Node.js sass to Hugo built-in SCSS processor by @michimani in https://github.com/michimani/simplog/pull/97
+- fix: resolve Hugo build warnings in exampleSite by @michimani in https://github.com/michimani/simplog/pull/98
+- chore: change copyright by @michimani in https://github.com/michimani/simplog/pull/99
+
+## [v1.0.0](https://github.com/michimani/simplog/commits/v1.0.0) - 2026-05-12
+- Issue/1/improve manu nav by @michimani in https://github.com/michimani/simplog/pull/4
+- hide page title in home index #5 by @michimani in https://github.com/michimani/simplog/pull/6
+- add github actions hosting demo site on github pages #7 by @michimani in https://github.com/michimani/simplog/pull/8
+- move screenshot to iamges dir #9 by @michimani in https://github.com/michimani/simplog/pull/12
+- improve pagination style #11 by @michimani in https://github.com/michimani/simplog/pull/13
+- add some meta tags, refactor css #14 by @michimani in https://github.com/michimani/simplog/pull/15
+- add logo, favicon and featured image #2 by @michimani in https://github.com/michimani/simplog/pull/16
+- fix ogp path #2 by @michimani in https://github.com/michimani/simplog/pull/17
+- fixup! fix ogp path #2 by @michimani in https://github.com/michimani/simplog/pull/18
+- show summary at list #20 by @michimani in https://github.com/michimani/simplog/pull/21
+- add Disqus #22 by @michimani in https://github.com/michimani/simplog/pull/23
+- fix theme images #19 by @michimani in https://github.com/michimani/simplog/pull/24
+- Add license scan report and status by @fossabot in https://github.com/michimani/simplog/pull/25
+- update README by @michimani in https://github.com/michimani/simplog/pull/26
+- fix example site toml #27 by @michimani in https://github.com/michimani/simplog/pull/28
+- fix head template #29 by @michimani in https://github.com/michimani/simplog/pull/30
+- add more customizations #31 by @michimani in https://github.com/michimani/simplog/pull/33
+- fix some style, and bug fix #32 by @michimani in https://github.com/michimani/simplog/pull/34
+- add lazy load shortcode #35 by @michimani in https://github.com/michimani/simplog/pull/36
+- generate CSS from SCSS #37 by @michimani in https://github.com/michimani/simplog/pull/38
+- Issue/39/some fix by @michimani in https://github.com/michimani/simplog/pull/40
+- Issue/41/additional template for adsense by @michimani in https://github.com/michimani/simplog/pull/42
+- add toggle of hide some elements #43 by @michimani in https://github.com/michimani/simplog/pull/44
+- enable cache for assets #45 by @michimani in https://github.com/michimani/simplog/pull/46
+- show original value of tags and categories #47 by @michimani in https://github.com/michimani/simplog/pull/48
+- fix value for cache buster #49 by @michimani in https://github.com/michimani/simplog/pull/50
+- Feature/51/enable header image by @michimani in https://github.com/michimani/simplog/pull/52
+- Typo in README by @jacul in https://github.com/michimani/simplog/pull/53
+- add rss link #54 by @michimani in https://github.com/michimani/simplog/pull/55
+- fixed font size discrepancy issue #56 by @michimani in https://github.com/michimani/simplog/pull/57
+- build demo site by hugo v0.105.0 by @michimani in https://github.com/michimani/simplog/pull/58
+- support Mermaid syntax by @michimani in https://github.com/michimani/simplog/pull/60
+- Bump minimist from 1.2.5 to 1.2.8 by @dependabot[bot] in https://github.com/michimani/simplog/pull/61
+- fix dependencies by @michimani in https://github.com/michimani/simplog/pull/68
+- Bump minimatch from 3.0.4 to 3.0.8 by @dependabot[bot] in https://github.com/michimani/simplog/pull/62
+- fix param name by @soralis0912 in https://github.com/michimani/simplog/pull/70
+- Bump yaml from 2.2.1 to 2.2.2 by @dependabot[bot] in https://github.com/michimani/simplog/pull/69
+- fix: update runner image to ubuntu-22.04 #71 by @michimani in https://github.com/michimani/simplog/pull/72
+- fix: baseURL of example site #73 by @michimani in https://github.com/michimani/simplog/pull/74
+- fix: parameter for relURL #73 by @michimani in https://github.com/michimani/simplog/pull/75
+- fix: use hugo.IsServer instead of site.IsServer by @michimani in https://github.com/michimani/simplog/pull/79
+- fix: example config by @michimani in https://github.com/michimani/simplog/pull/81
+- chore: set up devcontainer, migrate to pnpm, and improve dev infrastructure by @michimani in https://github.com/michimani/simplog/pull/82
+- chore: remove npm-check-updates as renovate handles dependency updates by @michimani in https://github.com/michimani/simplog/pull/87
+- chore(deps): update pnpm to v10.33.3 by @renovate[bot] in https://github.com/michimani/simplog/pull/85
+- chore: add michimani as reviewer for renovate PR by @michimani in https://github.com/michimani/simplog/pull/88

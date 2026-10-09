@@ -1,0 +1,53 @@
+/*
+This is a reduced subsets of the base-ui consisting of only 13 icons
+*/
+
+/* Icon Fonts */
+@font-face {
+    font-family: 'base-ui';
+    font-weight: 100 900;
+    font-style: normal italic;
+    font-display: block;
+    src: url(data:font/woff2;base64,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);
+}
+
+#to-top::before,
+.stat a::before,
+.icon {
+    text-transform: none;
+    line-height: 1;
+    font-family: 'base-ui' !important;
+    font-size: 0.9em;
+    font-weight: normal;
+    font-variant: normal;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-font-feature-settings: 'liga';
+            font-feature-settings: 'liga';
+    -webkit-font-variant-ligatures: discretionary-ligatures;
+            font-variant-ligatures: discretionary-ligatures;
+}
+
+.emoji {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'NotoColorEmoji', 'Segoe UI Symbol', 'Android Emoji', 'EmojiSymbols', 'base-ui';
+    font-size: 1.8ex;
+}
+
+#to-top::before,
+.icon.arrow:before {content: '\e902';}
+.icon.copyleft:before {content: '\e906';}
+.favourites::before,
+.icon.heart:before {content: '\e908';}
+.icon.localization:before {content: '\e90a';}
+.icon.menu:before {content: '\e90b';}
+.reblogs::before,
+.icon.reblog:before {content: '\e90d';}
+.replies::before,
+.icon.reply:before {content: '\e90e';}
+.icon.rss:before {content: '\e910';}
+.icon.search:before {content: '\e911';}
+.icon.xmark:before {content: '\e913';}
+.icon.bluesky:before {content: '\e918';}
+.icon.github:before {content: '\e92a';}
+.icon.ko-fi:before {content: '\e93a';}
+.icon.mastodon:before {content: '\e93e';}

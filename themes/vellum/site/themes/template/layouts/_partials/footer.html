@@ -1,0 +1,188 @@
+{{- if not (.Param "hideFooter") }}
+{{- /* The sheet's bottom border: the printed furniture of a drawing, carrying
+       the issuing party and the feed, ruled like the title block. */}}
+<footer class="footer">
+    <div class="footer__inner">
+        <span class="footer__issuer">
+            {{- with site.Params.footer.text }}{{ . | markdownify }}
+            {{- else }}&copy; {{ now.Year }} {{ partial "author.html" . | default site.Title }}{{ end }}
+        </span>
+        <span class="footer__meta">
+            {{- /* The feed is advertised in <head> for readers that sniff for it,
+                   but a person looking for it needs something to click. */}}
+            {{- with site.Home.OutputFormats.Get "rss" }}
+            <a href="{{ .RelPermalink }}">{{ i18n "rss" }}</a>
+            <span class="footer__sep" aria-hidden="true"></span>
+            {{- end }}
+            <span>{{ i18n "built_with" | default "Built with" }} <a href="https://gohugo.io/" rel="noopener noreferrer"
+                    target="_blank">Hugo{{ partial "new-window.html" . }}</a></span>
+        </span>
+    </div>
+</footer>
+{{- end }}
+
+{{- if not site.Params.disableScrollToTop }}
+<a class="top-link" id="top-link" href="#top" aria-label="{{ i18n "back_to_top" }}" title="{{ i18n "back_to_top" }}">
+    {{- partial "icon.html" "arrow-up" -}}
+</a>
+{{- end }}
+
+<script>
+    (function () {
+        var root = document.documentElement;
+
+        var toggle = document.getElementById("theme-toggle");
+        if (toggle) {
+            var media = window.matchMedia("(prefers-color-scheme: dark)");
+
+            // "auto" and an absent attribute are the same case: follow the OS.
+            var isDark = function () {
+                return root.dataset.theme === "dark" ||
+                    (root.dataset.theme !== "light" && media.matches);
+            };
+
+            // The accessible name is the action the button will perform, so
+            // activating it renames the element that still holds focus — which
+            // is what tells a screen reader the scheme actually changed. Hugo
+            // cannot render this: the resolved scheme is not known at build
+            // time, so the generic label it ships is corrected here before the
+            // button can be reached.
+            var relabel = function () {
+                var next = isDark() ? toggle.dataset.toLight : toggle.dataset.toDark;
+                if (!next) return;
+                toggle.setAttribute("aria-label", next);
+                toggle.title = next;
+            };
+
+            relabel();
+
+            // Both palettes land at once or the sheet repaints in two passes —
+            // see .is-theme-switching in 10-base.css for what that looks like
+            // and what it measures. The class goes on, the current style is
+            // flushed so the suppression is actually live, the scheme flips,
+            // the new palette is flushed under it, and the class comes off:
+            // no transition is ever started, so there is none to remove.
+            var snap = function (change) {
+                root.classList.add("is-theme-switching");
+                void root.offsetWidth;
+                change();
+                void root.offsetWidth;
+                root.classList.remove("is-theme-switching");
+            };
+
+            toggle.addEventListener("click", function () {
+                snap(function () {
+                    root.dataset.theme = isDark() ? "light" : "dark";
+                });
+                try { localStorage.setItem("pref-theme", root.dataset.theme); } catch (e) { }
+                relabel();
+            });
+
+            // On "auto" the scheme follows the OS, so the label has to follow it
+            // too — otherwise the button offers to switch to the mode it is in.
+            //
+            // The palette changes without passing through the button here, so
+            // snap() has nothing to wrap, and the class cannot be got in front
+            // of the change: measured, the ground moves a frame before the
+            // event is dispatched, which is the browser's ordering and not
+            // something script can reach around. What the class still does is
+            // cancel the fade that has already started, so the mismatch is one
+            // frame instead of the whole 140ms. Two frames to take it off
+            // again — a single rAF still runs before the paint it must follow.
+            media.addEventListener("change", function () {
+                root.classList.add("is-theme-switching");
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        root.classList.remove("is-theme-switching");
+                    });
+                });
+                relabel();
+            });
+        }
+
+        var top = document.getElementById("top-link");
+        if (top) {
+            var onScroll = function () {
+                top.classList.toggle("is-visible", window.scrollY > 800);
+            };
+            window.addEventListener("scroll", onScroll, { passive: true });
+            onScroll();
+        }
+    })();
+</script>
+
+{{- if .Param "ShowCodeCopyButtons" }}
+<script>
+    (function () {
+        var copy = {{ i18n "code_copy" }},
+            copied = {{ i18n "code_copied" }},
+            failed = {{ i18n "code_copy_failed" }},
+            label = {{ i18n "code_copy_label" }};
+
+        // Swapping the button's own label announces nothing: a screen reader has
+        // already read the control it is sitting on and does not re-read it, so
+        // "Copied" and — the one that matters — "Copy failed" reached sighted
+        // readers only. Over plain HTTP the clipboard API rejects outright, so
+        // that is not a rare path. One region for every block on the sheet,
+        // created now and written on click: a live region has to be in the
+        // document before the text lands or the first message is missed.
+        var announce = document.createElement("p");
+        announce.className = "visually-hidden";
+        announce.setAttribute("role", "status");
+        announce.setAttribute("aria-live", "polite");
+        document.body.appendChild(announce);
+
+        document.querySelectorAll(".content .highlight").forEach(function (block, i) {
+            var code = block.querySelector("code");
+            if (!code) return;
+            var button = document.createElement("button");
+            button.className = "copy-code";
+            button.type = "button";
+            button.textContent = copy;
+            // Every button on the page is the word "Copy", which is the right
+            // word to read and the wrong one to navigate by: a reader listing
+            // the sheet's controls hears it once per block with nothing telling
+            // them apart. The number is the block's position, which is the only
+            // thing that does.
+            button.setAttribute("aria-label", label.replace("{n}", i + 1));
+
+            var restore = function () {
+                setTimeout(function () {
+                    button.textContent = copy;
+                    delete button.dataset.state;
+                    // Emptied as well, or copying the same block twice writes
+                    // the identical string, mutates nothing, and is announced
+                    // once however many times the reader presses it.
+                    announce.textContent = "";
+                }, 1500);
+            };
+
+            button.addEventListener("click", function () {
+                // With line numbers on, Chroma splits the block into a two-cell
+                // table; the code itself is the last cell, and copying the whole
+                // block would prefix every line with its number.
+                var text = (block.querySelector("td:last-child code") || code).innerText;
+                // The clipboard API rejects outside a secure context, so the
+                // failure has to be reported rather than silently swallowed.
+                Promise.resolve()
+                    .then(function () {
+                        if (!navigator.clipboard) throw new Error("unavailable");
+                        return navigator.clipboard.writeText(text);
+                    })
+                    .then(function () {
+                        button.textContent = copied;
+                        announce.textContent = copied;
+                        restore();
+                    })
+                    .catch(function () {
+                        button.textContent = failed;
+                        button.dataset.state = "failed";
+                        announce.textContent = failed;
+                        restore();
+                    });
+            });
+            block.appendChild(button);
+        });
+    })();
+</script>
+{{- end }}

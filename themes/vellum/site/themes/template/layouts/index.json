@@ -1,0 +1,34 @@
+{{- /* The per-language search index, fetched by /{lang}/search/. It exists only
+       because [outputs] home includes "JSON" — drop that and search silently
+       finds nothing, with no build error.
+
+       site.RegularPages is already language-scoped, so /en/index.json contains
+       only English pages. */ -}}
+{{- $pages := where site.RegularPages "Params.searchHidden" "!=" true -}}
+{{- $pages = where $pages "Layout" "!=" "search" -}}
+{{- $pages = where $pages "Layout" "!=" "archives" -}}
+{{- /* date and extent are rendered here rather than in the script, and rendered
+       as strings rather than as numbers: a date's format is a site param and a
+       reading time is a pluralised translation, so both belong on the Hugo side
+       — the same rule search.html states for every string the script displays.
+       Neither is a Fuse key; they are carried for display only, so a search for
+       "5 min" still matches nothing.
+
+       hidemeta suppresses the whole meta line in post-card.html and single.html,
+       so it has to suppress it here too: a page that hides its title block
+       everywhere else must not have its date and reading time reappear in a
+       search result, which was the one surface still printing them. Both keys
+       stay present and empty rather than being dropped — the script's metaLine()
+       tests for falsiness and renders no row when both are blank. */ -}}
+{{- $index := slice -}}
+{{- range $pages -}}
+{{- $meta := not (.Param "hidemeta") -}}
+{{- $index = $index | append (dict
+    "title" .Title
+    "permalink" .RelPermalink
+    "summary" (.Summary | plainify | chomp)
+    "date" (cond (and $meta (not .Date.IsZero)) (.Date | time.Format (site.Params.DateFormat | default ":date_long")) "")
+    "extent" (cond (and $meta (and (.Param "ShowReadingTime") (gt .ReadingTime 0))) (i18n "read_time" .ReadingTime) "")
+    "content" (.Plain | chomp)) -}}
+{{- end -}}
+{{- $index | jsonify -}}

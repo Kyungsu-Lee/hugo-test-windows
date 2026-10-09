@@ -1,0 +1,41 @@
+/* special thanks to [@osimplex](https://github.com/osimplex) for contributing the base print styles */
+
+@page { margin: 12mm 14mm 14mm; }
+
+@media print {
+  :root[color-scheme^='light'], :root[color-scheme^='dark'] {
+    --body-text-color: #111;
+    --body-background-color: #fff;
+    --background-color: #fff;
+    --code-background-color: transparent;
+  }
+
+  header#main-header, ol.breadcrumbs, aside#side-pane,
+  footer#main-footer, div#aside-overlay,
+  a#aside-toggle-button, div.search-bar {
+    display: none !important;
+  }
+
+  div#container, div#main-pane, main#main-content {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  body { font-size: 11pt; line-height: 1.15; }
+
+  h1, h2, h3, h4, h5, h6 { break-after: avoid; }
+  table, img, figure { break-inside: avoid; }
+  img { max-width: 100%; height: auto; }
+
+  pre { white-space: pre-wrap; overflow: visible !important; }
+
+  section.page-section a[href]::after {
+    content: " (" attr(href) ")";
+    overflow-wrap: anywhere;
+  }
+}

@@ -1,0 +1,231 @@
+/* main and native elements rules */
+
+html[color-scheme^='dark'] .dark-icon,
+html[color-scheme^='light'] .light-icon { 
+  display: none; 
+}
+
+html {
+  --bgc-transition: background-color 100ms ease-in;
+  color-scheme: var(--color-scheme);
+  scroll-behavior: smooth;
+  ::-moz-selection, ::selection {
+    background: var(--selection-color);
+  }
+}
+
+body {
+  margin: 0 !important;
+  width: 100%;
+  background-color: var(--body-background-color);
+  color: var(--body-text-color);
+  font-family: var(--font-family-main);
+  font-weight: var(--font-weight-main);
+  line-height: 1.5;
+  margin: 1rem;
+  transition: var(--bgc-transition);
+}
+
+div#container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 2rem);
+  max-width: fit-content;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+div#main-pane {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  width: 768px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+aside#side-pane {
+  width: 224px;
+  height: calc(100vh - 60px); /* adds about the same margin at the bottom */
+  padding: 1rem;
+  overflow-y: auto;
+  border: var(--dim-color) 1px solid;
+  border-radius: 5px;
+  padding-top: 5px;
+}
+
+aside.side-sticky {
+  position: sticky;
+  top: 1rem;
+  bottom: 3rem;
+}
+
+header#main-header {
+  margin-bottom: 4rem;
+  border-bottom: 1px var(--dim-color) solid;
+}
+
+div#nav-menu {
+  display: flex
+}
+
+aside#side-pane-toggle {
+  display: none;
+}
+
+a#aside-toggle-button{
+  display: none;
+}
+
+div#aside-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #22222288;
+  display: none;
+}
+
+@media (max-width: 1128px) {
+  div#aside-overlay.shown {
+    display: block;
+  }
+
+  aside#side-pane:not(.shown) {
+    display: none;
+  }
+
+  aside#side-pane {
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 3;
+    background-color: var(--body-background-color);
+    height: 100vh;
+    border-radius: 0;
+    border-top: none;
+  }
+
+  a#aside-toggle-button:not(.hidden){
+    display: unset;
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 4;
+    background-color: var(--body-background-color);
+    transition: var(--bgc-transition);
+    border: 1px var(--dim-color) solid;
+    border-radius: 5px;
+  }
+}
+
+@media (min-width: 768px) {
+  div#nav-dropdown-menu {
+    display: none
+  }
+}
+
+@media (max-width: 768px) {
+  div#nav-menu {
+    display: none;
+  }
+
+  a#nav-dropdown-button {
+    display: unset !important;
+  }
+}
+
+a#nav-dropdown-button {
+  display: none;
+}
+
+div#nav-dropdown-menu {
+  position: relative;
+  top: 34px;
+  left: -44px;
+  width: fit-content;
+  border-radius: 5px;
+  border: 1px var(--dim-color) solid;
+  padding: 0 1rem;
+  text-align: center;
+  background-color: var(--body-background-color);
+  z-index: 2;
+}
+
+main#main-content {
+  flex-grow: 1;
+}
+
+main#main-content img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+footer#main-footer {
+  margin: 5rem auto 0;
+}
+
+section {
+  font-family: var(--font-family-content);
+  font-weight: var(--font-weight-content);
+}
+
+section a {
+  text-decoration: underline;
+}
+
+a {
+  color: var(--primary-color);
+  transition: color 80ms;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+a:hover {
+  color: color-mix(in lab, var(--primary-color) 60%, var(--hover-dim-color) 40%);
+}
+
+a > svg {
+  color: var(--body-text-color);
+  height: 22px;
+  width: 22px;
+  margin: 5px 5px 0;
+}
+
+blockquote {
+  padding-left: 25px; 
+  margin: auto 5px;
+  border-left: 6px var(--dim-color) solid; 
+}
+
+blockquote > p {
+  color: var(--quote-text-color);
+}
+
+table {
+  border: 1px var(--dim-color) solid; 
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px var(--dim-color) solid; 
+  padding: .2rem .5rem;
+}
+
+pre:has(code) {
+  display: grid;
+  overflow-x: auto;
+  padding: .8rem;
+  border-radius: .3rem;
+  color: var(--code-text-color);
+  background-color: var(--code-background-color) !important;
+}
+
+:not(pre) > code {
+  padding: .3rem .3rem 0;
+  border-radius: .3rem;
+  color: var(--code-text-color);
+  background-color: var(--code-background-color) !important;
+}

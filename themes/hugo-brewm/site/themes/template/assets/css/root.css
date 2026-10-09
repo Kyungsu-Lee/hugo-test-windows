@@ -1,0 +1,19 @@
+:root {
+    --golden-ratio: 61.803398%;
+    --canonic: 70.710678%;
+    --max-width: 58rem;
+    --void: calc((29.289322vw - 1rem) / 3.14); /* 100vw - 70.710678vw */
+    --vhead: 4.2rem;
+    --vfoot: 3.33rem;
+    --vbody: calc(100vh - var(--vhead) - var(--vfoot));
+    --marginparwidth: 27vw; /* --canonic - ( --canonic * --golden-ratio) */
+    --g18: #80808080;
+    --g18s: #80808022;
+    --bound: 1pt dotted var(--g18);
+    --border: 1pt solid var(--g18s);
+    --box-shadow: 0 1px 0.5px var(--g18);
+    --box-shadow-inset: inset 0 1px 5px #0001, 0 1px 0 #fff5, 0 -1px 0 #0005;
+    --fontScale: 1;
+    --baselineStretch: 1;
+    font-size: calc(var(--fontScale) * 10.5pt);
+}

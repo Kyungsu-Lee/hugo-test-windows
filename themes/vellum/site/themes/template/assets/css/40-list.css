@@ -1,0 +1,460 @@
+/* Index sheets: the post card, the tag list, pagination. The card is one
+   invariant field grid, identical wherever a post is indexed, so the unit is
+   learnable rather than re-invented per page. */
+
+.post-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Entries are separated by a ruled line rather than boxed. A drawing divides a
+   schedule with rules; boxing each row would make the index heavier than the
+   drawing it indexes. */
+.post-list > li {
+    border-top: var(--line-thin) solid var(--rule);
+}
+
+.post-list > li:last-child {
+    border-bottom: var(--line-thin) solid var(--rule);
+}
+
+/* The track list is stated for the one-column case too, and minmax(0, 1fr) is
+   the load-bearing half of it rather than tidiness. A grid track sized
+   automatically takes its floor from the item's *min-content* width, and
+   10-base.css breaks long words with overflow-wrap: break-word — which is the
+   right keyword for the reasons stated there, and which deliberately leaves
+   min-content alone. So an unbreakable run in a summary set the card's floor and
+   the card widened the sheet under it: measured at 320px with a bare URL in an
+   auto-generated summary, the index came out 600px wide and scrolled sideways by
+   280px. The same text on its own post page was already fine, because a word
+   overflowing a block in normal flow does not widen its parent.
+   minmax(0, …) drops that floor to zero and the wrap then does its job.
+
+   The cover variant below has always stated it. This is the same guard on the
+   plain one, which is the variant almost every card on almost every site is. */
+.post-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-sm) var(--space-lg);
+    padding-block: var(--space-lg);
+    transition: background-color var(--transition);
+}
+
+.post-card:hover {
+    background: var(--accent-panel);
+}
+
+/* 12rem is this component's own geometry, not a spacing step, so it is a
+   literal here rather than a token — see the exception noted in 00-tokens.css. */
+.post-card:has(.cover) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 12rem);
+    align-items: start;
+}
+
+.post-card:has(.cover) .post-card__body {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.post-card:has(.cover) .cover {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+}
+
+.post-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--meta);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: var(--space-2xs);
+}
+
+/* A drawn separator rather than a middot: the same hairline the sheet uses
+   everywhere else. */
+.post-card__meta > * + *::before {
+    content: "";
+    display: inline-block;
+    width: var(--space-sm);
+    height: var(--line-thin);
+    background: var(--rule-strong);
+    vertical-align: middle;
+    margin-inline-end: var(--space-xs);
+}
+
+.post-card__title {
+    font-size: var(--step-2);
+}
+
+.post-card__title a {
+    text-decoration: none;
+}
+
+.post-card:hover .post-card__title a {
+    color: var(--accent);
+}
+
+.post-card__summary {
+    margin-top: var(--space-2xs);
+    color: var(--meta);
+    font-size: var(--step--1);
+    max-width: 68ch;
+}
+
+/* The same instrument mark the sheet carries in its title block, so the index
+   discloses what the post does without teaching a second sign. Sized to the
+   meta line it sits in rather than to a fixed step. */
+.post-card__ai {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4xs);
+    color: var(--meta);
+}
+
+/* Larger than the type around it, because a 1.75 stroke scaled to the meta
+   line's own size thins out to under a pixel and the nib stops being a nib. */
+.post-card__ai .icon {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+/* The glyph is the only mark in this row that names nothing on its own — a date
+   and an extent read as themselves — so it carries its name in a box that opens
+   on hover and on focus, the same gesture the stamp on the sheet answers to.
+   Spelling the name out in the row instead would set the same two words down
+   the whole index in a line whose job is to differ from card to card.
+
+   A button, not a bare span: only a focusable element opens on a keyboard and
+   on a tap, which is the whole of what a title attribute could not do. Nothing
+   is activated, so the cursor says help rather than pointer. */
+.post-card__ai-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* The glyph draws at 1.5em of the meta line, which is under the 24px a
+       target has to answer to; the box is grown to it without the glyph
+       changing size, and to the platform figure where the pointer is a finger
+       and there is no hover to fall back on. */
+    min-width: var(--space-lg);
+    min-height: var(--space-lg);
+    cursor: help;
+    transition: color var(--transition);
+}
+
+@media (pointer: coarse) {
+    .post-card__ai-mark {
+        min-width: var(--tap-target);
+        min-height: var(--tap-target);
+    }
+}
+
+.post-card__ai-mark:hover {
+    color: var(--accent);
+}
+
+/* Boxed and ruled like the sheet's own stamp note, at the row's size. It hangs
+   from the mark's leading edge rather than the card's, so it reads as belonging
+   to the glyph, and it is lifted above the neighbouring cards' rules. */
+.post-card__ai-note {
+    display: none;
+    position: absolute;
+    inset-block-start: calc(100% + var(--space-3xs));
+    inset-inline-start: 0;
+    z-index: 1;
+    width: max-content;
+    max-width: min(32ch, 70vw);
+    padding: var(--space-3xs) var(--space-2xs);
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--bg);
+    line-height: var(--line-height-snug);
+}
+
+.post-card__ai:hover .post-card__ai-note,
+.post-card__ai:focus-within .post-card__ai-note {
+    display: block;
+}
+
+/* State is a mark, not a hue: the draft flag is a drawn box with its own
+   lettering, legible in greyscale and to anyone who cannot separate the two
+   colours. */
+.draft-badge {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--space-3xs);
+    border: var(--line-thin) solid var(--danger);
+    background: var(--danger-panel);
+    color: var(--danger);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+}
+
+.draft-badge::before {
+    content: none;
+}
+
+/* --- tags ---------------------------------------------------------------- */
+
+.tag-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+}
+
+/* A tag is a term an author writes, so it can be a compound with nothing to
+   break on. Measured at 320px, one such tag pushed a post's sheet to 572px and
+   the tag index to 681px — and on the post page it took .post-actions out of the
+   viewport with it, since .post-footer lays the two out as flex siblings.
+
+   **This is the one place the theme needs `anywhere` rather than `break-word`,
+   and it is the exact case 10-base.css's comment excludes.** That comment chose
+   break-word globally because `anywhere` also shrinks min-content, which would
+   let the measured reading column collapse under a flex or grid parent. A chip
+   has no measured column to protect: it is sized by its own word and nothing
+   else, so shrinking its min-content is the whole point. break-word alone could
+   not help here however much room the flex item was given — the chip is an
+   inline-flex whose min-content *is* the word, so it overflowed its own li at any
+   width. min-width: 0 on the li is kept so the item can actually take the
+   smaller size once the word will break.
+
+   A chip that breaks mid-word looks worse than one that does not, and better
+   than a sheet that scrolls sideways on the surface this theme exists for. */
+.tag-list > li {
+    min-width: 0;
+}
+
+.tag-list a {
+    overflow-wrap: anywhere;
+}
+
+.tag-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    padding: var(--space-4xs) var(--space-xs);
+    border: var(--line-thin) solid var(--rule-strong);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--meta);
+    transition: color var(--transition), border-color var(--transition), background-color var(--transition);
+}
+
+.tag-list a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-panel);
+}
+
+.tag-list--index {
+    gap: var(--space-xs);
+}
+
+.tag-list--index a {
+    font-size: var(--step--1);
+    padding: var(--space-3xs) var(--space-sm);
+}
+
+.tag-list__count {
+    padding-inline-start: var(--space-3xs);
+    border-inline-start: var(--line-thin) solid var(--rule-strong);
+    color: var(--meta-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- pagination ---------------------------------------------------------- */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-md);
+    border-top: var(--line-frame) solid var(--rule-frame);
+}
+
+.pagination__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    text-decoration: none;
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.pagination__link:hover {
+    color: var(--accent);
+}
+
+.pagination__link .icon {
+    width: 1em;
+    height: 1em;
+}
+
+/* An unavailable direction stays in place rather than disappearing, so the row
+   does not reflow between pages.
+
+   --meta-soft, not --rule-strong: that is a *line* token, and at 2.06:1 on 13px
+   lettering it sat below the standard this theme sets for itself even though
+   WCAG exempts an inactive control. Unavailability is carried by cursor and by
+   the missing hover, neither of which needs the text to be faint. */
+.pagination__link.is-disabled {
+    color: var(--meta-soft);
+    cursor: default;
+}
+
+.pagination__position {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--meta-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+.empty-note {
+    padding-block: var(--space-2xl);
+    color: var(--meta);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+}
+
+/* --- archives ------------------------------------------------------------ */
+
+.archive-year {
+    margin-bottom: var(--space-2xl);
+}
+
+.archive-year__label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--step-2);
+    font-weight: 700;
+    padding-bottom: var(--space-3xs);
+    border-bottom: var(--line-frame) solid var(--rule-frame);
+    font-variant-numeric: tabular-nums;
+}
+
+.archive-year__count {
+    font-size: var(--step--2);
+    font-weight: 400;
+    color: var(--meta-soft);
+}
+
+.archive-month {
+    margin-top: var(--space-lg);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.archive-list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2xs);
+}
+
+/* The date column. 2.5rem is what four digits set to, measured — it is not
+   --zone-rail-width, which happens to carry the same number for an unrelated
+   reason. Do not swap one for the other. */
+.archive-item {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--space-sm);
+    padding-block: var(--space-2xs);
+    border-top: var(--line-thin) solid var(--rule);
+}
+
+.archive-item__date {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--meta-soft);
+    font-variant-numeric: tabular-nums;
+}
+
+.archive-item__link {
+    text-decoration: none;
+}
+
+.archive-item__link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+@media (max-width: 40rem) {
+    .post-card:has(.cover) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .post-card:has(.cover) .cover {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .post-card__title {
+        font-size: var(--step-1);
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+    }
+}
+
+@media (pointer: coarse) {
+    .tag-list a,
+    .pagination__link {
+        min-height: var(--tap-target);
+    }
+
+    /* The card's title is the card's control — the one link on the home page,
+       every section list, every tag page and the 404 that a reader is actually
+       aiming at — and it was the one standalone control in the theme still at
+       its own line box, 24px at --step-1. .search-results a and
+       .archive-item__link are the same case and were both raised; this is the
+       third member of that set and was simply missed.
+
+       Same centred shape as those two, for the reason they give: the link
+       carries no padding, so growing it from the top would drop the title to the
+       head of a 44px box. Centred, it stays where it was and the card breathes
+       equally into the meta line above and the summary below. A title that
+       already wraps is past 44px and is not touched. */
+    .post-card__title a {
+        display: flex;
+        align-items: center;
+        min-height: var(--tap-target);
+    }
+
+    /* An archive row is a list of links and nothing else, so each title is a
+       standalone control rather than a link inside a sentence — the same case
+       .search-results a makes in 60-search.css, and it takes the same shape:
+       the link carries no padding of its own, so the height has to centre what
+       it grows around or the title sits at the top of a 44px box. The date
+       column stays baseline-aligned against the row; only the link grows. */
+    .archive-item__link {
+        display: flex;
+        align-items: center;
+        min-height: var(--tap-target);
+    }
+}

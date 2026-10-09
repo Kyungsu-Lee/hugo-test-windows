@@ -1,0 +1,71 @@
+baseURL = "https://devrel.hugo.pilato.fr/"
+title = "DevRel Example"
+locale = "en-us"
+defaultContentLanguage = "en"
+
+# Upcoming talks use date (announcement) + conference.date (event), so they
+# are generated without buildFuture. Permalinks stay masked until the event.
+#
+# buildFuture is optional and only for previewing scheduled posts
+# (content/posts/2099-…) as if they were already published. The theme does
+# not re-filter those posts: without the flag Hugo omits the page; with it
+# the post is listed everywhere (home, archives, taxonomies, RSS, Pagefind,
+# prev/next). Production / Netlify stay without --buildFuture.
+# buildFuture = true
+
+[module]
+  [[module.imports]]
+    path = "github.com/dadoonet/hugo-theme-devrel"
+  # Reuse the last Pagefind index during `hugo server`
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "public/pagefind"
+    target = "static/pagefind"
+    disableWatch = true
+
+[params]
+  author = "Alex Rivera"
+  description = "Developer Advocate | Speaker"
+  avatar = "about/alex.svg"
+  headerTitle = "Alex Rivera"
+  motto = "Developer Advocate | Speaker"
+  email = "alex@example.org"
+  siteStartYear = 2024
+  favicon = "favicon.ico"
+  rss = true
+  lightTheme = "emerald"
+  darkTheme = "forest"
+  stickyNav = true
+  noDefaultSummaryCover = true
+  showTableOfContents = true
+  showSummaryCoverInPost = true
+  reorderNavItems = ["search", "posts", "talks", "about_me"]
+  # Series joins this overflow menu when at least one post sets `series:` in
+  # front matter. Remove "series" here (and from reorderNavItems if you added
+  # it there) to hide the nav entry; /series/ still exists while the taxonomy
+  # is declared below.
+  collapseNavItems = ["categories", "tags", "series", "rss"]
+
+  [params.talks]
+    pdf_base_url = ""
+
+  [params.search]
+    enabled = true
+
+# Copy this block into a consuming site. Hugo’s defaults are only tags and
+# categories; extra taxonomies from the theme module are not applied unless
+# the site declares them.
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  series = "series"
+  city = "cities"
+  language = "languages"

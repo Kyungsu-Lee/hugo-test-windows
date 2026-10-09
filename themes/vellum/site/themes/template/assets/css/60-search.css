@@ -1,0 +1,178 @@
+/* The search sheet. */
+
+/* The field is enabled by the script and by nothing else, so without JavaScript
+   it is a permanently disabled control whose placeholder reads "Loading search…"
+   and always will. The <noscript> block below it already says what is going on
+   and offers the section and tag indexes as the way out; the field's only
+   contribution was a claim that something was still coming.
+
+   So it is hidden until the pre-paint script sets .js — the same rule the theme
+   toggle, the top link, the copy control and the terminal's window buttons take,
+   for the same reason: nobody should meet a dead control. Removing it is better
+   than relabelling it, because a search box that cannot search is not improved
+   by a more accurate caption. */
+.searchbox {
+    display: none;
+    margin-bottom: var(--space-xl);
+}
+
+.js .searchbox {
+    display: block;
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--surface-sunk);
+    border: var(--line-frame) solid var(--rule-strong);
+    color: var(--text);
+    font-size: var(--step-0);
+    transition: border-color var(--transition);
+}
+
+.search-input::placeholder {
+    color: var(--meta-soft);
+    opacity: 1;
+}
+
+/* The 2px outline is the focus signal; changing the border colour too would
+   draw a second concentric ring around the same field. */
+.search-input:focus-visible {
+    outline-offset: 0;
+}
+
+/* The loading state is the disabled state: the placeholder already says so, so
+   nothing else has to move. */
+.search-input:disabled {
+    cursor: progress;
+    color: var(--meta);
+}
+
+/* The UA clear control was the one browser surface still at its default on a
+   sheet that themes scrollbar, caret, selection and focus ring — it rendered in
+   Chrome blue. Drawn instead the way this stylesheet draws its other UA
+   replacement, the <details> chevron in 10-base.css: from geometry at hairline
+   weight rather than from an image, so it needs no request and no asset whose
+   RelPermalink someone has to remember to evaluate.
+
+   Two crossed strokes, coloured through currentColor so the hover state is one
+   line. WebKit and Blink only; Firefox renders no such control at all. */
+.search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.7em;
+    height: 0.7em;
+    cursor: pointer;
+    color: var(--meta-soft);
+    background-image:
+        linear-gradient(45deg, transparent calc(50% - var(--line-thin)), currentColor calc(50% - var(--line-thin)) calc(50% + var(--line-thin)), transparent calc(50% + var(--line-thin))),
+        linear-gradient(-45deg, transparent calc(50% - var(--line-thin)), currentColor calc(50% - var(--line-thin)) calc(50% + var(--line-thin)), transparent calc(50% + var(--line-thin)));
+    transition: color var(--transition);
+}
+
+.search-input::-webkit-search-cancel-button:hover {
+    color: var(--accent);
+}
+
+.search-results {
+    list-style: none;
+    padding: 0;
+}
+
+.search-results li {
+    border-top: var(--line-thin) solid var(--rule);
+}
+
+.search-results li:last-child {
+    border-bottom: var(--line-thin) solid var(--rule);
+}
+
+.search-results a {
+    display: block;
+    text-decoration: none;
+    font-size: var(--step-1);
+    transition: color var(--transition);
+}
+
+.search-results a:hover,
+.search-results a:focus-visible {
+    color: var(--accent);
+}
+
+/* The meta line opens the row, so the padding that used to sit on the link
+   moves up to it — a result is now the same three-field unit as a post card,
+   and only one of the two may carry the row's top spacing. */
+.search-results .post-card__meta {
+    margin-block: var(--space-sm) var(--space-4xs);
+}
+
+/* Every paragraph in a result except that meta line, which is the summary. It
+   would otherwise inherit the summary's tone and measure and stop reading as a
+   field row. */
+.search-results p:not(.post-card__meta) {
+    padding-bottom: var(--space-sm);
+    margin-top: var(--space-4xs);
+    color: var(--meta);
+    font-size: var(--step--1);
+    max-width: 68ch;
+}
+
+/* A result with no date and no extent keeps the spacing the meta line would
+   have supplied. */
+.search-results li > a:first-child {
+    padding-top: var(--space-sm);
+}
+
+.search-results li > a:last-child {
+    padding-bottom: var(--space-sm);
+}
+
+.search-status {
+    margin-top: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--meta);
+}
+
+.search-status[data-state="error"] {
+    color: var(--danger);
+}
+
+.search-fallback {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+/* The exits from a failed query, laid out like the 404's actions because they
+   are the same thing: the row the reader leaves by. Set tight under the status
+   line that told them there was nothing, so the two read as one answer. */
+.search-exits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+/* [hidden] is a UA rule and the flex row above is an author rule, which wins on
+   origin whatever the specificity — so the attribute has to be restated here or
+   it does nothing and the exits stand on the page from the moment it loads,
+   before the reader has typed anything. .search-status gets away without this
+   only because it never sets display. */
+.search-exits[hidden] {
+    display: none;
+}
+
+@media (pointer: coarse) {
+    /* The link carries no padding of its own — the meta line above it sets the
+       row's spacing — so the tap target has to centre what it grows around,
+       or the title sits at the top of a 44px box with the space beneath it. */
+    .search-results a {
+        display: flex;
+        align-items: center;
+        min-height: var(--tap-target);
+    }
+}

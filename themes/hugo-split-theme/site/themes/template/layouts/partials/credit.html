@@ -1,0 +1,14 @@
+<div class="credit">
+  {{ .Site.Copyright | safeHTML }}
+  {{ if not .Site.Params.licensed }}
+  &ndash; <a href="https://onepagelove.com/split" target="_blank" class="credit-links">Split Template</a> by <a href="https://onepagelove.com" target="_blank" class="credit-links">One Page Love</a>
+  {{- end }}
+
+  {{ if not .Site.Params.licensed }}
+  {{ "<!--" | safeHTML }}
+  {{ "To remove this credit you can remove the CC3.0 license for only $9 here: https://onepagelove.com/split" | safeHTML }}
+  {{ "This really helps contribute towards us developing more templates and means the world to me!" | safeHTML }}
+  {{ "Cheers, Rob (@robhope)" | safeHTML }}
+  {{ "-->" | safeHTML }}
+  {{ end }}
+</div>

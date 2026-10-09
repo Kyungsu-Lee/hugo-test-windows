@@ -1,0 +1,724 @@
+/* The sheet itself: its drawn frame, the zone rail, and the printed furniture
+   at the top and bottom. */
+
+.skip-link {
+    position: absolute;
+    left: var(--space-sm);
+    top: var(--space-sm);
+    z-index: 10;
+    transform: translateY(-200%);
+    background: var(--bg);
+    color: var(--text);
+    border: var(--line-frame) solid var(--accent);
+    padding: var(--space-xs) var(--space-md);
+    text-decoration: none;
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+/* --- header -------------------------------------------------------------- */
+
+.header {
+    border-bottom: var(--line-frame) solid var(--rule-frame);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* Below --sheet-narrow it stops being sticky, and that is two fixes in one rule.
+   The header takes a second line there — the index drops below the wordmark —
+   so it goes from 57px to 91px, and to 122px on a phone, where the touch
+   minimums raise both lines to --tap-target. That is 14% of an 844px viewport,
+   held permanently, on the device where reading room is scarcest and in a theme
+   whose whole claim is that a post survives intact. It was also the mechanical
+   cause of anchors landing behind it: no scroll-margin can absorb a header that
+   size without pushing the heading well down the screen, so the margin in
+   10-base.css only has to clear what stays sticky.
+
+   Those two figures were 126–129px and 181px until the header split by kind
+   rather than by wrap order — a third line carrying one control was what the
+   phone was paying 21% of its viewport for. The concession is smaller now than
+   the comment it replaces, and it is still the right one: 122px of sticky
+   furniture over a post is the thing this theme exists not to do.
+
+   The same breakpoint the sheet already uses to give up its frame and rail and
+   run full-bleed — the header giving up its position there is the same
+   concession, not a new one. The way back up is `.top-link`, which is fixed,
+   appears after 800px of scroll and is present at every width. */
+@media (max-width: 40rem) {
+    .header {
+        position: static;
+    }
+}
+
+.header__inner {
+    max-width: var(--frame-width);
+    margin-inline: auto;
+    padding: var(--space-sm) var(--sheet-gutter);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    min-width: 0;
+
+    /* The index and the instruments sit at the sheet's right edge, and the
+       wordmark's auto margin is the whole of what holds them there. It is
+       written this way round — flex-end plus one auto margin, rather than the
+       `justify-content: space-between` this rule carried when the header had
+       two children — because space-between distributes, and with three children
+       it stranded the index in the middle of the rule. It also answers the line
+       that has wrapped: a menu long enough to push the instruments onto a
+       second line drops them at the right edge, where they are still the field
+       at the end of the header, rather than at the left under the wordmark. */
+    justify-content: flex-end;
+}
+
+.header__brand {
+    /* See the inner above: this is what holds the index and the instruments at
+       the sheet's right edge. */
+    margin-inline-end: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    text-decoration: none;
+    font-stretch: var(--font-stretch-label);
+    font-weight: 700;
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+}
+
+.header__brand:hover {
+    color: var(--accent);
+}
+
+.header__logo {
+    border: var(--line-thin) solid var(--rule);
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    /* The drop from a nav item's bottom edge to the header rule: the inner's own
+       padding plus the rule itself. The active mark below is drawn at exactly
+       this distance so it lands on the rule and replaces a segment of it, so the
+       two are one value rather than two that have to be kept in step. */
+    --nav-mark-drop: calc(var(--space-sm) + var(--line-frame));
+
+    column-gap: var(--space-md);
+
+    /* The drop travels with the item when the row wraps, and there is no rule
+       down there to land on — so the row gap has to clear it, or the mark comes
+       down on the row below and marks a word it does not belong to. It did: the
+       gap was --space-md here and tightened to --space-sm below 40rem, which is
+       2px shallower than the drop, and a menu of six entries wraps at 390px.
+       Derived rather than chosen, so changing --space-sm cannot reopen it. */
+    row-gap: calc(var(--nav-mark-drop) + var(--line-thin));
+}
+
+.nav__item {
+    position: relative;
+    text-decoration: none;
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+    padding-block: var(--space-3xs);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+}
+
+.nav__item:hover {
+    color: var(--text);
+}
+
+/* The current sheet is marked, not merely tinted: a drawn underline in the
+   signal colour, which survives being read in greyscale or by someone who
+   cannot separate the two hues. */
+.nav__item.is-active {
+    color: var(--text);
+}
+
+.nav__item.is-active::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: calc(var(--nav-mark-drop) * -1);
+    height: var(--line-frame);
+    background: var(--accent);
+}
+
+.nav__item .icon {
+    width: 0.85em;
+    height: 0.85em;
+}
+
+/* The instruments — which language the sheet is drawn in, which paper it is
+   drawn on — are a field of the header, ruled off the index the way any field
+   on a drawing is. The rule is the field's edge, so it is drawn whenever the
+   field exists rather than only when there are two things in it. */
+.header__controls {
+    display: flex;
+    align-items: center;
+    column-gap: var(--space-md);
+}
+
+.header__rule {
+    width: var(--line-thin);
+    align-self: stretch;
+    background: var(--rule-strong);
+    margin-inline: var(--space-3xs);
+}
+
+.lang-switch {
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.lang-switch:hover {
+    color: var(--accent);
+}
+
+.theme-toggle {
+    color: var(--meta);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.js .theme-toggle {
+    display: inline-flex;
+}
+
+.theme-toggle:hover {
+    color: var(--accent);
+}
+
+/* light-dark() only produces colours, so swapping which glyph is shown needs a
+   real media query. data-theme is repeated so an explicit choice beats the OS. */
+.theme-toggle .icon--sun {
+    display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .theme-toggle .icon--moon {
+        display: none;
+    }
+
+    .theme-toggle .icon--sun {
+        display: block;
+    }
+}
+
+:root[data-theme="light"] .theme-toggle .icon--moon {
+    display: block;
+}
+
+:root[data-theme="light"] .theme-toggle .icon--sun {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon--moon {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon--sun {
+    display: block;
+}
+
+/* --- the frame ----------------------------------------------------------- */
+
+/* The drawn frame. Its side borders are the sheet's edge, the graph substrate
+   is printed inside them and nowhere else, and the zone rail sits just within
+   the left border where a drawing's zone reference belongs. */
+.sheet__frame {
+    width: 100%;
+    max-width: var(--frame-width);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: var(--zone-rail-width) minmax(0, 1fr);
+    align-items: stretch;
+    border-inline: var(--line-frame) solid var(--rule-frame);
+    /* The sheet runs to the footer rather than ending mid-page above a band of
+       bare ground. Short pages carry no zone letters, so the room left over
+       reads as unused sheet — which is what it is — rather than as an index
+       marking nothing, which was the objection to a tall lettered frame. */
+    flex: 1;
+
+    /* The graph substrate is printed inside the frame and nowhere else. Two
+       hairline gradients, so it never becomes an image request. */
+    background-image:
+        repeating-linear-gradient(to right, var(--grid) 0 var(--line-thin), transparent var(--line-thin) var(--grid-pitch)),
+        repeating-linear-gradient(to bottom, var(--grid) 0 var(--line-thin), transparent var(--line-thin) var(--grid-pitch));
+}
+
+/* A sheet with nothing to index renders no rail, so the column it would have
+   occupied is closed rather than left as a lettered empty strip. */
+.sheet__frame:not(:has(.zone-rail)) {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.main {
+    width: 100%;
+    max-width: calc(var(--content-width) + var(--sheet-gutter) * 2);
+    padding-block: var(--space-2xl) var(--space-4xl);
+    padding-inline: var(--sheet-gutter);
+    border-inline-start: var(--line-thin) solid var(--rule-strong);
+    min-width: 0;
+}
+
+/* The one place the ring is suppressed, and it is not a control. baseof.html
+   gives <main> tabindex="-1" so the skip link can land focus here rather than
+   only moving the sequential starting point; the global :focus-visible in
+   10-base.css then drew a 2px amber outline around the entire sheet, both on
+   Enter and on a cold load of any URL carrying #main. That is the same failure
+   the profile views record — a fragment naming a focusable element makes the
+   browser focus it on arrival — and they answer it by making the panel
+   focusable only at the moment focus moves, which needs JavaScript. The skip
+   link must work without it, so the answer here is the outline instead.
+
+   10-base.css's rule that a component may never suppress the ring is about
+   *controls*: the ring says which one of many things is focused, and a ring
+   around all of them says nothing. <main> is a destination, not a control, and
+   the next Tab lands on a real control that rings normally. */
+.main:focus {
+    outline: none;
+}
+
+/* --- zone rail ----------------------------------------------------------- */
+
+/* Before measurement the marks flow evenly down the rail; once placed they are
+   absolutely positioned at their own section's offset, which is what makes a
+   letter mark a location rather than list one. */
+/* baseof.html renders the rail *after* <main>, so a keyboard reader tabbing the
+   sheet is not thrown back up it mid-page; order puts the column back on the
+   left. Deliberately order rather than grid-column: below the collapse width the
+   frame has a single column, and an explicit column 2 for main would invent an
+   implicit one and squeeze the reading measure into it. Order also leaves the
+   DOM sequence — which is what assistive technology follows — untouched. */
+.zone-rail {
+    order: -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-2xl);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    color: var(--meta-soft);
+    /* Ticks read against the column's own rule, so the rail is right-aligned
+       into it. */
+    align-items: flex-end;
+    padding-inline-end: var(--space-3xs);
+}
+
+.zone-rail[data-placed] {
+    display: block;
+    position: relative;
+    padding-block: 0;
+}
+
+.zone-rail__mark {
+    position: relative;
+    padding-inline-end: var(--space-sm);
+    line-height: 1;
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--transition);
+}
+
+.zone-rail[data-placed] .zone-rail__mark {
+    position: absolute;
+    inset-inline-end: 0;
+    /* Measured against .main's border box, which already includes its own
+       padding, so no extra offset belongs here. */
+    top: var(--zone-top, 0);
+}
+
+/* The section being read is the lit zone — the drawing office's live mark. */
+.zone-rail__mark[aria-current] {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.zone-rail__mark[aria-current]::after {
+    background: var(--accent);
+    width: var(--space-md);
+}
+
+.zone-rail__mark:hover,
+.zone-rail__mark:focus-visible {
+    color: var(--accent);
+}
+
+.zone-rail__mark:hover::after,
+.zone-rail__mark:focus-visible::after {
+    background: var(--accent);
+}
+
+/* The hairline tick each zone letter sits against — the drawing's own ruling,
+   drawn onto the column rule the rail abuts. */
+.zone-rail__mark::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: var(--space-xs);
+    height: var(--line-thin);
+    background: var(--rule-strong);
+}
+
+/* --- page header --------------------------------------------------------- */
+
+.page-header {
+    margin-bottom: var(--space-2xl);
+}
+
+.page-title {
+    font-size: var(--step-4);
+}
+
+.page-title__prefix {
+    display: block;
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+    margin-bottom: var(--space-2xs);
+}
+
+.page-standfirst {
+    color: var(--meta);
+    font-size: var(--step-1);
+    margin-top: var(--space-sm);
+    max-width: 60ch;
+}
+
+/* --- sheet stamp --------------------------------------------------------- */
+
+.sheet-stamp {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    padding-block: var(--space-2xs);
+    border-block: var(--line-thin) solid var(--rule);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.sheet-stamp__count {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* --- sheet note ---------------------------------------------------------- */
+
+/* The body of an index page's own _index.md — a general note on the sheet,
+   not the first row of the schedule it introduces.
+
+   As plain .content it carried no spacing of its own, so it inherited the
+   header's --space-2xl above and nothing at all below: the one generous
+   interval on the page sat in the wrong gap, and proximity read the note as a
+   caption on the first card. The intervals are reversed here — tight to the
+   head it closes, generous before the index it introduces. */
+.sheet-note {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+/* The head owns no gap of its own when a note follows; the note does, so the
+   two margins cannot collapse to the larger of the pair. */
+.page-header:has(+ .sheet-note) {
+    margin-bottom: 0;
+}
+
+/* One voice quieter than the index below it, on the standfirst's measure, so
+   the sheet's loudest mass stays the thing the sheet is indexing. Scoped to
+   paragraphs: a table, an alert or a code block in an _index.md keeps its
+   ordinary .content treatment rather than being dimmed with the prose. */
+.sheet-note > p {
+    color: var(--meta);
+    max-width: 60ch;
+}
+
+/* --- breadcrumbs --------------------------------------------------------- */
+
+.breadcrumbs {
+    margin-bottom: var(--space-md);
+}
+
+.breadcrumbs__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.breadcrumbs__item + .breadcrumbs__item::before {
+    content: "/";
+    margin-inline-end: var(--space-2xs);
+    color: var(--rule-strong);
+}
+
+.breadcrumbs__item a {
+    text-decoration: none;
+}
+
+.breadcrumbs__item a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* A flex item's floor is min-width: auto, which resolves to its min-content
+   width — so an unbreakable run in the trail set the item's floor and the item
+   overflowed the sheet. The last crumb is the page's own title, which is the one
+   crumb an author can make arbitrarily long: measured at 320px, a compound title
+   pushed the sheet to 572px. Dropping the floor to zero lets
+   overflow-wrap: break-word, inherited from 10-base.css, actually break it.
+   Same mechanism as the post card's grid track in 40-list.css. */
+.breadcrumbs__item {
+    min-width: 0;
+}
+
+.breadcrumbs__item--current {
+    color: var(--text);
+}
+
+/* --- footer -------------------------------------------------------------- */
+
+.footer {
+    border-top: var(--line-frame) solid var(--rule-frame);
+    margin-top: auto;
+}
+
+.footer__inner {
+    max-width: var(--frame-width);
+    margin-inline: auto;
+    padding: var(--space-md) var(--sheet-gutter);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-lg);
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--step--1);
+    color: var(--meta);
+    min-width: 0;
+}
+
+.footer__issuer,
+.footer__meta {
+    min-width: 0;
+}
+
+.footer__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.footer__sep {
+    width: var(--space-md);
+    height: var(--line-thin);
+    background: var(--rule-strong);
+}
+
+.footer a {
+    text-decoration-color: var(--rule-strong);
+}
+
+/* --- back to top --------------------------------------------------------- */
+
+.top-link {
+    position: fixed;
+    right: var(--space-lg);
+    bottom: var(--space-lg);
+    z-index: 4;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-2xl);
+    height: var(--space-2xl);
+    background: var(--bg);
+    color: var(--meta);
+    border: var(--line-thin) solid var(--rule-strong);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition), visibility var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.js .top-link {
+    display: flex;
+}
+
+.top-link.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.top-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* --- adaptation ---------------------------------------------------------- */
+
+/* The zone rail is sheet furniture, not content: below the frame's own width
+   it has nothing to rule against, so the sheet collapses to a single column
+   and the rail is removed from the flow entirely. */
+@media (max-width: 60rem) {
+    .sheet__frame {
+        grid-template-columns: minmax(0, 1fr);
+        border-inline: 0;
+    }
+
+    /* Both states of the rail, deliberately. A media query carries no
+       specificity of its own, so a bare .zone-rail here loses to the
+       .zone-rail[data-placed] the script sets once it has measured the sheet,
+       and the rail comes back on a phone as a stack of letters absolutely
+       positioned into the frame's top corner. */
+    .zone-rail,
+    .zone-rail[data-placed] {
+        display: none;
+    }
+
+    .main {
+        border-inline-start: 0;
+    }
+}
+
+/* Keep this literal in step with --sheet-narrow in 00-tokens.css: a media
+   query cannot resolve var(), so the breakpoint is the one number that has to
+   be written twice. The values it switches to are not — they are tokens, so
+   tokens.html can read them and the image `sizes` attribute switches at exactly
+   the same width the layout does. */
+@media (max-width: 40rem) {
+    :root {
+        --sheet-gutter: var(--sheet-gutter-narrow);
+        --step-0: var(--step-0-narrow);
+    }
+
+    .main {
+        padding-block: var(--space-xl) var(--space-3xl);
+    }
+
+    .header__inner {
+        gap: var(--space-xs);
+    }
+
+    /* The header splits by kind rather than by whatever overflowed last. The
+       wordmark and the instruments share the top line; the index takes the line
+       below, whole.
+
+       Left to the wrap, the instruments were the tail of the index and the tail
+       is what came off: at 390px with the touch minimums applied, the scheme
+       toggle sat alone on a third line and the header stood at 181px — 21% of an
+       844px viewport. Worse, the index was then no longer the header's last
+       line, so the active mark dropped its --nav-mark-drop into the gap between
+       two rows and marked nothing, when landing on the header rule is the whole
+       of what that mark is.
+
+       Only the column gap tightens. The row gap is the mark's clearance and is
+       derived from it — see .nav — so it is not the viewport's to give up. */
+    .nav {
+        order: 1;
+        column-gap: var(--space-sm);
+        width: 100%;
+    }
+
+    /* The order above is a visual reorder of two adjacent groups and nothing
+       else: the reading order stays wordmark, index, instruments, which is the
+       order a drawing's header states them in and the order the markup keeps. A
+       keyboard leaves the last menu entry for the line above it — one row, in a
+       header of two. */
+    .header__controls {
+        column-gap: var(--space-sm);
+    }
+
+    .page-title {
+        font-size: var(--step-3);
+    }
+}
+
+@media (pointer: coarse) {
+    /* The rail is dropped below --frame-collapse, so a phone never meets it —
+       but a tablet in landscape is 64rem with a coarse pointer, and there the
+       marks were a 13px line box with no block padding while every other
+       control in the theme was already raised to --tap-target.
+
+       Grown symmetrically around the letter: the placed rail positions each
+       mark by its *top* edge at the offset the script measured, so growing the
+       box downward would slide every zone off the section it names. The
+       negative start margin gives back exactly half the height gained, which
+       leaves both the letter and its tick where they were. Scoped to the placed
+       state because the unplaced fallback is an evenly spaced flex column, and
+       there a negative margin would compress the spacing it falls back to. */
+    .zone-rail__mark {
+        display: flex;
+        align-items: center;
+        min-height: var(--tap-target);
+    }
+
+    .zone-rail[data-placed] .zone-rail__mark {
+        margin-block-start: calc((1em - var(--tap-target)) / 2);
+    }
+
+    /* The brand and the feed link are standalone controls in the sheet's own
+       header and footer rules, not links inside a sentence, so the minimum
+       applies to them exactly as it does to a nav item. The "Hugo" link beside
+       the feed is deliberately not here: it sits inside "Built with Hugo", and
+       an inline target is what the size minimum exempts — growing it would push
+       the footer line apart to satisfy a rule it was never under. */
+    .skip-link,
+    .header__brand,
+    .footer__meta > a,
+    .nav__item,
+    .lang-switch,
+    .theme-toggle,
+    .breadcrumbs__item a {
+        min-height: var(--tap-target);
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .theme-toggle {
+        min-width: var(--tap-target);
+    }
+
+    .top-link {
+        width: var(--tap-target);
+        height: var(--tap-target);
+    }
+}

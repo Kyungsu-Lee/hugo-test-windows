@@ -1,0 +1,56 @@
+{{- /*
+  Structured data (JSON-LD) per page type:
+  - own schema of the site via the hook partial seo_schema_page.html (e.g. Event), if it returns one
+  - BlogPosting for posts
+  - WebSite and Person on the start page
+*/ -}}
+{{- $authorName := .Site.Params.author.name | default .Site.Params.Author -}}
+{{- $pageSchema := partial "seo_schema_page.html" . -}}
+{{- if $pageSchema -}}
+<script type="application/ld+json">{{ $pageSchema | jsonify | safeJS }}</script>
+{{- else if eq .Section "posts" -}}
+{{- $schema := dict
+    "@context" "https://schema.org"
+    "@type" "BlogPosting"
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+    "headline" .Title
+    "description" (or .Description (.Summary | plainify | chomp))
+    "inLanguage" .Lang
+    "datePublished" (.Date.UTC.Format "2006-01-02T15:04:05Z")
+    "dateModified" (.Lastmod.UTC.Format "2006-01-02T15:04:05Z")
+    "url" .Permalink
+    "wordCount" .WordCount
+    "keywords" (.Params.tags | default (slice))
+-}}
+{{- with $authorName -}}
+{{- $schema = merge $schema (dict "author" (dict "@type" "Person" "name" . "url" $.Site.BaseURL) "publisher" (dict "@type" "Person" "name" .)) -}}
+{{- end -}}
+{{- with .Params.featured_image }}{{ with $.Resources.GetMatch (printf "*%s" .) }}{{ $schema = merge $schema (dict "image" .Permalink) }}{{ end }}{{ end -}}
+<script type="application/ld+json">{{ $schema | jsonify | safeJS }}</script>
+{{- else if .IsHome -}}
+{{- $website := dict
+    "@context" "https://schema.org"
+    "@type" "WebSite"
+    "name" .Site.Title
+    "url" .Site.BaseURL
+    "description" .Site.Params.description
+    "inLanguage" .Lang
+-}}
+{{- with $authorName -}}
+{{- $sameAs := slice -}}
+{{- range partial "social_links.html" $ }}{{ if .profile }}{{ $sameAs = $sameAs | append .url }}{{ end }}{{ end -}}
+{{- $person := dict
+    "@context" "https://schema.org"
+    "@type" "Person"
+    "name" .
+    "url" $.Site.BaseURL
+-}}
+{{- with $.Site.Params.authorImage }}{{ $person = merge $person (dict "image" (. | absURL)) }}{{ end -}}
+{{- with $.Site.Params.author.jobTitle }}{{ $person = merge $person (dict "jobTitle" .) }}{{ end -}}
+{{- with $.Site.Params.author.knowsAbout }}{{ $person = merge $person (dict "knowsAbout" .) }}{{ end -}}
+{{- if gt (len $sameAs) 0 }}{{ $person = merge $person (dict "sameAs" $sameAs) }}{{ end -}}
+<script type="application/ld+json">{{ slice $website $person | jsonify | safeJS }}</script>
+{{- else -}}
+<script type="application/ld+json">{{ $website | jsonify | safeJS }}</script>
+{{- end -}}
+{{- end -}}

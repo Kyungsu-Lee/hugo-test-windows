@@ -1,0 +1,5 @@
+{{- /* server-side Arabic date (Eastern digits); renders in the HTML itself so it works without JS and for crawlers */ -}}
+{{- $months := slice "يناير" "فبراير" "مارس" "أبريل" "مايو" "يونيو" "يوليو" "أغسطس" "سبتمبر" "أكتوبر" "نوفمبر" "ديسمبر" -}}
+{{- $s := printf "%d %s %d" .Day (index $months (sub (int .Month) 1)) .Year -}}
+{{- range $i, $d := slice "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩" -}}{{- $s = replace $s (string $i) $d -}}{{- end -}}
+{{- $s -}}

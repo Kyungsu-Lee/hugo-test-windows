@@ -1,0 +1,147 @@
+{{- /* Everything both the ordinary <head> and the root 404's leaner one need:
+       the pre-paint theme choice, the fonts, the stylesheet, the icons. Kept in
+       its own partial so the two heads cannot drift apart.
+
+       Cacheable on a constant key: it reads no page state and no i18n. */ -}}
+
+{{- $t := partialCached "tokens.html" . "tokens" }}
+
+{{- /* Tints the mobile browser's own chrome. Both values are read out of
+       --bg in 00-tokens.css, so they cannot go stale. */}}
+<meta name="theme-color" content="{{ $t.bgLight }}" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="{{ $t.bgDark }}" media="(prefers-color-scheme: dark)">
+
+{{- /* Applied before first paint. Without a stored preference data-theme stays
+       "auto" and the CSS follows the OS through color-scheme, so this script is
+       only ever correcting an explicit choice — nothing flashes when it is
+       absent, and nothing breaks when it cannot run.
+
+       The .js class is what reveals JS-only controls. Defaulting them to hidden
+       means a visitor without JavaScript never meets a dead button.
+
+       localStorage throws outright in some privacy modes and sandboxed frames,
+       which would otherwise abort the whole IIFE and leave .js unset. */}}
+<script>
+    (function () {
+        var r = document.documentElement;
+        r.classList.add("js");
+        try {
+            var t = localStorage.getItem("pref-theme");
+            if (t === "dark" || t === "light") r.dataset.theme = t;
+        } catch (e) { /* storage unavailable; auto is a correct fallback */ }
+    })();
+</script>
+
+{{- /* Self-hosted variable faces, subset to latin + latin-ext. Archivo carries a
+       width axis, so one file provides both the narrow drafting lettering of the
+       title blocks and the normal-width reading face.
+
+       Every face has to be walked, not just the preloaded ones: Hugo publishes
+       an asset only when something evaluates its RelPermalink, and the @font-face
+       rules in 10-base.css reference these by plain URL, which is invisible to
+       the build. Miss one and it 404s in production while working locally off
+       the source directory — the latin-ext and italic faces are exactly the ones
+       nobody would notice failing.
+
+       Only the two roman latin faces are preloaded. The italics and the
+       latin-ext subsets are fetched on demand, which for most pages is never. */}}
+{{- $preload := slice "/fonts/archivo.woff2" "/fonts/jetbrains-mono.woff2" }}
+{{- range resources.Match "fonts/*.woff2" }}
+{{- if in $preload .Name }}
+<link rel="preload" as="font" type="font/woff2" href="{{ .RelPermalink }}" crossorigin="anonymous">
+{{- else }}
+{{- /* Referenced purely so Hugo emits the file. */}}
+{{- $_ := .RelPermalink }}
+{{- end }}
+{{- end }}
+
+{{- /* One stylesheet. The numeric filename prefixes make the alphabetical glob
+       order the cascade order, so no explicit slice is needed. fingerprint must
+       come last: it hashes the bytes that are actually served, and any step
+       after it would invalidate the integrity attribute.
+
+       One file is dropped from the glob rather than styled into it. The terminal
+       profile is the theme's only feature that is off by default, and its sheet
+       is 5.9 KB minified — every other numbered file is live somewhere on every
+       site, so this is the one place where a site can be shipping a stylesheet
+       for markup no page of it will ever contain. It is safe to drop because it
+       is airtight: every selector in 35-terminal.css begins with .term, print
+       rules included, so removing the file removes the feature and touches
+       nothing else.
+
+       Dropped from the concat rather than served as a second <link>. A second
+       sheet would cost a render-blocking request on exactly the page that needs
+       it, and — because it would load after this one — would put the terminal's
+       screen rules after their own @media print overrides, where they win on
+       source order at equal specificity and the printed page silently keeps the
+       window chrome. Filtering the glob leaves the cascade exactly as the
+       prefixes state it.
+
+       The Concat target has to differ between the two, and that is not
+       cosmetic: Hugo caches a concatenated resource under its target path, so a
+       second call naming css/main.css in the same build is handed the first
+       one's bytes whatever its inputs were. A multilingual site that sets the
+       view per language — which is what exampleSite does — would otherwise
+       serve one language the other's stylesheet. The default keeps the
+       css/main.css name so nothing moves for a site that never turns this on.
+
+       .Name carries a leading slash, like the font names above. */}}
+{{- $terminal := eq (lower (site.Params.profile.view | default "index")) "terminal" }}
+{{- /* Sorted explicitly, and it is load-bearing. resources.Match walks the
+       union of the site's assets and the theme's, and it returns the site's
+       first rather than merging the two runs alphabetically — so a consuming
+       site's own css/99-local.css was concatenated *before* 00-tokens.css and
+       lost every tie it should have won. That is the exact opposite of what
+       README's "Customising → Your own CSS" promises, and it failed silently:
+       a local rule with more specificity than the theme's still worked, so the
+       bug only showed up on a plain one-class override. The theme's own files
+       are already in prefix order, so this sort moves nothing but the site's. */}}
+{{- $sheets := sort (resources.Match "css/*.css") "Name" }}
+{{- if not $terminal }}
+{{- $sheets = where $sheets "Name" "!=" "/css/35-terminal.css" }}
+{{- end }}
+{{- $css := $sheets | resources.Concat (cond $terminal "css/main-terminal.css" "css/main.css") | resources.Minify | fingerprint }}
+<link rel="preload stylesheet" as="style" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}"
+    crossorigin="anonymous">
+
+{{- /* relURL, like the fonts and the stylesheet above — these links have no
+       reason to be absolute, and root-relative ones keep working when the site
+       is reached under a hostname baseURL does not name. Absolute belongs to
+       canonical, hreflang and og:image in head.html, which are specified that
+       way; an icon href resolves against the document like any other.
+
+       The TrimPrefix is not decoration. Both relURL and absURL read a leading
+       slash as host-root and drop baseURL's own path, so the "/favicon.ico"
+       spelling this theme documents lands outside a site published under a
+       subpath. Trimming it makes both spellings resolve inside the site, and
+       leaves a fully qualified URL to an external host untouched. */}}
+{{- with site.Params.assets }}
+{{- $a := . }}
+{{- with .favicon }}<link rel="icon" href="{{ . | strings.TrimPrefix "/" | relURL }}">{{ end }}
+{{- with .favicon16x16 }}<link rel="icon" type="image/png" sizes="16x16" href="{{ . | strings.TrimPrefix "/" | relURL }}">{{ end }}
+{{- with .favicon32x32 }}<link rel="icon" type="image/png" sizes="32x32" href="{{ . | strings.TrimPrefix "/" | relURL }}">{{ end }}
+{{- /* Deliberately emitted after the raster rungs: a browser that understands
+       image/svg+xml takes this one and the .ico above stays the fallback for
+       the ones that don't. Reversing the order hands Safari and Chrome the
+       32px bitmap on a display that could have drawn the vector, and an SVG
+       favicon can carry its own prefers-color-scheme rules — which is the
+       whole point, since it is the only icon rung that can follow the theme. */}}
+{{- with .favicon_svg }}<link rel="icon" type="image/svg+xml" href="{{ . | strings.TrimPrefix "/" | relURL }}">{{ end }}
+{{- /* sizes is emitted only when the site declares it. The theme is handed a
+       path, not a resource, so it cannot measure the file — and a declared size
+       that disagrees with the actual PNG is worse than none. It earns its keep
+       when a site lists several apple-touch-icon rungs, which is the case where
+       iOS picks between them by declared size; for the single rung below there
+       is nothing to pick. */}}
+{{- with .apple_touch_icon }}<link rel="apple-touch-icon"{{ with $a.apple_touch_icon_sizes }} sizes="{{ . }}"{{ end }} href="{{ . | strings.TrimPrefix "/" | relURL }}">{{ end }}
+{{- /* color is not decoration here: Safari tints the pinned tab's template icon
+       with it, and the attribute is required for the icon to be used at all.
+       Defaults to --accent's light value, read out of 00-tokens.css like the
+       theme-color pair above, so the pinned tab matches the sheet it opens. */}}
+{{- with .safari_pinned_tab }}<link rel="mask-icon" href="{{ . | strings.TrimPrefix "/" | relURL }}" color="{{ $a.safari_pinned_tab_color | default $t.accentLight }}">{{ end }}
+{{- /* Guarded like every asset above it, and it has to be: the theme ships no
+       manifest, so an unconditional link was a 404 and two console errors on
+       every page load of every site running it — the only error the theme
+       produced anywhere. A site that has one names it here. */}}
+{{- with .manifest }}<link rel="manifest" href="{{ . | strings.TrimPrefix "/" | relURL }}">{{ end }}
+{{- end }}

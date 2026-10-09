@@ -1,0 +1,484 @@
+baseURL = "https://example.org/"
+
+
+# The theme is multilingual, so the demo is too: English and German, each with
+# its own content directory, menu, profile and search index. A post may exist in
+# only one language — two of the posts below deliberately do.
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = true
+
+enableRobotsTXT = true
+capitalizeListTitles = false
+
+# A real site would leave this off. The demo is also the theme's only test
+# harness, and the draft flag is a *state* rather than a param: it has a badge in
+# post-card.html and title-block.html, its own rules in 40-list.css and a
+# translation in both languages, but it renders only where some page is actually
+# in it. Nothing here was, so the badge — and --danger-panel under it, one of the
+# five fills baked opaque for contrast — was built by no CI run.
+#
+# The documented dev command already passes -D, so this only makes the published
+# build agree with what a maintainer sees locally. One post sets draft = true;
+# see content/en/posts/the-zone-rail.md.
+buildDrafts = true
+
+[pagination]
+  # Deliberately small. The demo has nine posts and this is what makes the
+  # pagination visible on a list; a real site would set this far higher.
+  pagerSize = 3
+
+[taxonomies]
+  tag = "tags"
+
+# With defaultContentLanguageInSubdir nothing lands at the publish root, so the
+# web server has no error document. This writes one to /404.html.
+[outputFormats.ROOT404]
+  mediaType = "text/html"
+  baseName = "404"
+  notAlternative = true
+  root = true
+
+# --- languages -------------------------------------------------------------
+
+[languages]
+
+  [languages.en]
+    label = "English"
+    contentDir = "content/en"
+    weight = 1
+    title = "Vellum"
+
+    [languages.en.params]
+      description = "A Hugo theme that sets every page as an engineering drawing sheet."
+      # Localised long date. A Go layout string would freeze the month in one
+      # language; the shorthand resolves per language.
+      DateFormat = ":date_long"
+
+      [languages.en.params.profile]
+        title = "Your Name"
+        subtitle = "what you do, in one line"
+        image = "images/profile.svg"
+        imageAlt = "Placeholder portrait, drawn as a front elevation"
+        imageWidth = 120
+
+        # The five profile views. Each renders only when its own key is set, so
+        # this block is also the demo of that: English sets all five, German
+        # deliberately leaves `projects` out so the "view absent" path is built
+        # rather than assumed.
+        about = """
+Placeholder prose, but the shape is the point: a paragraph or two in the
+author's own voice, set on the reading measure rather than squeezed into a
+caption. Markdown works here, so a [link](https://gohugo.io/) does too.
+"""
+
+        # Status fields. They sit in the profile block itself and stay open on
+        # every view, because they are what the sheet states about itself.
+        [[languages.en.params.profile.fields]]
+          label = "Location"
+          value = "Bremen, DE"
+
+        [[languages.en.params.profile.fields]]
+          label = "Discipline"
+          value = "Backend and platform"
+
+        [[languages.en.params.profile.fields]]
+          label = "Status"
+          value = "Open to consulting"
+
+        [[languages.en.params.profile.buttons]]
+          name = "Posts"
+          url = "posts"
+
+        [[languages.en.params.profile.buttons]]
+          name = "Archive"
+          url = "archive"
+
+        # The schedule. Both item forms are exercised here on purpose: a plain
+        # list of strings stays a single line, and the moment one item in a
+        # group carries a `note` that whole group becomes ruled rows with the
+        # grades in a column. Only a site with both in it builds both branches.
+        [[languages.en.params.profile.skills]]
+          name  = "Languages"
+          items = ["Go", "Rust", "TypeScript", "Python"]
+
+        [[languages.en.params.profile.skills]]
+          name = "Infrastructure"
+
+          [[languages.en.params.profile.skills.items]]
+            name = "Kubernetes"
+            note = "in production"
+
+          [[languages.en.params.profile.skills.items]]
+            name = "Terraform"
+            note = "4 years"
+
+          [[languages.en.params.profile.skills.items]]
+            name = "Nix"
+            note = "daily"
+
+        [[languages.en.params.profile.skills]]
+          name  = "Data"
+          items = ["PostgreSQL", "Redis", "ClickHouse"]
+
+        [[languages.en.params.profile.skills]]
+          name  = "Typesetting"
+          items = ["Hugo", "CSS", "Inkscape"]
+
+        # The record, newest first. `note` is optional and only the first entry
+        # sets one, so both rows are rendered.
+        [[languages.en.params.profile.record]]
+          period = "2022–"
+          role   = "Principal engineer"
+          org    = "Acme Werke"
+          note   = "Platform, build tooling and the drawing standards nobody else wanted to own."
+
+        [[languages.en.params.profile.record]]
+          period = "2019–2022"
+          role   = "Senior backend engineer"
+          org    = "Beispiel AG"
+
+        [[languages.en.params.profile.record]]
+          period = "2016–2019"
+          role   = "Backend engineer"
+          org    = "Kleinbetrieb GmbH"
+
+        [[languages.en.params.profile.record]]
+          period = "2014–2016"
+          role   = "Working student"
+          org    = "Universität Bremen"
+
+        # Reference drawings. The first URL is external and the second is
+        # relative, so both branches of the link — target/rel plus the external
+        # glyph, or relLangURL — are built.
+        [[languages.en.params.profile.projects]]
+          name        = "vellum"
+          url         = "https://github.com/cebor/vellum"
+          description = "This theme. Every page set as an engineering drawing sheet."
+          tags        = ["Hugo", "CSS", "Go templates"]
+
+        [[languages.en.params.profile.projects]]
+          name        = "Writing"
+          url         = "posts"
+          description = "Notes on build tooling, typesetting and the things that break in between."
+          tags        = ["Markdown"]
+
+        [[languages.en.params.profile.contact]]
+          label = "Email"
+          value = "[you@example.org](mailto:you@example.org)"
+
+        [[languages.en.params.profile.contact]]
+          label = "Fediverse"
+          value = "[@you@mastodon.social](https://mastodon.social/)"
+
+        [[languages.en.params.profile.contact]]
+          label = "Code"
+          value = "[github.com/you](https://github.com/)"
+
+      # Per-language, because .File.Path is relative to that language's
+      # contentDir and a single URL could only ever be right for one of them.
+      [languages.en.params.editPost]
+        URL = "https://github.com/cebor/vellum/edit/main/exampleSite/content/en"
+        Text = "Suggest an edit"
+        appendFilePath = true
+
+    # The JSON output is the search index; ROOT404 writes the root error
+    # document. Default language only — adding ROOT404 to both makes them
+    # fight over /404.html.
+    [languages.en.outputs]
+      home = ["HTML", "RSS", "JSON", "ROOT404"]
+
+    [[languages.en.menus.main]]
+      name = "Posts"
+      pageRef = "/posts"
+      weight = 10
+
+    [[languages.en.menus.main]]
+      name = "Docs"
+      pageRef = "/docs"
+      weight = 15
+
+    [[languages.en.menus.main]]
+      name = "Tags"
+      pageRef = "/tags"
+      weight = 20
+
+    [[languages.en.menus.main]]
+      name = "Archive"
+      pageRef = "/archive"
+      weight = 30
+
+    [[languages.en.menus.main]]
+      name = "Search"
+      pageRef = "/search"
+      weight = 40
+
+  [languages.de]
+    label = "Deutsch"
+    contentDir = "content/de"
+    weight = 2
+    title = "Vellum"
+
+    [languages.de.params]
+      description = "Ein Hugo-Theme, das jede Seite als technische Zeichnung setzt."
+      DateFormat = ":date_long"
+
+      # Nur im Deutschen gesetzt, nach demselben Muster wie `profile.view`
+      # darüber: Englisch zeigt die reine Wortmarke, Deutsch die Marke mit
+      # Signet — so baut jeder Build beide Zweige von `header.html`.
+      #
+      # Vorher war der ganze `[params.label]`-Block von keiner Sprache gesetzt,
+      # also wurde er nirgends gebaut. Das ist teurer als es klingt: der
+      # Rasterpfad holt die Datei, skaliert sie höhenbegrenzt und schreibt
+      # width/height aus der *skalierten* Ressource. Stünde dort zweimal die
+      # Höhe, wäre jedes Signet quadratisch deklariert — eine Wortmarke würde
+      # gestaucht und der Kopf verspränge beim Laden. Genau deshalb ist die
+      # Marke hier 2:1 und nicht quadratisch: ein Rückfall wäre sofort sichtbar
+      # statt unsichtbar.
+      [languages.de.params.label]
+        text = "Vellum"
+        icon = "images/label.png"
+        iconHeight = 24
+
+      [languages.de.params.profile]
+        # Dieselben Profil-Params wie im Englischen, nur anders dargestellt:
+        # Englisch zeigt den gezeichneten Ansichtsindex, Deutsch die Terminal-
+        # Sitzung. Beide Zweige werden damit von jedem Build gerendert, und die
+        # beiden Startseiten sind ein direkter Vergleich. Zum Umschalten diesen
+        # einen Wert ändern oder löschen.
+        view = "terminal"
+
+        # Deutsch lässt bewusst eine Ansicht weg, damit der Fall „Ansicht nicht
+        # gesetzt" tatsächlich gebaut wird — hier `contact`, nicht `projects`.
+        # Andersherum wäre die Projektausgabe des Terminals (.term__projects mit
+        # Link und Tags) von keinem Build je gerendert worden, und ein Markup,
+        # das nichts rendert, ist ein Markup, das nichts testet.
+        title = "Dein Name"
+        subtitle = "was du machst, in einer Zeile"
+        image = "images/profile.svg"
+        imageAlt = "Platzhalter-Porträt, als Konstruktion gezeichnet"
+        imageWidth = 120
+
+        # Dieselben Ansichten wie im Englischen, mit einer bewussten Ausnahme:
+        # `projects` fehlt hier, damit der Fall „Ansicht nicht gesetzt“ auch
+        # tatsächlich gebaut wird. Der Index zeigt dann vier statt fünf Einträge.
+        about = """
+Platzhaltertext, aber die Form ist der Punkt: ein, zwei Absätze in der Stimme
+des Autors, gesetzt auf dem Lesemaß statt in eine Bildunterschrift gequetscht.
+Markdown funktioniert hier, also auch ein [Link](https://gohugo.io/).
+"""
+
+        [[languages.de.params.profile.fields]]
+          label = "Standort"
+          value = "Bremen, DE"
+
+        [[languages.de.params.profile.fields]]
+          label = "Fachgebiet"
+          value = "Backend und Plattform"
+
+        [[languages.de.params.profile.fields]]
+          label = "Status"
+          value = "Offen für Anfragen"
+
+        # Eine Zeile mehr als im Englischen — die Feldzahl ist frei, und ein
+        # Block mit vier Zeilen zeigt das.
+        [[languages.de.params.profile.fields]]
+          label = "Sprachen"
+          value = "Deutsch, Englisch"
+
+        [[languages.de.params.profile.buttons]]
+          name = "Beiträge"
+          url = "posts"
+
+        [[languages.de.params.profile.buttons]]
+          name = "Archiv"
+          url = "archive"
+
+        [[languages.de.params.profile.skills]]
+          name  = "Sprachen"
+          items = ["Go", "Rust", "TypeScript", "Python"]
+
+        [[languages.de.params.profile.skills]]
+          name = "Infrastruktur"
+
+          [[languages.de.params.profile.skills.items]]
+            name = "Kubernetes"
+            note = "produktiv"
+
+          [[languages.de.params.profile.skills.items]]
+            name = "Terraform"
+            note = "4 Jahre"
+
+          [[languages.de.params.profile.skills.items]]
+            name = "Nix"
+            note = "täglich"
+
+        [[languages.de.params.profile.skills]]
+          name  = "Daten"
+          items = ["PostgreSQL", "Redis", "ClickHouse"]
+
+        [[languages.de.params.profile.skills]]
+          name  = "Satz"
+          items = ["Hugo", "CSS", "Inkscape"]
+
+        [[languages.de.params.profile.record]]
+          period = "2022–"
+          role   = "Principal Engineer"
+          org    = "Acme Werke"
+          note   = "Plattform, Build-Werkzeug und die Zeichnungsnormen, die sonst niemand übernehmen wollte."
+
+        [[languages.de.params.profile.record]]
+          period = "2019–2022"
+          role   = "Senior Backend Engineer"
+          org    = "Beispiel AG"
+
+        [[languages.de.params.profile.record]]
+          period = "2016–2019"
+          role   = "Backend Engineer"
+          org    = "Kleinbetrieb GmbH"
+
+        [[languages.de.params.profile.record]]
+          period = "2014–2016"
+          role   = "Werkstudent"
+          org    = "Universität Bremen"
+
+        # Wie im Englischen: die erste URL ist extern, die zweite relativ, damit
+        # beide Zweige der Verlinkung gebaut werden.
+        [[languages.de.params.profile.projects]]
+          name        = "vellum"
+          url         = "https://github.com/cebor/vellum"
+          description = "Dieses Theme. Jede Seite als technische Zeichnung gesetzt."
+          tags        = ["Hugo", "CSS", "Go-Templates"]
+
+        [[languages.de.params.profile.projects]]
+          name        = "Schreiben"
+          url         = "posts"
+          description = "Notizen zu Build-Werkzeug, Satz und dem, was dazwischen kaputtgeht."
+          tags        = ["Markdown"]
+
+      [languages.de.params.editPost]
+        URL = "https://github.com/cebor/vellum/edit/main/exampleSite/content/de"
+        Text = "Korrektur vorschlagen"
+        appendFilePath = true
+
+      # Set for German and deliberately left unset for English. footer.html has
+      # a `with`/`else` pair here, and this repository has only one site to
+      # exercise both with: German builds the custom line (markdownify included),
+      # English keeps falling through to the copyright default.
+      [languages.de.params.footer]
+        text = "Gesetzt als technische Zeichnung. Inhalte unter [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.de)."
+
+    [languages.de.outputs]
+      home = ["HTML", "RSS", "JSON"]
+
+    [[languages.de.menus.main]]
+      name = "Beiträge"
+      pageRef = "/posts"
+      weight = 10
+
+    [[languages.de.menus.main]]
+      name = "Doku"
+      pageRef = "/docs"
+      weight = 15
+
+    [[languages.de.menus.main]]
+      name = "Tags"
+      pageRef = "/tags"
+      weight = 20
+
+    [[languages.de.menus.main]]
+      name = "Archiv"
+      pageRef = "/archive"
+      weight = 30
+
+    [[languages.de.menus.main]]
+      name = "Suche"
+      pageRef = "/search"
+      weight = 40
+
+# --- shared params ---------------------------------------------------------
+
+[params]
+  env = "production"
+  author = "Your Name"
+  defaultTheme = "auto"
+  latestPosts = 5
+  mainSections = ["posts"]
+  displayFullLangName = true
+
+  # Only reached on pages that carry no tags of their own — the home page, the
+  # archive, search — because head.html falls back page keywords, then tags,
+  # then this. Set so that last rung is built rather than assumed.
+  keywords = ["hugo", "theme", "engineering drawing", "technical writing"]
+
+  # Puts the whole post in the feed instead of the summary. Worth exercising
+  # rather than assuming: it is the branch in rss.xml that has to survive the
+  # render hooks, and a demo with code-heavy posts is where that shows.
+  ShowFullTextinRSS = true
+
+  ShowReadingTime = true
+  ShowWordCount = true
+  ShowPostNavLinks = true
+  ShowCodeCopyButtons = true
+  ShowBreadCrumbs = true
+  ShowShareButtons = true
+  ShowToc = true
+  # Shut here, against the theme's own default of open. The panel sits between
+  # the title block and the first paragraph, so open it pushes the sheet's
+  # opening line down by as much as the index is long — and these demo posts
+  # carry enough headings for that to cost the first screen. A site whose posts
+  # are longer, or which expects search arrivals after one section, wants the
+  # default instead; this is a demo preference, not a correction to it.
+  TocOpen = false
+  ShareButtons = ["mastodon", "bluesky", "reddit", "hackernews", "linkedin", "email"]
+
+  # Real files in static/, so the icon rungs in head-assets.html are actually
+  # rendered by the CI build instead of sitting behind an unset param. Both
+  # optional attributes are deliberately left out: one 180x180 apple-touch-icon
+  # needs no sizes, and the mask-icon colour is meant to fall through to
+  # --accent, which is the path worth exercising because it reads 00-tokens.css.
+  [params.assets]
+    favicon = "/favicon.ico"
+    favicon16x16 = "/favicon-16x16.png"
+    favicon32x32 = "/favicon-32x32.png"
+    favicon_svg = "/favicon.svg"
+    apple_touch_icon = "/apple-touch-icon.png"
+    safari_pinned_tab = "/safari-pinned-tab.svg"
+    manifest = "/site.webmanifest"
+
+  # Named once here rather than in every post that discloses AI use. A post may
+  # still override it, and a post without an `ai` key discloses nothing at all.
+  [params.ai]
+    model = "Claude Opus 5"
+
+  # Placeholder tokens, not real ones. They exist so head.html's three
+  # verification rungs are rendered by the build rather than sitting behind an
+  # unset param — a site swaps in its own or drops the block entirely.
+  [params.analytics]
+    [params.analytics.google]
+      SiteVerificationTag = "replace-with-your-google-token"
+    [params.analytics.bing]
+      SiteVerificationTag = "replace-with-your-bing-token"
+    [params.analytics.yandex]
+      SiteVerificationTag = "replace-with-your-yandex-token"
+
+  [params.cover]
+    linkFullImages = true
+
+  [params.schema]
+    publisherType = "Person"
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/"
+
+  [[params.socialIcons]]
+    name = "mastodon"
+    url = "https://mastodon.social/"
+
+  [[params.socialIcons]]
+    name = "rss"
+    url = "index.xml"
+
+  [params.fuseOpts]
+    threshold = 0.4
+    keys = ["title", "permalink", "summary", "content"]

@@ -1,0 +1,134 @@
+baseURL = "https://example.com/"
+title = "Sigil"
+
+
+defaultContentLanguage = "en"
+
+[languages]
+  [languages.en]
+    label = "English"
+    weight = 1
+    title = "Sigil"
+    [languages.en.params]
+      [languages.en.params.homeInfoParams]
+        content = "A restrained literary theme for Hugo — paper, ink, and everything in threes. This is its demo."
+
+    [[languages.en.menus.main]]
+        identifier = "typography"
+        name = "Typography"
+        pageRef = "posts/typography"
+    [[languages.en.menus.main]]
+        identifier = "archives"
+        name = "Archives"
+        pageRef = "archives"
+    [[languages.en.menus.main]]
+        identifier = "about"
+        name = "About"
+        pageRef = "about"
+    [[languages.en.menus.main]]
+        identifier = "search"
+        name = "Search"
+        pageRef = "search"
+    [[languages.en.menus.main]]
+        identifier = "config"
+        name = "Config"
+        pageRef = "config-example"
+    [[languages.en.menus.main]]
+        identifier = "api"
+        name = "API"
+        pageRef = "api"
+    [[languages.en.menus.main]]
+        identifier = "categories"
+        name = "Categories"
+        pageRef = "categories"
+    [[languages.en.menus.main]]
+        identifier = "tags"
+        name = "Tags"
+        pageRef = "tags"
+
+  [languages.zh-cn]
+    locale = "zh-CN"
+    label = "简体中文"
+    weight = 2
+    title = "Sigil"
+    [languages.zh-cn.params]
+      [languages.zh-cn.params.homeInfoParams]
+        content = "一个克制的 Hugo 文学主题——纸、墨，万物成三。这里是它的演示站。"
+    [[languages.zh-cn.menus.main]]
+        identifier = "typography"
+        name = "排版"
+        pageRef = "posts/typography"
+    [[languages.zh-cn.menus.main]]
+        identifier = "archives"
+        name = "归档"
+        pageRef = "archives"
+    [[languages.zh-cn.menus.main]]
+        identifier = "about"
+        name = "关于"
+        pageRef = "about"
+    [[languages.zh-cn.menus.main]]
+        identifier = "search"
+        name = "搜索"
+        pageRef = "search"
+
+  [languages.ja]
+    locale = "ja"
+    label = "日本語"
+    weight = 3
+    title = "Sigil"
+    [languages.ja.params]
+      [languages.ja.params.homeInfoParams]
+        content = "Hugo の控えめな文学テーマ——紙とインク、三つ組。こちらはデモサイトです。"
+    [[languages.ja.menus.main]]
+        identifier = "typography"
+        name = "組版"
+        pageRef = "posts/typography"
+    [[languages.ja.menus.main]]
+        identifier = "archives"
+        name = "アーカイブ"
+        pageRef = "archives"
+    [[languages.ja.menus.main]]
+        identifier = "about"
+        name = "About"
+        pageRef = "about"
+    [[languages.ja.menus.main]]
+        identifier = "search"
+        name = "検索"
+        pageRef = "search"
+
+[params]
+  mainSections = ["posts"]
+  author = "SigiL"
+  ShowBreadCrumbs = true
+  ShowReadingTime = true
+  ShowWordCount = true
+  ShowTotalWords = true
+  sgDaysInCage = true
+  hideSummary = true
+  ShowToc = true
+  TocOpen = true
+  ShowCodeCopyButtons = true
+  ShowPostNavLinks = true
+  ogAutoCard = true
+  # demo 托管在 ouatis.com 子目录下,不进搜索引擎索引
+  robotsNoIndex = true
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/ouatis/hugo-theme-sigil"
+
+[outputs]
+  home = ["HTML", "RSS", "LLMSTXT", "JSONFeed"]
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.extensions.passthrough]
+      enable = true
+      [markup.goldmark.extensions.passthrough.delimiters]
+        inline = [['\(', '\)']]
+        block = [['$$', '$$'], ['\[', '\]']]
+  [markup.highlight]
+    # 主题自带 Catppuccin Macchiato 的 chroma class 样式,走 class 模式
+    noClasses = false

@@ -1,0 +1,53 @@
+{{- /* 0.158 is where site.Language.Locale and .Language.Label arrived, both of
+       which this file and six others use unguarded. The theme claimed 0.146 for
+       a while and did not build there at all. */ -}}
+{{- if lt hugo.Version "0.158.0" }}
+{{- errorf "the vellum theme requires hugo v0.158.0 or greater" }}
+{{- end -}}
+{{- /* Site settings the theme depends on and cannot set itself. Cached on a
+       constant key: every check is a property of the site, not of this page,
+       and one of them highlights a token to read the Chroma config. */ -}}
+{{- partialCached "config-guards.html" . "guards" -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale | default site.Language.Lang }}"
+    dir="{{ site.Language.Direction | default `auto` }}"
+    data-theme="{{ site.Params.defaultTheme | default `auto` }}">
+
+<head>
+    {{- partial "head.html" . }}
+</head>
+
+<body id="top" class="sheet{{ with .Params.bodyClass }} {{ . }}{{ end }}">
+    <a class="skip-link" href="#main">{{ i18n "skip_to_content" | default "Skip to content" }}</a>
+
+    {{- /* Uncached: the active nav item and the language switcher's target both
+           depend on the current page. */}}
+    {{ partial "header.html" . -}}
+
+    {{- /* The rail comes after the content in the DOM and is put back in the
+           first grid column by CSS. Rendered before <main>, its marks were tab
+           stops 9–12 while sitting hundreds of pixels down the sheet, so the
+           next stop threw a keyboard reader back to the breadcrumb at the top —
+           2200px backwards, mid-page. Read as a source document it is also the
+           right order: the index of a sheet answers the sheet. */}}
+    <div class="sheet__frame">
+        {{- /* tabindex="-1" so the skip link above can actually put focus here.
+               Without it <main> is not focusable, and activating the link moved
+               only the sequential focus *starting point*: the next Tab landed
+               inside main, which is what a sighted keyboard reader wants, while
+               focus itself stayed on <body>. A screen reader was therefore never
+               taken anywhere and announced nothing, so the one control whose
+               whole job is to confirm you skipped the navigation confirmed
+               nothing. Negative, so it is reachable programmatically and stays
+               out of the tab sequence itself. */}}
+        <main class="main" id="main" tabindex="-1">
+            {{- block "main" . }}{{ end }}
+        </main>
+        {{- partial "zone-rail.html" . }}
+    </div>
+
+    {{ partialCached "footer.html" . .Lang (.Param "ShowCodeCopyButtons") (.Param "hideFooter") -}}
+    {{ partial "extend-footer.html" . -}}
+</body>
+
+</html>

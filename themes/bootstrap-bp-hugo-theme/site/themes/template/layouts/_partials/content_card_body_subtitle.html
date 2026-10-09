@@ -1,0 +1,29 @@
+{{- /*
+  Meta line below the card title: date · (last updated) · author · reading time.
+  Updated date and author are only shown on the full page, lists stay short.
+  Context: dict "page" "fullsize" "summary" (see content.html); a page alone is a full page.
+*/ -}}
+{{- $page := . -}}
+{{- $fullsize := true -}}
+{{- if reflect.IsMap . }}{{ $page = .page }}{{ $fullsize = and .fullsize (not .summary) }}{{ end -}}
+{{- with $page -}}
+{{- $customDateFormat := .Site.Params.customDateFormat | default "02.01.2006" -}}
+{{- $items := slice -}}
+{{- if and (ne .Type "page") (not .PublishDate.IsZero) -}}
+    {{- $items = $items | append (printf "<time datetime=\"%s\">%s</time>" (.PublishDate.Format "2006-01-02") (.PublishDate.Format $customDateFormat)) -}}
+    {{- if and $fullsize (gt .Lastmod .PublishDate) -}}
+        {{- $items = $items | append (printf "%s %s" (i18n "lastupdated") (.Lastmod.Format $customDateFormat) | htmlEscape) -}}
+    {{- end -}}
+{{- end -}}
+{{- if and $fullsize .Params.author -}}
+    {{- $author := .Params.author -}}
+    {{- if reflect.IsSlice $author }}{{ $author = delimit $author ", " }}{{ end -}}
+    {{- $items = $items | append ($author | htmlEscape) -}}
+{{- end -}}
+{{- if and (ne .Site.Params.hideReadingTime true) (ne .Type "page") -}}
+    {{- $items = $items | append (i18n "readingTimeShort" .ReadingTime | htmlEscape) -}}
+{{- end -}}
+{{- with $items -}}
+<p class="card-meta">{{ delimit . "<span class=\"sep\" aria-hidden=\"true\"> · </span>" | safeHTML }}</p>
+{{- end -}}
+{{- end -}}

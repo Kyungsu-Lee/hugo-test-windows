@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Lang | default "ar" }}" dir="{{ if eq site.Language.Lang "ar" }}rtl{{ else }}ltr{{ end }}">
+
+<head>
+	<meta charset="UTF-8" />
+	{{/* ===== Inline Dark Mode Script (prevents FOUC) ===== */}}
+	<script>
+		(function() {
+			var savedTheme = localStorage.getItem('theme');
+			var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+				document.documentElement.classList.add('dark');
+			}
+		})();
+	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	{{/* ===== Title ===== */}}
+	<title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ site.Title }}</title>
+
+	{{/* ===== Description ===== */}}
+	{{- $description := "" }}
+	{{- if .Description }}
+		{{- $description = .Description }}
+	{{- else if .IsPage }}
+		{{- $description = .Summary | plainify | truncate 160 }}
+	{{- else if site.Params.description }}
+		{{- $description = site.Params.description }}
+	{{- else }}
+		{{- $description = printf "%s - %s" .Title site.Title }}
+	{{- end }}
+	<meta name="description" content="{{ $description }}">
+
+	{{/* ===== Keywords ===== */}}
+	{{- if .IsHome }}
+		{{ with site.Params.keywords }}
+		<meta name="keywords" content="{{ delimit . ", " }}">
+		{{ end }}
+	{{- else }}
+		{{- $keywords := .Params.keywords | default .Params.tags }}
+		{{ with $keywords }}
+		<meta name="keywords" content="{{ delimit . ", " }}">
+		{{ end }}
+	{{- end }}
+
+	{{/* ===== Author ===== */}}
+	{{ with .Params.author | default site.Params.author }}
+	<meta name="author" content="{{ . }}">
+	{{ end }}
+
+	{{/* ===== Robots ===== */}}
+	{{- if or .Params.noindex site.Params.noindex (eq .Kind "404") }}
+	<meta name="robots" content="noindex, nofollow">
+	{{- else }}
+	<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+	{{- end }}
+
+	{{/* ===== Canonical URL ===== */}}
+	{{- if ne .Kind "404" }}
+	<link rel="canonical" href="{{ .Params.canonicalURL | default .Permalink }}">
+	{{- end }}
+
+	{{/* ===== RSS autodiscovery ===== */}}
+	{{ with site.Home.OutputFormats.Get "RSS" }}<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .Permalink }}">{{ end }}
+
+	{{/* ===== Alternate Languages (if multilingual) ===== */}}
+	{{ range .AllTranslations }}
+	<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
+	{{ end }}
+	{{ if .IsTranslated }}
+	<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
+	{{ end }}
+
+	{{/* ===== Open Graph ===== */}}
+	<meta property="og:site_name" content="{{ site.Title }}">
+	<meta property="og:locale" content="{{ site.Language.Lang | default "ar" }}">
+	{{- if .IsHome }}
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="{{ site.Title }}">
+	<meta property="og:description" content="{{ $description }}">
+	<meta property="og:url" content="{{ site.BaseURL }}">
+	{{- else if .IsPage }}
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="{{ .Title }}">
+	<meta property="og:description" content="{{ $description }}">
+	<meta property="og:url" content="{{ .Permalink }}">
+	{{ with .Date }}{{ if not .IsZero }}<meta property="article:published_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}{{ end }}
+	{{ with .Lastmod }}<meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+	{{ with .Params.author | default site.Params.author }}<meta property="article:author" content="{{ . }}">{{ end }}
+	{{ range .Params.tags }}<meta property="article:tag" content="{{ . }}">{{ end }}
+	{{ with .Params.series }}<meta property="article:section" content="{{ . }}">{{ end }}
+	{{- else }}
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="{{ .Title }}">
+	<meta property="og:description" content="{{ $description }}">
+	<meta property="og:url" content="{{ .Permalink }}">
+	{{- end }}
+
+	{{/* ===== Open Graph Image ===== */}}
+	{{- $ogImage := "" }}
+	{{- if .Params.cover }}
+		{{- $ogImage = .Params.cover | absURL }}
+	{{- else if .Params.image }}
+		{{- $ogImage = .Params.image | absURL }}
+	{{- else if site.Params.ogImage }}
+		{{- $ogImage = site.Params.ogImage | absURL }}
+	{{- else if fileExists "static/images/og-default.png" }}
+		{{- $ogImage = "images/og-default.png" | absURL }}
+	{{- end }}
+	{{- with $ogImage }}
+	<meta property="og:image" content="{{ . }}">
+	<meta property="og:image:alt" content="{{ $.Title }}">
+	{{- end }}
+
+	{{/* ===== Twitter Card ===== */}}
+	<meta name="twitter:card" content="{{ if $ogImage }}summary_large_image{{ else }}summary{{ end }}">
+	{{ with site.Params.social.twitter }}<meta name="twitter:site" content="@{{ . }}">{{ end }}
+	{{ with site.Params.social.twitter }}<meta name="twitter:creator" content="@{{ . }}">{{ end }}
+	<meta name="twitter:title" content="{{ .Title }}">
+	<meta name="twitter:description" content="{{ $description }}">
+	{{- with $ogImage }}
+	<meta name="twitter:image" content="{{ . }}">
+	{{- end }}
+
+	{{/* ===== JSON-LD Structured Data (jsonify escapes quotes/Arabic safely) ===== */}}
+	{{- $lang := site.Language.Lang | default "ar" }}
+	{{- $author := .Params.author | default site.Params.author | default site.Title }}
+	{{- if .IsHome }}
+	{{- $ld := dict "@context" "https://schema.org" "@type" "WebSite" "name" site.Title "url" site.BaseURL "description" $description "inLanguage" $lang }}
+	{{- with site.Params.author }}{{ $ld = merge $ld (dict "author" (dict "@type" "Person" "name" .)) }}{{ end }}
+	<script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
+	{{- else if and .IsPage (not .IsNode) }}
+	{{- $publisher := dict "@type" "Organization" "name" site.Title "url" site.BaseURL }}
+	{{- $ld := dict "@context" "https://schema.org" "@type" "Article" "headline" .Title "description" $description "url" .Permalink "inLanguage" $lang "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink) "author" (dict "@type" "Person" "name" $author) "publisher" $publisher }}
+	{{- with .Date }}{{ if not .IsZero }}{{ $ld = merge $ld (dict "datePublished" (.Format "2006-01-02T15:04:05Z07:00")) }}{{ end }}{{ end }}
+	{{- with .Lastmod }}{{ if not .IsZero }}{{ $ld = merge $ld (dict "dateModified" (.Format "2006-01-02T15:04:05Z07:00")) }}{{ end }}{{ end }}
+	{{- with $ogImage }}{{ $ld = merge $ld (dict "image" .) }}{{ end }}
+	{{- with .Params.tags }}{{ $ld = merge $ld (dict "keywords" (delimit . ", ")) }}{{ end }}
+	{{- with .WordCount }}{{ $ld = merge $ld (dict "wordCount" .) }}{{ end }}
+	<script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
+
+	{{- $items := slice (dict "@type" "ListItem" "position" 1 "name" site.Title "item" site.BaseURL) }}
+	{{- $pos := 2 }}
+	{{- with .Parent }}{{ if not .IsHome }}{{ $items = $items | append (dict "@type" "ListItem" "position" $pos "name" .Title "item" .Permalink) }}{{ $pos = 3 }}{{ end }}{{ end }}
+	{{- $items = $items | append (dict "@type" "ListItem" "position" $pos "name" .Title "item" .Permalink) }}
+	<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $items | jsonify | safeJS }}</script>
+	{{- end }}
+
+	{{/* ===== Verification Tags ===== */}}
+	{{ with site.Params.verification.google }}
+	<meta name="google-site-verification" content="{{ . }}">
+	{{ end }}
+	{{ with site.Params.verification.bing }}
+	<meta name="msvalidate.01" content="{{ . }}">
+	{{ end }}
+	{{ with site.Params.verification.yandex }}
+	<meta name="yandex-verification" content="{{ . }}">
+	{{ end }}
+	{{ with site.Params.verification.pinterest }}
+	<meta name="p:domain_verify" content="{{ . }}">
+	{{ end }}
+
+	{{/* ===== Favicon ===== */}}
+	{{ if fileExists "static/favicon.ico" }}
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	{{ else }}
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+	{{ end }}
+	{{ if fileExists "static/apple-touch-icon.png" }}
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	{{ end }}
+	{{ if fileExists "static/favicon-32x32.png" }}
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	{{ end }}
+	{{ if fileExists "static/favicon-16x16.png" }}
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	{{ end }}
+	{{ if fileExists "static/site.webmanifest" }}
+	<link rel="manifest" href="/site.webmanifest">
+	{{ end }}
+
+	{{/* ===== Preconnect for Performance ===== */}}
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+	{{/* ===== Stylesheet ===== */}}
+	<link rel="stylesheet" href="{{ "css/output.css" | relURL }}" type="text/css" media="all" />
+	<link rel="stylesheet" href="{{ "css/syntax.css" | relURL }}" type="text/css" media="all" />
+
+	{{/* ===== Custom Head (for analytics, etc.) ===== */}}
+	{{ partial "head-custom.html" . }}
+
+</head>
+
+<body class="font-custom min-h-screen flex flex-col bg-white dark:bg-stone-950 text-stone-900 dark:text-stone-100 antialiased">
+
+	{{ partial "nav.html" . }}
+
+	<main class="content container max-w-3xl mx-auto flex-1 py-8 px-4 md:px-6">

@@ -1,0 +1,49 @@
+{{ define "main" }}
+
+<header class="sp-head">
+    <h1 class="sp-welcome">{{ .Site.Params.welcomeText }}</h1>
+    {{- with .Site.Params.tagline }}
+    <p class="sp-tagline">{{ . }}</p>
+    {{- end }}
+</header>
+
+{{- $engines := where (.Site.Params.searchEngines | default slice) "activated" true }}
+{{- with $engines }}
+    {{- $first := index . 0 }}
+    <form class="sp-search" action="{{ $first.url }}" method="get" role="search">
+        {{ partial "icon.html" "fas fa-search" }}
+        <input class="sp-search-input" type="search" name="{{ $first.searchkey | default "q" }}" placeholder="Search {{ $first.name }}" aria-label="Search {{ $first.name }}" autofocus>
+        {{- if gt (len .) 1 }}
+        <span class="sp-engines">
+            {{- range $i, $e := . }}
+            <button type="button" class="sp-engine" data-url="{{ $e.url }}" data-key="{{ $e.searchkey | default "q" }}" data-name="{{ $e.name }}" aria-pressed="{{ if eq $i 0 }}true{{ else }}false{{ end }}">{{ $e.name }}</button>
+            {{- end }}
+        </span>
+        {{- end }}
+    </form>
+{{- end }}
+
+{{ if .Site.Params.startPageColumns }}
+    <div class="sp-groups" style="--sp-cols: {{ len hugo.Data.links }}">
+        {{- range hugo.Data.links }}
+        <section class="sp-card">
+            <h2 class="sp-group-title">{{ .group }}</h2>
+            <ul class="sp-list">
+                {{- range .items }}
+                <li><a href="{{ .url }}">{{ partial "icon.html" .icon }}<span>{{ .title | safeHTML }}</span></a></li>
+                {{- end }}
+            </ul>
+        </section>
+        {{- end }}
+    </div>
+{{ else }}
+    <div class="sp-tiles">
+        {{- range hugo.Data.links }}
+            {{- range .items }}
+        <a class="sp-tile" href="{{ .url }}">{{ partial "icon.html" (dict "name" .icon "class" "sp-tile-icon") }}<span>{{ .title | safeHTML }}</span></a>
+            {{- end }}
+        {{- end }}
+    </div>
+{{ end }}
+
+{{ end }}

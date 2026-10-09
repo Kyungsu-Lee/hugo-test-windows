@@ -1,0 +1,121 @@
+baseURL = 'https://foxihd.github.io/hugo-foxx'
+title = 'example'
+
+enableGitInfo = true
+canonifyURLs = true
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = true
+ignoreFiles = ['\.redacted', '\.old','\.bak', '\.tmp', '\.swp', '\.DS_Store']
+enableRobotsTXT = true
+
+[languages]
+    [languages.en]
+        contentDir = 'content/en'
+        disabled = false
+        description = 'Hugo-foxx exampleSite'
+        # languageCode = 'en-GB'
+        locale = 'en-GB'
+        # languageDirection = 'ltr'
+        direction = 'ltr'
+        # languageName = 'English'
+        label = 'English'
+        [languages.en.pagination]
+            disableAliases = false
+            pagerSize = 12
+            path = 'page'
+        [languages.en.params]
+            license = 'hugo-foxx <i class="icon">copyleft</i> 2026'
+
+    [languages.id]
+        title = 'contoh'
+        contentDir = 'content/id'
+        disabled = false
+        description = 'contoh situs hugo-foxx'
+        # languageCode = 'id-ID'
+        locale = 'id-ID'
+        # languageDirection = 'ltr'
+        direction = 'ltr'
+        # languageName = 'Bahasa Indonesia'
+        label = 'Bahasa Indonesia'
+        [languages.id.pagination]
+            disableAliases = false
+            pagerSize = 12
+            path = 'laman'
+        [languages.id.params]
+            license = 'hugo-foxx <i class="icon">copyleft</i> 2026'
+
+
+[markup]
+    [markup.highlight]
+        noClasses = false
+        codeFences = true
+    [markup.goldmark]
+        [markup.goldmark.extensions]
+            [markup.goldmark.extensions.passthrough]
+                enable = true
+                [markup.goldmark.extensions.passthrough.delimiters]
+                    block = [['\[', '\]'], ['$$', '$$'], ['\begin{equation}', '\end{equation}'], ['\begin{align}', '\end{align}']]
+                    inline = [['\(', '\)'], ['$', '$'] ]
+        [markup.goldmark.parser]
+        [markup.goldmark.parser.attribute]
+            block = true
+        [markup.goldmark.renderer]
+            unsafe = true
+
+[outputs]
+    home = ['html', 'rss']
+
+[taxonomies]
+    author = 'author'
+    category = 'categories'
+    tag = 'tags'
+    stage = 'stage'
+
+[params]
+    # title = ''
+    # description = ''
+    extMeta = true
+    # images = ''
+    enableAppearance = true
+    enableBionRead = true
+
+    [params.analytics]
+        append = 'body'
+
+    [params.author]
+        name = 'Author Name'
+        # email = ''
+        # coauthor = [{name = 'A.N. Other', bio = ''}]
+
+    [params.comments]
+        disabled = false
+
+    [params.favicon]
+        # png = '/favicon-96x96.png'
+        # svg = '/favicon.svg'
+        # ico = '/favicon.ico'
+        # apple = '/apple-touch-icon.png'
+        # appTitle = 'foxx.ink'
+        # webmanifest = '/site.webmanifest'
+
+    [params.home]
+        # disableSlide = true
+        # disableListing = true
+
+    [params.posts]
+        disableCard = true
+
+    [params.search]
+        pagefind = true
+
+    [params.logo]
+        # logoInlineCSS = true
+        # logoMark = '-'
+        logoType = true
+
+    [params.socialCard]
+        enable = true
+
+    [params.typeface]
+        webSafe = false
+        minimalUI = true

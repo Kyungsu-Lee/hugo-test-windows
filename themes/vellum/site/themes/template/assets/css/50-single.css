@@ -1,0 +1,1019 @@
+/* The post sheet: title block, prose rhythm, code, and the sheet's closing
+   furniture. */
+
+.post-header {
+    margin-bottom: var(--space-2xl);
+}
+
+/* The sheet's name and the mark that qualifies it, on one row. The title takes
+   what it needs and wraps; the stamp holds its size at the end of the row. The
+   row is nothing but this pairing, so with no stamp to place it leaves the
+   title exactly where a bare <h1> would have been. */
+.post-titlerow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.post-title {
+    font-size: var(--step-4);
+    min-width: 0;
+}
+
+.post-standfirst {
+    margin-top: var(--space-sm);
+    color: var(--meta);
+    font-size: var(--step-1);
+    max-width: 60ch;
+}
+
+/* --- title block ---------------------------------------------------------
+
+   The thesis of the theme: what is usually a grey caption line is here the
+   ruled block a drawing carries in its corner. Two columns — narrow tracked
+   label, value — with a hairline between every row, framed top and bottom by
+   the sheet's heavier rule. */
+
+.title-block {
+    margin-top: var(--space-lg);
+    border-block: var(--line-frame) solid var(--rule-frame);
+    display: grid;
+    font-size: var(--step--1);
+}
+
+/* The label column, wide enough for the longest lettered label in either
+   language. Component geometry, not a spacing step. */
+.title-block__row {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: var(--space-md);
+    padding-block: var(--space-2xs);
+    align-items: baseline;
+}
+
+.title-block__row + .title-block__row {
+    border-top: var(--line-thin) solid var(--rule);
+}
+
+.title-block__label {
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.title-block__value {
+    margin: 0;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    min-width: 0;
+}
+
+/* Deliberately not raised to --tap-target on a coarse pointer, and recorded here
+   because every other standalone control in the theme is. A value link is not a
+   control row: the *row* is the field, and the link is the value written in it,
+   set in that value's own line box under the field's label and between the row's
+   rules. Growing it would space the block's rows apart to satisfy a rule it was
+   never under — on the one instrument whose whole point is that it is ruled
+   evenly and tightly.
+
+   That test is the element's *place*, and this paragraph used to state it as the
+   element's company: "a word beside the commas that separate it from the next
+   one". Which described the Subject row, where several tags sit in one value,
+   and described nothing at all about the Also-in row, whose value is one
+   translation link alone — so on a two-language site the argument here covered
+   four rows out of five, and rule 7's own test ("a link that is its own row is
+   not exempt") answered the fifth the other way. Neither text was wrong about
+   the pixels; they disagreed about which question was being asked. A field's
+   value is exempt whether it holds one link or six, because what earns the
+   exemption is that the reader is reading a block of specification, not aiming
+   at a row of controls.
+
+   Measured at 390px: 16px tall, adjacent tags 7.3px apart, the lone translation
+   link 56x16 with nothing within 24px of it, and the next target 48px below —
+   which clears WCAG 2.5.8's spacing exception in every direction. It is the
+   theme's own minimum this steps outside, not the standard's. */
+.title-block__value a {
+    text-decoration-color: var(--rule-strong);
+}
+
+/* --- the AI stamp ---------------------------------------------------------
+
+   A note on how the sheet was drawn qualifies the whole sheet rather than
+   adding one more field to the title block, so it is set against the sheet's
+   name: at the end of the title row, dropped onto the title's cap band so it
+   reads as struck on the same line rather than floated above it. Closed, it is
+   a bordered square holding the mark; opened — on hover and on focus, so a
+   pointer, a keyboard and a tap all reach it — it draws the note beneath
+   itself, opening inward from the end of the row.
+
+   The note is closed with `display`, never with `opacity`. The button points at
+   it with aria-describedby, and a description is read out of hidden content, so
+   a screen reader hears the whole disclosure with the box shut. */
+
+.ai-stamp {
+    position: relative;
+    flex: none;
+    /* The drop onto the title's cap band at --step-4 over --line-height-tight.
+       Component geometry: it belongs to this pairing and to nothing else. */
+    margin-block-start: 0.75rem;
+}
+
+.ai-stamp__mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-xl);
+    height: var(--space-xl);
+    padding: 0;
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--bg);
+    color: var(--meta);
+    cursor: help;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.ai-stamp__mark .icon {
+    width: var(--space-lg);
+    height: var(--space-lg);
+}
+
+.ai-stamp__mark:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.ai-stamp__note {
+    display: none;
+    position: absolute;
+    inset-block-start: calc(100% + var(--space-3xs));
+    inset-inline-end: 0;
+    z-index: 1;
+    width: max-content;
+    max-width: min(42ch, 70vw);
+    padding: var(--space-xs) var(--space-sm);
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--bg);
+    font-size: var(--step--1);
+    line-height: var(--line-height-snug);
+}
+
+.ai-stamp:hover .ai-stamp__note,
+.ai-stamp:focus-within .ai-stamp__note {
+    display: block;
+}
+
+.ai-stamp__note p {
+    margin: 0;
+}
+
+.ai-stamp__label {
+    margin-bottom: var(--space-3xs);
+}
+
+.ai-stamp__detail,
+.ai-stamp__model {
+    margin-top: var(--space-4xs);
+    color: var(--meta);
+    font-size: var(--step--2);
+}
+
+/* --- the revision flag ----------------------------------------------------
+
+   The mark a drawing sets beside a changed region, and on this sheet that mark
+   is the AI stamp's own glyph — nib above a plotted line — so the whole-sheet
+   stamp and the passage flag are one mark at two grains rather than two marks
+   competing to mean the same thing. It was a numbered triangle, which had to
+   carry the number inside it and read as a warning sign for the trouble.
+
+   The number therefore rides after the glyph as the reference it is, set in the
+   same mono figure the inline case raises after its words, so both grains answer
+   the revision note in one voice.
+
+   The flag stands beside the bar rather than astride it. Hung over the line it
+   read as a mark applied *to* the rule, and the rule cut the nib in half on its
+   way past; set clear of it by a quarter em, the bar stays one unbroken dashed
+   line down the passage and the flag is what annotates it — which is how a
+   drawing sets a flag against a change bar in the first place. It needs no
+   width-dependent variant now: the mark sits inside the passage's own padding at
+   every width, where hanging over the bar had to be given up below the frame's
+   collapse because the gutter there is the screen edge. */
+
+.ai-flag {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 0.25em;
+    font-size: var(--step--2);
+    color: var(--meta-soft);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+/* Sized in em rather than to the box, so growing the box for a touch target
+   grows the reach and not the drawing. */
+.ai-flag .icon {
+    width: 2.1em;
+    height: 2.1em;
+}
+
+.ai-flag__n {
+    margin-inline-start: 0.15em;
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    font-variant-numeric: tabular-nums;
+}
+
+.ai-flag:hover {
+    color: var(--accent);
+}
+
+/* --- AI-marked passages ---------------------------------------------------
+
+   The drawing convention for an altered region: a change bar down its edge, a
+   numbered flag on the bar, and the number resolving to a row in the revision
+   note at the foot of the sheet.
+
+   The bar is dashed, and this is the one place in the stylesheet where line
+   *style* carries meaning rather than width and ink alone. It has to: a
+   blockquote already owns the solid thin rule in this very ink, and on a
+   drawing the dashed line is the provisional one. One use, one meaning — the
+   distinction --line-hair could never make. */
+
+.ai-passage {
+    margin-block: var(--space-lg);
+    padding-inline-start: var(--space-md);
+    border-inline-start: var(--line-thin) dashed var(--rule-strong);
+}
+
+/* Pulled back to the bar so the flag starts where the line does, and laid out as
+   a flex row rather than a line of text: as an ordinary paragraph the glyph sat
+   in a line box struck for 20px type at 1.75, which padded a 27px mark out to
+   nearly twice its height and left it floating a clear line above the passage it
+   flags. A flex row is exactly the mark's own height, so the flag sits down on
+   the text it belongs to. */
+.ai-passage__flag {
+    display: flex;
+    margin-block: 0;
+    margin-inline-start: calc((var(--space-md) + var(--line-thin)) * -1);
+}
+
+/* A run inside a sentence: the same dashed line, laid under the words. */
+.ai-mark__text {
+    text-decoration: underline dashed var(--rule-strong);
+    text-underline-offset: 0.25em;
+}
+
+/* The raised number that answers the dashed line, set like the reference it is
+   rather than like the flag on the bar. */
+.ai-ref {
+    margin-inline-start: var(--space-4xs);
+    vertical-align: 0.45em;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-variant-numeric: tabular-nums;
+    color: var(--meta);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.ai-ref:hover {
+    color: var(--accent);
+}
+
+/* --- the revision note ----------------------------------------------------
+
+   Ruled like the title block it answers to, because it is the same instrument:
+   a flag column and a detail column, hairlines between the rows, the sheet's
+   own rule closing it top and bottom. */
+
+.ai-notes {
+    margin-top: var(--space-2xl);
+}
+
+.ai-notes__label {
+    margin-bottom: var(--space-2xs);
+}
+
+.ai-notes__list {
+    margin: 0;
+    display: grid;
+    border-block: var(--line-frame) solid var(--rule-frame);
+    font-size: var(--step--1);
+}
+
+.ai-notes__row {
+    display: grid;
+    grid-template-columns: var(--space-lg) minmax(0, 1fr);
+    gap: var(--space-md);
+    padding-block: var(--space-2xs);
+    align-items: baseline;
+}
+
+.ai-notes__row + .ai-notes__row {
+    border-top: var(--line-thin) solid var(--rule);
+}
+
+.ai-notes__flag {
+    color: var(--meta);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+}
+
+.ai-notes__detail {
+    margin: 0;
+    min-width: 0;
+    color: var(--text);
+}
+
+.ai-notes__model {
+    color: var(--meta-soft);
+}
+
+/* --- cover --------------------------------------------------------------- */
+
+.cover {
+    margin-block: var(--space-xl);
+}
+
+.cover__image {
+    width: 100%;
+    border: var(--line-thin) solid var(--rule-strong);
+}
+
+.cover__caption {
+    margin-top: var(--space-2xs);
+    font-size: var(--step--2);
+    color: var(--meta);
+    font-family: var(--font-mono);
+}
+
+/* --- table of contents --------------------------------------------------- */
+
+.toc {
+    margin-bottom: var(--space-2xl);
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--surface-sunk);
+}
+
+.toc__summary {
+    cursor: pointer;
+    padding: var(--space-xs) var(--space-md);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.toc__summary:hover {
+    color: var(--accent);
+}
+
+.toc[open] .toc__summary {
+    border-bottom: var(--line-thin) solid var(--rule);
+}
+
+.toc__body {
+    padding: var(--space-sm) var(--space-md);
+}
+
+.toc ul {
+    list-style: none;
+    padding-inline-start: var(--space-md);
+    margin: 0;
+}
+
+.toc > .toc__body > nav > ul {
+    padding-inline-start: 0;
+}
+
+.toc li {
+    margin-block: var(--space-4xs);
+}
+
+.toc a {
+    text-decoration: none;
+    font-size: var(--step--1);
+    color: var(--meta);
+}
+
+.toc a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* --- prose --------------------------------------------------------------- */
+
+.content > * + * {
+    margin-top: var(--space-md);
+}
+
+/* The same rule for the wrappers that hold rendered Markdown but are not
+   .content: an alert body, a collapse body, an AI passage. They exist because
+   Goldmark's output has to be boxed, and being one level down they were missed
+   by the direct-child selector above — 10-base.css zeroes every margin, so a
+   two-paragraph [!NOTE] or {{< collapse >}} ran its paragraphs together with no
+   gap at all. Direct children again, so a nested list keeps its own spacing.
+   .toc__body is deliberately absent: its single <nav> carries its own rules. */
+.alert__body > * + *,
+.collapse__body > * + *,
+.ai-passage__body > * + * {
+    margin-top: var(--space-md);
+}
+
+/* More space above a heading than below it, so a heading belongs to what
+   follows it rather than floating between two blocks. */
+.content h2,
+.content h3,
+.content h4 {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-xs);
+}
+
+.content h2 {
+    font-size: var(--step-3);
+    padding-bottom: var(--space-3xs);
+    border-bottom: var(--line-thin) solid var(--rule);
+}
+
+.content h3 {
+    font-size: var(--step-2);
+}
+
+.content h4 {
+    font-size: var(--step-1);
+}
+
+.content > h2:first-child,
+.content > h3:first-child {
+    margin-top: 0;
+}
+
+.heading {
+    position: relative;
+}
+
+.heading__anchor {
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: var(--space-2xs);
+    color: var(--rule-strong);
+    opacity: 0;
+    text-decoration: none;
+    transition: opacity var(--transition), color var(--transition);
+}
+
+.heading__anchor .icon {
+    width: 0.7em;
+    height: 0.7em;
+}
+
+.heading:hover .heading__anchor,
+.heading__anchor:focus-visible {
+    opacity: 1;
+}
+
+.heading__anchor:hover {
+    color: var(--accent);
+}
+
+/* Anchors are a pointer affordance; on touch they never reveal, so they are
+   removed rather than left as dead space. */
+@media (pointer: coarse) {
+    .heading__anchor {
+        display: none;
+    }
+}
+
+.content ul,
+.content ol {
+    padding-inline-start: var(--space-lg);
+}
+
+.content li + li {
+    margin-top: var(--space-3xs);
+}
+
+.content li::marker {
+    color: var(--meta-soft);
+}
+
+/* A start rule is the standard typographic convention for a block quotation,
+   kept at hairline weight so it reads as a drawn rule rather than a coloured
+   stripe. The italic is a real loaded face, not synthesised oblique. */
+.content blockquote {
+    padding-inline-start: var(--space-md);
+    border-inline-start: var(--line-thin) solid var(--rule-strong);
+    color: var(--meta);
+    font-style: italic;
+}
+
+.content img,
+.content video {
+    border: var(--line-thin) solid var(--rule-strong);
+}
+
+.link-external .icon {
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    margin-inline-start: var(--space-4xs);
+    vertical-align: baseline;
+    color: var(--meta-soft);
+}
+
+/* --- alerts -------------------------------------------------------------- */
+
+.alert {
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--surface-sunk);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.alert__label {
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+    margin-bottom: var(--space-3xs);
+}
+
+/* The panel tokens, not the -soft ones: an alert is a surface a label is read
+   off, and an alpha fill over the graph substrate is not a surface — it is a
+   composite that changes wherever a grid line runs under it. See 00-tokens.css. */
+.alert--warning,
+.alert--caution {
+    border-color: var(--danger);
+    background: var(--danger-panel);
+}
+
+.alert--warning .alert__label,
+.alert--caution .alert__label {
+    color: var(--danger);
+}
+
+.alert--important,
+.alert--tip {
+    border-color: var(--accent);
+    background: var(--accent-panel);
+}
+
+.alert--important .alert__label,
+.alert--tip .alert__label {
+    color: var(--accent);
+}
+
+/* --- collapse ------------------------------------------------------------ */
+
+.collapse {
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--surface-sunk);
+}
+
+.collapse__summary {
+    cursor: pointer;
+    padding: var(--space-xs) var(--space-md);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.collapse__summary:hover {
+    color: var(--accent);
+}
+
+.collapse[open] .collapse__summary {
+    border-bottom: var(--line-thin) solid var(--rule);
+}
+
+.collapse__body {
+    padding: var(--space-sm) var(--space-md);
+}
+
+/* --- figures ------------------------------------------------------------- */
+
+.figure {
+    margin-block: var(--space-xl);
+}
+
+/* A caption is running prose about a figure, not data — so it is set in the
+   reading face. It was mono, which is this theme's own named failure: JetBrains
+   Mono carries code, dates, counts and tabular figures, and reaching for it here
+   was mono as a costume for "technical" rather than for measurement.
+
+   And it takes a measure. At --step--2 across the full column it ran about a
+   quarter longer than body copy does at --step-0 — the smaller the step, the
+   longer the line, on a sheet whose whole argument is a measure that was counted
+   rather than guessed. 60ch is the standfirst's measure, which is what every
+   other run of secondary prose here is already set to. */
+.figure__caption {
+    margin-top: var(--space-2xs);
+    font-size: var(--step--2);
+    color: var(--meta);
+    max-width: 60ch;
+}
+
+.figure__attr {
+    display: block;
+    color: var(--meta-soft);
+}
+
+img.in-text {
+    display: inline-block;
+    vertical-align: text-bottom;
+    border: 0;
+}
+
+/* --- tables -------------------------------------------------------------- */
+
+/* Goldmark emits a bare table; the wrapper from _markup/render-table.html is
+   the scroll container that keeps a wide one from pushing the page sideways. */
+.table-wrap {
+    overflow-x: auto;
+    margin-block: var(--space-lg);
+    border: var(--line-thin) solid var(--rule-strong);
+}
+
+.content table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
+}
+
+.content th,
+.content td {
+    padding: var(--space-2xs) var(--space-sm);
+    border-bottom: var(--line-thin) solid var(--rule);
+    text-align: start;
+    vertical-align: top;
+}
+
+.content thead th {
+    border-bottom: var(--line-thin) solid var(--rule-strong);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+    white-space: nowrap;
+}
+
+.content tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* --- code ---------------------------------------------------------------- */
+
+.content :not(pre) > code {
+    background: var(--surface);
+    border: var(--line-thin) solid var(--rule);
+    padding: 0.1em 0.3em;
+    border-radius: var(--radius-sm);
+    word-break: break-word;
+}
+
+.content pre {
+    overflow-x: auto;
+    padding: var(--space-md);
+    line-height: var(--line-height-code);
+    background: var(--surface-sunk);
+    tab-size: 4;
+}
+
+.content pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+}
+
+/* The block a reader came for. Ruled like everything else, and given room to
+   breathe: on a code-heavy sheet this is the content, not an inset. */
+.content .highlight {
+    position: relative;
+    margin-block: var(--space-lg);
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--surface-sunk);
+}
+
+.content .highlight pre {
+    margin: 0;
+    border: 0;
+}
+
+.copy-code {
+    position: absolute;
+    top: var(--space-3xs);
+    right: var(--space-3xs);
+    display: none;
+    padding: var(--space-4xs) var(--space-xs);
+    border: var(--line-thin) solid var(--rule-strong);
+    background: var(--bg);
+    color: var(--meta);
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.js .copy-code {
+    display: block;
+}
+
+.highlight:hover .copy-code,
+.copy-code:focus-visible {
+    opacity: 1;
+}
+
+.copy-code:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.copy-code[data-state="failed"] {
+    color: var(--danger);
+    border-color: var(--danger);
+    opacity: 1;
+}
+
+/* Touch has no hover, so the control must be permanently visible there — which
+   means it can no longer float over the code. A permanent button in the corner
+   masked the first two lines of every block, and because it is positioned
+   against .highlight, which does not scroll, it masked the same column however
+   far the reader scrolled sideways. On a sheet whose whole claim is that
+   command blocks survive intact, that is the one place the control may not sit.
+   It docks instead into a ruled strip above the block, the way a note sits
+   above a drawn detail, and the code below keeps its full measure. */
+@media (pointer: coarse) {
+    .content .highlight {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .js .copy-code {
+        order: -1;
+        position: static;
+        width: 100%;
+        min-height: var(--tap-target);
+        padding: var(--space-4xs) var(--space-sm);
+        border: 0;
+        border-bottom: var(--line-thin) solid var(--rule-strong);
+        background: none;
+        text-align: end;
+        opacity: 1;
+    }
+
+    /* On touch, the stamp is the only way to open the note, and the passage's
+       flag the only way to reach its row — both are standalone controls and
+       both grow. The inline flag stays as drawn: it sits inside a sentence, and
+       an inline target is exactly what the size minimum exempts. Growing it
+       would push the line apart to fix a rule it was never under. */
+    .ai-stamp__mark,
+    .ai-passage__flag .ai-flag {
+        width: var(--tap-target);
+        height: var(--tap-target);
+    }
+}
+
+/* --- post footer --------------------------------------------------------- */
+
+.post-footer {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-md);
+    border-top: var(--line-frame) solid var(--rule-frame);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* The tag list and the actions row sit here as flex siblings, so a wide one
+   pushes the other out of the sheet rather than merely overflowing itself. The
+   tag chips carry their own floor now; this is the same guard one level up, so
+   the row cannot be widened by whatever is put in it next. */
+.post-footer > * {
+    min-width: 0;
+}
+
+.post-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.share {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.share__label {
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.share__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+}
+
+.share__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-xl);
+    height: var(--space-xl);
+    color: var(--meta);
+    border: var(--line-thin) solid transparent;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.share__link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.share__link .icon {
+    width: 1.1em;
+    height: 1.1em;
+}
+
+.edit-post {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    text-decoration: none;
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.edit-post:hover {
+    color: var(--accent);
+}
+
+.edit-post .icon {
+    width: 1em;
+    height: 1em;
+}
+
+/* --- post navigation ----------------------------------------------------- */
+
+.post-nav {
+    margin-top: var(--space-2xl);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.post-nav__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    border: var(--line-thin) solid var(--rule);
+    text-decoration: none;
+    transition: border-color var(--transition), background-color var(--transition);
+    min-width: 0;
+}
+
+.post-nav__link:hover {
+    border-color: var(--accent);
+    background: var(--accent-panel);
+}
+
+.post-nav__link--next {
+    grid-column: 2;
+    justify-content: flex-end;
+    text-align: end;
+}
+
+.post-nav__side {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.post-nav__label {
+    font-stretch: var(--font-stretch-label);
+    font-size: var(--step--2);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--meta);
+}
+
+.post-nav__title {
+    font-size: var(--step--1);
+    line-height: var(--line-height-snug);
+}
+
+.post-nav__link .icon {
+    color: var(--meta);
+    flex: none;
+}
+
+@media (max-width: 40rem) {
+    .post-title {
+        font-size: var(--step-3);
+    }
+
+    .title-block__row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-4xs);
+    }
+
+    .content h2 {
+        font-size: var(--step-2);
+    }
+
+    .content h3 {
+        font-size: var(--step-1);
+    }
+
+    .content pre {
+        padding: var(--space-sm);
+    }
+
+    .post-nav {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .post-nav__link--next {
+        grid-column: 1;
+    }
+
+    .post-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (pointer: coarse) {
+    .share__link {
+        min-width: var(--tap-target);
+        min-height: var(--tap-target);
+    }
+
+    .edit-post,
+    .tag-list a {
+        min-height: var(--tap-target);
+    }
+
+    /* Both summaries are the whole control — a reader opens the contents or a
+       collapsed block by hitting the label row — and both came out at 39px,
+       which is the label step plus its own padding and nothing to do with a
+       target size. min-height alone is enough: `summary` is already a centred
+       flex row in 10-base.css, so the drawn chevron and its label stay on the
+       row's optical centre as it grows. */
+    .toc__summary,
+    .collapse__summary {
+        min-height: var(--tap-target);
+    }
+
+    /* The summary above got the minimum and the entries under it did not, which
+       left the control that *opens* the contents at 44px and every control that
+       uses them at 16px — the line box and nothing else.
+
+       These are the case the rule was written for, and the one with the most
+       riding on it. The zone rail is dropped below --frame-collapse, so on a
+       phone the contents are the only section navigation the sheet has; the
+       rail's own no-JavaScript fallback hands them the same job. A stack of
+       16px rows is not a navigation instrument.
+
+       Centred, like .archive-item__link and .search-results a, and for the same
+       reason those two spell out: the link carries no padding of its own, so
+       growing it from the top would leave each title sitting at the head of a
+       44px box with the space beneath it. The li margins stay — 2px between
+       44px rows is what keeps them reading as separate entries. */
+    .toc a {
+        display: flex;
+        align-items: center;
+        min-height: var(--tap-target);
+    }
+}

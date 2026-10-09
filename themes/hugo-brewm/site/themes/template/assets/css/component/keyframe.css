@@ -1,0 +1,57 @@
+@keyframes ellipsis {
+    0% {content: '...';}
+    25% {content: '';}
+    50% {content: '.';}
+    100% {content: '..';}
+}
+
+@-webkit-keyframes ellipsis {
+    0% {content: '...';}
+    25% {content: '';}
+    50% {content: '.';}
+    100% {content: '..';}
+}
+
+@-webkit-keyframes blinking {
+    from, to {opacity: 1;}
+    50% {opacity: 0;}
+}
+
+@keyframes blinking {
+    from, to {opacity: 1;}
+    50% {opacity: 0;}
+}
+
+@keyframes expand {
+    from {
+        transform: scale(1 , 0);
+    }
+    to {
+        transform: scale(1 , 1);
+    }
+}
+
+@-webkit-keyframes expand {
+    from {
+        -webkit-transform: scale(1 , 0);
+    }
+    to {
+        -webkit-transform: scale(1 , 1);
+    }
+}
+
+@media (prefers-reduced-motion) {
+
+    @keyframes expand {
+        from {
+            transform: unset;
+        }
+    }
+
+    @-webkit-keyframes expand {
+        from {
+            -webkit-transform: unset;
+        }
+    }
+
+}

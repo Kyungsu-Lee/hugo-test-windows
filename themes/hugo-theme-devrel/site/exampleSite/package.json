@@ -1,0 +1,15 @@
+{
+  "name": "hugo-theme-devrel-example",
+  "private": true,
+  "scripts": {
+    "build": "hugo --minify && npx pagefind --site public",
+    "index": "npx pagefind --site public",
+    "test:search": "bash scripts/assert-pagefind-skips-future.sh public",
+    "test:search:future": "bash scripts/assert-pagefind-skips-future.sh public-buildFuture --buildFuture",
+    "test:svg": "bash scripts/assert-svg-utf8.sh content",
+    "dev": "hugo server"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
+  }
+}

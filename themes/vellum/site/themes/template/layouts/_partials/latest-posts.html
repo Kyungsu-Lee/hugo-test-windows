@@ -1,0 +1,27 @@
+{{- /* Usage: {{ partial "latest-posts.html" (dict "page" . "count" 5) }}
+       Renders nothing at all when the count is zero or the section is empty,
+       rather than an empty heading.
+
+       No `| default` on the count: zero is a meaningful value here — it is how
+       a site turns the block off — and `default` would read it as absent and
+       hand back the fallback, which is exactly the bug this guard existed to
+       catch and never could. The caller resolves the default. */ -}}
+{{- $count := int .count }}
+{{- $sections := site.Params.mainSections | default (slice "posts") }}
+{{- $posts := where site.RegularPages "Type" "in" $sections }}
+{{- $posts = where $posts "Params.hiddenInHomeList" "!=" true }}
+{{- if and (gt $count 0) $posts }}
+<section class="latest">
+    <div class="sheet-band">
+        <h2 class="sheet-band__label">{{ i18n "latest_posts" }}</h2>
+        {{- with site.GetPage (index $sections 0) }}
+        <a class="sheet-band__label" href="{{ .RelPermalink }}">{{ i18n "all_posts" }}{{ partialCached "icon.html" "arrow-right" "arrow-right" }}</a>
+        {{- end }}
+    </div>
+    <ul class="post-list post-list--latest">
+        {{- range first $count $posts }}
+        <li>{{ partial "post-card.html" (dict "page" . "level" 3) }}</li>
+        {{- end }}
+    </ul>
+</section>
+{{- end }}

@@ -1,0 +1,42 @@
+{{- define "main" }}
+    {{- $home := . }}
+    {{- $copyMarkdownEnabled := partial "copy-markdown/enabled.html" . }}
+    {{- with .Site.GetPage "_index.md" }}
+        {{- if .Params.homePageIsPost }}
+    <h1>{{ .Title | .RenderString }}</h1>
+    <h4>{{ .Params.description }}</h4>
+    <div class="page-meta">
+        <p class="author-date"><time datetime="{{ .Date }}">{{ .Date.Format "January 2, 2006" }}</time> - {{ .Params.author }}</p>
+        {{- if $copyMarkdownEnabled }}
+{{ partial "copy-markdown/button.html" $home }}
+        {{- end }}
+    </div>
+
+{{ .Content }}
+        {{- else }}
+            {{- $subtitle := .Params.subtitle }}
+            {{- with .Content }}
+    <section>
+    <h1 class="smaller">{{ $subtitle }}</h1>
+{{ . }}
+    </section>
+            {{- end }}
+            {{- if $copyMarkdownEnabled }}
+    <div class="page-meta page-meta-home">
+{{ partial "copy-markdown/button.html" $home }}
+    </div>
+            {{- end }}
+        {{- end }}
+    {{- end }}
+
+    {{- range sort (where .Site.Sections "Section" "in" .Site.MainSections) "Weight" }}
+    <section>
+    <h2>{{ .Title | .RenderString }}</h2>
+    <ul>
+        {{- range where .Site.RegularPages "Section" .Section }}
+        <li><a href="{{ .Permalink }}">{{ .Title | .RenderString | plainify  }}</a></li>
+        {{- end }}
+    </ul>
+    </section>
+    {{- end }}
+{{- end }}

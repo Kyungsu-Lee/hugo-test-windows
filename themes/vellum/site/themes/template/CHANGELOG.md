@@ -1,0 +1,240 @@
+# Changelog
+
+What changed in each release, and what an upgrade asks of you. Anything under **Breaking** changes
+the built URL surface, a param or a front matter key — read those before upgrading, since a static
+host deployed with `rsync --delete` loses the paths a build stops emitting.
+
+Entries are generated from the commit history by [`.release/changelog.sh`](.release/changelog.sh);
+the format they follow is in [`CONTRIBUTING.md`](CONTRIBUTING.md). Only changes a user of the theme
+can see are listed — refactors, documentation, CI and build chores are not. Releases up to 0.1.2
+predate the generated format and were written by hand.
+
+## [0.3.2](https://github.com/cebor/vellum/compare/v0.3.1...v0.3.2) - 2026-09-15
+
+### Added
+
+- **partials:** accept an SVG as the profile image (9d36bd0)
+
+### Fixed
+
+- **a11y:** declare the language of the switcher's link text (be2c66e)
+- **a11y:** name the table of contents landmark (4425618)
+- **a11y:** announce the theme toggle's resulting state (b57f4bb)
+- **css:** break a long word instead of widening the sheet (516c715)
+- **a11y:** raise the zone rail's marks to the touch minimum (68ea6c8)
+- **css:** span a marked code line's band across the whole block (58bf595)
+- **a11y:** bake every fill that carries text opaque (ff49c9a)
+- **a11y:** raise the remaining standalone touch targets to the minimum (9be2001)
+- **a11y:** give the terminal's window buttons a real hit box (99732aa)
+- **print:** set one dim grey on paper (9689bed)
+- **css:** set figure captions in the reading face on a measure (d36c8b1)
+- **shortcodes:** reserve an in-text image's box before it loads (d7c97e1)
+- **a11y:** guard the terminal's focus ring behind :has() support (c71a140)
+- **partials:** measure a vector so its box is reserved before it loads (c0613dd)
+- **a11y:** raise the contents entries and card titles to 44px (05a70a2)
+- **search:** say both numbers once the rendered list is capped (e7355cd)
+- **a11y:** announce the copy control's outcome and name each button (db330d7)
+- **a11y:** report what the terminal's window controls did (53caa9c)
+- **a11y:** let any key in the window cut the terminal's reveal short (e9e23fd)
+- **a11y:** hide the terminal's window controls until JavaScript has run (cab2dca)
+- **a11y:** hide the search field until JavaScript has run (91b2472)
+- **partials:** take the avatar's height from the resized file (3c27c44)
+- **css:** stop an unbreakable word widening the sheet (948e129)
+- **a11y:** name each post card so repeated landmarks differ (47ba982)
+- **a11y:** outline the terminal's window buttons in forced colours (8117dfb)
+- **print:** keep the title block and a fence's border off a page break (50be63d)
+- **a11y:** land an anchor clear of the header at every width (bb40461)
+- **a11y:** move focus into main when the skip link is used (22cdb01)
+- **css:** break the narrow header by kind, not by wrap order (25e7215)
+- **a11y:** suppress transitions for the length of a scheme change (2d72bed)
+- **a11y:** free the keyboard focus trapped in the terminal input (5feb159)
+- **a11y:** let Ctrl+C copy a selection in the terminal (055856e)
+- **css:** keep the terminal title clear of the window lights on touch (0423cbf)
+- **a11y:** announce the new window on every external link (9737643)
+
+### Performance
+
+- **search:** drop includeMatches from the Fuse defaults (c5e55ff)
+- **search:** cap the rendered result list at 50 (f6b9155)
+- **partials:** batch the zone rail's reads and throttle its resize (53bccde)
+
+## [0.3.1](https://github.com/cebor/vellum/compare/v0.3.0...v0.3.1) - 2026-09-08
+
+### Fixed
+
+- **print:** carry .js into the terminal's print height override (c991e1a)
+- **css:** sort the stylesheet glob so a site's own CSS lands last (1be7957)
+- **print:** drop the graph substrate from the printed sheet (0b2a806)
+
+### Performance
+
+- **css:** drop the terminal sheet from the bundle when it is unused (47acdca)
+
+## [0.3.0](https://github.com/cebor/vellum/compare/v0.2.10...v0.3.0) - 2026-09-08
+
+### Added
+
+- **layouts:** give the landing page profile views (338cdf3)
+- **layouts:** set the landing page's buttons under the views (60dee96)
+
+### Fixed
+
+- **a11y:** read alert labels and code highlights off opaque surfaces (fe7e13e)
+- **layouts:** draw the landing page's closing break at the boundary (9c3edf3)
+- **css:** drop the title block's frame caps inside the profile block (477c459)
+- **css:** draw one rule under the profile view index, not two (fd92bdb)
+- **css:** set the office's ruled instruments on one label column (c84a719)
+- **a11y:** move focus into the profile view a tab opens (2e09ad5)
+- **css:** clear the nav's active mark of the row below when it wraps (8d93741)
+
+## [0.2.10](https://github.com/cebor/vellum/compare/v0.2.9...v0.2.10) - 2026-09-03
+
+### Added
+
+- **layouts:** highlight code without asking the site for Chroma classes (961be30)
+
+## [0.2.9](https://github.com/cebor/vellum/compare/v0.2.8...v0.2.9) - 2026-09-03
+
+### Added
+
+- **ai:** set the stamp beside the title rather than above it (ac4cea0)
+
+## [0.2.8](https://github.com/cebor/vellum/compare/v0.2.7...v0.2.8) - 2026-09-03
+
+### Added
+
+- **ai:** draw the stamp in the corner of the sheet's head (fc61347)
+
+## [0.2.7](https://github.com/cebor/vellum/compare/v0.2.6...v0.2.7) - 2026-09-03
+
+### Added
+
+- **layouts:** announce the settings the theme cannot set for itself (6e7df7e)
+
+### Fixed
+
+- **layouts:** stop the search and 404 sheets assuming one site's shape (2a41b2e)
+
+## [0.2.6](https://github.com/cebor/vellum/compare/v0.2.5...v0.2.6) - 2026-08-19
+
+### Fixed
+
+- **seo:** stop JSON-LD from being escaped into a JSON string (15f496b)
+
+## [0.2.5](https://github.com/cebor/vellum/compare/v0.2.4...v0.2.5) - 2026-08-18
+
+### Added
+
+- **partials:** add an optional favicon_svg slot (ea3a554)
+
+### Fixed
+
+- **ai:** open the index mark's name rather than setting it in the row (8c1d94c)
+- **head:** declare apple-touch-icon sizes and mask-icon color (c7de86b)
+- **partials:** emit apple-touch-icon sizes only when the site declares it (8ee628f)
+- **partials:** resolve icon paths against a baseURL that has a subpath (54c6dbb)
+- **partials:** give Hacker News its own icon branch (8c66e3b)
+- **partials:** honour latestPosts = 0 (e740ea8)
+- **partials:** size the header logo from the image it resized (120239d)
+- **css:** keep the image sizes attribute in step with the layout (9c9a2db)
+- **css:** space the children of nested prose wrappers (ed7264a)
+- **a11y:** take the AI stamp out of the title block's <dl> (baaeb3d)
+- **layouts:** bring the root 404 shell back in line with baseof (2ee675c)
+- **layouts:** make ShowAllPagesInArchive mean what it says (d40467c)
+- **parity:** take the shots against the documented dev server (34b3972)
+- **release:** stop --help printing a line of the script (cb1aa84)
+
+## [0.2.4](https://github.com/cebor/vellum/compare/v0.2.3...v0.2.4) - 2026-08-17
+
+### Reverted
+
+- **exampleSite:** the demo ships its contents panel collapsed again, reverting the change made in
+  0.2.3. This is demo configuration only — the theme's own default is unchanged and still renders the
+  panel open unless a site or a page sets `TocOpen = false` (024866d, reverts 9b4e4c8)
+
+## [0.2.3](https://github.com/cebor/vellum/compare/v0.2.2...v0.2.3) - 2026-08-17
+
+### Added
+
+- **search:** results carry the post card's field grid — the issued date and the extent, in the same
+  positions and with the same drawn separators as every other index. `hidemeta` is honoured, so a page
+  that hides its title block does not have its date reappear here (3e849ee, cff4ba8, bc8eebe)
+- **search:** a query that matches nothing is given the 404's exits rather than a grey line, and so is
+  a search index that fails to load (a940aed, 328b0d8)
+
+### Fixed
+
+- **a11y:** `:target` scroll-margin is no longer scoped to the reduced-motion query, where a reader who
+  asked for reduced motion had every zone mark, contents link and deep link land behind the sticky
+  header (0f29e7d)
+- **a11y:** the zone rail is placed after the sheet's content in the DOM, so tabbing a long post no
+  longer throws focus back to the top of the page mid-read (14eeefb)
+- **a11y:** disabled pagination text drops to `--meta-soft`. It had been painted in a line token, at
+  2.06:1 (3275b68)
+- **a11y:** the AI mark on a post card is named in the field grid, so it discloses to a keyboard and a
+  touch reader and not only to a mouse (b3db382, 6fed8b9)
+- **ai:** a marked passage is flagged with the sheet's own AI mark, standing beside the change bar so
+  the bar runs unbroken. It replaces the numbered revision triangle, and the `revision` icon goes with
+  it (c730124, 4d5dd26)
+- **css:** the code copy button docks into a ruled strip above the block on touch. As a permanent
+  floating control it had masked the first two lines of every block, and the same column however far
+  the block was scrolled sideways (d564395, ed998e9)
+- **search:** the search route gets its breadcrumbs (707a13a)
+- **search:** the browser's native clear control is drawn from the palette instead of being left at its
+  UA default (712b7b3)
+- **partials:** the manifest link is guarded like the asset links around it. The theme ships no
+  manifest of its own, so the unconditional `<link rel="manifest">` was a 404 and two console errors on
+  every page load of every site running the theme. **Upgrading:** a site that serves a manifest now has
+  to name it — `manifest = "/site.webmanifest"` under `[params.assets]` — or the link is no longer
+  emitted (1828193)
+- **exampleSite:** the demo opens the contents panel that the theme opens by default (9b4e4c8)
+
+## [0.2.2](https://github.com/cebor/vellum/compare/v0.2.1...v0.2.2) - 2026-08-16
+
+### Fixed
+
+- **ai:** quieten the revision marks to the weight of the text they annotate (5a8c4a7)
+
+## [0.2.1](https://github.com/cebor/vellum/compare/v0.2.0...v0.2.1) - 2026-08-16
+
+### Added
+
+- **ai:** disclose AI use as a title-block stamp and marked passages (e456a7d)
+
+## [0.2.0](https://github.com/cebor/vellum/compare/v0.1.2...v0.2.0) - 2026-08-16
+
+First release with a generated changelog. From here on entries come from the commit history, and
+**Breaking** carries everything that moves a URL or drops a param. The two fixes below predate that
+and were written by hand.
+
+### Fixed
+
+- **css:** keep the zone rail hidden below the collapse width once the script has placed it, where it
+  had been coming back as a stack of marks in the frame's top corner (eaa1cc3)
+- **list:** attach an `_index.md` body to the page head as a sheet note, instead of flush against the
+  first post card, where proximity read it as that card's caption (6a29629)
+
+## [0.1.2](https://github.com/cebor/vellum/compare/v0.1.1...v0.1.2) - 2026-08-15
+
+### Fixed
+
+- **docs:** correct the contributing note and document that the GitHub copy is pushed by hand, so a
+  release that stops at GitLab is visibly an unfinished one.
+
+## [0.1.1](https://github.com/cebor/vellum/compare/v0.1.0...v0.1.1) - 2026-08-15
+
+### Fixed
+
+- **docs:** escape the README's shortcode examples. The theme registry renders the README as a Hugo
+  page, which extracts shortcodes from the raw source before Markdown runs — the examples were being
+  called rather than shown, and failed the themes.gohugo.io build.
+
+## [0.1.0] - 2026-08-15
+
+First release listed for the Hugo theme registry.
+
+### Added
+
+- `[module.hugoVersion]` in `hugo.toml`, a `go.mod` fixing the module path at
+  `github.com/cebor/vellum`, and the 3:2 preview images in `images/` — the metadata the registry
+  reads, all of it from the latest tag.

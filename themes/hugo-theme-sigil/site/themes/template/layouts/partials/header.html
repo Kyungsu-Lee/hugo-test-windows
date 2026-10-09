@@ -1,0 +1,125 @@
+<header class="header">
+    <nav class="nav" aria-label="{{ i18n "navSiteAria" | default "Site navigation" }}">
+        <div class="logo">
+            {{- $label_text := (site.Params.label.text | default site.Title) }}
+            {{- if site.Title }}
+            <a href="{{ "" | absLangURL }}" accesskey="h" title="{{ $label_text }} (Alt + H)">
+                {{- if site.Params.label.icon }}
+                {{- $img := resources.Get site.Params.label.icon }}
+                {{- if $img }}
+                    {{- $processableFormats := (slice "jpg" "jpeg" "png" "tif" "bmp" "gif") -}}
+                    {{- if hugo.IsExtended -}}
+                        {{- $processableFormats = $processableFormats | append "webp" -}}
+                    {{- end -}}
+                    {{- $prod := (hugo.IsProduction | or (eq site.Params.env "production")) }}
+                    {{- if and (in $processableFormats $img.MediaType.SubType) (eq $prod true)}}
+                        {{- if site.Params.label.iconHeight }}
+                            {{- $img = $img.Resize (printf "x%d" site.Params.label.iconHeight) }}
+                        {{ else }}
+                            {{- $img = $img.Resize "x30" }}
+                        {{- end }}
+                    {{- end }}
+                    {{- /* alt 留空:紧邻的 $label_text 已是链接可见名,alt 同文会被读屏念两遍(image-redundant-alt) */ -}}
+                    <img src="{{ $img.Permalink }}" alt=""
+                        width="{{ $img.Width }}"
+                        height="{{- site.Params.label.iconHeight | default "30" -}}">
+                {{- else }}
+                {{- /* 静态文件拿不到尺寸,按方形约定与 iconHeight 同值,避免只有 height 的属性期失真 */ -}}
+                <img src="{{- site.Params.label.icon | absURL -}}" alt=""
+                    width="{{- site.Params.label.iconHeight | default "30" -}}"
+                    height="{{- site.Params.label.iconHeight | default "30" -}}">
+                {{- end -}}
+                {{- else if hasPrefix site.Params.label.iconSVG "<svg" }}
+                    {{ site.Params.label.iconSVG | safeHTML }}
+                {{- end -}}
+                {{- $label_text -}}
+            </a>
+            {{- end }}
+            {{- $currentPage := . }}
+            <div class="logo-switches">
+                {{- if (not site.Params.disableThemeToggle) }}
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    {{ partial "sg-icon.html" (dict "name" "moon-stars" "size" 22 "id" "moon") }}
+                    {{ partial "sg-icon.html" (dict "name" "sun" "size" 22 "id" "sun") }}
+                </button>
+                {{- end }}
+                
+                {{- if (not site.Params.disableLangToggle) }}
+                    {{- /* 优先跳当前页的翻译;该页无翻译时才回退语言首页。
+                         用 site.Home.Translations 会让任何页面的语言切换
+                         都跳回首页,读了半篇文章点「中文」被送回起点。 */ -}}
+                    {{- $switches := slice }}
+                    {{- with $currentPage.Translations }}{{- $switches = . }}{{- end }}
+                    {{- if not $switches }}{{- with site.Home.Translations }}{{- $switches = . }}{{- end }}{{- end }}
+                    {{- with $switches }}
+                    {{- /* 只列出口,不列所在:当前语言的名字是死信息,
+                           退场后这里每个词都是一扇门 */ -}}
+                    <ul class="lang-switch" aria-label="Language switcher">
+                        {{- range . -}}
+                        <li>
+                            <a href="{{- .Permalink -}}" title="{{ .Language.Label | default (.Lang | title) }}"
+                                aria-label="{{ .Language.Label | default (.Lang | title) }}">
+                                {{- if eq .Lang "en" -}}EN
+                                {{- else if eq .Lang "ja" -}}日本語
+                                {{- else -}}中文
+                                {{- end -}}
+                            </a>
+                        </li>
+                        {{- end}}
+                    </ul>
+                    {{- end }}
+                {{- end }}
+            </div>
+        </div>
+        <ul id="menu">
+            {{- range site.Menus.main }}
+            {{- /* 站内项走 .Page.Permalink。menu.URL 由 Hugo 在构建期拼装,
+                 非默认语言 + baseURL 子目录并存时语言码会排到子目录之前
+                 (ouatis.com/zh-cn/hugo-theme-sigil/...),是 404。页面对象的
+                 Permalink 与 canonical 一致,以它为准;无页面绑定的外鏈
+                 才回退 .URL。 */ -}}
+            {{- $menu_item_url := "" }}
+            {{- with .Page -}}{{- $menu_item_url = .Permalink -}}{{- end -}}
+            {{- if not $menu_item_url -}}{{- $menu_item_url = .URL -}}{{- end -}}
+            {{- /* leaf bundle 的 Permalink 不带尾斜杠,补上避免多余重定向 */ -}}
+            {{- if and $menu_item_url (not (strings.HasSuffix $menu_item_url "/")) -}}
+            {{- $menu_item_url = printf "%s/" $menu_item_url -}}
+            {{- end -}}
+            {{- $page_url:= $currentPage.Permalink }}
+            {{- /* 搜索项判定:按 KeyName 取页面 Layout。多语言站点下同一 identifier
+                 可能对应多个语言版本,site.GetPage 会报歧义而中断整页渲染——
+                 用 try 兜底,拿不到就退回按 URL 判断,保证单/多语言都不炸。 */ -}}
+            {{- $is_search := false -}}
+            {{- with try (site.GetPage .KeyName) -}}
+            {{- with .Value -}}{{- if eq .Layout "search" -}}{{- $is_search = true -}}{{- end -}}{{- end -}}
+            {{- else -}}
+            {{- if strings.HasSuffix .URL "/search/" -}}{{- $is_search = true -}}{{- end -}}
+            {{- end -}}
+            <li>
+                <a href="{{ $menu_item_url }}" title="{{ .Title | default .Name }} {{- cond $is_search (" (Alt + /)" | safeHTMLAttr) ("" | safeHTMLAttr ) }}"
+                {{- cond $is_search (" accesskey=/" | safeHTMLAttr) ("" | safeHTMLAttr ) }}
+                {{- if $is_search }} aria-label="{{ .Name }}"{{ end }}>
+                    <span {{- if eq $menu_item_url $page_url }} class="active" {{- end }}>
+                        {{- if $is_search -}}
+                        {{- /* 搜索以符代词:一枚放大镜,节拍与 header 其余图标同 */ -}}
+                        {{ partial "sg-icon.html" (dict "name" "magnifying-glass" "size" 15) }}
+                        {{- else -}}
+                        {{- .Pre }}
+                        {{- .Name -}}
+                        {{ .Post -}}
+                        {{- end -}}
+                    </span>
+                    {{- if (findRE "://" .URL) }}&nbsp;
+                    <svg fill="none" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" height="12" width="12">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14L21 3"></path>
+                    </svg>
+                    {{- end }}
+                </a>
+            </li>
+            {{- end }}
+        </ul>
+    </nav>
+</header>

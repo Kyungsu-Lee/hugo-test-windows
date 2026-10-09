@@ -1,0 +1,18 @@
+{{- /*
+  Whether this page should be in the Pagefind index.
+
+  Upcoming talks (event date still in the future) omit data-pagefind-body.
+  Talks can still have public URLs from their announcement date without
+  --buildFuture. Scheduled posts follow Hugo: if the page was generated
+  (--buildFuture / hugo server), it is indexed.
+
+  Talk templates and about pages are always indexed. In development,
+  upcoming talks stay searchable so local previews match listings.
+*/ -}}
+{{- $index := true -}}
+{{- if and (ne hugo.Environment "development") (eq .Section "talks") (ne .Params.layout "template") -}}
+  {{- if partial "talk-is-upcoming.html" . -}}
+    {{- $index = false -}}
+  {{- end -}}
+{{- end -}}
+{{- return $index -}}

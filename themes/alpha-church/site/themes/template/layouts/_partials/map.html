@@ -1,0 +1,179 @@
+<!-- layouts/_partials/map.html -->
+{{ $service := site.Params.Map.service }}
+{{ $zoom := site.Params.Map.zoom }}
+
+{{ if not .id }}
+  {{ $id := printf "map-%d" ( now.Unix ) }}
+{{ else }}
+  {{ $id := .id }}
+{{ end }}
+
+<div id="{{ .id }}" class="map"></div>
+
+
+  {{ if eq $service "osm" }}
+
+    <script>
+
+		var points = {{ .points | jsonify | safeJS }};
+		var initialZoom = {{ with $zoom  }}{{ . }}{{ else }} 0 {{ end }};
+		var bounds = new L.LatLngBounds(points.map(p=>{
+			return [p.latitude,p.longitude];
+		}));
+		var mymap = L.map("{{- .id -}}").fitBounds(bounds);
+		if ( initialZoom == 0 ){
+			// If it's not set on the map shortcode, 13 is a reasonable MAXIUMUM based on my testing
+			// If it has multiple pins, we'll zoom out as much as possible to fit them all
+			if ( mymap.getZoom() > 13){
+				mymap.setZoom(13);
+			}
+		} else {
+				mymap.setZoom(initialZoom);
+		}
+        L.tileLayer(
+          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          {
+            attribution:
+              'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              zoom: {{- int .zoom -}}
+            }
+        ).addTo(mymap);
+		points.forEach(loc=>{
+			let marker = L.marker([loc.latitude,loc.longitude]).addTo(mymap);
+			if ( loc.title ){
+				let content;
+				if ( loc.link ){
+					content = `<div class="special"><h4>${loc.title}</h4><a class="" href="${loc.link}">Find out more</a></div>`
+				} else {
+					content = `<h4>${loc.title}</h4>`
+				}
+				marker.bindPopup(content,{closeOnClick: false, autoClose: false}).openPopup();
+			}
+		});
+
+    </script>
+  {{ else if eq $service "google" }}
+
+    {{ "<!-- Google Map -->" | safeHTML }}
+    <script>
+        let map;
+        var points = {{ .points | jsonify | safeJS }};
+
+        async function initMap() {
+          const { Map } = await google.maps.importLibrary("maps");
+
+          if (points.length == 1) {
+            var centre = {lat: {{- float (index ( index .points 0) "latitude") -}}, lng: {{- float (index ( index .points 0) "longitude") -}}};
+            var title = {{- string (index ( index .points 0) "title") -}};
+            var link = {{- string (index ( index .points 0) "link") -}};
+
+            map = new Map(document.getElementById('{{- .id -}}'), {
+              center: centre,
+              zoom: {{- int $zoom -}}
+            });
+            
+            var marker = new google.maps.Marker({
+                position: centre,
+                map: map,
+                title: title
+            });
+            
+            if (link){
+              var infowindow = new google.maps.InfoWindow({
+                content: `<a href="${link}">Click to view ${title} page.</a>`
+                });
+              marker.addListener('click', function() {
+                infowindow.open(map, marker);
+              });
+            }
+          }
+          else {
+            
+            var bounds = new google.maps.LatLngBounds();
+
+            map = new Map(document.getElementById('{{- .id -}}'))
+
+            points.forEach(loc=>{
+              bounds.extend(new google.maps.LatLng(loc.latitude, loc.longitude));
+            });
+
+            points.forEach(function(loc) {
+              var marker = new google.maps.Marker({
+                position: {lat: loc.latitude, lng: loc.longitude},
+                map: map,
+                title: loc.title
+              });
+              if (loc.link){
+                var infowindow = new google.maps.InfoWindow({
+                  content: `<a href="${loc.link}">Click to view ${loc.title} page.</a>`
+                  });
+                marker.addListener('click', function() {
+                  infowindow.open(map, marker);
+                });
+              }
+            });
+          
+            map.fitBounds(bounds);
+          }
+			    
+        }
+        //initMap();
+      </script> 
+  {{ else if eq $service "mapbox" }}
+    {{ printf "<meta name=\"viewport\" content=\"initial-scale=1,maximum-scale=1,user-scalable=no\" />" | safeHTML }}
+    {{ printf "<script src=\"https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js\"></script>" | safeHTML }}
+    {{ printf "<link href=\"https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css\" rel=\"stylesheet\" />" | safeHTML }}
+    <style>
+      body { margin: 0; padding: 0; }
+      #map { top: 0; bottom: 0; padding: 0; width: 100%; }
+    </style>
+    <script>
+      var loc = [{{- float (index ( index .points 0) "latitude") -}}, {{- float (index ( index .points 0) "longitude") -}}];
+      mapboxgl.accessToken = "{{- .api_key -}}";
+
+      var geojson = {
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [{{- float .longitude -}}, {{- float .latitude -}}],
+          },
+          properties: {
+            title: "{{- .marker_title -}}",
+            description: "{{- .marker_address -}}"
+          }
+        }]
+      };
+
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: "{{- safeHTML .style_url  -}}", // stylesheet location
+        center: loc, // starting position [lng, lat]
+        zoom: {{- int $zoom -}} // starting zoom
+      });
+
+      // add markers to map
+      geojson.features.forEach(function(marker) {
+
+      // create a HTML element for each feature
+      var el = document.createElement('div');
+      el.className = 'marker';
+
+      // make a marker for each feature and add to the map
+      new mapboxgl.Marker(el)
+        .setLngLat(marker.geometry.coordinates)
+        .addTo(map);
+
+      if (marker.properties.title || marker.properties.description) {
+        new mapboxgl.Marker(el)
+          .setLngLat(marker.geometry.coordinates)
+          .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML('<h4>' + marker.properties.title + '</h4><div>' + marker.properties.description + '</div>'))
+          .addTo(map);
+      }
+      });
+
+      map.addControl(new mapboxgl.NavigationControl());
+    </script>
+  {{ end }}
